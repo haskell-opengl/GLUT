@@ -11,50 +11,41 @@ A small Tutorial
 <autor>Sven Eric Panitz</autor>
 <institution>TFH Berlin</institution> 
 
-
 <disclaimer>
-Publish early and publish often. That is the reason why you can read
-this. I started playing around with <em>HOpenGL</em> the Haskell port
-of OpenGL a common library for doing 3D graphics. I more or less took
-minutes of my efforts and make them public in this tutorial. 
-I did not have any prior
-experience in graphics programming, when I started to work with
-HOpenGL. <p/>
+Publish early and publish often. That is the reason why you can read this. I
+started playing around with <em>HOpenGL</em>, the Haskell port of OpenGL a
+common library for doing 3D graphics. I more or less took minutes of my efforts
+and make them public in this tutorial. I did not have any prior experience in
+graphics programming when I started to work with HOpenGL.<p/>
 
+The source of this paper is an XML-file. The sources are processed by an XQuery
+processor, XSLT scripts and <LaTeX/><white/> in order to produce the different
+formats of the tutorial.<p/>
 
-
-The source of this paper is an XML-file. The sources are processed by
-an XQuery processor, XSLT scripts and <LaTeX></LaTeX><white></white> 
-in order to
-produce the different formats of the tutorial.<p/>
-
-I'd like to thank Sven Panne<footnote
->Similar name different person.</footnote>, the author of HOpenGL, 
-who has been so kind to
-comment on first drafts of this tutorial.
+I'd like to thank Sven Panne<footnote>Similar name different person.</footnote>,
+the author of HOpenGL, who has been so kind to comment on first drafts of this
+tutorial.
 </disclaimer>
-
 </titelseite>
 
 <toc/>
 
 <kapitel titel="Introduction" >
-In this chapter some basic background information can be found. You you
-can read the sections of this chapter in an arbitrary order. Whatever
-your personal preference is.
+In this chapter some basic background information can be found. You can read the
+sections of this chapter in an arbitrary order, whatever your personal
+preference is.
 
 <section titel="A Little Bit of Practice">
-Before you read a lot of technical details you will probably  like to
-see something on your screen.  Therefore you find some very simple
-examples in the beginning. This will give you a first impression, of how
-an OpenGL program might look like in Haskell. 
+Before you read a lot of technical details, you will probably like to see
+something on your screen. Therefore you find some very simple examples in the
+beginning. This will give you a first impression of how an OpenGL program might
+look like in Haskell.
 
 <subsection titel="Opening Windows">
-OpenGL's main purpose is to render some graphics on a device. This
-device is generally a window on your computer screen. Before you can
-draw something on a screen you will need to open a window. So let's
-have a look at the simpliest OpenGL program, which just opens an empty
-window:
+OpenGL's main purpose is to render some graphics on a device. This device is
+generally a window on your computer screen. Before you can draw something on a
+screen, you will need to open a window. So let's have a look at the simplest
+OpenGL program which just opens an empty window:
 
 <code class="HelloWindow" lang="hs" main="main"
 ><![CDATA[import Graphics.UI.GLUT
@@ -70,50 +61,69 @@ createAWindow windowName = do
   createWindow windowName
   displayCallback $= clear [ColorBuffer]]]></code>
 
-The first two lines import the necessary libraries. The main function
-does three things:
+The first line imports the necessary modules, in our case simply the one
+containing the GLUT API. GLUT is a graphical user interface which is usually
+shipped with most OpenGL distributions. All OpenGL-related modules are
+re-exported from this module, keeping things simple.
+
+The main function does three things:
 <itemize>
-<item>initialize the OpenGL system</item>
-<item>define a window</item>
-<item>start the main procedure for dispaying everything and reacting
-on events</item>
+<item>Initialize the OpenGL system</item>
+<item>Define a window</item>
+<item>Start the main procedure for displaying everything and reacting on
+events</item>
 </itemize>
 
 For the definition of a window with a given name we do two things:
 <itemize>
-<item>create some window with the given name</item>
-<item>define, what is to be done, when the window contents is to be
-displayed. In the simple example above we simply clear the screen of
-any color by filling it with the default background color.</item>
+<item>Create some window with the given name</item>
+<item>Define what is to be done when the window contents are to be displayed. In
+the simple example above, we simply clear the screen by filling it with the
+default clear color (black).</item>
 </itemize>
 
-This 10 lines can be compiled with <tt>ghc</tt>. Do not forget to
-specify the packages, which contain the OpenGL library. It suffices to
-include the package <tt>GLUT</tt>, which automatically forces the
-inclusion of the package <tt>OpenGL</tt>. GLUT is the graphical user
-interface, which comes along with OpenGL, i.e. the window managing
-system etc.
-
+These 12 lines can be compiled with <tt>ghc</tt>. Do not forget to specify the
+packages which contain the OpenGL and GLUT libraries. It suffices to include the
+package <tt>GLUT</tt>, which automatically forces the inclusion of the
+package <tt>OpenGL</tt>:
 
 <scode><![CDATA[sep@swe10:~/hopengl/examples> ghc -package GLUT -o HelloWindow HelloWindow.hs
 sep@swe10:~/hopengl/examples> ./HelloWindow]]></scode>
 
-When you start the program, a window will be opened on your desktop. As you
-may have noticed, we did not specify any attribute of the window, like
-its size and position. GLUT  is defined in a way that initial default
-values are used for unspecified attributes.
+Alternatively, <tt>ghc</tt>'s <tt>make</tt>-like mode can be used for
+compilation, which will especially be handy when multiple modules are involved
+in a single program. In this mode, no OpenGL or GLUT packages need to specified,
+because these are so-called <em>auto</em> packages:
+
+<scode><![CDATA[sep@swe10:~/hopengl/examples> ghc --make -o HelloWindow HelloWindow.hs]]></scode>
+
+If you don't want to compile the example, just use <tt>ghc</tt> in its
+interpreter mode:
+
+<scode><![CDATA[sep@swe10:~/hopengl/examples> ghci HelloWindow]]></scode>
+
+Note that this only loads the example into the interpreter, so you'll have to
+call <tt>main</tt> explicitly on the interpreter prompt. As a shortcut, one can
+give the interpreter an expression to evaluate:
+
+<scode><![CDATA[sep@swe10:~/hopengl/examples> ghc -e main HelloWindow]]></scode>
+
+When you start the program, a window will be opened on your desktop. As you may
+have noticed, we only specified the title of the window, not any other attribute
+like size or position. GLUT is defined in a way that initial default values are
+used for unspecified attributes.
 </subsection>
 
-
 <subsection titel="Drawing into Windows">
-The simple program above did just open a window. The main purpose of
-OpenGL is to define some graphics which is rendered in a window.
-Before starting to systematically explore the OpenGL library let's
-have a look at two examples that draw something into a window frame.
+The simple program above just opened a window, but the main purpose of OpenGL is
+to render graphics. Before starting to systematically explore the OpenGL
+library, let's have a look at two examples that draw something into a window
+frame.
 
 <subsubsection titel="Some Points">
-First we will draw some tiny points on the screen. 
-We use the same code for openening some window:
+First we will draw some tiny points onto the screen, using the same code for
+opening a window:
+
 <code class="SomePoints" lang="hs" main="main"
 ><![CDATA[import Graphics.UI.GLUT
 
@@ -122,100 +132,97 @@ main = do
   (progName,_) <- getArgsAndInitialize
   createAWindow progName
   mainLoop]]></code>
-The only thing that has changed, is that we make use of one of 
-the values returned by <tt>getArgsAndInitialize</tt>: the name of the
-program. <p/>
 
-For the window definition we use the code from <tt
->HelloWindow.hs</tt>. But instead of clearing the screen, when the
-window is to be displayed, we use an own display function:
+The only thing that has changed is that we make use of one of the values
+returned by <tt>getArgsAndInitialize</tt>: the name of the program.<p/>
+
+For the window definition we use the code from <tt>HelloWindow.hs</tt>. But
+instead of simply clearing the screen when the window contents are to be
+displayed, we use a more elaborate display function:
+
 <code class="SomePoints" lang="hs" sequel="true"
 ><![CDATA[createAWindow :: String -> IO ()
 createAWindow windowName = do
   createWindow windowName
   displayCallback $= displayPoints]]></code>
 
-We want to draw some points on the screen. So let's define some
-points. We can do this in a list. Points in a three dimensional space
-are triples of coordinates. We can use floating point numbers for
-coordinates in OpenGL.
+We want to draw some points on the screen, so let's define some points in a
+list. Points in three-dimensional space are triples of coordinates. We can use
+floating point numbers for coordinates in OpenGL. For the points itself, we use
+the <tt>Vertex3</tt> data type defined in the OpenGL package instead of plain
+Haskell triples, which improves readability and type safety:
 
 <code class="SomePoints" lang="hs" sequel="true"
-><![CDATA[myPoints :: [(GLfloat,GLfloat,GLfloat)]
-myPoints =
-  [(-0.25, 0.25, 0.0)
-  ,(0.75, 0.35, 0.0)
-  ,(0.75, -0.15, 0.0)
-  ,((-0.75), -0.25, 0.0)]]]></code>
+><![CDATA[myPoints :: [Vertex3 GLfloat]
+myPoints = [
+  Vertex3 (-0.25)   0.25  0.0,
+  Vertex3   0.75    0.35  0.0,
+  Vertex3   0.75  (-0.15) 0.0,
+  Vertex3 (-0.75) (-0.25) 0.0]]]></code>
 
-Eventually we need the display function, which displays these points. 
+Eventually we need the display function, which displays these points:
+
 <code class="SomePoints" lang="hs" sequel="true"
 ><![CDATA[displayPoints :: DisplayCallback
-displayPoints = do 
+displayPoints = do
   clear [ColorBuffer]
   renderPrimitive Points $
-    mapM_ (\(x, y, z) -> vertex $ Vertex3 x y z) myPoints]]></code>
-As you see, when the window ist displayed, we want first everything to
-be cleared from the window. Then we use the HOpenGL function <tt
->renderPrimitive</tt>. The first argument <tt>Point</tt> specifies
-what it is that we want to render; points in our case. For the second
-argument we need to transform our coordinates into some data, which is
-used by HOpenGL. Do not yet worry about this transformation.
-<p/>
-As before, you will notice that again for quite a number of
-attributes we did not supply explicit values. We did not specify the
-Color of the points to be drawn. Moreover we did not define the
-coordinates of the graphics window. Looking at its result it is
-obviously  a two dimensional
-view, where the lower left corner seems to have coordinates (-1,-1) and the
-upper right corner the (1,1). These values are default values chosen
-by the OpenGL library. 
+    mapM_ vertex myPoints]]></code>
+
+As you see when the window ist displayed, everything is cleared from the
+window. Then we use the HOpenGL function <tt >renderPrimitive</tt>. The first
+argument <tt>Points</tt> specifies what it is that we want to render; points in
+this case. The second argument is an action sending our points to OpenGL for
+rendering.<p/>
+
+As before, you will notice that again for quite a number of attributes we did
+not supply explicit values, e.g. the color of the points to be drawn or the
+coordinates of the graphics window. Looking at the result, it is obviously a two
+dimensional view where the lower left corner seems to have coordinates (-1,-1)
+and the upper right corner the coordinates (1,1). These values are the default
+values chosen by the OpenGL library.
 </subsubsection>
 
-
-
 <subsubsection titel="A Polygon">
-The points in the last section were rather boring? By changing a
-single word, we can span an area with these points. Instead of saying
-render the following as points, we can tell HOpenGL to render them as
-a polygon.<p/>
+Did you find the points in the last section rather boring? By changing a single
+word, we can span an area with these points. Instead of telling OpenGL to render
+our data as points, we can tell it to render them as a polygon.<p/>
 
 <example>
-So here the program from above with one word changed. <tt
->Points</tt> becomes <tt>Polygon</tt>.
+So here the program from above with one word changed, <tt>Points</tt>
+becomes <tt>Polygon</tt>:
 
 <code class="APolygon" lang="hs" main="main"
 ><![CDATA[import Graphics.UI.GLUT
 
 main :: IO ()
 main = do
-   (progName,_) <- getArgsAndInitialize
-   createAWindow progName
-   mainLoop
+  (progName,_) <- getArgsAndInitialize
+  createAWindow progName
+  mainLoop
 
 createAWindow :: String -> IO ()
 createAWindow windowName = do
-   createWindow windowName
-   displayCallback $= displayPoints
+  createWindow windowName
+  displayCallback $= displayPoints
+
+myPoints :: [Vertex3 GLfloat]
+myPoints = [
+  Vertex3 (-0.25)   0.25  0.0,
+  Vertex3   0.75    0.35  0.0,
+  Vertex3   0.75  (-0.15) 0.0,
+  Vertex3 (-0.75) (-0.25) 0.0]
 
 displayPoints :: DisplayCallback
 displayPoints = do
   clear [ColorBuffer]
   renderPrimitive ]]><redv>Polygon</redv><![CDATA[ $
-    mapM_ (\(x, y, z) -> vertex $ Vertex3 x y z) myPoints
+    mapM_ vertex myPoints]]></code>
 
-myPoints :: [(GLfloat,GLfloat,GLfloat)]
-myPoints =
-  [(-0.25, 0.25, 0.0)
-  ,(0.75, 0.35, 0.0)
-  ,(0.75, -0.15, 0.0)
-  ,((-0.75), -0.25, 0.0)]]]></code>
-The resulting window can be found in figure<white></white>
-<ref name="APolygon"></ref>.
+The resulting window can be found in figure<white></white><ref name="APolygon"></ref>.
 
 <bild name="APolygon" pdfscale="0.6" psscale="0.5"
-caption="A simple polygon."
-/> 
+ caption="A simple polygon."/> 
 </example>
 </subsubsection>
 </subsection>
