@@ -5,7 +5,9 @@
    See the file libraries/GLUT/LICENSE
 -}
 
+import Control.Monad ( when )
 import Data.IORef ( IORef, newIORef )
+import System.Console.GetOpt
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT hiding ( initialize )
 
@@ -15,17 +17,24 @@ import Graphics.UI.GLUT hiding ( initialize )
 main :: IO ()
 main = do
    -- Setup the basic GLUT stuff
-   getArgsAndInitialize
-   initialDisplayMode $= [ DoubleBuffered, RGBMode, WithDepthBuffer ]
+   (progName, args) <- getArgsAndInitialize
+   let header = "Usage: " ++ progName ++ " [OPTION...]"
+   flags <- case getOpt Permute options args of
+               (fs,[],[]) -> return fs
+               (_,_,errs) -> ioError (userError (concat errs ++ usageInfo header options))
 
-   -- Create the window
-   initialWindowSize $= Size 800 600
-   get gameModeInfo >>= print
-   gameModeCapabilities $= [ Where' GameModeWidth  IsEqualTo 800,
-                             Where' GameModeHeight IsEqualTo 600 ]
-   get gameModeInfo >>= print
-   createWindow "BOGLGP - Chapter 2 - OpenGL Application"
-   fullScreen
+   if null [ () | Fullscreen <- flags ]
+      then do
+         -- Create the window
+         initialDisplayMode $= [ DoubleBuffered, RGBMode, WithDepthBuffer ]
+         initialWindowSize $= Size 800 600
+         createWindow "BOGLGP - Chapter 2 - OpenGL Application"
+         return ()
+      else do
+         gameModeCapabilities $= [ Where' GameModeWidth  IsEqualTo 800,
+                                   Where' GameModeHeight IsEqualTo 600 ]
+         enterGameMode
+         return ()
 
    state <- initialize
 
@@ -39,13 +48,27 @@ main = do
    -- Control is returned as events occur, via the callback functions.
    mainLoop
 
+data Flag = ShowHelp | Fullscreen
+
+options :: [OptDescr Flag]
+options =
+   [ Option ['?','h'] ["help"]       (NoArg ShowHelp)   "show help"
+   , Option ['f']     ["fullscreen"] (NoArg Fullscreen) "use fullscreen mode"
+   ]
+
 ----------------------------------------------------------------------------
 -- Handle mouse and keyboard events. For this simple demo, just exit when
 -- ESCAPE is pressed.
 ----------------------------------------------------------------------------
 keyboardMouseHandler :: KeyboardMouseCallback
-keyboardMouseHandler (Char '\27') Down _ _ = exitWith ExitSuccess
+keyboardMouseHandler (Char '\27') Down _ _ = safeExitWith ExitSuccess
 keyboardMouseHandler _             _   _ _ = return ()
+
+safeExitWith :: ExitCode -> IO a
+safeExitWith code = do
+    gma <- get gameModeActive
+    when gma leaveGameMode
+    exitWith code
 
 ----------------------------------------------------------------------------
 -- The globale state, which is only the current angle in this simple demo.
