@@ -55,7 +55,8 @@ module Graphics.UI.GLUT (
    module Graphics.UI.GLUT.GameMode
 )  where
 
-import Graphics.UI.GLUT.Initialization hiding ( ToString(..), marshalDisplayMode )
+import Graphics.UI.GLUT.Initialization hiding ( marshalDisplayMode,
+                                                relationToString )
 import Graphics.UI.GLUT.Begin
 import Graphics.UI.GLUT.Window hiding ( Window )
 import Graphics.UI.GLUT.Window ( Window )

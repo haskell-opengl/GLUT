@@ -37,7 +37,7 @@ import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Initialization ( WindowSize(..), Relation,
-                                         ToString(..) )
+                                         relationToString )
 import Graphics.UI.GLUT.Window ( Window(..) )
 
 --------------------------------------------------------------------------------
@@ -53,20 +53,21 @@ data Capability'
                    --   with the give capabilities (numbering starts at 1)
    deriving ( Eq, Ord )
 
-instance ToString Capability' where
-   toString Width        = "width"
-   toString Height       = "height"
-   toString BitsPerPlane = "bpp"
-   toString RefreshRate  = "hertz"
-   toString Num'         = "num"
+capabilityToString :: Capability' -> String
+capabilityToString Width        = "width"
+capabilityToString Height       = "height"
+capabilityToString BitsPerPlane = "bpp"
+capabilityToString RefreshRate  = "hertz"
+capabilityToString Num'         = "num"
 
 -- | A single capability description for 'initGameMode'.
 
 data CapabilityDescription' = Where' Capability' Relation CInt
    deriving ( Eq, Ord )
 
-instance ToString CapabilityDescription' where
-   toString (Where' c r i) = toString c ++ toString r ++ show i
+capabilityDescriptionToString :: CapabilityDescription' -> String
+capabilityDescriptionToString (Where' c r i) =
+      capabilityToString c ++ relationToString r ++ show i
 
 --------------------------------------------------------------------------------
 
@@ -92,8 +93,9 @@ instance ToString CapabilityDescription' where
 
 initGameMode :: [CapabilityDescription'] -> IO ()
 initGameMode settings =
-   withCString (concat . intersperse " " . map toString $ settings)
-               glutGameModeString
+   withCString
+      (concat . intersperse " " . map capabilityDescriptionToString $ settings)
+      glutGameModeString
 
 foreign import ccall unsafe "glutGameModeString" glutGameModeString ::
    CString -> IO ()

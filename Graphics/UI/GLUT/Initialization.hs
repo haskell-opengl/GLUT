@@ -37,7 +37,7 @@ module Graphics.UI.GLUT.Initialization (
    marshalDisplayMode,   -- used only internally
 
    -- * Setting the initial window mode (II)
-   ToString(..),   -- used only internally
+   relationToString,   -- used only internally
    Capability(..), Relation(..), CapabilityDescription(..), initDisplay
 ) where
 
@@ -232,11 +232,6 @@ foreign import ccall unsafe "glutInitDisplayMode" glutInitDisplayMode ::
 
 --------------------------------------------------------------------------------
 
--- Internal class for leaving Show instances untouched
-
-class ToString a where
-   toString :: a -> String
-
 -- | Capabilities for 'initDisplay', most of them are extensions of
 -- 'DisplayMode'\'s constructors.
 
@@ -356,35 +351,35 @@ data Capability
                   --   Default is \"'IsEqualTo' @1@\".
    deriving ( Eq, Ord )
 
-instance ToString Capability where
-   toString RGBA'        = "rgba"
-   toString RGB'         = "rgb"
-   toString Red          = "red"
-   toString Green        = "green"
-   toString Blue         = "blue"
-   toString Index'       = "index"
-   toString Buffer       = "buffer"
-   toString Single'      = "single"
-   toString Double'      = "double"
-   toString AccA         = "acca"
-   toString Acc          = "acc"
-   toString Alpha'       = "alpha"
-   toString Depth'       = "depth"
-   toString Stencil'     = "stencil"
-   toString Samples      = "samples"
-   toString Stereo'      = "stereo"
-   toString Luminance'   = "luminance"
-   toString Num          = "num"
-   toString Conformant   = "conformant"
-   toString Slow         = "slow"
-   toString Win32PFD     = "win32pfd"
-   toString XVisual      = "xvisual"
-   toString XStaticGray  = "xstaticgray"
-   toString XGrayScale   = "xgrayscale"
-   toString XStaticColor = "xstaticcolor"
-   toString XPseudoColor = "xpseudocolor"
-   toString XTrueColor   = "xtruecolor"
-   toString XDirectColor = "xdirectcolor"
+capabilityToString :: Capability -> String
+capabilityToString RGBA'        = "rgba"
+capabilityToString RGB'         = "rgb"
+capabilityToString Red          = "red"
+capabilityToString Green        = "green"
+capabilityToString Blue         = "blue"
+capabilityToString Index'       = "index"
+capabilityToString Buffer       = "buffer"
+capabilityToString Single'      = "single"
+capabilityToString Double'      = "double"
+capabilityToString AccA         = "acca"
+capabilityToString Acc          = "acc"
+capabilityToString Alpha'       = "alpha"
+capabilityToString Depth'       = "depth"
+capabilityToString Stencil'     = "stencil"
+capabilityToString Samples      = "samples"
+capabilityToString Stereo'      = "stereo"
+capabilityToString Luminance'   = "luminance"
+capabilityToString Num          = "num"
+capabilityToString Conformant   = "conformant"
+capabilityToString Slow         = "slow"
+capabilityToString Win32PFD     = "win32pfd"
+capabilityToString XVisual      = "xvisual"
+capabilityToString XStaticGray  = "xstaticgray"
+capabilityToString XGrayScale   = "xgrayscale"
+capabilityToString XStaticColor = "xstaticcolor"
+capabilityToString XPseudoColor = "xpseudocolor"
+capabilityToString XTrueColor   = "xtruecolor"
+capabilityToString XDirectColor = "xdirectcolor"
 
 -- | Relation between a 'Capability' and a numeric value.
 
@@ -408,14 +403,14 @@ data Relation
                       --   buffers where you would rather not over-allocate.
    deriving ( Eq, Ord )
 
-instance ToString Relation where
-   toString IsEqualTo        = "="
-   toString IsNotEqualTo     = "!="
-   toString IsLessThan       = "<"
-   toString IsNotGreaterThan = "<="
-   toString IsGreaterThan    = ">"
-   toString IsAtLeast        = ">="
-   toString IsNotLessThan    = "~"
+relationToString :: Relation -> String
+relationToString IsEqualTo        = "="
+relationToString IsNotEqualTo     = "!="
+relationToString IsLessThan       = "<"
+relationToString IsNotGreaterThan = "<="
+relationToString IsGreaterThan    = ">"
+relationToString IsAtLeast        = ">="
+relationToString IsNotLessThan    = "~"
 
 -- | A single capability description for 'initDisplay'.
 
@@ -428,9 +423,10 @@ data CapabilityDescription
                                     --   constructors of 'Capability'.
    deriving ( Eq, Ord )
 
-instance ToString CapabilityDescription where
-   toString (Where c r i) = toString c ++ toString r ++ show i
-   toString (With c)      = toString c
+capabilityDescriptionToString ::  CapabilityDescription -> String
+capabilityDescriptionToString (Where c r i) =
+   capabilityToString c ++ relationToString r ++ show i
+capabilityDescriptionToString (With c) = capabilityToString c
 
 -- | Set the /initial display mode/ used when creating top-level windows,
 -- subwindows, and overlays to determine the OpenGL display mode for the
@@ -464,8 +460,9 @@ instance ToString CapabilityDescription where
 
 initDisplay :: [CapabilityDescription] -> IO ()
 initDisplay settings =
-   withCString (concat . intersperse " " . map toString $ settings)
-               glutInitDisplayString
+   withCString
+      (concat . intersperse " " . map capabilityDescriptionToString $ settings)
+      glutInitDisplayString
 
 foreign import ccall unsafe "glutInitDisplayString" glutInitDisplayString ::
   CString -> IO ()
