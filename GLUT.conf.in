@@ -4,7 +4,7 @@ Package {
 	name		= "GLUT",
 	auto		= True,
 #ifdef INSTALLING
-	import_dirs	= [ "$libdir/imports/GLUT" ],
+	import_dirs	= [ "$libdir/imports" ],
 #else
 	import_dirs	= [ "$libdir/libraries/GLUT" ],
 #endif
