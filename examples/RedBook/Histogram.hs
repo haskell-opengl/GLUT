@@ -9,14 +9,12 @@
 -}
 
 import Control.Monad ( zipWithM_ )
-import Foreign.Ptr ( Ptr )
-import Foreign.Storable ( Storable(..) )
-import Foreign.Marshal.Array ( allocaArray )
+import Foreign.Marshal.Array ( allocaArray, peekArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 import ReadImage
 
-histogramSize :: GLsizei
+histogramSize :: Int
 histogramSize = 256   -- Must be a power of 2
 
 myInit :: IO ()
@@ -24,7 +22,7 @@ myInit = do
    rowAlignment Unpack $= 1
    clearColor $= Color4 0 0 0 0
 
-   histogram NoProxy $= Just (histogramSize, RGB', PassThrough)
+   histogram NoProxy $= Just (fromIntegral histogramSize, RGB', PassThrough)
 
 display :: Size -> PixelData a -> DisplayCallback
 display size pixels = do
@@ -34,24 +32,24 @@ display size pixels = do
    rasterPos2i (Vertex2 1 1)
    drawPixels size pixels
 
-   allocaArray (3 * fromIntegral histogramSize) $ \values -> do
-      -- Note: The example in the Red Book uses GL_UNSIGNED_SHORT
-      -- here, but we are more honest by using Short...
-      getHistogram Reset (PixelData RGB Short values)
+   values <- allocaArray histogramSize $ \buf -> do
+      -- Note: The example in the Red Book uses GL_UNSIGNED_SHORT here,
+      -- but we are more honest by using Short...
+      getHistogram Reset (PixelData RGB Short buf)
+      peekArray histogramSize buf
 
-      -- Plot histogram
-      zipWithM_ (plotColor values)
-                [ Color3 1 0 0, Color3 0 1 0, Color3 0 0 1 ]
-                [ 0 .. ]
+   -- Plot histogram
+   zipWithM_ (plotHistogram values)
+             [  Color3 1 0 0,         Color3 0 1 0,         Color3 0 0 1       ]
+             [\(Color3 r _ _) -> r, \(Color3 _ g _) -> g, \(Color3 _ _ b) -> b ]
    flush
 
-plotColor :: Ptr GLshort -> Color3 GLfloat -> Int -> IO ()
-plotColor values c off = do
+plotHistogram ::
+   [Color3 GLshort] -> Color3 GLfloat -> (Color3 GLshort -> GLshort) -> IO ()
+plotHistogram values c selectComponent =
    renderPrimitive LineStrip $ do
       color c
-      mapM_ (\i -> do v <- peekElemOff values (off + 3 * fromIntegral i)
-                      vertex (Vertex2 i v))
-            [ 0 .. (fromIntegral histogramSize :: GLshort) - 1 ]
+      zipWithM_ (\i h -> vertex (Vertex2 i (selectComponent h))) [ 0 .. ] values
 
 reshape :: ReshapeCallback
 reshape size = do
