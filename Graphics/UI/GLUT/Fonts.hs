@@ -28,10 +28,15 @@ import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
 import Foreign.Ptr ( Ptr )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint, GLfloat )
+import Graphics.UI.GLUT.Extensions
 
 #ifdef __HUGS__
 {-# CFILES cbits/HsGLUT.c #-}
 #endif
+
+--------------------------------------------------------------------------------
+
+#include "HsGLUTExt.h"
 
 --------------------------------------------------------------------------------
 
@@ -198,8 +203,7 @@ bitmapHeight :: BitmapFont -- ^ Bitmap font to use.
              -> IO GLfloat -- ^ Height in pixels.
 bitmapHeight f = liftM fromIntegral $ glutBitmapHeight =<< marhshalBitmapFont f
 
-foreign import CALLCONV unsafe "glutBitmapHeight"
-   glutBitmapHeight :: GLUTbitmapFont -> IO CInt
+EXTENSION_ENTRY(unsafe,"freeglut",glutBitmapHeight,GLUTbitmapFont -> IO CInt)
 
 --------------------------------------------------------------------------------
 
@@ -207,5 +211,4 @@ strokeHeight :: StrokeFont -- ^ Stroke font to use.
              -> IO GLfloat -- ^ Height in units.
 strokeHeight f = glutStrokeHeight =<< marhshalStrokeFont f
 
-foreign import CALLCONV unsafe "glutStrokeHeight"
-   glutStrokeHeight :: GLUTstrokeFont -> IO GLfloat
+EXTENSION_ENTRY(unsafe,"freeglut",glutStrokeHeight,GLUTstrokeFont -> IO GLfloat)
