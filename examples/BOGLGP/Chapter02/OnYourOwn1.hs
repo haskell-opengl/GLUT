@@ -1,13 +1,17 @@
 {-
-   OnYourOwn1.hs (adapted from OpenGLApplication which is (c) 2004 Astle/Hawkins)
+   OpenGLApplication.hs (adapted from OpenGLApplication which is (c) 2004 Astle/Hawkins)
    Copyright (c) Sven Panne 2004 <sven.panne@aedion.de>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 -}
 
+import Control.Monad ( when, unless )
 import Data.IORef ( IORef, newIORef )
-import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT hiding ( initialize )
+import System.Console.GetOpt
+import System.Environment ( getProgName )
+import System.Exit ( exitWith, ExitCode(..) )
+import System.IO ( hPutStr, stderr )
 
 ----------------------------------------------------------------------------
 -- Setup GLUT and OpenGL, drop into the event loop.
@@ -15,12 +19,9 @@ import Graphics.UI.GLUT hiding ( initialize )
 main :: IO ()
 main = do
    -- Setup the basic GLUT stuff
-   getArgsAndInitialize
-   initialDisplayMode $= [ DoubleBuffered, RGBMode, WithDepthBuffer ]
-
-   -- Create the window
-   initialWindowSize $= Size 800 600
-   createWindow "BOGLGP - Chapter 2 - On Your Own 1"
+   (_, args) <- getArgsAndInitialize
+   opts <- parseOptions args
+   (if useFullscreen opts then fullscreenMode else windowedMode) opts
 
    state <- initialize
 
@@ -34,13 +35,116 @@ main = do
    -- Control is returned as events occur, via the callback functions.
    mainLoop
 
+fullscreenMode :: Options -> IO ()
+fullscreenMode opts = do
+   let addCapability c = maybe id (\x -> (Where' c IsEqualTo x :))
+   gameModeCapabilities $=
+      (addCapability GameModeWidth (Just (windowWidth  opts)) .
+       addCapability GameModeHeight (Just (windowHeight opts)) .
+       addCapability GameModeBitsPerPlane (bpp opts) .
+       addCapability GameModeRefreshRate (refreshRate opts)) []
+   (_, modeChanged) <- enterGameMode
+   unless modeChanged $ do
+      hPutStr stderr "Could not enter fullscreen mode, using windowed mode\n"
+      windowedMode (opts { useFullscreen = False } )
+
+windowedMode :: Options -> IO ()
+windowedMode opts = do
+   initialDisplayMode $= [ DoubleBuffered, RGBMode, WithDepthBuffer ]
+   initialWindowSize $= getSize opts
+   createWindow "BOGLGP - Chapter 2 - OpenGL Application"
+   return ()
+
+----------------------------------------------------------------------------
+-- Option handling
+----------------------------------------------------------------------------
+data Options = Options {
+   useFullscreen :: Bool,
+   windowWidth   :: Int,
+   windowHeight  :: Int,
+   bpp           :: Maybe Int,
+   refreshRate   :: Maybe Int
+   }
+
+startOpt :: Options
+startOpt = Options {
+   useFullscreen = False,
+   windowWidth   = 800,
+   windowHeight  = 600,
+   bpp           = Nothing,
+   refreshRate   = Nothing
+   }
+
+getSize :: Options -> Size
+getSize opts =
+   Size (fromIntegral (windowWidth opts)) (fromIntegral (windowHeight opts))
+
+options :: [OptDescr (Options -> IO Options)]
+options = [
+   Option ['f'] ["fullscreen"]
+      (NoArg (\opt -> return opt { useFullscreen = True }))
+      "use fullscreen mode if possible",
+   Option ['w'] ["width"]
+      (ReqArg (\arg opt -> do w <- readInt "WIDTH" arg
+                              return opt { windowWidth = w })
+              "WIDTH")
+      "use window width WIDTH",
+   Option ['h'] ["height"]
+      (ReqArg (\arg opt -> do h <- readInt "HEIGHT" arg
+                              return opt { windowHeight = h })
+              "HEIGHT")
+      "use window height HEIGHT",
+   Option ['b'] ["bpp"]
+      (ReqArg (\arg opt -> do b <- readInt "BPP" arg
+                              return opt { bpp = Just b })
+              "BPP")
+      "use BPP bits per plane (ignored in windowed mode)",
+   Option ['r'] ["refresh-rate"]
+      (ReqArg (\arg opt -> do r <- readInt "HZ" arg
+                              return opt { refreshRate = Just r })
+              "HZ")
+      "use refresh rate HZ (ignored in windowed mode)",
+   Option ['?'] ["help"]
+      (NoArg (\_ -> do usage >>= putStr
+                       safeExitWith ExitSuccess))
+      "show help" ]
+
+readInt :: String -> String -> IO Int
+readInt name arg =
+   case reads arg of
+      ((x,[]) : _) -> return x
+      _ -> dieWith ["Can't parse " ++ name ++ " argument '" ++ arg ++ "'\n"]
+
+usage :: IO String
+usage = do
+   progName <- getProgName
+   return $ usageInfo ("Usage: " ++ progName ++ " [OPTION...]") options
+
+parseOptions :: [String] -> IO Options
+parseOptions args = do
+   let (optsActions, nonOptions, errs) = getOpt Permute options args
+   unless (null nonOptions && null errs) (dieWith errs)
+   foldl (>>=) (return startOpt) optsActions
+
+dieWith :: [String] -> IO a
+dieWith errs = do
+   u <- usage
+   mapM_ (hPutStr stderr) (errs ++ [u])
+   safeExitWith (ExitFailure 1)
+
 ----------------------------------------------------------------------------
 -- Handle mouse and keyboard events. For this simple demo, just exit when
 -- ESCAPE is pressed.
 ----------------------------------------------------------------------------
 keyboardMouseHandler :: KeyboardMouseCallback
-keyboardMouseHandler (Char '\27') Down _ _ = exitWith ExitSuccess
+keyboardMouseHandler (Char '\27') Down _ _ = safeExitWith ExitSuccess
 keyboardMouseHandler _             _   _ _ = return ()
+
+safeExitWith :: ExitCode -> IO a
+safeExitWith code = do
+    gma <- get gameModeActive
+    when gma leaveGameMode
+    exitWith code
 
 ----------------------------------------------------------------------------
 -- The globale state, which is only the current angle in this simple demo.
@@ -59,7 +163,7 @@ makeState = do
 ----------------------------------------------------------------------------
 initialize :: IO State
 initialize = do
-   -- clear to black background
+   -- clear to white background
    clearColor $= Color4 1 1 1 0
 
    makeState
