@@ -24,7 +24,7 @@ myInit = do
    rowAlignment Unpack $= 1
    clearColor $= Color4 0 0 0 0
    matrixMode $= Color
-   currentMatrix $= (m :: GLmatrix GLfloat)
+   matrix Nothing $= (m :: GLmatrix GLfloat)
    matrixMode $= Modelview 0
 
 display :: Size -> PixelData a -> DisplayCallback

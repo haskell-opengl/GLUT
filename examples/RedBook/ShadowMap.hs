@@ -213,7 +213,7 @@ generateTextureMatrix = do
       perspective 60 1 1 1000
       lightPos' <- getLightPos Vertex3
       lookAt lightPos' lookat up
-      get (matrix (Modelview 0))
+      get (matrix (Just (Modelview 0)))
 
    [ sx, sy, sz, sw,
      tx, ty, tz, tw,
