@@ -190,10 +190,10 @@ foreign import CALLCONV unsafe "glutPostWindowRedisplay" postWindowRedisplay ::
 -- typically takes place during the vertical retrace of the monitor, rather than
 -- immediately after 'swapBuffers' is called.
 --
--- An implicit 'Graphics.Rendering.OpenGL.flush' is done by 'swapBuffers' before
--- it returns. Subsequent OpenGL commands can be issued immediately after
--- calling 'swapBuffers', but are not executed until the buffer exchange is
--- completed.
+-- An implicit 'Graphics.Rendering.OpenGL.FlushFinish.flush' is done by
+-- 'swapBuffers' before it returns. Subsequent OpenGL commands can be issued
+-- immediately after calling 'swapBuffers', but are not executed until the
+-- buffer exchange is completed.
 --
 -- If the /layer in use/ is not double buffered, 'swapBuffers' has no effect.
 
