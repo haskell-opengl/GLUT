@@ -50,8 +50,8 @@ import Data.Bits ( Bits((.&.)) )
 import Data.Char ( chr )
 import Foreign.C.Types ( CInt, CUInt, CUChar )
 import Foreign.Ptr ( FunPtr )
+import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
 import Graphics.UI.GLUT.Callbacks.Registration ( CallbackType(..), setCallback )
-import Graphics.UI.GLUT.Initialization ( WindowSize(..), WindowPosition(..) )
 import Graphics.UI.GLUT.State ( ButtonIndex, DialIndex, PollRate )
 import Graphics.UI.GLUT.Constants
 
@@ -150,7 +150,7 @@ foreign import CALLCONV unsafe "glutOverlayDisplayFunc" glutOverlayDisplayFunc
 
 -- | A reshape callback
 
-type ReshapeCallback = WindowSize -> IO ()
+type ReshapeCallback = Size -> IO ()
 
 type ReshapeCallback' = CInt -> CInt -> IO ()
 
@@ -166,7 +166,7 @@ type ReshapeCallback' = CInt -> CInt -> IO ()
 -- default reshape callback is used. This default callback will simply call
 --
 -- @
--- 'viewport' ('Graphics.UI.GLUT.Initialization.WindowPosition' 0 0) ('Graphics.UI.GLUT.Initialization.WindowSize' /width/ /height/)
+-- 'viewport' ('Graphics.Rendering.OpenGL.GL.CoordTrans.Position' 0 0) ('Graphics.Rendering.OpenGL.GL.CoordTrans.Size' /width/ /height/)
 -- @
 --
 -- on the normal plane (and on the overlay if one exists).
@@ -183,7 +183,7 @@ type ReshapeCallback' = CInt -> CInt -> IO ()
 setReshapeCallback :: Maybe ReshapeCallback -> IO ()
 setReshapeCallback =
    setCallback ReshapeCB glutReshapeFunc (makeReshapeCallback . unmarshal)
-   where unmarshal cb w h = cb (WindowSize (fromIntegral w) (fromIntegral h))
+   where unmarshal cb w h = cb (Size (fromIntegral w) (fromIntegral h))
 
 foreign import ccall "wrapper" makeReshapeCallback ::
    ReshapeCallback' -> IO (FunPtr ReshapeCallback')
@@ -240,16 +240,15 @@ foreign import CALLCONV unsafe "glutVisibilityFunc" glutVisibilityFunc ::
 
 --------------------------------------------------------------------------------
 
-type KeyboardCallback = Char -> WindowPosition -> IO ()
+type KeyboardCallback = Char -> Position -> IO ()
 
 type KeyboardCallback' = CUChar -> CInt -> CInt -> IO ()
 
 setKeyboardCallback :: Maybe KeyboardCallback -> IO ()
 setKeyboardCallback =
    setCallback KeyboardCB glutKeyboardFunc (makeKeyboardCallback . unmarshal)
-   where unmarshal cb c x y =
-            cb (chr (fromIntegral c))
-               (WindowPosition (fromIntegral x) (fromIntegral y))
+   where unmarshal cb c x y = cb (chr (fromIntegral c))
+                                 (Position (fromIntegral x) (fromIntegral y))
 
 foreign import ccall "wrapper" makeKeyboardCallback ::
    KeyboardCallback' -> IO (FunPtr KeyboardCallback')
@@ -263,9 +262,8 @@ setKeyboardUpCallback :: Maybe KeyboardCallback -> IO ()
 setKeyboardUpCallback =
    setCallback KeyboardUpCB glutKeyboardUpFunc
                (makeKeyboardCallback . unmarshal)
-   where unmarshal cb c x y =
-            cb (chr (fromIntegral c))
-               (WindowPosition (fromIntegral x) (fromIntegral y))
+   where unmarshal cb c x y = cb (chr (fromIntegral c))
+                                 (Position (fromIntegral x) (fromIntegral y))
 
 foreign import CALLCONV unsafe "glutKeyboardUpFunc" glutKeyboardUpFunc ::
    FunPtr KeyboardCallback' -> IO ()
@@ -325,16 +323,15 @@ unmarshalSpecialKey k
 
 --------------------------------------------------------------------------------
 
-type SpecialCallback = SpecialKey -> WindowPosition -> IO ()
+type SpecialCallback = SpecialKey -> Position -> IO ()
 
 type SpecialCallback' = CInt -> CInt -> CInt -> IO ()
 
 setSpecialCallback :: Maybe SpecialCallback -> IO ()
 setSpecialCallback =
    setCallback SpecialCB glutSpecialFunc (makeSpecialCallback . unmarshal)
-   where unmarshal cb k x y =
-            cb (unmarshalSpecialKey k)
-               (WindowPosition (fromIntegral x) (fromIntegral y))
+   where unmarshal cb k x y = cb (unmarshalSpecialKey k)
+                                 (Position (fromIntegral x) (fromIntegral y))
 
 foreign import ccall "wrapper" makeSpecialCallback ::
    SpecialCallback' -> IO (FunPtr SpecialCallback')
@@ -347,9 +344,8 @@ foreign import CALLCONV unsafe "glutSpecialFunc" glutSpecialFunc ::
 setSpecialUpCallback :: Maybe SpecialCallback -> IO ()
 setSpecialUpCallback =
    setCallback SpecialUpCB glutSpecialUpFunc (makeSpecialCallback . unmarshal)
-   where unmarshal cb k x y =
-            cb (unmarshalSpecialKey k)
-               (WindowPosition (fromIntegral x) (fromIntegral y))
+   where unmarshal cb k x y = cb (unmarshalSpecialKey k)
+                                 (Position (fromIntegral x) (fromIntegral y))
 
 foreign import CALLCONV unsafe "glutSpecialUpFunc" glutSpecialUpFunc ::
    FunPtr SpecialCallback' -> IO ()
@@ -399,17 +395,16 @@ unmarshalKeyState s
 
 --------------------------------------------------------------------------------
 
-type MouseCallback = MouseButton -> KeyState -> WindowPosition -> IO ()
+type MouseCallback = MouseButton -> KeyState -> Position -> IO ()
 
 type MouseCallback' = CInt -> CInt -> CInt -> CInt -> IO ()
 
 setMouseCallback :: Maybe MouseCallback -> IO ()
 setMouseCallback =
    setCallback MouseCB glutMouseFunc (makeMouseCallback . unmarshal)
-   where unmarshal cb b s x y =
-            cb (unmarshalMouseButton b)
-               (unmarshalKeyState s)
-               (WindowPosition (fromIntegral x) (fromIntegral y))
+   where unmarshal cb b s x y = cb (unmarshalMouseButton b)
+                                   (unmarshalKeyState s)
+                                   (Position (fromIntegral x) (fromIntegral y))
 
 foreign import ccall "wrapper" makeMouseCallback ::
    MouseCallback' -> IO (FunPtr MouseCallback')
@@ -448,7 +443,7 @@ data Key
 -- | A keyboard\/mouse callback
 
 type KeyboardMouseCallback =
-   Key -> KeyState -> Modifiers -> WindowPosition -> IO ()
+   Key -> KeyState -> Modifiers -> Position -> IO ()
 
 -- | Set the keyboard\/mouse callback for the /current window./ The
 -- keyboard\/mouse callback for a window is called when the state of a key or
@@ -479,7 +474,7 @@ setKeyboardMouseCallback (Just cb) = do
 
 -- | A motion callback
 
-type MotionCallback = WindowPosition -> IO ()
+type MotionCallback = Position -> IO ()
 
 type MotionCallback' = CInt -> CInt -> IO ()
 
@@ -491,8 +486,7 @@ type MotionCallback' = CInt -> CInt -> IO ()
 setMotionCallback :: Maybe MotionCallback -> IO ()
 setMotionCallback =
    setCallback MotionCB glutMotionFunc (makeMotionCallback . unmarshal)
-   where unmarshal cb x y =
-            cb (WindowPosition (fromIntegral x) (fromIntegral y))
+   where unmarshal cb x y = cb (Position (fromIntegral x) (fromIntegral y))
 
 foreign import ccall "wrapper" makeMotionCallback ::
    MotionCallback' -> IO (FunPtr MotionCallback')
@@ -510,8 +504,7 @@ foreign import CALLCONV unsafe "glutMotionFunc" glutMotionFunc ::
 setPassiveMotionCallback :: Maybe MotionCallback -> IO ()
 setPassiveMotionCallback =
    setCallback MotionCB glutPassiveMotionFunc (makeMotionCallback . unmarshal)
-   where unmarshal cb x y =
-            cb (WindowPosition (fromIntegral x) (fromIntegral y))
+   where unmarshal cb x y = cb (Position (fromIntegral x) (fromIntegral y))
 
 foreign import CALLCONV unsafe "glutPassiveMotionFunc" glutPassiveMotionFunc ::
    FunPtr MotionCallback' -> IO ()

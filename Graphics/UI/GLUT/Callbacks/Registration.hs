@@ -23,7 +23,8 @@ import Data.IORef ( IORef, newIORef, readIORef, writeIORef, modifyIORef )
 import Foreign.C.Types ( CInt, CUInt )
 import Foreign.Ptr ( FunPtr, nullFunPtr, freeHaskellFunPtr )
 import System.IO.Unsafe ( unsafePerformIO )
-import Graphics.UI.GLUT.Window ( Window, getWindow )
+import Graphics.Rendering.OpenGL.GL.StateVar ( HasGetter(get) )
+import Graphics.UI.GLUT.Window ( Window, currentWindow )
 
 --------------------------------------------------------------------------------
 -- No timer callback here, because they are one-shot and "self destroy"
@@ -52,7 +53,9 @@ data CallbackID = CallbackID (Maybe Window) CallbackType   deriving (Eq, Ord)
 
 getCallbackID :: CallbackType -> IO CallbackID
 getCallbackID callbackType = do
-   maybeWindow <- if isGlobal callbackType then return Nothing else getWindow
+   maybeWindow <- if isGlobal callbackType
+                     then return Nothing
+                     else liftM Just $ get currentWindow
    return $ CallbackID maybeWindow callbackType
 
 --------------------------------------------------------------------------------

@@ -26,7 +26,7 @@ module Graphics.UI.GLUT.Window (
    createWindow, createSubWindow, destroyWindow,
 
    -- * Manipulating the /current window/
-   setWindow, getWindow,
+   currentWindow, isRealWindow,
 
    -- * Re-displaying and double buffer management
    postRedisplay, postWindowRedisplay, swapBuffers,
@@ -57,7 +57,8 @@ module Graphics.UI.GLUT.Window (
 
 import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
-import Graphics.UI.GLUT.Initialization ( WindowPosition(..), WindowSize(..) )
+import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
+import Graphics.Rendering.OpenGL.GL.StateVar ( StateVar, makeStateVar )
 import Graphics.UI.GLUT.Constants
 
 --------------------------------------------------------------------------------
@@ -108,12 +109,12 @@ foreign import CALLCONV unsafe "glutCreateWindow" glutCreateWindow ::
 -- newly created subwindow. Subwindows can be nested arbitrarily deep.
 
 createSubWindow
-   :: Window         -- ^ Identifier of the subwindow\'s parent window.
-   -> WindowPosition -- ^ Window position in pixels relative to parent window\'s
-                     --   origin.
-   -> WindowSize     -- ^ Window size in pixels
-   -> IO Window      -- ^ The identifier for the newly created subwindow
-createSubWindow win (WindowPosition x y) (WindowSize w h) =
+   :: Window    -- ^ Identifier of the subwindow\'s parent window.
+   -> Position  -- ^ Window position in pixels relative to parent window\'s
+                --   origin.
+   -> Size      -- ^ Window size in pixels
+   -> IO Window -- ^ The identifier for the newly created subwindow
+createSubWindow win (Position x y) (Size w h) =
    glutCreateSubWindow win
                        (fromIntegral x) (fromIntegral y)
                        (fromIntegral w) (fromIntegral h)
@@ -133,20 +134,23 @@ foreign import CALLCONV unsafe "glutDestroyWindow" destroyWindow ::
 
 --------------------------------------------------------------------------------
 
--- | Set the /current window/. It does /not/ change the /layer in use/ for the
--- window; this is done using 'Graphics.UI.GLUT.Overlay.useLayer'.
+-- | Controls the /current window/. It does /not/ affect the /layer in use/ for
+-- the window; this is done using 'Graphics.UI.GLUT.Overlay.useLayer'. If no
+-- windows exist or the previously /current window/ was destroyed, a pseudo
+-- window is returned, see 'isRealWindow'.
 
-foreign import CALLCONV unsafe "glutSetWindow" setWindow :: Window -> IO ()
+currentWindow :: StateVar Window
+currentWindow = makeStateVar glutGetWindow glutSetWindow
 
--- | Return 'Just' the identifier of the /current window/. If no windows exist
--- or the previously /current window/ was destroyed, 'Nothing' is returned.
-
-getWindow :: IO (Maybe Window)
-getWindow = do
-   w <- glutGetWindow
-   return $ if w == Window 0 then Nothing else Just w
+foreign import CALLCONV unsafe "glutSetWindow" glutSetWindow :: Window -> IO ()
 
 foreign import CALLCONV unsafe "glutGetWindow" glutGetWindow :: IO Window
+
+-- | Returns 'True' if the given window identifier refers to a real window, not
+-- a pseudo one.
+
+isRealWindow :: Window -> Bool
+isRealWindow (Window w) = w /= 0
 
 --------------------------------------------------------------------------------
 
@@ -207,25 +211,25 @@ foreign import CALLCONV unsafe "glutSwapBuffers" swapBuffers :: IO ()
 -- full screen status of the window.
 
 -- | Request a change in the position of the /current window/. For top-level
--- windows, parameters of 'WindowPosition' are pixel offsets from the screen
--- origin. For subwindows, the parameters are pixel offsets from the window\'s
--- parent window origin.
+-- windows, parameters of 'Position' are pixel offsets from the screen origin.
+-- For subwindows, the parameters are pixel offsets from the window\'s parent
+-- window origin.
 --
 -- In the case of top-level windows, a 'positionWindow' call is considered only
 -- a request for positioning the window. The window system is free to apply its
 -- own policies to top-level window placement. The intent is that top-level
 -- windows should be repositioned according 'positionWindow'\'s parameter.
 
-positionWindow :: WindowPosition -> IO ()
-positionWindow (WindowPosition x y) =
+positionWindow :: Position -> IO ()
+positionWindow (Position x y) =
    glutPositionWindow (fromIntegral x) (fromIntegral y)
 
 foreign import CALLCONV unsafe "glutPositionWindow" glutPositionWindow ::
    CInt -> CInt -> IO ()
 
 -- | Request a change in the size of the /current window/. The parameters of
--- 'WindowSize' are size extents in pixels. The width and height must be
--- positive values.
+-- 'Size' are size extents in pixels. The width and height must be positive
+-- values.
 --
 -- In the case of top-level windows, a 'reshapeWindow' call is considered only a
 -- request for sizing the window. The window system is free to apply its own
@@ -234,9 +238,8 @@ foreign import CALLCONV unsafe "glutPositionWindow" glutPositionWindow ::
 -- reshape actually takes effect and, if so, the reshaped dimensions are
 -- reported to the program by a reshape callback.
 
-reshapeWindow :: WindowSize -> IO ()
-reshapeWindow (WindowSize w h) =
-   glutReshapeWindow (fromIntegral w) (fromIntegral h)
+reshapeWindow :: Size -> IO ()
+reshapeWindow (Size w h) = glutReshapeWindow (fromIntegral w) (fromIntegral h)
 
 foreign import CALLCONV unsafe "glutReshapeWindow" glutReshapeWindow ::
    CInt -> CInt -> IO ()
@@ -415,8 +418,8 @@ foreign import CALLCONV unsafe "glutSetCursor" glutSetCursor :: CInt -> IO ()
 -- reason for calling this function. The pointer should normally be left to the
 -- user.\"
 
-warpPointer :: WindowPosition -> IO ()
-warpPointer (WindowPosition x y) =
+warpPointer :: Position -> IO ()
+warpPointer (Position x y) =
    glutWarpPointer (fromIntegral x) (fromIntegral y)
 
 foreign import CALLCONV unsafe "glutWarpPointer" glutWarpPointer ::

@@ -35,9 +35,9 @@ import Data.List ( intersperse )
 import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
+import Graphics.Rendering.OpenGL.GL.CoordTrans ( Size(..) )
 import Graphics.UI.GLUT.Constants
-import Graphics.UI.GLUT.Initialization ( WindowSize(..), Relation,
-                                         relationToString )
+import Graphics.UI.GLUT.Initialization ( Relation, relationToString )
 import Graphics.UI.GLUT.Window ( Window, makeWindow )
 
 --------------------------------------------------------------------------------
@@ -86,9 +86,9 @@ capabilityDescriptionToString (Where' c r i) =
 -- To determine which configuration will actually be tried by 'enterGameMode'
 -- (if any), use 'getGameModeInfo'.
 --
--- Note that even for game mode previous calls to
--- 'Graphics.UI.GLUT.Initialization.setInitialDisplayMode'or
--- 'Graphics.UI.GLUT.Initialization.setInitialDisplayCapabilities' will
+-- Note that even for game mode the current values of
+-- 'Graphics.UI.GLUT.Initialization.initialDisplayMode'or
+-- 'Graphics.UI.GLUT.Initialization.initialDisplayCapabilities' will
 -- determine which buffers are available, if double buffering is used or not,
 -- etc.
 
@@ -140,7 +140,7 @@ type BitsPerPlane = CInt
 
 type RefreshRate = CInt
 
-data GameModeInfo = GameModeInfo WindowSize BitsPerPlane RefreshRate
+data GameModeInfo = GameModeInfo Size BitsPerPlane RefreshRate
 
 --------------------------------------------------------------------------------
 
@@ -157,7 +157,7 @@ getGameModeInfo = do
    if possible
       then do w <- glutGameModeGet glut_GAME_MODE_WIDTH
               h <- glutGameModeGet glut_GAME_MODE_HEIGHT
-              let size = WindowSize (fromIntegral w) (fromIntegral h)
+              let size = Size (fromIntegral w) (fromIntegral h)
               b <- glutGameModeGet glut_GAME_MODE_PIXEL_DEPTH
               r <- glutGameModeGet glut_GAME_MODE_REFRESH_RATE
               return $ Just $ GameModeInfo size b r

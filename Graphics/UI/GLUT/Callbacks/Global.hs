@@ -24,8 +24,8 @@ module Graphics.UI.GLUT.Callbacks.Global (
 import Control.Monad.Fix ( MonadFix(..) )
 import Foreign.C.Types ( CInt, CUInt )
 import Foreign.Ptr ( FunPtr )
+import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..) )
 import Graphics.UI.GLUT.Constants
-import Graphics.UI.GLUT.Initialization ( WindowPosition(..) )
 import Graphics.UI.GLUT.Callbacks.Registration ( CallbackType(..), setCallback,
                                                  registerForCleanup )
 
@@ -42,7 +42,7 @@ unmarshalMenuUsage u
    | u == glut_MENU_IN_USE      = InUse
    | otherwise = error "unmarshalMenuUsage"
 
-type MenuStatusCallback  = MenuUsage -> WindowPosition -> IO ()
+type MenuStatusCallback  = MenuUsage -> Position -> IO ()
 
 type MenuStatusCallback' = CInt -> CInt -> CInt -> IO ()
 
@@ -69,7 +69,7 @@ setMenuStatusCallback = setCallback MenuStatusCB glutMenuStatusFunc
                                     (makeMenuStatusCallback . unmarshal)
    where unmarshal cb s x y =
             cb (unmarshalMenuUsage s)
-               (WindowPosition (fromIntegral x) (fromIntegral y))
+               (Position (fromIntegral x) (fromIntegral y))
 
 foreign import ccall "wrapper" makeMenuStatusCallback ::
    MenuStatusCallback' -> IO (FunPtr MenuStatusCallback')

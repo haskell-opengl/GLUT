@@ -22,14 +22,15 @@ module Graphics.UI.GLUT.Menu (
 import Data.Array ( listArray, (!) )
 import Data.FiniteMap ( FiniteMap, emptyFM, lookupFM, addToFM, delFromFM )
 import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
-import Data.Maybe ( fromJust )
 import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
 import Foreign.Ptr ( FunPtr, freeHaskellFunPtr )
-import Control.Monad ( liftM, unless, zipWithM )
+import Control.Monad ( liftM, unless, zipWithM, when )
 import System.IO.Unsafe ( unsafePerformIO )
+import Graphics.Rendering.OpenGL.GL.StateVar (
+   HasGetter(get), HasSetter(($=)), StateVar, makeStateVar )
 import Graphics.UI.GLUT.Callbacks.Window ( MouseButton, marshalMouseButton )
-import Graphics.UI.GLUT.Window ( Window, getWindow )
+import Graphics.UI.GLUT.Window ( Window, currentWindow )
 
 --------------------------------------------------------------------------------
 
@@ -63,8 +64,8 @@ type MenuCallback = IO ()
 
 attachMenu :: MouseButton -> Menu -> IO ()
 attachMenu mouseButton menu@(Menu items) = do
-   maybeWindow <- getWindow
-   let hook = MenuHook (fromJust maybeWindow) mouseButton
+   win <- get currentWindow
+   let hook = MenuHook win mouseButton
    detachMenu hook
    unless (null items) $ do
       (_, destructor) <- traverseMenu menu
@@ -108,9 +109,10 @@ addMenuItem (SubMenu s m) _ = do
 -- Perform an action, saving/restoring the current menu around it
 saveExcursion :: IO a -> IO a
 saveExcursion act = do
-   maybeMenuID <- getMenu
+   menuID <- get currentMenu
    returnValue <- act
-   maybe (return ()) setMenu maybeMenuID      -- Hmmm, a bit to lenient?
+   when (isRealMenu menuID) $
+      currentMenu $= menuID
    return returnValue
 
 --------------------------------------------------------------------------------
@@ -193,17 +195,21 @@ foreign import CALLCONV unsafe "glutDestroyMenu" glutDestroyMenu ::
 
 --------------------------------------------------------------------------------
 
--- | Set the /current menu./
+-- | Controls the /current menu./ If no menus exist or the previous /current
+-- menu/ was destroyed, a pseudo menu is returned, see 'isRealMenu'.
 
-foreign import CALLCONV unsafe "glutSetMenu" setMenu :: MenuID -> IO ()
+currentMenu :: StateVar MenuID
+currentMenu = makeStateVar glutGetMenu glutSetMenu
 
--- | Return 'Just' the identifier of the /current menu./ 'Nothing' is returned
--- if no menus exist or the previous /current menu/ was destroyed.
-
-getMenu :: IO (Maybe MenuID)
-getMenu = liftM (\i -> if i == 0 then Nothing else Just i) glutGetMenu
+foreign import CALLCONV unsafe "glutSetMenu" glutSetMenu :: MenuID -> IO ()
 
 foreign import CALLCONV unsafe "glutGetMenu" glutGetMenu :: IO MenuID
+
+-- | Returns 'True' if the given menu identifier refers to a real menu, not
+-- a pseudo one.
+
+isRealMenu :: MenuID -> Bool
+isRealMenu = (/= 0)
 
 --------------------------------------------------------------------------------
 

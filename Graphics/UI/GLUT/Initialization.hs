@@ -28,21 +28,19 @@ module Graphics.UI.GLUT.Initialization (
    -- * Primary initialization
    initialize, getArgsAndInitialize,
 
-   -- * Setting the initial window geometry
-   WindowPosition(..), setInitialWindowPosition,
-   WindowSize(..), setInitialWindowSize,
+   -- * Initial window geometry
+   initialWindowPosition, initialWindowSize,
 
    -- * Setting the initial display mode (I)
-   DisplayMode(..), setInitialDisplayMode,
-   marshalDisplayMode,   -- used only internally
+   DisplayMode(..), initialDisplayMode, isDisplayModePossible,
 
    -- * Setting the initial display mode (II)
    relationToString,   -- used only internally
    Capability(..), Relation(..), CapabilityDescription(..),
-   setInitialDisplayCapabilities
+   initialDisplayCapabilities
 ) where
 
-import Data.Bits ( Bits((.|.)) )
+import Data.Bits ( Bits((.|.),(.&.)) )
 import Data.List ( genericLength, intersperse )
 import Foreign.C.String ( CString, withCString, peekCString )
 import Foreign.C.Types ( CInt, CUInt )
@@ -51,8 +49,11 @@ import Foreign.Marshal.Utils ( with, withMany )
 import Foreign.Ptr ( Ptr, nullPtr )
 import Foreign.Storable ( Storable(..) )
 import System.Environment ( getProgName, getArgs )
-import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint, GLsizei )
+import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
+import Graphics.Rendering.OpenGL.GL.StateVar (
+   SettableStateVar, makeSettableStateVar, StateVar, makeStateVar )
 import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.State ( simpleGet )
 
 --------------------------------------------------------------------------------
 
@@ -78,7 +79,7 @@ import Graphics.UI.GLUT.Constants
 --   screen. The parameter following @-geometry@ should be formatted as a
 --   standard X geometry specification. The effect of using this option is to
 --   change the GLUT initial size and initial position the same as if
---   'setInitialWindowSize' or 'setInitialWindowPosition' were called directly.
+--   'initialWindowSize' or 'initialWindowPosition' were modified directly.
 --
 -- * @-iconic@: Requests all top-level windows be created in an iconic state.
 --
@@ -128,36 +129,43 @@ getArgsAndInitialize = do
 
 --------------------------------------------------------------------------------
 
--- | Window position, measured in pixels.
-data WindowPosition = WindowPosition GLint GLint
-
--- | Set the /initial window position/.  Windows created by
+-- | Controls the /initial window position/.  Windows created by
 -- 'Graphics.UI.GLUT.Window.createWindow' will be requested to be created with
 -- the current /initial window position/. The initial value of the /initial
--- window position/ GLUT state is @'WindowPosition' (-1) (-1)@. If either the
--- X or Y component of the /initial window position/ is negative, the actual
--- window position is left to the window system to determine.
+-- window position/ GLUT state is @'Size' (-1) (-1)@. If either the X or Y
+-- component of the /initial window position/ is negative, the actual window
+-- position is left to the window system to determine.
 --
 -- The intent of the /initial window position/ is to provide a suggestion to
 -- the window system for a window\'s initial position. The window system is
 -- not obligated to use this information. Therefore, GLUT programs should not
 -- assume the window was created at the specified position.
 
-setInitialWindowPosition :: WindowPosition -> IO ()
-setInitialWindowPosition (WindowPosition x y) =
+initialWindowPosition :: StateVar Position
+initialWindowPosition =
+   makeStateVar getInitialWindowPosition setInitialWindowPosition
+
+getInitialWindowPosition :: IO Position
+getInitialWindowPosition = do
+   x <- simpleGet fromIntegral glut_INIT_WINDOW_X
+   y <- simpleGet fromIntegral glut_INIT_WINDOW_Y
+   return $ Position x y
+
+setInitialWindowPosition :: Position -> IO ()
+setInitialWindowPosition (Position x y) =
     glutInitWindowPosition (fromIntegral x) (fromIntegral y)
 
 foreign import CALLCONV unsafe "glutInitWindowPosition" glutInitWindowPosition
    :: CInt -> CInt -> IO ()
 
--- | Window size, measured in pixels.
-data WindowSize = WindowSize GLsizei GLsizei
+--------------------------------------------------------------------------------
 
--- | Set the /initial window size/.  Windows created by
+-- | Controls the /initial window size/.  Windows created by
 -- 'Graphics.UI.GLUT.Window.createWindow' will be requested to be created with
 -- the current /initial window size/. The initial value of the /initial window
--- size/ GLUT state is @'WindowPosition' 300 300@. The /initial window size/
--- components must be greater than zero.
+-- size/ GLUT state is @'Size' 300 300@. If either the width or the height
+-- component of the /initial window size/ is non-positive, the actual window
+-- size is left to the window system to determine.
 --
 -- The intent of the /initial window size/ is to provide a suggestion to the
 -- window system for a window\'s initial size. The window system is not
@@ -166,8 +174,17 @@ data WindowSize = WindowSize GLsizei GLsizei
 -- use the window\'s reshape callback to determine the true size of the
 -- window.
 
-setInitialWindowSize :: WindowSize -> IO ()
-setInitialWindowSize (WindowSize w h) =
+initialWindowSize :: StateVar Size
+initialWindowSize = makeStateVar getInitialWindowSize setInitialWindowSize
+
+getInitialWindowSize :: IO Size
+getInitialWindowSize = do
+   w <- simpleGet fromIntegral glut_INIT_WINDOW_WIDTH
+   h <- simpleGet fromIntegral glut_INIT_WINDOW_HEIGHT
+   return $ Size w h
+
+setInitialWindowSize :: Size -> IO ()
+setInitialWindowSize (Size w h) =
    glutInitWindowSize (fromIntegral w) (fromIntegral h)
 
 foreign import CALLCONV unsafe "glutInitWindowSize" glutInitWindowSize ::
@@ -215,7 +232,9 @@ marshalDisplayMode m = case m of
    Stereo      -> glut_STEREO
    Luminance   -> glut_LUMINANCE
 
--- | Set the /initial display mode/ used when creating top-level windows,
+--------------------------------------------------------------------------------
+
+-- | Controls the /initial display mode/ used when creating top-level windows,
 -- subwindows, and overlays to determine the OpenGL display mode for the
 -- to-be-created window or overlay.
 --
@@ -223,6 +242,19 @@ marshalDisplayMode m = case m of
 -- bits of alpha (sometimes called an /alpha buffer/ or /destination alpha/)
 -- be allocated. To request alpha, specify 'Alpha'. The same applies to
 -- 'Luminance'.
+
+initialDisplayMode :: StateVar [DisplayMode]
+initialDisplayMode = makeStateVar getInitialDisplayMode setInitialDisplayMode
+
+getInitialDisplayMode :: IO [DisplayMode]
+getInitialDisplayMode = simpleGet i2dms glut_INIT_DISPLAY_MODE
+
+i2dms :: CInt -> [DisplayMode]
+i2dms = fromBitfield marshalDisplayMode . fromIntegral
+
+fromBitfield :: (Enum a, Bounded a, Bits b) => (a -> b) -> b -> [a]
+fromBitfield marshal bitfield =
+   [ c | c <- [ minBound .. maxBound ],  (bitfield .&. marshal c) /= 0 ]
 
 setInitialDisplayMode :: [DisplayMode] -> IO ()
 setInitialDisplayMode = glutInitDisplayMode . toBitfield marshalDisplayMode
@@ -232,6 +264,11 @@ toBitfield marshal = foldl (.|.) 0 . map marshal
 
 foreign import CALLCONV unsafe "glutInitDisplayMode" glutInitDisplayMode ::
    CUInt -> IO ()
+
+-- | Test whether the /current display mode/ is supported or not.
+
+isDisplayModePossible :: IO Bool
+isDisplayModePossible = simpleGet (/= 0) glut_DISPLAY_MODE_POSSIBLE
 
 --------------------------------------------------------------------------------
 
@@ -431,7 +468,7 @@ capabilityDescriptionToString (Where c r i) =
    capabilityToString c ++ relationToString r ++ show i
 capabilityDescriptionToString (With c) = capabilityToString c
 
--- | Set the /initial display mode/ used when creating top-level windows,
+-- | Controls the /initial display mode/ used when creating top-level windows,
 -- subwindows, and overlays to determine the OpenGL display mode for the
 -- to-be-created window or overlay. It is described by a list of zero or more
 -- capability descriptions, which are translated into a set of criteria used to
@@ -461,11 +498,12 @@ capabilityDescriptionToString (With c) = capabilityToString c
 -- (favoring less stencil to more as long as 2 bits are available), and double
 -- buffering.
 
-setInitialDisplayCapabilities :: [CapabilityDescription] -> IO ()
-setInitialDisplayCapabilities settings =
-   withCString
-      (concat . intersperse " " . map capabilityDescriptionToString $ settings)
-      glutInitDisplayString
+initialDisplayCapabilities :: SettableStateVar [CapabilityDescription]
+initialDisplayCapabilities =
+   makeSettableStateVar $ \caps ->
+      withCString
+         (concat . intersperse " " . map capabilityDescriptionToString $ caps)
+         glutInitDisplayString
 
 foreign import CALLCONV unsafe "glutInitDisplayString" glutInitDisplayString ::
   CString -> IO ()

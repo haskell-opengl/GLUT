@@ -19,10 +19,6 @@ module Graphics.UI.GLUT.State (
   SubWindowCount, SampleCount, BufferDepth, ButtonCount, ButtonIndex, DialCount,
   DialIndex, AxisCount, PollRate,
 
-  -- * Initial window parameters
-  getInitialWindowPosition, getInitialWindowSize, getInitialDisplayMode,
-  isDisplayModePossible,
-
   -- * State of the /current window/
   getWindowPosition, getWindowSize,
   getParent, getSubWindowCount,
@@ -67,18 +63,18 @@ module Graphics.UI.GLUT.State (
   TabletInfo(..), getTabletInfo,
 
   -- ** Joystick information
-  JoystickInfo(..), getJoystickInfo
+  JoystickInfo(..), getJoystickInfo,
+
+  simpleGet -- used only internally
 ) where
 
 import Control.Monad ( liftM )
-import Data.Bits ( Bits((.&.)) )
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
+import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
 import Graphics.Rendering.OpenGL.GL.VertexSpec ( Index1(..) )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Overlay ( Layer(..) )
-import Graphics.UI.GLUT.Initialization ( WindowPosition(..), WindowSize(..),
-                                         DisplayMode(..), marshalDisplayMode )
 import Graphics.UI.GLUT.Window ( Window, makeWindow, Cursor(..) )
 
 --------------------------------------------------------------------------------
@@ -121,85 +117,57 @@ type PollRate = CInt
 
 --------------------------------------------------------------------------------
 
--- | Return the /initial window position./
-getInitialWindowPosition :: IO WindowPosition
-getInitialWindowPosition = do
-   x <- get fromIntegral glut_INIT_WINDOW_X
-   y <- get fromIntegral glut_INIT_WINDOW_Y
-   return $ WindowPosition x y
-
--- | Return the /initial window size./
-
-getInitialWindowSize :: IO WindowSize
-getInitialWindowSize = do
-   w <- get fromIntegral glut_INIT_WINDOW_WIDTH
-   h <- get fromIntegral glut_INIT_WINDOW_HEIGHT
-   return $ WindowSize w h
-
--- | Return the /initial display mode./
-
-getInitialDisplayMode :: IO [DisplayMode]
-getInitialDisplayMode =
-   get i2dms glut_INIT_DISPLAY_MODE
-
--- | Test whether the /current display mode/ is supported or not.
-
-isDisplayModePossible :: IO Bool
-isDisplayModePossible = get i2b glut_DISPLAY_MODE_POSSIBLE
-
---------------------------------------------------------------------------------
-
 -- | Return the location of the /current window,/ measured in pixels relative to
 -- the screen origin.
 
-getWindowPosition :: IO WindowPosition
+getWindowPosition :: IO Position
 getWindowPosition = do
-   x <- get fromIntegral glut_WINDOW_X
-   y <- get fromIntegral glut_WINDOW_Y
-   return $ WindowPosition x y
+   x <- simpleGet fromIntegral glut_WINDOW_X
+   y <- simpleGet fromIntegral glut_WINDOW_Y
+   return $ Position x y
 
 -- | Return the size of the /current window,/ measured in pixels.
 
-getWindowSize :: IO WindowSize
+getWindowSize :: IO Size
 getWindowSize = do
-   w <- get fromIntegral glut_WINDOW_WIDTH
-   h <- get fromIntegral glut_WINDOW_HEIGHT
-   return $ WindowSize w h
+   w <- simpleGet fromIntegral glut_WINDOW_WIDTH
+   h <- simpleGet fromIntegral glut_WINDOW_HEIGHT
+   return $ Size w h
 
 -- | Return 'Just' the /current window\'s/ parent or 'Nothing' if the /current
 -- window/ is a top-level window.
 
 getParent :: IO (Maybe Window)
 getParent = do
-   w <- get makeWindow glut_WINDOW_PARENT
+   w <- simpleGet makeWindow glut_WINDOW_PARENT
    return $ if w == makeWindow 0 then Nothing else Just w
 
 -- | Return the number of subwindows the /current window/ has, not counting
 -- children of children.
 
 getSubWindowCount :: IO SubWindowCount
-getSubWindowCount = get id glut_WINDOW_NUM_CHILDREN
+getSubWindowCount = simpleGet id glut_WINDOW_NUM_CHILDREN
 
 -- | Return the current cursor for the /current window./
 
 getCursor :: IO Cursor
-getCursor = get unmarshalCursor glut_WINDOW_CURSOR
+getCursor = simpleGet unmarshalCursor glut_WINDOW_CURSOR
 
 -- | Test whether the current layer of the /current window/ is in RGBA mode.
 -- 'False' means color index mode.
 
 isRGBA :: IO Bool
-isRGBA = get i2b glut_WINDOW_RGBA
+isRGBA = simpleGet i2b glut_WINDOW_RGBA
 
 -- | Return the number of red, green, blue, and alpha bits in the color buffer
 -- of the /current window\'s/ current layer (0 in color index mode).
 
 getRGBABufferDepths :: IO (BufferDepth, BufferDepth, BufferDepth, BufferDepth)
 getRGBABufferDepths = do
-   r <- get id glut_WINDOW_RED_SIZE
-   g <- get id glut_WINDOW_GREEN_SIZE
-   b <- get id glut_WINDOW_BLUE_SIZE
-   a <- get id glut_WINDOW_ALPHA_SIZE
+   r <- simpleGet id glut_WINDOW_RED_SIZE
+   g <- simpleGet id glut_WINDOW_GREEN_SIZE
+   b <- simpleGet id glut_WINDOW_BLUE_SIZE
+   a <- simpleGet id glut_WINDOW_ALPHA_SIZE
    return (r, g, b, a)
 
 -- | Return the total number of bits in the color buffer of the /current
@@ -208,51 +176,51 @@ getRGBABufferDepths = do
 -- of bits of the color indexes.
 
 getColorBufferDepth :: IO BufferDepth
-getColorBufferDepth = get id glut_WINDOW_BUFFER_SIZE
+getColorBufferDepth = simpleGet id glut_WINDOW_BUFFER_SIZE
 
 -- | Return the number of entries in the colormap of the /current window\'s/
 -- current layer (0 in RGBA mode).
 
 getColormapEntryCount :: IO CInt
-getColormapEntryCount = get id glut_WINDOW_COLORMAP_SIZE
+getColormapEntryCount = simpleGet id glut_WINDOW_COLORMAP_SIZE
 
 -- | Test whether the current layer of the /current window/ is double buffered.
 
 isDoubleBuffered :: IO Bool
-isDoubleBuffered = get i2b glut_WINDOW_DOUBLEBUFFER
+isDoubleBuffered = simpleGet i2b glut_WINDOW_DOUBLEBUFFER
 
 -- | Test whether the current layer of the /current window/ is stereo.
 
 isStereo :: IO Bool
-isStereo = get i2b glut_WINDOW_STEREO
+isStereo = simpleGet i2b glut_WINDOW_STEREO
 
 -- | Return the number of red, green, blue, and alpha bits in the accumulation
 -- buffer of the /current window\'s/ current layer (0 in color index mode).
 
 getAccumBufferDepths :: IO (BufferDepth, BufferDepth, BufferDepth, BufferDepth)
 getAccumBufferDepths = do
-   r <- get id glut_WINDOW_ACCUM_RED_SIZE
-   g <- get id glut_WINDOW_ACCUM_GREEN_SIZE
-   b <- get id glut_WINDOW_ACCUM_BLUE_SIZE
-   a <- get id glut_WINDOW_ACCUM_ALPHA_SIZE
+   r <- simpleGet id glut_WINDOW_ACCUM_RED_SIZE
+   g <- simpleGet id glut_WINDOW_ACCUM_GREEN_SIZE
+   b <- simpleGet id glut_WINDOW_ACCUM_BLUE_SIZE
+   a <- simpleGet id glut_WINDOW_ACCUM_ALPHA_SIZE
    return (r, g, b, a)
 
 -- | Return the number of bits in the depth buffer of the /current window\'s/
 -- current layer.
 
 getDepthBufferDepth :: IO BufferDepth
-getDepthBufferDepth = get id glut_WINDOW_DEPTH_SIZE
+getDepthBufferDepth = simpleGet id glut_WINDOW_DEPTH_SIZE
 
 -- | Return the number of bits in the stencil buffer of the /current window\'s/
 -- current layer.
 
 getStencilBufferDepth :: IO BufferDepth
-getStencilBufferDepth = get id glut_WINDOW_STENCIL_SIZE
+getStencilBufferDepth = simpleGet id glut_WINDOW_STENCIL_SIZE
 
 -- | Return the number of samples for multisampling for the /current window./
 
 getSampleCount :: IO SampleCount
-getSampleCount = get id glut_WINDOW_NUM_SAMPLES
+getSampleCount = simpleGet id glut_WINDOW_NUM_SAMPLES
 
 -- | Return the window system dependent format ID for the current layer of the
 -- /current window/. On X11 GLUT implementations, this is the X visual ID. On
@@ -260,7 +228,7 @@ getSampleCount = get id glut_WINDOW_NUM_SAMPLES
 -- This value is returned for debugging, benchmarking, and testing ease.
 
 getFormatID :: IO CInt
-getFormatID = get id glut_WINDOW_FORMAT_ID
+getFormatID = simpleGet id glut_WINDOW_FORMAT_ID
 
 --------------------------------------------------------------------------------
 
@@ -269,12 +237,12 @@ getFormatID = get id glut_WINDOW_FORMAT_ID
 -- 'getElapsedTime').
 
 getElapsedTime :: IO CInt
-getElapsedTime = get id glut_ELAPSED_TIME
+getElapsedTime = simpleGet id glut_ELAPSED_TIME
 
 -- | Return the number of menu items in the /current menu./
 
 getMenuItemCount :: IO CInt
-getMenuItemCount = get id glut_MENU_NUM_ITEMS
+getMenuItemCount = simpleGet id glut_MENU_NUM_ITEMS
 
 --------------------------------------------------------------------------------
 
@@ -331,17 +299,17 @@ isOverlayDamaged = layerGet i2mb glut_OVERLAY_DAMAGED
 
 -- | The size of the screen in pixels and millimeters
 
-data ScreenInfo = ScreenInfo WindowSize WindowSize
+data ScreenInfo = ScreenInfo Size Size
 
 -- | /Note:/ A screen is always assumed, so there is no 'Maybe' here.
 
 getScreenInfo :: IO ScreenInfo
 getScreenInfo = do
-  wpx <- get fromIntegral glut_SCREEN_WIDTH
-  hpx <- get fromIntegral glut_SCREEN_HEIGHT
-  wmm <- get fromIntegral glut_SCREEN_WIDTH_MM
-  hmm <- get fromIntegral glut_SCREEN_HEIGHT_MM
-  return $ ScreenInfo (WindowSize wpx hpx) (WindowSize wmm hmm)
+  wpx <- simpleGet fromIntegral glut_SCREEN_WIDTH
+  hpx <- simpleGet fromIntegral glut_SCREEN_HEIGHT
+  wmm <- simpleGet fromIntegral glut_SCREEN_WIDTH_MM
+  hmm <- simpleGet fromIntegral glut_SCREEN_HEIGHT_MM
+  return $ ScreenInfo (Size wpx hpx) (Size wmm hmm)
 
 --------------------------------------------------------------------------------
 
@@ -492,13 +460,6 @@ i2c i = if i < 0 then Nothing else Just (Index1 i)
 i2mb :: CInt -> Maybe Bool
 i2mb i = if i < 0 then Nothing else Just (i /= 0)
 
-i2dms :: CInt -> [DisplayMode]
-i2dms = fromBitfield marshalDisplayMode . fromIntegral
-
-fromBitfield :: (Enum a, Bounded a, Bits b) => (a -> b) -> b -> [a]
-fromBitfield marshal bitfield =
-   [ c | c <- [ minBound .. maxBound ],  (bitfield .&. marshal c) /= 0 ]
-
 --------------------------------------------------------------------------------
 
 -- marshaler is in Graphics.UI.GLUT.Window
@@ -548,8 +509,8 @@ type Getter a   = (CInt -> a) -> GLenum -> IO a
 makeGetter :: PrimGetter -> Getter a
 makeGetter g f = liftM f . g
 
-get, layerGet, deviceGet :: Getter a
-get       = makeGetter glutGet
+simpleGet, layerGet, deviceGet :: Getter a
+simpleGet = makeGetter glutGet
 layerGet  = makeGetter glutLayerGet
 deviceGet = makeGetter glutDeviceGet
 
