@@ -47,6 +47,7 @@ module Graphics.UI.GLUT (
    module Graphics.UI.GLUT.Window,
    module Graphics.UI.GLUT.Overlay,
    module Graphics.UI.GLUT.Colormap,
+   module Graphics.UI.GLUT.Fonts,
    module Graphics.UI.GLUT.Objects
 )  where
 
@@ -55,6 +56,7 @@ import Graphics.UI.GLUT.Begin
 import Graphics.UI.GLUT.Window
 import Graphics.UI.GLUT.Overlay
 import Graphics.UI.GLUT.Colormap
+import Graphics.UI.GLUT.Fonts
 import Graphics.UI.GLUT.Objects
 
 -----------------------------------------------------------------------------
