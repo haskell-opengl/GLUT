@@ -27,6 +27,7 @@ exposed-modules:
 hidden-modules:
 	Graphics.UI.GLUT.Callbacks.Registration,
 	Graphics.UI.GLUT.Constants,
+	Graphics.UI.GLUT.Extensions,
 	Graphics.UI.GLUT.FreeGLUT,
 	Graphics.UI.GLUT.QueryUtils,
 	Graphics.UI.GLUT.Types

@@ -41,5 +41,6 @@
 
 extern void* hs_GLUT_marshalBitmapFont(int fontID);
 extern void* hs_GLUT_marshalStrokeFont(int fontID);
+extern void* hs_GLUT_getProcAddress(char *procName);
 
 #endif

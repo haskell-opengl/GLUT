@@ -36,3 +36,15 @@ hs_GLUT_marshalStrokeFont(int fontID)
   }
   return (void*)0;
 }
+
+/* procName is really a const char*, but currently we can't specify this in
+   Haskell's FFI and consequently get a warning from the C compiler. */
+void*
+hs_GLUT_getProcAddress(char *procName)
+{
+#if (FREEGLUT || GLUT_API_VERSION >= 5)
+  return glutGetProcAddress(procName);
+#else
+  return NULL;
+#endif
+}
