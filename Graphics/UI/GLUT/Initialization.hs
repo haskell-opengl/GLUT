@@ -37,6 +37,7 @@ module Graphics.UI.GLUT.Initialization (
    marshalDisplayMode,   -- used only internally
 
    -- * Setting the initial window mode (II)
+   ToString(..),   -- used only internally
    Capability(..), Relation(..), CapabilityDescription(..), initDisplay
 ) where
 

@@ -51,10 +51,11 @@ module Graphics.UI.GLUT (
    module Graphics.UI.GLUT.Colormap,
    module Graphics.UI.GLUT.State,
    module Graphics.UI.GLUT.Fonts,
-   module Graphics.UI.GLUT.Objects
+   module Graphics.UI.GLUT.Objects,
+   module Graphics.UI.GLUT.GameMode
 )  where
 
-import Graphics.UI.GLUT.Initialization hiding ( marshalDisplayMode )
+import Graphics.UI.GLUT.Initialization hiding ( ToString(..), marshalDisplayMode )
 import Graphics.UI.GLUT.Begin
 import Graphics.UI.GLUT.Window hiding ( Window )
 import Graphics.UI.GLUT.Window ( Window )
@@ -65,6 +66,7 @@ import Graphics.UI.GLUT.Colormap
 import Graphics.UI.GLUT.State
 import Graphics.UI.GLUT.Fonts
 import Graphics.UI.GLUT.Objects
+import Graphics.UI.GLUT.GameMode
 
 -----------------------------------------------------------------------------
 -- $LegalStuff

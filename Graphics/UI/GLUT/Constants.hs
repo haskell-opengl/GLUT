@@ -295,7 +295,7 @@ glut_JOYSTICK_BUTTON_D                 = 0x08
 -- @glutGameModeGet@ parameters
 glut_GAME_MODE_ACTIVE, glut_GAME_MODE_POSSIBLE, glut_GAME_MODE_WIDTH,
    glut_GAME_MODE_HEIGHT, glut_GAME_MODE_PIXEL_DEPTH,
-   glut_GAME_MODE_REFRESH_RATE, glut_GAME_MODE_DISPLAY_CHANGED :: CInt
+   glut_GAME_MODE_REFRESH_RATE, glut_GAME_MODE_DISPLAY_CHANGED :: GLenum
 glut_GAME_MODE_ACTIVE                  = 0
 glut_GAME_MODE_POSSIBLE                = 1
 glut_GAME_MODE_WIDTH                   = 2
