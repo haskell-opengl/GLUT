@@ -13,7 +13,7 @@
 #include "HsGLUT.h"
 
 void*
-hOpenGL_marshalBitmapFont(int fontID)
+hs_GLUT_marshalBitmapFont(int fontID)
 {
   switch (fontID) {
   case 0 : return GLUT_BITMAP_8_BY_13;
@@ -28,7 +28,7 @@ hOpenGL_marshalBitmapFont(int fontID)
 }
 
 void*
-hOpenGL_marshalStrokeFont(int fontID)
+hs_GLUT_marshalStrokeFont(int fontID)
 {
   switch (fontID) {
   case 0 : return GLUT_STROKE_ROMAN;

@@ -39,7 +39,7 @@
 #include <GL/freeglut_ext.h>
 #endif
 
-extern void* hOpenGL_marshalBitmapFont(int fontID);
-extern void* hOpenGL_marshalStrokeFont(int fontID);
+extern void* hs_GLUT_marshalBitmapFont(int fontID);
+extern void* hs_GLUT_marshalStrokeFont(int fontID);
 
 #endif

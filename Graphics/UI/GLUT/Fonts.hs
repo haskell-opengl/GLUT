@@ -99,18 +99,18 @@ data BitmapFont
 -- small C wrappers around those macros. *sigh*
 type GLUTbitmapFont = Ptr ()
 
-foreign import ccall unsafe "hOpenGL_marshalBitmapFont"
-   hOpenGL_marshalBitmapFont :: CInt -> IO GLUTbitmapFont
+foreign import ccall unsafe "hs_GLUT_marshalBitmapFont"
+   hs_GLUT_marshalBitmapFont :: CInt -> IO GLUTbitmapFont
 
 marhshalBitmapFont :: BitmapFont -> IO GLUTbitmapFont
 marhshalBitmapFont f = case f of
-   Fixed8By13   -> hOpenGL_marshalBitmapFont 0
-   Fixed9By15   -> hOpenGL_marshalBitmapFont 1
-   TimesRoman10 -> hOpenGL_marshalBitmapFont 2
-   TimesRoman24 -> hOpenGL_marshalBitmapFont 3
-   Helvetica10  -> hOpenGL_marshalBitmapFont 4
-   Helvetica12  -> hOpenGL_marshalBitmapFont 5
-   Helvetica18  -> hOpenGL_marshalBitmapFont 6
+   Fixed8By13   -> hs_GLUT_marshalBitmapFont 0
+   Fixed9By15   -> hs_GLUT_marshalBitmapFont 1
+   TimesRoman10 -> hs_GLUT_marshalBitmapFont 2
+   TimesRoman24 -> hs_GLUT_marshalBitmapFont 3
+   Helvetica10  -> hs_GLUT_marshalBitmapFont 4
+   Helvetica12  -> hs_GLUT_marshalBitmapFont 5
+   Helvetica18  -> hs_GLUT_marshalBitmapFont 6
 
 --------------------------------------------------------------------------------
 
@@ -128,13 +128,13 @@ data StrokeFont
 -- Same remarks as for GLUTbitmapFont
 type GLUTstrokeFont = Ptr ()
 
-foreign import ccall unsafe "hOpenGL_marshalStrokeFont"
-   hOpenGL_marshalStrokeFont :: CInt -> IO GLUTstrokeFont
+foreign import ccall unsafe "hs_GLUT_marshalStrokeFont"
+   hs_GLUT_marshalStrokeFont :: CInt -> IO GLUTstrokeFont
 
 marhshalStrokeFont :: StrokeFont -> IO GLUTstrokeFont
 marhshalStrokeFont f = case f of
-   Roman     -> hOpenGL_marshalStrokeFont 0
-   MonoRoman -> hOpenGL_marshalStrokeFont 1
+   Roman     -> hs_GLUT_marshalStrokeFont 0
+   MonoRoman -> hs_GLUT_marshalStrokeFont 1
 
 --------------------------------------------------------------------------------
 
