@@ -32,7 +32,7 @@ module Graphics.UI.GLUT.Initialization (
    initialWindowPosition, initialWindowSize,
 
    -- * Setting the initial display mode (I)
-   DisplayMode(..), initialDisplayMode, isDisplayModePossible,
+   DisplayMode(..), initialDisplayMode, displayModePossible,
 
    -- * Setting the initial display mode (II)
    Capability(..), Relation(..), CapabilityDescription(..),
@@ -50,7 +50,9 @@ import Foreign.Storable ( Storable(..) )
 import System.Environment ( getProgName, getArgs )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
 import Graphics.Rendering.OpenGL.GL.StateVar (
-   SettableStateVar, makeSettableStateVar, StateVar, makeStateVar )
+   GettableStateVar, makeGettableStateVar,
+   SettableStateVar, makeSettableStateVar,
+   StateVar, makeStateVar )
 import Graphics.UI.GLUT.Constants (
    glut_INIT_WINDOW_X, glut_INIT_WINDOW_Y,
    glut_INIT_WINDOW_WIDTH, glut_INIT_WINDOW_HEIGHT,
@@ -270,10 +272,12 @@ toBitfield marshal = foldl (.|.) 0 . map marshal
 foreign import CALLCONV unsafe "glutInitDisplayMode" glutInitDisplayMode ::
    CUInt -> IO ()
 
--- | Test whether the /current display mode/ is supported or not.
+-- | Contains 'True' if the /current display mode/ is supported, 'False'
+-- otherwise.
 
-isDisplayModePossible :: IO Bool
-isDisplayModePossible = simpleGet (/= 0) glut_DISPLAY_MODE_POSSIBLE
+displayModePossible :: GettableStateVar Bool
+displayModePossible =
+   makeGettableStateVar $ simpleGet (/= 0) glut_DISPLAY_MODE_POSSIBLE
 
 --------------------------------------------------------------------------------
 
