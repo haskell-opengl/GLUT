@@ -38,7 +38,7 @@ myInit = do
 
 renderSpehere :: Vector3 GLfloat -> IO ()
 renderSpehere xyz =
-   matrixExcursion $ do
+   preservingMatrix $ do
       translate xyz
       renderObject Solid (Sphere' 0.4 16 16)
 

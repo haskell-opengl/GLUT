@@ -41,7 +41,7 @@ display = do
    clear [ ColorBuffer ]
    fog $= Disabled
    triangle
-   matrixExcursion $ do
+   preservingMatrix $ do
       let translatef = translate :: Vector3 GLfloat -> IO ()
       translatef (Vector3 12.5 0 0)
       fog $= Enabled

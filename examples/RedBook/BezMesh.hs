@@ -38,7 +38,7 @@ initlights = do
 display :: DisplayCallback
 display = do
    clear [ ColorBuffer, DepthBuffer ]
-   matrixExcursion $ do
+   preservingMatrix $ do
       rotate (85 :: GLfloat) (Vector3 1 1 1)
       evalMesh2 Fill (0, 20) (0, 20)
    flush

@@ -30,7 +30,7 @@ display :: DisplayCallback
 display = do
    clear [ ColorBuffer, DepthBuffer ]
    color (Color3 1 1 1 :: Color3 GLfloat)
-   matrixExcursion $ do
+   preservingMatrix $ do
       rotate (85 :: GLfloat) (Vector3 1 1 1)
       for 0 8 $ \j -> do
          renderPrimitive LineStrip $ do

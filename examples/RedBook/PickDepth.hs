@@ -82,9 +82,9 @@ pickRects :: KeyboardMouseCallback
 pickRects (MouseButton LeftButton) Down _ (Position x y) = do
    vp@(_, (Size _ height)) <- get viewport
    (_, maybeHitRecords) <- getHitRecords bufSize $
-      pushName (Name 0) $ do
+      withName (Name 0) $ do
          matrixMode $= Projection
-         matrixExcursion $ do
+         preservingMatrix $ do
             loadIdentity
             -- create 5x5 pixel picking region near cursor location
             pickMatrix (fromIntegral x, fromIntegral height - fromIntegral y) (5, 5) vp

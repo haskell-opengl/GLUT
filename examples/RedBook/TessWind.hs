@@ -138,7 +138,7 @@ display (dl1, dl2, dl3, dl4) = do
    let color3f = color :: Color3 GLfloat -> IO ()
        translatef = translate :: Vector3 GLfloat -> IO ()
    color3f (Color3 1 1 1)
-   matrixExcursion $ do
+   preservingMatrix $ do
       callList dl1
       translatef (Vector3   0   500  0)
       callList dl2

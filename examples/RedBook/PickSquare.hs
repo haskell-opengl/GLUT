@@ -34,7 +34,7 @@ drawSquares board =
    flip mapM_ [ 0 .. 2 ] $ \i -> do
       loadName (Name (fromIntegral i))
       flip mapM_ [ 0 .. 2 ] $ \j ->
-         pushName (Name (fromIntegral j)) $ do
+         withName (Name (fromIntegral j)) $ do
             val <- readIORef (board ! (i,j))
             -- resolve overloading, not needed in "real" programs
             let color3f = color :: Color3 GLfloat -> IO ()
@@ -69,9 +69,9 @@ pickSquares :: Board -> KeyboardMouseCallback
 pickSquares board (MouseButton LeftButton) Down _ (Position x y) = do
    vp@(_, (Size _ height)) <- get viewport
    (_, maybeHitRecords) <- getHitRecords bufSize $
-      pushName (Name 0) $ do
+      withName (Name 0) $ do
          matrixMode $= Projection
-         matrixExcursion $ do
+         preservingMatrix $ do
             loadIdentity
             -- create 5x5 pixel picking region near cursor location
             pickMatrix (fromIntegral x, fromIntegral height - fromIntegral y) (5, 5) vp

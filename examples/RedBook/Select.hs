@@ -102,8 +102,8 @@ bufSize = 512
 selectObjects :: IO ()
 selectObjects = do
    (_, maybeHitRecords) <- getHitRecords bufSize $ do
-      pushName (Name 0) $ do
-         matrixExcursion $ do
+      withName (Name 0) $ do
+         preservingMatrix $ do
             matrixMode $= Projection
             loadIdentity
             ortho 0 5 0 5 0 10
