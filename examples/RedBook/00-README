@@ -12,7 +12,7 @@ Chapter 2: State Management and Drawing Geometric Objects
         Lines.hs        (1.0)
         Polys.hs        (1.0)
         VArray.hs       (1.1)
-        MVarray.hs      (1.4)
+        MVArray.hs      (1.4)
 
 Chapter 3: Viewing
 
