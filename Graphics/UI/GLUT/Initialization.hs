@@ -5,7 +5,7 @@
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven.panne@aedion.de
--- Stability   :  provisional
+-- Stability   :  stable
 -- Portability :  portable
 --
 -- Actions and state variables in this module are used to initialize GLUT state.

@@ -6,7 +6,7 @@
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven.panne@aedion.de
--- Stability   :  provisional
+-- Stability   :  stable
 -- Portability :  portable
 --
 -- This purely internal module defines all numeric GLUT constants.

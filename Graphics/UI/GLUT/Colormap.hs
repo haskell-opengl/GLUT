@@ -5,7 +5,7 @@
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven.panne@aedion.de
--- Stability   :  provisional
+-- Stability   :  stable
 -- Portability :  portable
 --
 -- OpenGL supports both RGBA and color index rendering. The RGBA mode is

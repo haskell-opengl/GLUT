@@ -5,7 +5,7 @@
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven.panne@aedion.de
--- Stability   :  provisional
+-- Stability   :  stable
 -- Portability :  portable
 --
 -- GLUT supports two types of windows: top-level windows and subwindows. Both

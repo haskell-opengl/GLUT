@@ -5,7 +5,7 @@
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven.panne@aedion.de
--- Stability   :  provisional
+-- Stability   :  stable
 -- Portability :  portable
 --
 -- GLUT maintains a considerable amount of programmer visible state. Some (but
