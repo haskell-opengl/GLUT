@@ -237,18 +237,18 @@ data DisplayMode
 
 marshalDisplayMode :: DisplayMode -> CUInt
 marshalDisplayMode m = case m of
-   RGBAMode           -> glut_RGBA
-   RGBMode            -> glut_RGB
-   IndexMode          -> glut_INDEX
-   SingleBuffered     -> glut_SINGLE
-   DoubleBuffered     -> glut_DOUBLE
-   WithAccumBuffer    -> glut_ACCUM
+   RGBAMode -> glut_RGBA
+   RGBMode -> glut_RGB
+   IndexMode -> glut_INDEX
+   SingleBuffered -> glut_SINGLE
+   DoubleBuffered -> glut_DOUBLE
+   WithAccumBuffer -> glut_ACCUM
    WithAlphaComponent -> glut_ALPHA
-   WithDepthBuffer    -> glut_DEPTH
-   WithStencilBuffer  -> glut_STENCIL
-   Multisampling      -> glut_MULTISAMPLE
-   Stereoscopic       -> glut_STEREO
-   LuminanceMode      -> glut_LUMINANCE
+   WithDepthBuffer -> glut_DEPTH
+   WithStencilBuffer -> glut_STENCIL
+   Multisampling -> glut_MULTISAMPLE
+   Stereoscopic -> glut_STEREO
+   LuminanceMode -> glut_LUMINANCE
 
 --------------------------------------------------------------------------------
 

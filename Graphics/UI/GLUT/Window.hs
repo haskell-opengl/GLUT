@@ -430,57 +430,57 @@ data Cursor
    deriving ( Eq, Ord, Show )
 
 marshalCursor :: Cursor -> CInt
-marshalCursor c = case c of
-   RightArrow        -> glut_CURSOR_RIGHT_ARROW
-   LeftArrow         -> glut_CURSOR_LEFT_ARROW
-   Info              -> glut_CURSOR_INFO
-   Destroy           -> glut_CURSOR_DESTROY
-   Help              -> glut_CURSOR_HELP
-   Cycle             -> glut_CURSOR_CYCLE
-   Spray             -> glut_CURSOR_SPRAY
-   Wait              -> glut_CURSOR_WAIT
-   Text              -> glut_CURSOR_TEXT
-   Crosshair         -> glut_CURSOR_CROSSHAIR
-   UpDown            -> glut_CURSOR_UP_DOWN
-   LeftRight         -> glut_CURSOR_LEFT_RIGHT
-   TopSide           -> glut_CURSOR_TOP_SIDE
-   BottomSide        -> glut_CURSOR_BOTTOM_SIDE
-   LeftSide          -> glut_CURSOR_LEFT_SIDE
-   RightSide         -> glut_CURSOR_RIGHT_SIDE
-   TopLeftCorner     -> glut_CURSOR_TOP_LEFT_CORNER
-   TopRightCorner    -> glut_CURSOR_TOP_RIGHT_CORNER
+marshalCursor x = case x of
+   RightArrow -> glut_CURSOR_RIGHT_ARROW
+   LeftArrow -> glut_CURSOR_LEFT_ARROW
+   Info -> glut_CURSOR_INFO
+   Destroy -> glut_CURSOR_DESTROY
+   Help -> glut_CURSOR_HELP
+   Cycle -> glut_CURSOR_CYCLE
+   Spray -> glut_CURSOR_SPRAY
+   Wait -> glut_CURSOR_WAIT
+   Text -> glut_CURSOR_TEXT
+   Crosshair -> glut_CURSOR_CROSSHAIR
+   UpDown -> glut_CURSOR_UP_DOWN
+   LeftRight -> glut_CURSOR_LEFT_RIGHT
+   TopSide -> glut_CURSOR_TOP_SIDE
+   BottomSide -> glut_CURSOR_BOTTOM_SIDE
+   LeftSide -> glut_CURSOR_LEFT_SIDE
+   RightSide -> glut_CURSOR_RIGHT_SIDE
+   TopLeftCorner -> glut_CURSOR_TOP_LEFT_CORNER
+   TopRightCorner -> glut_CURSOR_TOP_RIGHT_CORNER
    BottomRightCorner -> glut_CURSOR_BOTTOM_RIGHT_CORNER
-   BottomLeftCorner  -> glut_CURSOR_BOTTOM_LEFT_CORNER
-   Inherit           -> glut_CURSOR_INHERIT
-   None              -> glut_CURSOR_NONE
-   FullCrosshair     -> glut_CURSOR_FULL_CROSSHAIR
+   BottomLeftCorner -> glut_CURSOR_BOTTOM_LEFT_CORNER
+   Inherit -> glut_CURSOR_INHERIT
+   None -> glut_CURSOR_NONE
+   FullCrosshair -> glut_CURSOR_FULL_CROSSHAIR
 
 unmarshalCursor :: CInt -> Cursor
-unmarshalCursor c
-   | c == glut_CURSOR_RIGHT_ARROW         = RightArrow
-   | c == glut_CURSOR_LEFT_ARROW          = LeftArrow
-   | c == glut_CURSOR_INFO                = Info
-   | c == glut_CURSOR_DESTROY             = Destroy
-   | c == glut_CURSOR_HELP                = Help
-   | c == glut_CURSOR_CYCLE               = Cycle
-   | c == glut_CURSOR_SPRAY               = Spray
-   | c == glut_CURSOR_WAIT                = Wait
-   | c == glut_CURSOR_TEXT                = Text
-   | c == glut_CURSOR_CROSSHAIR           = Crosshair
-   | c == glut_CURSOR_UP_DOWN             = UpDown
-   | c == glut_CURSOR_LEFT_RIGHT          = LeftRight
-   | c == glut_CURSOR_TOP_SIDE            = TopSide
-   | c == glut_CURSOR_BOTTOM_SIDE         = BottomSide
-   | c == glut_CURSOR_LEFT_SIDE           = LeftSide
-   | c == glut_CURSOR_RIGHT_SIDE          = RightSide
-   | c == glut_CURSOR_TOP_LEFT_CORNER     = TopLeftCorner
-   | c == glut_CURSOR_TOP_RIGHT_CORNER    = TopRightCorner
-   | c == glut_CURSOR_BOTTOM_RIGHT_CORNER = BottomRightCorner
-   | c == glut_CURSOR_BOTTOM_LEFT_CORNER  = BottomLeftCorner
-   | c == glut_CURSOR_INHERIT             = Inherit
-   | c == glut_CURSOR_NONE                = None
-   | c == glut_CURSOR_FULL_CROSSHAIR      = FullCrosshair
-   | otherwise = error "unmarshalCursor"
+unmarshalCursor x
+   | x == glut_CURSOR_RIGHT_ARROW = RightArrow
+   | x == glut_CURSOR_LEFT_ARROW = LeftArrow
+   | x == glut_CURSOR_INFO = Info
+   | x == glut_CURSOR_DESTROY = Destroy
+   | x == glut_CURSOR_HELP = Help
+   | x == glut_CURSOR_CYCLE = Cycle
+   | x == glut_CURSOR_SPRAY = Spray
+   | x == glut_CURSOR_WAIT = Wait
+   | x == glut_CURSOR_TEXT = Text
+   | x == glut_CURSOR_CROSSHAIR = Crosshair
+   | x == glut_CURSOR_UP_DOWN = UpDown
+   | x == glut_CURSOR_LEFT_RIGHT = LeftRight
+   | x == glut_CURSOR_TOP_SIDE = TopSide
+   | x == glut_CURSOR_BOTTOM_SIDE = BottomSide
+   | x == glut_CURSOR_LEFT_SIDE = LeftSide
+   | x == glut_CURSOR_RIGHT_SIDE = RightSide
+   | x == glut_CURSOR_TOP_LEFT_CORNER = TopLeftCorner
+   | x == glut_CURSOR_TOP_RIGHT_CORNER = TopRightCorner
+   | x == glut_CURSOR_BOTTOM_RIGHT_CORNER = BottomRightCorner
+   | x == glut_CURSOR_BOTTOM_LEFT_CORNER = BottomLeftCorner
+   | x == glut_CURSOR_INHERIT = Inherit
+   | x == glut_CURSOR_NONE = None
+   | x == glut_CURSOR_FULL_CROSSHAIR = FullCrosshair
+   | otherwise = error ("unmarshalCursor: illegal value " ++ show x)
 
 --------------------------------------------------------------------------------
 

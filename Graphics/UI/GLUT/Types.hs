@@ -85,17 +85,18 @@ data MouseButton
    deriving ( Eq, Ord, Show )
 
 marshalMouseButton :: MouseButton -> CInt
-marshalMouseButton LeftButton   = glut_LEFT_BUTTON
-marshalMouseButton MiddleButton = glut_MIDDLE_BUTTON
-marshalMouseButton RightButton  = glut_RIGHT_BUTTON
-marshalMouseButton WheelUp      = glut_WHEEL_UP
-marshalMouseButton WheelDown    = glut_WHEEL_DOWN
+marshalMouseButton x = case x of
+   LeftButton -> glut_LEFT_BUTTON
+   MiddleButton -> glut_MIDDLE_BUTTON
+   RightButton -> glut_RIGHT_BUTTON
+   WheelUp ->glut_WHEEL_UP
+   WheelDown -> glut_WHEEL_DOWN
 
 unmarshalMouseButton :: CInt -> MouseButton
-unmarshalMouseButton b
-   | b == glut_LEFT_BUTTON   = LeftButton
-   | b == glut_MIDDLE_BUTTON = MiddleButton
-   | b == glut_RIGHT_BUTTON  = RightButton
-   | b == glut_WHEEL_UP      = WheelUp
-   | b == glut_WHEEL_DOWN    = WheelDown
-   | otherwise = error "unmarshalMouseButton"
+unmarshalMouseButton x
+   | x == glut_LEFT_BUTTON = LeftButton
+   | x == glut_MIDDLE_BUTTON = MiddleButton
+   | x == glut_RIGHT_BUTTON = RightButton
+   | x == glut_WHEEL_UP = WheelUp
+   | x == glut_WHEEL_DOWN = WheelDown
+   | otherwise = error ("unmarshalMouseButton: illegal value " ++ show x)

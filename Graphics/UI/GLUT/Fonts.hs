@@ -115,14 +115,14 @@ foreign import ccall unsafe "hs_GLUT_marshalBitmapFont"
    hs_GLUT_marshalBitmapFont :: CInt -> IO GLUTbitmapFont
 
 marhshalBitmapFont :: BitmapFont -> IO GLUTbitmapFont
-marhshalBitmapFont f = case f of
-   Fixed8By13   -> hs_GLUT_marshalBitmapFont 0
-   Fixed9By15   -> hs_GLUT_marshalBitmapFont 1
+marhshalBitmapFont x = case x of
+   Fixed8By13 -> hs_GLUT_marshalBitmapFont 0
+   Fixed9By15 -> hs_GLUT_marshalBitmapFont 1
    TimesRoman10 -> hs_GLUT_marshalBitmapFont 2
    TimesRoman24 -> hs_GLUT_marshalBitmapFont 3
-   Helvetica10  -> hs_GLUT_marshalBitmapFont 4
-   Helvetica12  -> hs_GLUT_marshalBitmapFont 5
-   Helvetica18  -> hs_GLUT_marshalBitmapFont 6
+   Helvetica10 -> hs_GLUT_marshalBitmapFont 4
+   Helvetica12 -> hs_GLUT_marshalBitmapFont 5
+   Helvetica18 -> hs_GLUT_marshalBitmapFont 6
 
 --------------------------------------------------------------------------------
 
@@ -144,8 +144,8 @@ foreign import ccall unsafe "hs_GLUT_marshalStrokeFont"
    hs_GLUT_marshalStrokeFont :: CInt -> IO GLUTstrokeFont
 
 marhshalStrokeFont :: StrokeFont -> IO GLUTstrokeFont
-marhshalStrokeFont f = case f of
-   Roman     -> hs_GLUT_marshalStrokeFont 0
+marhshalStrokeFont x = case x of
+   Roman -> hs_GLUT_marshalStrokeFont 0
    MonoRoman -> hs_GLUT_marshalStrokeFont 1
 
 --------------------------------------------------------------------------------

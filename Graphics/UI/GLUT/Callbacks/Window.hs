@@ -225,10 +225,10 @@ data Visibility
    deriving ( Eq, Ord, Show )
 
 unmarshalVisibility :: CInt -> Visibility
-unmarshalVisibility v
-   | v == glut_NOT_VISIBLE = NotVisible
-   | v == glut_VISIBLE     = Visible
-   | otherwise = error "unmarshalVisibility"
+unmarshalVisibility x
+   | x == glut_NOT_VISIBLE = NotVisible
+   | x == glut_VISIBLE = Visible
+   | otherwise = error ("unmarshalVisibility: illegal value " ++ show x)
 
 --------------------------------------------------------------------------------
 
@@ -330,29 +330,29 @@ data SpecialKey
    deriving ( Eq, Ord, Show )
 
 unmarshalSpecialKey :: CInt -> SpecialKey
-unmarshalSpecialKey k
-   | k == glut_KEY_F1        = KeyF1
-   | k == glut_KEY_F2        = KeyF2
-   | k == glut_KEY_F3        = KeyF3
-   | k == glut_KEY_F4        = KeyF4
-   | k == glut_KEY_F5        = KeyF5
-   | k == glut_KEY_F6        = KeyF6
-   | k == glut_KEY_F7        = KeyF7
-   | k == glut_KEY_F8        = KeyF8
-   | k == glut_KEY_F9        = KeyF9
-   | k == glut_KEY_F10       = KeyF10
-   | k == glut_KEY_F11       = KeyF11
-   | k == glut_KEY_F12       = KeyF12
-   | k == glut_KEY_LEFT      = KeyLeft
-   | k == glut_KEY_UP        = KeyUp
-   | k == glut_KEY_RIGHT     = KeyRight
-   | k == glut_KEY_DOWN      = KeyDown
-   | k == glut_KEY_PAGE_UP   = KeyPageUp
-   | k == glut_KEY_PAGE_DOWN = KeyPageDown
-   | k == glut_KEY_HOME      = KeyHome
-   | k == glut_KEY_END       = KeyEnd
-   | k == glut_KEY_INSERT    = KeyInsert
-   | otherwise = error "unmarshalSpecialKey"
+unmarshalSpecialKey x
+   | x == glut_KEY_F1 = KeyF1
+   | x == glut_KEY_F2 = KeyF2
+   | x == glut_KEY_F3 = KeyF3
+   | x == glut_KEY_F4 = KeyF4
+   | x == glut_KEY_F5 = KeyF5
+   | x == glut_KEY_F6 = KeyF6
+   | x == glut_KEY_F7 = KeyF7
+   | x == glut_KEY_F8 = KeyF8
+   | x == glut_KEY_F9 = KeyF9
+   | x == glut_KEY_F10 = KeyF10
+   | x == glut_KEY_F11 = KeyF11
+   | x == glut_KEY_F12 = KeyF12
+   | x == glut_KEY_LEFT = KeyLeft
+   | x == glut_KEY_UP = KeyUp
+   | x == glut_KEY_RIGHT = KeyRight
+   | x == glut_KEY_DOWN = KeyDown
+   | x == glut_KEY_PAGE_UP = KeyPageUp
+   | x == glut_KEY_PAGE_DOWN = KeyPageDown
+   | x == glut_KEY_HOME = KeyHome
+   | x == glut_KEY_END = KeyEnd
+   | x == glut_KEY_INSERT = KeyInsert
+   | otherwise = error ("unmarshalSpecialKey: illegal value " ++ show x)
 
 --------------------------------------------------------------------------------
 
@@ -393,10 +393,10 @@ data KeyState
    deriving ( Eq, Ord, Show )
 
 unmarshalKeyState :: CInt -> KeyState
-unmarshalKeyState s
-   | s == glut_DOWN = Down
-   | s == glut_UP   = Up
-   | otherwise = error "unmarshalKeyState"
+unmarshalKeyState x
+   | x == glut_DOWN = Down
+   | x == glut_UP = Up
+   | otherwise = error ("unmarshalKeyState: illegal value " ++ show x)
 
 --------------------------------------------------------------------------------
 
@@ -530,10 +530,10 @@ data Crossing
    deriving ( Eq, Ord, Show )
 
 unmarshalCrossing :: CInt -> Crossing
-unmarshalCrossing c
-   | c == glut_LEFT    = WindowLeft
-   | c == glut_ENTERED = WindowEntered
-   | otherwise = error "unmarshalCrossing"
+unmarshalCrossing x
+   | x == glut_LEFT = WindowLeft
+   | x == glut_ENTERED = WindowEntered
+   | otherwise = error ("unmarshalCrossing: illegal value " ++ show x)
 
 --------------------------------------------------------------------------------
 

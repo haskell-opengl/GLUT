@@ -184,8 +184,9 @@ elapsedTime = makeGettableStateVar $ simpleGet fromIntegral glut_ELAPSED_TIME
 damaged :: Layer -> GettableStateVar Bool
 damaged l = makeGettableStateVar $ layerGet isDamaged (marshalDamagedLayer l)
    where isDamaged d = d /= 0 && d /= -1
-         marshalDamagedLayer Normal  = glut_NORMAL_DAMAGED
-         marshalDamagedLayer Overlay = glut_OVERLAY_DAMAGED
+         marshalDamagedLayer x = case x of
+            Normal -> glut_NORMAL_DAMAGED
+            Overlay -> glut_OVERLAY_DAMAGED
 
 --------------------------------------------------------------------------------
 

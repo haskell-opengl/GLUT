@@ -39,10 +39,10 @@ data MenuUsage
    deriving ( Eq, Ord, Show )
 
 unmarshalMenuUsage :: CInt -> MenuUsage
-unmarshalMenuUsage u
-   | u == glut_MENU_NOT_IN_USE  = NotInUse
-   | u == glut_MENU_IN_USE      = InUse
-   | otherwise = error "unmarshalMenuUsage"
+unmarshalMenuUsage x
+   | x == glut_MENU_NOT_IN_USE = NotInUse
+   | x == glut_MENU_IN_USE = InUse
+   | otherwise = error ("unmarshalMenuUsage: illegal value " ++ show x)
 
 type MenuStatusCallback  = MenuUsage -> Position -> IO ()
 

@@ -132,15 +132,15 @@ data Layer
    deriving ( Eq, Ord, Show )
 
 marshalLayer :: Layer -> GLenum
-marshalLayer l = case l of
-   Normal  -> glut_NORMAL
+marshalLayer x = case x of
+   Normal -> glut_NORMAL
    Overlay -> glut_OVERLAY
 
 unmarshalLayer :: GLenum -> Layer
-unmarshalLayer l
-   | l == glut_NORMAL  = Normal
-   | l == glut_OVERLAY = Overlay
-   | otherwise = error "unmarshalLayer"
+unmarshalLayer x
+   | x == glut_NORMAL  = Normal
+   | x == glut_OVERLAY = Overlay
+   | otherwise = error ("unmarshalLayer: illegal value " ++ show x)
 
 --------------------------------------------------------------------------------
 

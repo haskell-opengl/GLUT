@@ -37,16 +37,17 @@ data GlobalKeyRepeat
    deriving ( Eq, Ord, Show )
 
 marshalGlobalKeyRepeat :: GlobalKeyRepeat -> CInt
-marshalGlobalKeyRepeat GlobalKeyRepeatOff     = glut_KEY_REPEAT_OFF
-marshalGlobalKeyRepeat GlobalKeyRepeatOn      = glut_KEY_REPEAT_ON
-marshalGlobalKeyRepeat GlobalKeyRepeatDefault = glut_KEY_REPEAT_DEFAULT
+marshalGlobalKeyRepeat x = case x of
+   GlobalKeyRepeatOff -> glut_KEY_REPEAT_OFF
+   GlobalKeyRepeatOn -> glut_KEY_REPEAT_ON
+   GlobalKeyRepeatDefault -> glut_KEY_REPEAT_DEFAULT
 
 unmarshalGlobalKeyRepeat :: CInt -> GlobalKeyRepeat
-unmarshalGlobalKeyRepeat r
-   | r == glut_KEY_REPEAT_OFF     = GlobalKeyRepeatOff
-   | r == glut_KEY_REPEAT_ON      = GlobalKeyRepeatOn
-   | r == glut_KEY_REPEAT_DEFAULT = GlobalKeyRepeatDefault
-   | otherwise = error "unmarshalGlobalKeyRepeat"
+unmarshalGlobalKeyRepeat x
+   | x == glut_KEY_REPEAT_OFF     = GlobalKeyRepeatOff
+   | x == glut_KEY_REPEAT_ON      = GlobalKeyRepeatOn
+   | x == glut_KEY_REPEAT_DEFAULT = GlobalKeyRepeatDefault
+   | otherwise = error ("unmarshalGlobalKeyRepeat: illegal value " ++ show x)
 
 --------------------------------------------------------------------------------
 
@@ -91,12 +92,14 @@ data PerWindowKeyRepeat
    deriving ( Eq, Ord, Show )
 
 marshalPerWindowKeyRepeat :: PerWindowKeyRepeat -> CInt
-marshalPerWindowKeyRepeat PerWindowKeyRepeatOff = 0
-marshalPerWindowKeyRepeat PerWindowKeyRepeatOn  = 1
+marshalPerWindowKeyRepeat x = case x of
+   PerWindowKeyRepeatOff -> 0
+   PerWindowKeyRepeatOn -> 1
 
 unmarshalPerWindowKeyRepeat :: CInt -> PerWindowKeyRepeat
-unmarshalPerWindowKeyRepeat 0 = PerWindowKeyRepeatOff
-unmarshalPerWindowKeyRepeat _ = PerWindowKeyRepeatOn
+unmarshalPerWindowKeyRepeat x
+   | x == 0 = PerWindowKeyRepeatOff
+   | otherwise = PerWindowKeyRepeatOn
 
 --------------------------------------------------------------------------------
 
