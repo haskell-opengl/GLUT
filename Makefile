@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# $Id: Makefile,v 1.6 2002/05/27 20:31:37 panne Exp $
+# $Id: Makefile,v 1.7 2002/06/16 19:53:24 panne Exp $
 
 TOP = ..
 include $(TOP)/mk/boilerplate.mk
@@ -10,7 +10,8 @@ SUBDIRS = cbits include
 
 ALL_DIRS = \
 	Graphics/UI \
-	Graphics/UI/GLUT
+	Graphics/UI/GLUT \
+	Graphics/UI/GLUT/Callbacks
 
 PACKAGE = GLUT
 
