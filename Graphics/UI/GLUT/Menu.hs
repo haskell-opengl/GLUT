@@ -32,11 +32,11 @@ import Graphics.Rendering.OpenGL.GL.StateVar (
    HasGetter(get), HasSetter(($=)),
    GettableStateVar, makeGettableStateVar,
    StateVar, makeStateVar )
-import Graphics.UI.GLUT.Callbacks.Window ( MouseButton )
 import Graphics.UI.GLUT.Constants ( glut_MENU_NUM_ITEMS )
 import Graphics.UI.GLUT.QueryUtils ( simpleGet )
 import Graphics.UI.GLUT.Types ( marshalMouseButton )
 import Graphics.UI.GLUT.Window ( Window, currentWindow )
+import Graphics.UI.GLUT.Callbacks.Window ( MouseButton )
 
 --------------------------------------------------------------------------------
 

@@ -44,9 +44,9 @@ import Graphics.UI.GLUT.Constants (
    glut_GAME_MODE_WIDTH, glut_GAME_MODE_HEIGHT,
    glut_GAME_MODE_PIXEL_DEPTH, glut_GAME_MODE_REFRESH_RATE,
    glut_GAME_MODE_ACTIVE )
-import Graphics.UI.GLUT.Initialization ( Relation )
 import Graphics.UI.GLUT.Types ( makeWindow, relationToString )
 import Graphics.UI.GLUT.Window ( Window )
+import Graphics.UI.GLUT.Initialization ( Relation(..) )
 
 --------------------------------------------------------------------------------
 
