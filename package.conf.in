@@ -56,7 +56,7 @@ extra-hugs-opts:
 extra-cc-opts:	GLUT_CFLAGS
 extra-ld-opts:	GLUT_LIBS
 framework-dirs:
-extra_frameworks: GLUT_FRAMEWORKS
+extra-frameworks: GLUT_FRAMEWORKS
 
 haddock-interfaces:
 haddock-html:
