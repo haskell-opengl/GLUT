@@ -4,8 +4,8 @@
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 
-   Invert a passed block of pixels.  This program illustrates the use of the
-   colorTable function.
+   Compute the histogram of the image.  This program illustrates the use of
+   the histogram function.
 -}
 
 import Control.Monad
