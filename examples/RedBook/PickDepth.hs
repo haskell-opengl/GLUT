@@ -66,14 +66,13 @@ processHits :: Maybe[HitRecord] -> IO ()
 processHits Nothing = putStrLn "selection buffer overflow"
 processHits (Just hitRecords) = do
    putStrLn ("hits = " ++ show (length hitRecords))
-   mapM_ (\(HitRecord z1 z2 names) -> do
+   flip mapM_ hitRecords $ \(HitRecord z1 z2 names) -> do
       putStrLn (" number of names for hit = " ++ show (length names))
       putStr   ("  z1 is " ++ show z1)
       putStrLn ("; z2 is " ++ show z2)
       putStr   "   the name is"
       sequence_ [ putStr (" " ++ show n) | Name n <- names ]
-      putChar '\n')
-      hitRecords
+      putChar '\n'
 
 -- pickRects() sets up selection mode, name stack, and projection matrix for
 -- picking. Then the objects are drawn.

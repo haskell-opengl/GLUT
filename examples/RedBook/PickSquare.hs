@@ -33,9 +33,9 @@ myInit = do
 -- is even suggested by the Red Book.
 drawSquares :: Board -> IO ()
 drawSquares board =
-   mapM_ (\i -> do
+   flip mapM_ [ 0 .. 2 ] $ \i -> do
       loadName (Name (fromIntegral i))
-      mapM_ (\j ->
+      flip mapM_ [ 0 .. 2 ] $ \j ->
          pushName (Name (fromIntegral j)) $ do
             val <- readIORef (board ! (i,j))
             -- resolve overloading, not needed in "real" programs
@@ -43,9 +43,7 @@ drawSquares board =
             color3f (Color3 (fromIntegral i   / 3.0)
                             (fromIntegral j   / 3.0)
                             (fromIntegral val / 3.0))
-            rect (Vertex2 i j) (Vertex2 (i + 1) (j + 1)))
-         [ 0 .. 2 ])
-      [ 0 .. 2 ]
+            rect (Vertex2 i j) (Vertex2 (i + 1) (j + 1))
 
 -- processHits prints the hit records and updates the board array.
 processHits :: Maybe[HitRecord] -> Board -> IO ()
