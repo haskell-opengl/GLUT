@@ -4,8 +4,8 @@
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 
-   This program demonstrates smooth shading.
-   A smooth shaded polygon is drawn in a 2-D projection.
+   This program demonstrates smooth shading. A smooth shaded polygon is drawn in
+   a 2-D projection.
 -}
 
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )

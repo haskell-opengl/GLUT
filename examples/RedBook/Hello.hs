@@ -40,13 +40,11 @@ myInit = do
    loadIdentity
    ortho 0 1 0 1 (-1) 1
 
-{-
-   Declare initial window size, position, and display mode
-   (single buffer and RGBA).  Open window with "hello"
-   in its title bar.  Call initialization routines.
-   Register callback function to display graphics.
-   Enter main loop and process events.
--}
+
+-- Declare initial window size, position, and display mode (single buffer and
+-- RGBA). Open window with "hello" in its title bar. Call initialization
+-- routines. Register callback function to display graphics. Enter main loop and
+-- process events.
 main :: IO ()
 main = do
    getArgsAndInitialize

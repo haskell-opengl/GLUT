@@ -4,12 +4,11 @@
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 
-   This program draws 5 red spheres, each at a different 
-   z distance from the eye, in different types of fog.  
-   Pressing the f key chooses between 3 types of 
-   fog:  exponential, exponential squared, and linear.  
-   In this program, there is a fixed density value, as well 
-   as fixed start and end values for the linear fog.
+   This program draws 5 red spheres, each at a different z distance from the
+   eye, in different types of fog. Pressing the f key chooses between 3 types
+   of fog: exponential, exponential squared, and linear. In this program, there
+   is a fixed density value, as well as fixed start and end values for the
+   linear fog.
 -}
 
 import Data.Char ( toLower )
@@ -78,9 +77,8 @@ keyboard (Char c) Down _ _ = case toLower c of
    _     -> return ()
 keyboard _ _ _ _ = return ()
 
--- Main Loop
--- Open window with initial window size, title bar, 
--- RGBA display mode, depth buffer, and handle input events.
+-- Main Loop: Open window with initial window size, title bar, RGBA display
+-- mode, depth buffer, and handle input events.
 main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
