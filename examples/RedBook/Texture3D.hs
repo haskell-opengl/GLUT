@@ -35,7 +35,7 @@ myInit = do
    rowAlignment Unpack $= 1
 
    [texName] <- genObjectNames 1
-   textureBinding Texture3D $= texName
+   textureBinding Texture3D $= Just texName
    textureWrapMode Texture3D S $= (Repeated, Clamp)
    textureWrapMode Texture3D T $= (Repeated, Clamp)
    textureWrapMode Texture3D R $= (Repeated, Clamp)

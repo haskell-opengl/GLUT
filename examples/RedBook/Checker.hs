@@ -9,6 +9,8 @@
    Texture objects are only used when GL_EXT_texture_object is supported.
 -}
 
+import Control.Monad ( liftM, when )
+import Data.Maybe ( isJust, listToMaybe )
 import Data.Bits ( (.&.) )
 import Foreign ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
@@ -37,10 +39,9 @@ myInit = do
 
    exts <- get glExtensions
    mbTexName <- if "GL_EXT_texture_object" `elem` exts
-      then do [texName] <- genObjectNames 1
-              textureBinding Texture2D $= texName
-              return $ Just texName
-      else return Nothing
+                   then liftM listToMaybe $ genObjectNames 1
+                   else return Nothing
+   when (isJust mbTexName) $ textureBinding Texture2D $= mbTexName
 
    textureWrapMode Texture2D S $= (Repeated, Repeat)
    textureWrapMode Texture2D T $= (Repeated, Repeat)
@@ -54,7 +55,7 @@ display mbTexName = do
    clear [ ColorBuffer, DepthBuffer ]
    texture Texture2D $= Enabled
    textureEnvMode $= Decal
-   maybe (return ()) (\texName -> textureBinding Texture2D $= texName) mbTexName
+   when (isJust mbTexName) $ textureBinding Texture2D $= mbTexName
    
    -- resolve overloading, not needed in "real" programs
    let texCoord2f = texCoord :: TexCoord2 GLfloat -> IO ()

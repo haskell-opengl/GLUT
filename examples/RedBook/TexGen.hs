@@ -14,7 +14,9 @@
    (x + y + z = 0). Pressing the 'x' key switches it back to x = 0.
 -}
 
+import Control.Monad ( liftM, when )
 import Data.Char ( toLower )
+import Data.Maybe ( isJust, listToMaybe )
 import Foreign ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
@@ -45,10 +47,9 @@ myInit = do
 
    exts <- get glExtensions
    mbTexName <- if "GL_EXT_texture_object" `elem` exts
-      then do [texName] <- genObjectNames 1
-              textureBinding Texture1D $= texName
-              return $ Just texName
-      else return Nothing
+                   then liftM listToMaybe $ genObjectNames 1
+                   else return Nothing
+   when (isJust mbTexName) $ textureBinding Texture1D $= mbTexName
 
    textureWrapMode Texture1D S $= (Repeated, Repeat)
    textureFilter Texture1D $= ((Linear', Nothing), Linear')
@@ -72,7 +73,7 @@ display mbTexName = do
    clear [ ColorBuffer, DepthBuffer ]
    preservingMatrix $ do
       rotate (45 :: GLfloat) (Vector3 0 0 1)
-      maybe (return ()) (\texName -> textureBinding Texture1D $= texName) mbTexName
+      when (isJust mbTexName) $ textureBinding Texture1D $= mbTexName
       renderObject Solid (Teapot 2)
    flush
 

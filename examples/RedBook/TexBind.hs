@@ -36,14 +36,14 @@ myInit = do
    rowAlignment Unpack $= 1
 
    [texName0, texName1] <- genObjectNames 2
-   textureBinding Texture2D $= texName0
+   textureBinding Texture2D $= Just texName0
    textureWrapMode Texture2D S $= (Repeated, Clamp)
    textureWrapMode Texture2D T $= (Repeated, Clamp)
    textureFilter Texture2D $= ((Nearest, Nothing), Nearest)
    withCheckImage checkImageSize 0x08 (\c -> Color4 c c c 255) $
       texImage2D Nothing NoProxy 0  RGBA' checkImageSize 0
 
-   textureBinding Texture2D $= texName1
+   textureBinding Texture2D $= Just texName1
    textureWrapMode Texture2D S $= (Repeated, Clamp)
    textureWrapMode Texture2D T $= (Repeated, Clamp)
    textureFilter Texture2D $= ((Nearest, Nothing), Nearest)
@@ -59,13 +59,13 @@ display (texName0, texName1) = do
    -- resolve overloading, not needed in "real" programs
    let texCoord2f = texCoord :: TexCoord2 GLfloat -> IO ()
        vertex3f = vertex :: Vertex3 GLfloat -> IO ()
-   textureBinding Texture2D $= texName0
+   textureBinding Texture2D $= Just texName0
    renderPrimitive Quads $ do
       texCoord2f (TexCoord2 0 0); vertex3f (Vertex3 (-2.0)    (-1.0)   0.0     )
       texCoord2f (TexCoord2 0 1); vertex3f (Vertex3 (-2.0)      1.0    0.0     )
       texCoord2f (TexCoord2 1 1); vertex3f (Vertex3   0.0       1.0    0.0     )
       texCoord2f (TexCoord2 1 0); vertex3f (Vertex3   0.0     (-1.0)   0.0     )
-   textureBinding Texture2D $= texName1
+   textureBinding Texture2D $= Just texName1
    renderPrimitive Quads $ do
       texCoord2f (TexCoord2 0 0); vertex3f (Vertex3   1.0     (-1.0)   0.0     )
       texCoord2f (TexCoord2 0 1); vertex3f (Vertex3   1.0       1.0    0.0     )

@@ -44,7 +44,7 @@ myInit = do
    rowAlignment Unpack $= 1
 
    [texName] <- genObjectNames 1
-   textureBinding Texture2D $= texName
+   textureBinding Texture2D $= Just texName
 
    textureWrapMode Texture2D S $= (Repeated, Repeat)
    textureWrapMode Texture2D T $= (Repeated, Repeat)
@@ -57,7 +57,7 @@ display texName = do
    clear [ ColorBuffer, DepthBuffer ]
    texture Texture2D $= Enabled
    textureEnvMode $= Decal
-   textureBinding Texture2D $= texName
+   textureBinding Texture2D $= Just texName
    
    -- resolve overloading, not needed in "real" programs
    let texCoord2f = texCoord :: TexCoord2 GLfloat -> IO ()
@@ -88,11 +88,11 @@ reshape size@(Size w h) = do
 keyboard :: TextureObject -> Image -> Image -> KeyboardMouseCallback
 keyboard texName checkImage subImage (Char c) Down _ _ = case toLower c of
    's' -> do
-      textureBinding Texture2D $= texName
+      textureBinding Texture2D $= Just texName
       texSubImage2D Nothing 0 (TexturePosition2D 12 44) subImageSize subImage
       postRedisplay Nothing
    'r' -> do
-      textureBinding Texture2D $= texName
+      textureBinding Texture2D $= Just texName
       texImage2D Nothing NoProxy 0 RGBA' checkImageSize 0 checkImage
       postRedisplay Nothing
    '\27' -> exitWith ExitSuccess

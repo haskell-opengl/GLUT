@@ -10,6 +10,8 @@
    with several different colors.
 -}
 
+import Control.Monad ( liftM, when )
+import Data.Maybe ( isJust, listToMaybe )
 import Foreign ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
@@ -35,10 +37,9 @@ myInit = do
 
    exts <- get glExtensions
    mbTexName <- if "GL_EXT_texture_object" `elem` exts
-      then do [texName] <- genObjectNames 1
-              textureBinding Texture2D $= texName
-              return $ Just texName
-      else return Nothing
+                   then liftM listToMaybe $ genObjectNames 1
+                   else return Nothing
+   when (isJust mbTexName) $ textureBinding Texture2D $= mbTexName
 
    textureWrapMode Texture2D S $= (Repeated, Repeat)
    textureWrapMode Texture2D T $= (Repeated, Repeat)
@@ -58,7 +59,7 @@ myInit = do
 display :: Maybe TextureObject -> DisplayCallback
 display mbTexName = do
    clear [ ColorBuffer, DepthBuffer ]
-   maybe (return ()) (\texName -> textureBinding Texture2D $= texName) mbTexName
+   when (isJust mbTexName) $ textureBinding Texture2D $= mbTexName
    -- resolve overloading, not needed in "real" programs
    let texCoord2f = texCoord :: TexCoord2 GLfloat -> IO ()
        vertex3f = vertex :: Vertex3 GLfloat -> IO ()

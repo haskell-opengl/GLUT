@@ -24,7 +24,7 @@ myInit = do
    rowAlignment Unpack $= 1
 
    [texName0, texName1] <- genObjectNames 2
-   textureBinding Texture2D $= texName0
+   textureBinding Texture2D $= Just texName0
    -- Note: We use much brighter colors than in the original example where
    -- everything was almost black.
    specifyTexture (TextureSize2D 32 32) (\i j -> Color4 (i*8) (j*8) ((i*j) `div` 4) 255)
@@ -32,7 +32,7 @@ myInit = do
    textureWrapMode Texture2D S $= (Repeated, Repeat)
    textureWrapMode Texture2D T $= (Repeated, Repeat)
 
-   textureBinding Texture2D $= texName1
+   textureBinding Texture2D $= Just texName1
    specifyTexture (TextureSize2D 16 16) (\i j -> Color4 255 (i*16) (j*16) 255)
    textureFilter Texture2D $= ((Linear', Nothing), Linear')
    textureWrapMode Texture2D S $= (Repeated, ClampToEdge)
@@ -41,7 +41,7 @@ myInit = do
    -- for use in multitexturing
    activeTexture $= TextureUnit 0
    texture Texture2D $= Enabled
-   textureBinding Texture2D $= texName0
+   textureBinding Texture2D $= Just texName0
    textureEnvMode $= Replace
    matrixMode $= Texture
    loadIdentity
@@ -51,7 +51,7 @@ myInit = do
    matrixMode $= Modelview 0
    activeTexture $= TextureUnit 1
    texture Texture2D $= Enabled
-   textureBinding Texture2D $= texName1
+   textureBinding Texture2D $= Just texName1
    textureEnvMode $= Modulate
 
 display ::  DisplayCallback

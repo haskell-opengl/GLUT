@@ -12,9 +12,10 @@
 
 --------------------------------------------------------------------------------
 
-import Control.Monad ( when )
-import Data.List ( intersperse )
+import Control.Monad ( when, liftM )
 import Data.IORef ( IORef, newIORef )
+import Data.List ( intersperse )
+import Data.Maybe ( fromJust )
 import System.Console.GetOpt
 import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
 import Graphics.UI.GLUT
@@ -242,15 +243,15 @@ myInit args = do
    depthFunc $= Just Less
 
    -- make the gears
-   g1 <- defineNewList Compile $ do
+   g1 <- liftM fromJust $ defineNewList Compile $ do
       materialAmbientAndDiffuse Front $= Color4 0.8 0.1 0.0 1.0
       gear 1 4 1 20 0.7
 
-   g2 <- defineNewList Compile $ do
+   g2 <- liftM fromJust $ defineNewList Compile $ do
       materialAmbientAndDiffuse Front $= Color4 0.0 0.8 0.2 1.0
       gear 0.5 2 2 10 0.7
 
-   g3 <- defineNewList Compile $ do
+   g3 <- liftM fromJust $ defineNewList Compile $ do
       materialAmbientAndDiffuse Front $= Color4 0.2 0.2 1.0 1.0
       gear 1.3 2 0.5 10 0.7
 
