@@ -50,7 +50,7 @@ CLEAN_FILES += $(STUBOBJS) \
 
 # -----------------------------------------------------------------------------
 
-DIST_CLEAN_FILES += config.cache config.status config.mk
+LATE_DIST_CLEAN_FILES += config.cache config.status config.mk
 
 extraclean::
 	$(RM) -rf autom4te.cache
