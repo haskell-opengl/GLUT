@@ -24,7 +24,7 @@ else
 SRC_HC_OPTS += -DCALLCONV=ccall
 endif
 
-SRC_HADDOCK_OPTS += -t "HOpenGL Libraries (GLUT package)" -p prologue.txt
+SRC_HADDOCK_OPTS += -t "HOpenGL Libraries (GLUT package)"
 
 # yeuch, have to get GL_CFLAGS & GLUT_LIBS in through CPP to package.conf.in
 comma = ,
