@@ -59,6 +59,8 @@ CLEAN_FILES += $(STUBOBJS) \
    Graphics/UI/GLUT/Callbacks/Registration_stub.[ch] \
    Graphics/UI/GLUT/Callbacks/Window_stub.[ch]
 
+endif
+
 # -----------------------------------------------------------------------------
 
 DIST_CLEAN_FILES += HsGLUTConfig.h GLUT.buildinfo config.cache config.status 
@@ -68,7 +70,5 @@ extraclean::
 	$(RM) -rf autom4te.cache
 
 # -----------------------------------------------------------------------------
-
-endif
 
 include $(TOP)/mk/target.mk
