@@ -103,14 +103,36 @@ gameModeCapabilityDescriptionToString (Where' c r i) =
 -- etc.
 
 gameModeCapabilities :: SettableStateVar [GameModeCapabilityDescription]
-gameModeCapabilities = makeSettableStateVar $ \settings ->
-   withCString
-      (concat . intersperse " " . map gameModeCapabilityDescriptionToString $
-       settings)
-      glutGameModeString
+gameModeCapabilities = makeSettableStateVar $ \ds ->
+   withCString (descriptionsToString ds) glutGameModeString
 
 foreign import CALLCONV unsafe "glutGameModeString" glutGameModeString ::
    CString -> IO ()
+
+-- freeglut currently handles only simple game mode descriptions like "WxH:B@R",
+-- so we try hard to use this format instead of the more general format allowed
+-- by the "real" GLUT.
+descriptionsToString :: [GameModeCapabilityDescription] -> String
+descriptionsToString ds =
+   let ws = [ x | Where' GameModeWidth        IsEqualTo x <- ds ]
+       hs = [ x | Where' GameModeHeight       IsEqualTo x <- ds ]
+       bs = [ x | Where' GameModeBitsPerPlane IsEqualTo x <- ds ]
+       rs = [ x | Where' GameModeRefreshRate  IsEqualTo x <- ds ]
+       allSimple = (length ws + length hs + length bs + length rs) == (length ds)
+       dimensionsOK = (null ws) == (null hs)
+   in if allSimple && dimensionsOK
+         then simpleCapStr ws hs bs rs
+         else generalCapStr ds
+
+simpleCapStr :: [Int] -> [Int] -> [Int] -> [Int] -> String
+simpleCapStr ws hs bs rs =
+   showCap "" ws ++ showCap "x" hs ++ showCap ":" bs ++ showCap "@" rs
+   where showCap _      []    = ""
+         showCap prefix (x:_) = prefix ++ show x
+
+generalCapStr :: [GameModeCapabilityDescription] -> String
+generalCapStr =
+   concat . intersperse " " . map gameModeCapabilityDescriptionToString
 
 --------------------------------------------------------------------------------
 
