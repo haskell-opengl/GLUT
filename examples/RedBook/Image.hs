@@ -15,8 +15,9 @@
    keys, you change the zoom factors.
 -}
 
+import Data.Bits ( (.&.) )
 import Data.IORef ( IORef, newIORef, readIORef, writeIORef, modifyIORef )
-import Foreign ( Ptr, newArray, (.&.) )
+import Foreign.Marshal.Array ( newArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -24,9 +25,7 @@ import Graphics.UI.GLUT
 checkImageSize :: Size
 checkImageSize = Size 64 64
 
-type PixelDescriptor = (PixelFormat, DataType, Ptr (Color3 GLubyte))
-
-makeCheckImage :: IO PixelDescriptor
+makeCheckImage :: IO (PixelData (Color3 GLubyte))
 makeCheckImage = do
    let Size w h = checkImageSize
    buf <- newArray [ Color3 c c c |
@@ -34,22 +33,22 @@ makeCheckImage = do
                      j <- [ 0 .. h - 1 ],
                      let c | (i .&. 0x8) == (j .&. 0x8) = 0
                            | otherwise                  = 255 ]
-   return (RGB, UnsignedByte, buf)
+   return $ PixelData RGB UnsignedByte buf
 
-myInit :: IO PixelDescriptor
+myInit :: IO (PixelData (Color3 GLubyte))
 myInit = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Flat
    rowAlignment Unpack $= 1
    makeCheckImage
 
-display ::  PixelDescriptor -> DisplayCallback
-display (format, dataType, ptr) = do
+display ::  PixelData a -> DisplayCallback
+display pixelData = do
    clear [ ColorBuffer ]
    -- resolve overloading, not needed in "real" programs
    let rasterPos2i = rasterPos :: Vertex2 GLint -> IO ()
    rasterPos2i (Vertex2 0 0)
-   drawPixels checkImageSize format dataType ptr
+   drawPixels checkImageSize pixelData
    flush
 
 reshape :: ReshapeCallback
