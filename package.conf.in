@@ -7,16 +7,16 @@ maintainer:	MAINTAINER
 exposed:	True
 
 exposed-modules:
+	Graphics.UI.GLUT,
 	Graphics.UI.GLUT.Begin,
-	Graphics.UI.GLUT.Callbacks.Global,
 	Graphics.UI.GLUT.Callbacks,
+	Graphics.UI.GLUT.Callbacks.Global,
 	Graphics.UI.GLUT.Callbacks.Window,
 	Graphics.UI.GLUT.Colormap,
 	Graphics.UI.GLUT.Debugging,
 	Graphics.UI.GLUT.DeviceControl,
 	Graphics.UI.GLUT.Fonts,
 	Graphics.UI.GLUT.GameMode,
-	Graphics.UI.GLUT,
 	Graphics.UI.GLUT.Initialization,
 	Graphics.UI.GLUT.Menu,
 	Graphics.UI.GLUT.Objects,
@@ -27,6 +27,7 @@ exposed-modules:
 hidden-modules:
 	Graphics.UI.GLUT.Callbacks.Registration,
 	Graphics.UI.GLUT.Constants,
+	Graphics.UI.GLUT.FreeGLUT,
 	Graphics.UI.GLUT.QueryUtils,
 	Graphics.UI.GLUT.Types
 
