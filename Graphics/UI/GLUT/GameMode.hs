@@ -16,10 +16,10 @@
 -- window, no other (sub-)windows can be created, and all other applications are
 -- hidden.
 --
--- /X Implementation Notes:/ Note that game mode is not fully supported in
--- GLUT for X, it is essentially the same as using
--- 'Graphics.UI.GLUT.Window.fullScreen', with the additional restrictions
--- mentioned above.
+-- /X Implementation Notes:/ Note that game mode is not fully supported in the
+-- original GLUT for X, it is essentially the same as using
+-- 'Graphics.UI.GLUT.Window.fullScreen'. The GLUT clone freeglut
+-- (see <http://freeglut.sourceforge.net/>) does not have this restriction.
 --
 --------------------------------------------------------------------------------
 
@@ -143,10 +143,6 @@ generalCapStr =
 --
 -- Re-entering /game mode/ is allowed, the previous game mode window gets
 -- destroyed by this, and a new one is created.
---
--- /X Implementation Notes:/ GLUT for X never changes the display mode, but
--- simply creates a full screen window, requesting absolutely no decorations
--- from the window manager.
 
 enterGameMode :: IO (Window, Bool)
 enterGameMode = do
@@ -182,8 +178,6 @@ data GameModeInfo = GameModeInfo Size BitsPerPlane RefreshRate
 -- 'enterGameMode'. Returns 'Nothing' if the mode requested by the current value
 -- of 'gameModeCapabilities' is not possible, in which case 'enterGameMode'
 -- would simply create a full screen window using the current mode.
---
--- /X Implementation Notes:/ GLUT for X will always return 'Nothing'.
 
 gameModeInfo :: GettableStateVar (Maybe GameModeInfo)
 gameModeInfo = makeGettableStateVar $ do
