@@ -141,7 +141,7 @@ modifyMenuTable = modifyIORef theMenuTable
 -- currently attached in a window to a mouse button.
 
 data MenuHook = MenuHook Window MouseButton
-   deriving ( Eq, Ord, Show )
+   deriving ( Eq, Ord )
 
 type Destructor = IO ()
 

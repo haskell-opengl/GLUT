@@ -129,7 +129,7 @@ foreign import CALLCONV safe "glutHideOverlay" glutHideOverlay :: IO ()
 data Layer
    = Normal   -- ^ The normal plane.
    | Overlay  -- ^ The overlay.
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 marshalLayer :: Layer -> GLenum
 marshalLayer l = case l of

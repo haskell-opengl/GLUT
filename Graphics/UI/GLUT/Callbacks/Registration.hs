@@ -38,7 +38,7 @@ data CallbackType
    | SpaceballButtonCB | ButtonBoxCB       | DialsCB
    | TabletMotionCB    | TabletButtonCB    | JoystickCB
    | MenuStatusCB      | IdleCB
-   deriving ( Eq, Ord, Show )
+   deriving ( Eq, Ord )
 
 isGlobal :: CallbackType -> Bool
 isGlobal MenuStatusCB = True
@@ -50,7 +50,7 @@ isGlobal _            = False
 -- for window callbacks.
 
 data CallbackID = CallbackID (Maybe Window) CallbackType
-   deriving ( Eq, Ord, Show )
+   deriving ( Eq, Ord )
 
 getCallbackID :: CallbackType -> IO CallbackID
 getCallbackID callbackType = do
