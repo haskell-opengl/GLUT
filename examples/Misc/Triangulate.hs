@@ -14,7 +14,6 @@
    star will make the interior unshaded (TessWindingOdd).
 -}
 
-import Data.Either ( Either(..) )
 import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
 import System.Random ( randomIO )
 import Graphics.UI.GLUT

@@ -10,7 +10,6 @@
 -}
 
 import Data.Char ( toLower )
-import Data.Either ( Either(..) )
 import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
 import Graphics.UI.GLUT
