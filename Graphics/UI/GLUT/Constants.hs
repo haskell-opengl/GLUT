@@ -139,7 +139,9 @@ glut_WINDOW_X, glut_WINDOW_Y, glut_WINDOW_WIDTH, glut_WINDOW_HEIGHT,
    glut_SCREEN_HEIGHT_MM, glut_MENU_NUM_ITEMS, glut_DISPLAY_MODE_POSSIBLE,
    glut_INIT_WINDOW_X, glut_INIT_WINDOW_Y, glut_INIT_WINDOW_WIDTH,
    glut_INIT_WINDOW_HEIGHT, glut_INIT_DISPLAY_MODE, glut_ELAPSED_TIME,
-   glut_WINDOW_FORMAT_ID :: GLenum
+   glut_WINDOW_FORMAT_ID, glut_ACTION_ON_WINDOW_CLOSE, glut_WINDOW_BORDER_WIDTH,
+   glut_WINDOW_HEADER_HEIGHT, glut_VERSION, glut_RENDERING_CONTEXT,
+   glut_DIRECT_RENDERING :: GLenum
 glut_WINDOW_X                          = 100
 glut_WINDOW_Y                          = 101
 glut_WINDOW_WIDTH                      = 102
@@ -176,6 +178,12 @@ glut_INIT_WINDOW_HEIGHT                = 503
 glut_INIT_DISPLAY_MODE                 = 504
 glut_ELAPSED_TIME                      = 700
 glut_WINDOW_FORMAT_ID                  = 123
+glut_ACTION_ON_WINDOW_CLOSE            = 505
+glut_WINDOW_BORDER_WIDTH               = 506
+glut_WINDOW_HEADER_HEIGHT              = 507
+glut_VERSION                           = 508
+glut_RENDERING_CONTEXT                 = 509
+glut_DIRECT_RENDERING                  = 510
 
 -----------------------------------------------------------------------------
 -- * @glutDeviceGet@ parameters
@@ -303,3 +311,29 @@ glut_GAME_MODE_HEIGHT                  = 3
 glut_GAME_MODE_PIXEL_DEPTH             = 4
 glut_GAME_MODE_REFRESH_RATE            = 5
 glut_GAME_MODE_DISPLAY_CHANGED         = 6
+
+-----------------------------------------------------------------------------
+-- * Direct/indirect rendering context options (has meaning only in unix/x11),
+-- see glut_DIRECT_RENDERING
+glut_FORCE_INDIRECT_CONTEXT, glut_ALLOW_DIRECT_CONTEXT,
+   glut_TRY_DIRECT_CONTEXT, glut_FORCE_DIRECT_CONTEXT :: CInt
+glut_FORCE_INDIRECT_CONTEXT            = 0
+glut_ALLOW_DIRECT_CONTEXT              = 1
+glut_TRY_DIRECT_CONTEXT                = 2
+glut_FORCE_DIRECT_CONTEXT              = 3
+
+-----------------------------------------------------------------------------
+-- * Behaviour when the user clicks on an "x" to close a window, see
+-- glut_ACTION_ON_WINDOW_CLOSE
+glut_ACTION_EXIT, glut_ACTION_GLUTMAINLOOP_RETURNS,
+   glut_ACTION_CONTINUE_EXECUTION :: CInt
+glut_ACTION_EXIT                       = 0
+glut_ACTION_GLUTMAINLOOP_RETURNS       = 1
+glut_ACTION_CONTINUE_EXECUTION         = 2
+
+-----------------------------------------------------------------------------
+-- * Create a new rendering context when the user opens a new window? See
+-- glut_RENDERING_CONTEXT
+glut_CREATE_NEW_CONTEXT, glut_USE_CURRENT_CONTEXT :: CInt
+glut_CREATE_NEW_CONTEXT                = 0
+glut_USE_CURRENT_CONTEXT               = 1

@@ -35,6 +35,10 @@
 #endif
 #endif
 
+#if FREEGLUT
+#include <GL/freeglut_ext.h>
+#endif
+
 extern void* hOpenGL_marshalBitmapFont(int fontID);
 extern void* hOpenGL_marshalStrokeFont(int fontID);
 
