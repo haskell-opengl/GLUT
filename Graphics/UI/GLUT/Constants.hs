@@ -15,7 +15,7 @@
 
 module Graphics.UI.GLUT.Constants where
 
-import Foreign.C.Types ( CInt, CUInt)
+import Foreign.C.Types ( CInt, CUInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 
 -----------------------------------------------------------------------------
