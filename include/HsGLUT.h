@@ -13,7 +13,7 @@
 #ifndef HSGLUT_H
 #define HSGLUT_H
 
-#include "config.h"
+#include "ghcconfig.h"
 
 #ifdef USE_QUARTZ_OPENGL /* Mac OS X only */
 #include <GLUT/glut.h>
