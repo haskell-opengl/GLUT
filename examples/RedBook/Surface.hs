@@ -59,8 +59,8 @@ display state = do
       scale 0.5 0.5 (0.5 :: GLfloat)
 
       withNURBSObj () $ \nurbsObj -> do
-         setNURBSProperty nurbsObj (SamplingTolerance 25)
-         setNURBSProperty nurbsObj (DisplayMode Fill')
+         setSamplingMethod nurbsObj (PathLength 25)
+         setDisplayMode nurbsObj Fill'
          checkForError nurbsObj $
             nurbsBeginEndSurface nurbsObj $
                withArray (concat ctlPoints) $ \cBuf ->
