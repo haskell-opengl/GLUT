@@ -1,11 +1,11 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Begin
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 -- After a GLUT program has done initial setup such as creating windows and

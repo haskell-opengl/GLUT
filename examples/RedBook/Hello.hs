@@ -53,5 +53,5 @@ main = do
    initialWindowPosition $= Position 100 100
    createWindow "hello"
    myInit
-   setDisplayCallback display
+   displayCallback $= display
    mainLoop

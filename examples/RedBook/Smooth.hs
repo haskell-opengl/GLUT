@@ -58,7 +58,7 @@ main = do
    initialWindowPosition $= Position 100 100
    createWindow progName
    myInit
-   setDisplayCallback display
-   setReshapeCallback (Just reshape)
-   setKeyboardMouseCallback (Just keyboard)
+   displayCallback       $= display
+   reshapeCallback       $= Just reshape
+   keyboardMouseCallback $= Just keyboard
    mainLoop

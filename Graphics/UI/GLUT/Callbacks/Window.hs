@@ -1,49 +1,47 @@
--- #prune
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Callbacks.Window
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Callbacks.Window (
    -- * Redisplay callbacks
-   DisplayCallback, setDisplayCallback, setOverlayDisplayCallback,
+   DisplayCallback, displayCallback, overlayDisplayCallback,
 
    -- * Reshape callback
-   ReshapeCallback, setReshapeCallback,
+   ReshapeCallback, reshapeCallback,
 
    -- * Callback for visibility changes
-   Visibility(..), VisibilityCallback, setVisibilityCallback,
+   Visibility(..), VisibilityCallback, visibilityCallback,
 
    -- * Keyboard and mouse input callback
    Key(..), SpecialKey(..), MouseButton(..), KeyState(..), Modifiers(..),
-   KeyboardMouseCallback, setKeyboardMouseCallback,
-   marshalMouseButton,   -- used only internally
+   KeyboardMouseCallback, keyboardMouseCallback,
 
    -- * Mouse movement callbacks
-   MotionCallback, setMotionCallback, setPassiveMotionCallback,
-   Crossing(..), CrossingCallback, setCrossingCallback,
+   MotionCallback, motionCallback, passiveMotionCallback,
+   Crossing(..), CrossingCallback, crossingCallback,
 
    -- * Spaceball callback
-   SpaceballMotion, SpaceballRotation, SpaceballInput(..),
-   SpaceballCallback, setSpaceballCallback,
+   SpaceballMotion, SpaceballRotation, ButtonIndex, SpaceballInput(..),
+   SpaceballCallback, spaceballCallback,
 
    -- * Dial & button box callback
-   DialAndButtonBoxInput(..),
-   DialAndButtonBoxCallback, setDialAndButtonBoxCallback,
+   DialAndButtonBoxInput(..), DialIndex,
+   DialAndButtonBoxCallback, dialAndButtonBoxCallback,
 
    -- * Tablet callback
-   TabletPosition(..), TabletInput(..), TabletCallback, setTabletCallback,
+   TabletPosition(..), TabletInput(..), TabletCallback, tabletCallback,
 
    -- * Joystick callback
    JoystickButtons(..), JoystickPosition(..),
-   JoystickCallback, setJoystickCallback
+   JoystickCallback, joystickCallback
 ) where
 
 import Control.Monad ( liftM )
@@ -52,8 +50,9 @@ import Data.Char ( chr )
 import Foreign.C.Types ( CInt, CUInt, CUChar )
 import Foreign.Ptr ( FunPtr )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
+import Graphics.Rendering.OpenGL.GL.StateVar (
+   SettableStateVar, makeSettableStateVar )
 import Graphics.UI.GLUT.Callbacks.Registration ( CallbackType(..), setCallback )
-import Graphics.UI.GLUT.State ( ButtonIndex, DialIndex, PollRate )
 import Graphics.UI.GLUT.Constants (
    glut_NOT_VISIBLE, glut_VISIBLE,
    glut_KEY_F1, glut_KEY_F2, glut_KEY_F3, glut_KEY_F4, glut_KEY_F5, glut_KEY_F6,
@@ -61,13 +60,13 @@ import Graphics.UI.GLUT.Constants (
    glut_KEY_F12, glut_KEY_LEFT, glut_KEY_UP, glut_KEY_RIGHT, glut_KEY_DOWN,
    glut_KEY_PAGE_UP, glut_KEY_PAGE_DOWN, glut_KEY_HOME, glut_KEY_END,
    glut_KEY_INSERT,
-   glut_LEFT_BUTTON, glut_MIDDLE_BUTTON, glut_RIGHT_BUTTON,
-   glut_WHEEL_UP, glut_WHEEL_DOWN,
    glut_DOWN, glut_UP,
    glut_ACTIVE_SHIFT, glut_ACTIVE_CTRL, glut_ACTIVE_ALT,
    glut_LEFT, glut_ENTERED,
    glut_JOYSTICK_BUTTON_A, glut_JOYSTICK_BUTTON_B,
    glut_JOYSTICK_BUTTON_C, glut_JOYSTICK_BUTTON_D )
+import Graphics.UI.GLUT.State ( PollRate )
+import Graphics.UI.GLUT.Types ( MouseButton(..), unmarshalMouseButton )
 
 --------------------------------------------------------------------------------
 
@@ -75,7 +74,7 @@ import Graphics.UI.GLUT.Constants (
 
 type DisplayCallback = IO ()
 
--- | Set the display callback for the /current window./ When GLUT determines
+-- | Controls the display callback for the /current window./ When GLUT determines
 -- that the normal plane for the window needs to be redisplayed, the display
 -- callback for the window is called. Before the callback, the /current window/
 -- is set to the window needing to be redisplayed and (if no overlay display
@@ -96,7 +95,7 @@ type DisplayCallback = IO ()
 -- state or overlay redisplay state is set). In this case, the /layer in use/ is
 -- not implicitly changed on entry to the display callback.
 --
--- See 'setOverlayDisplayCallback' to understand how distinct callbacks for the
+-- See 'overlayDisplayCallback' to understand how distinct callbacks for the
 -- overlay and normal plane of a window may be established.
 --
 -- When a window is created, no display callback exists for the window. It is
@@ -113,8 +112,8 @@ type DisplayCallback = IO ()
 -- the window (returned by calling 'Graphics.UI.GLUT.State.isOverlayDamaged') is
 -- also cleared.
 
-setDisplayCallback :: DisplayCallback -> IO ()
-setDisplayCallback =
+displayCallback :: SettableStateVar DisplayCallback
+displayCallback = makeSettableStateVar $
    setCallback DisplayCB glutDisplayFunc makeDisplayCallback . Just
 
 foreign import ccall "wrapper" makeDisplayCallback ::
@@ -125,7 +124,7 @@ foreign import CALLCONV unsafe "glutDisplayFunc" glutDisplayFunc ::
 
 --------------------------------------------------------------------------------
 
--- | Set the overlay display callback for the /current window./ The overlay
+-- | Controls the overlay display callback for the /current window./ The overlay
 -- display callback is functionally the same as the window\'s display callback
 -- except that the overlay display callback is used to redisplay the window\'s
 -- overlay.
@@ -150,11 +149,11 @@ foreign import CALLCONV unsafe "glutDisplayFunc" glutDisplayFunc ::
 -- is cleared.
 --
 -- Initially there is no overlay display callback registered when an overlay is
--- established. See 'setDisplayCallback' to understand how the display callback
+-- established. See 'displayCallback' to understand how the display callback
 -- alone is used if an overlay display callback is not registered.
 
-setOverlayDisplayCallback :: Maybe DisplayCallback -> IO ()
-setOverlayDisplayCallback =
+overlayDisplayCallback :: SettableStateVar (Maybe DisplayCallback)
+overlayDisplayCallback = makeSettableStateVar $
    setCallback OverlayDisplayCB glutOverlayDisplayFunc makeDisplayCallback
 
 foreign import CALLCONV unsafe "glutOverlayDisplayFunc" glutOverlayDisplayFunc
@@ -168,8 +167,8 @@ type ReshapeCallback = Size -> IO ()
 
 type ReshapeCallback' = CInt -> CInt -> IO ()
 
--- | Set the reshape callback for the /current window./ The reshape callback is
--- triggered when a window is reshaped. A reshape callback is also triggered
+-- | Controls the reshape callback for the /current window./ The reshape callback
+-- is triggered when a window is reshaped. A reshape callback is also triggered
 -- immediately before a window\'s first display callback after a window is
 -- created or whenever an overlay for the window is established. The parameter
 -- of the callback specifies the new window size in pixels. Before the callback,
@@ -192,10 +191,10 @@ type ReshapeCallback' = CInt -> CInt -> IO ()
 -- When a top-level window is reshaped, subwindows are not reshaped. It is up to
 -- the GLUT program to manage the size and positions of subwindows within a
 -- top-level window. Still, reshape callbacks will be triggered for subwindows
--- when their size is changed using 'Graphics.UI.GLUT.Window.reshapeWindow'.
+-- when their size is changed using 'Graphics.UI.GLUT.Window.windowSize'.
 
-setReshapeCallback :: Maybe ReshapeCallback -> IO ()
-setReshapeCallback =
+reshapeCallback :: SettableStateVar (Maybe ReshapeCallback)
+reshapeCallback = makeSettableStateVar $
    setCallback ReshapeCB glutReshapeFunc (makeReshapeCallback . unmarshal)
    where unmarshal cb w h = cb (Size (fromIntegral w) (fromIntegral h))
 
@@ -217,7 +216,7 @@ data Visibility
    | Visible    -- ^ No part of the /current window/ is visible, i.e., until the
                 --   window\'s visibility changes, all further rendering to the
                 --   window is discarded.
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 unmarshalVisibility :: CInt -> Visibility
 unmarshalVisibility v
@@ -233,7 +232,7 @@ type VisibilityCallback = Visibility -> IO ()
 
 type VisibilityCallback' = CInt -> IO ()
 
--- | Set the visibility callback for the /current window./ The visibility
+-- | Controls the visibility callback for the /current window./ The visibility
 -- callback for a window is called when the visibility of a window changes.
 -- 
 -- If the visibility callback for a window is disabled and later re-enabled, the
@@ -241,9 +240,10 @@ type VisibilityCallback' = CInt -> IO ()
 -- will be reported, that is if you disable a visibility callback and re-enable
 -- the callback, you are guaranteed the next visibility change will be reported.
 
-setVisibilityCallback :: Maybe VisibilityCallback -> IO ()
-setVisibilityCallback = setCallback VisibilityCB glutVisibilityFunc
-                                    (makeVisibilityCallback . unmarshal)
+visibilityCallback :: SettableStateVar (Maybe VisibilityCallback)
+visibilityCallback = makeSettableStateVar $
+   setCallback VisibilityCB glutVisibilityFunc
+               (makeVisibilityCallback . unmarshal)
    where unmarshal cb  = cb . unmarshalVisibility
 
 foreign import ccall "wrapper" makeVisibilityCallback ::
@@ -308,7 +308,7 @@ data SpecialKey
    | KeyHome
    | KeyEnd
    | KeyInsert
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 unmarshalSpecialKey :: CInt -> SpecialKey
 unmarshalSpecialKey k
@@ -366,40 +366,12 @@ foreign import CALLCONV unsafe "glutSpecialUpFunc" glutSpecialUpFunc ::
 
 --------------------------------------------------------------------------------
 
--- | Mouse buttons, including a wheel
-
-data MouseButton
-   = LeftButton
-   | MiddleButton
-   | RightButton
-   | WheelUp
-   | WheelDown
-   deriving ( Eq, Ord )
-
-marshalMouseButton :: MouseButton -> CInt
-marshalMouseButton LeftButton   = glut_LEFT_BUTTON
-marshalMouseButton MiddleButton = glut_MIDDLE_BUTTON
-marshalMouseButton RightButton  = glut_RIGHT_BUTTON
-marshalMouseButton WheelUp      = glut_WHEEL_UP
-marshalMouseButton WheelDown    = glut_WHEEL_DOWN
-
-unmarshalMouseButton :: CInt -> MouseButton
-unmarshalMouseButton b
-   | b == glut_LEFT_BUTTON   = LeftButton
-   | b == glut_MIDDLE_BUTTON = MiddleButton
-   | b == glut_RIGHT_BUTTON  = RightButton
-   | b == glut_WHEEL_UP      = WheelUp
-   | b == glut_WHEEL_DOWN    = WheelDown
-   | otherwise = error "unmarshalMouseButton"
-
---------------------------------------------------------------------------------
-
 -- | The current state of a key or button
 
 data KeyState
    = Down
    | Up
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 unmarshalKeyState :: CInt -> KeyState
 unmarshalKeyState s
@@ -430,7 +402,8 @@ foreign import CALLCONV unsafe "glutMouseFunc" glutMouseFunc ::
 
 -- | The state of the keyboard modifiers
 
-data Modifiers = Modifiers { shift, ctrl, alt :: KeyState } deriving ( Eq, Ord )
+data Modifiers = Modifiers { shift, ctrl, alt :: KeyState }
+   deriving ( Eq, Ord, Show )
 
 -- Could use fromBitfield + Enum/Bounded instances + marshalModifier instead...
 unmarshalModifiers :: CInt -> Modifiers
@@ -452,18 +425,21 @@ data Key
    = Char Char
    | SpecialKey SpecialKey
    | MouseButton MouseButton
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 -- | A keyboard\/mouse callback
 
 type KeyboardMouseCallback =
    Key -> KeyState -> Modifiers -> Position -> IO ()
 
--- | Set the keyboard\/mouse callback for the /current window./ The
+-- | Controls the keyboard\/mouse callback for the /current window./ The
 -- keyboard\/mouse callback for a window is called when the state of a key or
 -- mouse button changes. The callback parameters indicate the new state of the
 -- key\/button, the state of the keyboard modifiers, and the mouse location in
 -- window relative coordinates.
+
+keyboardMouseCallback :: SettableStateVar (Maybe KeyboardMouseCallback)
+keyboardMouseCallback = makeSettableStateVar setKeyboardMouseCallback
 
 setKeyboardMouseCallback :: Maybe KeyboardMouseCallback -> IO ()
 setKeyboardMouseCallback Nothing = do
@@ -492,13 +468,13 @@ type MotionCallback = Position -> IO ()
 
 type MotionCallback' = CInt -> CInt -> IO ()
 
--- | Set the motion callback for the /current window./ The motion callback for a
--- window is called when the mouse moves within the window while one or more
--- mouse buttons are pressed. The callback parameter indicates the mouse
+-- | Controls the motion callback for the /current window./ The motion callback
+-- for a window is called when the mouse moves within the window while one or
+-- more mouse buttons are pressed. The callback parameter indicates the mouse
 -- location in window relative coordinates.
 
-setMotionCallback :: Maybe MotionCallback -> IO ()
-setMotionCallback =
+motionCallback :: SettableStateVar (Maybe MotionCallback)
+motionCallback = makeSettableStateVar $
    setCallback MotionCB glutMotionFunc (makeMotionCallback . unmarshal)
    where unmarshal cb x y = cb (Position (fromIntegral x) (fromIntegral y))
 
@@ -510,13 +486,13 @@ foreign import CALLCONV unsafe "glutMotionFunc" glutMotionFunc ::
 
 --------------------------------------------------------------------------------
 
--- | Set the passive motion callback for the /current window./ The passive
+-- | Controls the passive motion callback for the /current window./ The passive
 -- motion callback for a window is called when the mouse moves within the window
 -- while /no/ mouse buttons are pressed. The callback parameter indicates the
 -- mouse location in window relative coordinates.
 
-setPassiveMotionCallback :: Maybe MotionCallback -> IO ()
-setPassiveMotionCallback =
+passiveMotionCallback :: SettableStateVar (Maybe MotionCallback)
+passiveMotionCallback = makeSettableStateVar $
    setCallback MotionCB glutPassiveMotionFunc (makeMotionCallback . unmarshal)
    where unmarshal cb x y = cb (Position (fromIntegral x) (fromIntegral y))
 
@@ -532,7 +508,7 @@ foreign import CALLCONV unsafe "glutPassiveMotionFunc" glutPassiveMotionFunc ::
 data Crossing
    = WindowLeft    -- ^ The mouse pointer has left the /current window./
    | WindowEntered -- ^ The mouse pointer has entered the /current window./
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 unmarshalCrossing :: CInt -> Crossing
 unmarshalCrossing c
@@ -548,14 +524,14 @@ type CrossingCallback = Crossing -> IO ()
 
 type CrossingCallback' = CInt -> IO ()
 
--- | Set the mouse enter\/leave callback for the /current window./ Note that
--- some window systems may not generate accurate enter\/leave callbacks.
+-- | Controls the mouse enter\/leave callback for the /current window./ Note
+-- that some window systems may not generate accurate enter\/leave callbacks.
 --
 -- /X Implementation Notes:/ An X implementation of GLUT should generate
 -- accurate enter\/leave callbacks.
 
-setCrossingCallback :: Maybe CrossingCallback -> IO ()
-setCrossingCallback =
+crossingCallback :: SettableStateVar (Maybe CrossingCallback)
+crossingCallback = makeSettableStateVar $
    setCallback CrossingCB glutEntryFunc (makeCrossingCallback . unmarshal)
    where unmarshal cb = cb . unmarshalCrossing
 
@@ -577,6 +553,10 @@ type SpaceballMotion = CInt
 
 type SpaceballRotation = CInt
 
+-- | The index of a specific buttons of an input device.
+
+type ButtonIndex = CInt
+
 -- | The state of the Spaceball has changed.
 
 data SpaceballInput
@@ -588,15 +568,18 @@ data SpaceballInput
 
 type SpaceballCallback = SpaceballInput -> IO ()
 
--- | Set the Spaceball callback for the /current window./ The Spaceball callback
--- for a window is called when the window has Spaceball input focus (normally,
--- when the mouse is in the window) and the user generates Spaceball
+-- | Controls the Spaceball callback for the /current window./ The Spaceball
+-- callback for a window is called when the window has Spaceball input focus
+-- (normally, when the mouse is in the window) and the user generates Spaceball
 -- translations, rotations, or button presses. The number of available Spaceball
--- buttons can be determined with 'Graphics.UI.GLUT.State.getSpaceballInfo'.
+-- buttons can be determined with 'Graphics.UI.GLUT.State.numSpaceballButtons'.
 --
 -- Registering a Spaceball callback when a Spaceball device is not available has
 -- no effect and is not an error. In this case, no Spaceball callbacks will be
 -- generated.
+
+spaceballCallback :: SettableStateVar (Maybe SpaceballCallback)
+spaceballCallback = makeSettableStateVar setSpaceballCallback
 
 setSpaceballCallback :: Maybe SpaceballCallback -> IO ()
 setSpaceballCallback Nothing = do
@@ -662,27 +645,34 @@ foreign import CALLCONV unsafe "glutSpaceballButtonFunc"
 
 --------------------------------------------------------------------------------
 
+-- | The index of a specific dial of a dial and button box.
+
+type DialIndex = CInt
+
 -- | The dial & button box state has changed.
 
 data DialAndButtonBoxInput
    = DialAndButtonBoxButton ButtonIndex KeyState
    | DialAndButtonBoxDial   DialIndex CInt
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 -- | A dial & button box callback
 
 type DialAndButtonBoxCallback = DialAndButtonBoxInput -> IO ()
 
--- | Set the dial & button box callback for the /current window./ The dial &
--- button box button callback for a window is called when the window has dial &
--- button box input focus (normally, when the mouse is in the window) and the
+-- | Controls the dial & button box callback for the /current window./ The dial
+-- & button box button callback for a window is called when the window has dial
+-- & button box input focus (normally, when the mouse is in the window) and the
 -- user generates dial & button box button presses or dial changes. The number
 -- of available dial & button box buttons and dials can be determined with
--- 'Graphics.UI.GLUT.State.getDialAndButtonBoxInfo'.
+-- 'Graphics.UI.GLUT.State.numDialsAndButtons'.
 --
 -- Registering a dial & button box callback when a dial & button box device is
 -- not available is ineffectual and not an error. In this case, no dial & button
 -- box button will be generated.
+
+dialAndButtonBoxCallback :: SettableStateVar (Maybe DialAndButtonBoxCallback)
+dialAndButtonBoxCallback = makeSettableStateVar setDialAndButtonBoxCallback
 
 setDialAndButtonBoxCallback :: Maybe DialAndButtonBoxCallback -> IO ()
 setDialAndButtonBoxCallback Nothing = do
@@ -741,15 +731,18 @@ data TabletInput
 
 type TabletCallback = TabletInput -> TabletPosition -> IO ()
 
--- | Set the tablet callback for the /current window./ The tablet callback for a
--- window is called when the window has tablet input focus (normally, when the
--- mouse is in the window) and the user generates tablet motion or button
+-- | Controls the tablet callback for the /current window./ The tablet callback
+-- for a window is called when the window has tablet input focus (normally, when
+-- the mouse is in the window) and the user generates tablet motion or button
 -- presses. The number of available tablet buttons can be determined with
--- 'Graphics.UI.GLUT.State.getTabletInfo'.
+-- 'Graphics.UI.GLUT.State.numTabletButtons'.
 --
 -- Registering a tablet callback when a tablet device is not available is
 -- ineffectual and not an error. In this case, no tablet callbacks will be
 -- generated.
+
+tabletCallback :: SettableStateVar (Maybe TabletCallback)
+tabletCallback = makeSettableStateVar setTabletCallback
 
 setTabletCallback :: Maybe TabletCallback -> IO ()
 setTabletCallback Nothing = do
@@ -801,8 +794,8 @@ foreign import CALLCONV unsafe "glutTabletButtonFunc" glutTabletButtonFunc ::
 
 data JoystickButtons = JoystickButtons {
    joystickButtonA, joystickButtonB,
-   joystickButtonC, joystickButtonD :: KeyState
-   } deriving ( Eq, Ord )
+   joystickButtonC, joystickButtonD :: KeyState }
+   deriving ( Eq, Ord, Show )
 
 -- Could use fromBitfield + Enum/Bounded instances + unmarshalJoystickButton
 -- instead...
@@ -824,7 +817,8 @@ unmarshalJoystickButtons m = JoystickButtons {
 --
 -- * if available (e.g. rudder): negative = down, positive = up
 
-data JoystickPosition = JoystickPosition CInt CInt CInt deriving ( Eq, Ord )
+data JoystickPosition = JoystickPosition CInt CInt CInt
+   deriving ( Eq, Ord, Show )
 
 --------------------------------------------------------------------------------
 
@@ -834,15 +828,15 @@ type JoystickCallback = JoystickButtons -> JoystickPosition -> IO ()
 
 type JoystickCallback' = CUInt -> CInt -> CInt -> CInt -> IO ()
 
--- | Set the joystick callback for the /current window./ The joystick callback
--- is called either due to polling of the joystick at the uniform timer interval
--- specified (if > 0) or in response to an explicit call of
+-- | Controls the joystick callback for the /current window./ The joystick
+-- callback is called either due to polling of the joystick at the uniform timer
+-- interval specified (if > 0) or in response to an explicit call of
 -- 'Graphics.UI.GLUT.DeviceControl.forceJoystickCallback'.
 --
 -- /X Implementation Notes:/ Currently GLUT has no joystick support for X11.
 
-setJoystickCallback :: Maybe JoystickCallback -> PollRate -> IO ()
-setJoystickCallback c rate =
+joystickCallback :: SettableStateVar (Maybe JoystickCallback, PollRate)
+joystickCallback = makeSettableStateVar $ \(c, rate) ->
     setCallback JoystickCB (\f -> glutJoystickFunc f rate)
                 (makeJoystickFunc . unmarshal) c
     where unmarshal cb b x y z = cb (unmarshalJoystickButtons b)

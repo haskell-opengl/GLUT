@@ -1,40 +1,42 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Callbacks.Global
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Callbacks.Global (
    -- * Menu status callback
-   MenuUsage(..), MenuStatusCallback, setMenuStatusCallback,
+   MenuUsage(..), MenuStatusCallback, menuStatusCallback,
 
    -- * Idle callback
-   IdleCallback, setIdleCallback,
+   IdleCallback, idleCallback,
 
    -- * Timer callbacks
-   Timeout, TimerCallback, setTimerCallback
+   Timeout, TimerCallback, addTimerCallback
 ) where
 
 import Control.Monad.Fix ( MonadFix(..) )
 import Foreign.C.Types ( CInt, CUInt )
 import Foreign.Ptr ( FunPtr )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..) )
-import Graphics.UI.GLUT.Constants
-import Graphics.UI.GLUT.Callbacks.Registration ( CallbackType(..), setCallback,
-                                                 registerForCleanup )
+import Graphics.Rendering.OpenGL.GL.StateVar (
+   SettableStateVar, makeSettableStateVar )
+import Graphics.UI.GLUT.Constants ( glut_MENU_NOT_IN_USE, glut_MENU_IN_USE )
+import Graphics.UI.GLUT.Callbacks.Registration (
+   CallbackType(..), setCallback, registerForCleanup )
 
 --------------------------------------------------------------------------------
 
 data MenuUsage
    = NotInUse
    | InUse
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 unmarshalMenuUsage :: CInt -> MenuUsage
 unmarshalMenuUsage u
@@ -46,13 +48,13 @@ type MenuStatusCallback  = MenuUsage -> Position -> IO ()
 
 type MenuStatusCallback' = CInt -> CInt -> CInt -> IO ()
 
--- | Set the global menu status callback so a GLUT program can determine when a
--- menu is in use or not. When a menu status callback is registered, it will be
--- called with the value 'InUse' when pop-up menus are in use by the user; and
--- the callback will be called with the value 'NotInUse' when pop-up menus are
--- no longer in use. Additionally, the location in window coordinates of the
--- button press that caused the menu to go into use, or the location where the
--- menu was released (maybe outside the window). Other callbacks continue to
+-- | Controls the global menu status callback so a GLUT program can determine
+-- when a menu is in use or not. When a menu status callback is registered, it
+-- will be called with the value 'InUse' when pop-up menus are in use by the
+-- user; and the callback will be called with the value 'NotInUse' when pop-up
+-- menus are no longer in use. Additionally, the location in window coordinates
+-- of the button press that caused the menu to go into use, or the location where
+-- the menu was released (maybe outside the window). Other callbacks continue to
 -- operate (except mouse motion callbacks) when pop-up menus are in use so the
 -- menu status callback allows a program to suspend animation or other tasks
 -- when menus are in use. The cascading and unmapping of sub-menus from an
@@ -64,9 +66,11 @@ type MenuStatusCallback' = CInt -> CInt -> CInt -> IO ()
 -- /current window/ will be set to the window from which the initial menu was
 -- popped up from, also in both cases.
 
-setMenuStatusCallback :: Maybe MenuStatusCallback -> IO ()
-setMenuStatusCallback = setCallback MenuStatusCB glutMenuStatusFunc
-                                    (makeMenuStatusCallback . unmarshal)
+menuStatusCallback :: SettableStateVar (Maybe MenuStatusCallback)
+menuStatusCallback =
+   makeSettableStateVar $
+      setCallback MenuStatusCB glutMenuStatusFunc
+                  (makeMenuStatusCallback . unmarshal)
    where unmarshal cb s x y =
             cb (unmarshalMenuUsage s)
                (Position (fromIntegral x) (fromIntegral y))
@@ -81,7 +85,7 @@ foreign import CALLCONV unsafe "glutMenuStatusFunc" glutMenuStatusFunc ::
 
 type IdleCallback = IO ()
 
--- | Set the global idle callback so a GLUT program can perform background
+-- | Controls the global idle callback so a GLUT program can perform background
 -- processing tasks or continuous animation when window system events are not
 -- being received. If enabled, the idle callback is continuously called when
 -- events are not being received. The /current window/ and /current menu/ will
@@ -93,8 +97,9 @@ type IdleCallback = IO ()
 -- minimized to avoid affecting the program\'s interactive response. In general,
 -- not more than a single frame of rendering should be done in an idle callback.
 
-setIdleCallback :: Maybe IdleCallback -> IO ()
-setIdleCallback = setCallback IdleCB glutIdleFunc makeIdleCallback
+idleCallback :: SettableStateVar (Maybe IdleCallback)
+idleCallback =
+   makeSettableStateVar $ setCallback IdleCB glutIdleFunc makeIdleCallback
 
 foreign import ccall "wrapper" makeIdleCallback ::
    IdleCallback -> IO (FunPtr IdleCallback)
@@ -120,8 +125,8 @@ type TimerCallback' = CInt -> IO ()
 -- is generated. GLUT attempts to deliver the timer callback as soon as possible
 -- after the expiration of the callback\'s time interval.
 
-setTimerCallback :: Timeout -> TimerCallback -> IO ()
-setTimerCallback msecs timerCallback = do
+addTimerCallback :: Timeout -> TimerCallback -> IO ()
+addTimerCallback msecs timerCallback = do
    funPtr <- mfix (\self -> makeTimerCallback (\_ -> do registerForCleanup self
                                                         timerCallback))
    glutTimerFunc msecs funPtr 0

@@ -1,11 +1,11 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.GameMode
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 -- In addition to the functionality offered by
@@ -41,8 +41,9 @@ import Graphics.UI.GLUT.Constants (
    glut_GAME_MODE_WIDTH, glut_GAME_MODE_HEIGHT,
    glut_GAME_MODE_PIXEL_DEPTH, glut_GAME_MODE_REFRESH_RATE,
    glut_GAME_MODE_ACTIVE )
-import Graphics.UI.GLUT.Initialization ( Relation, relationToString )
-import Graphics.UI.GLUT.Window ( Window, makeWindow )
+import Graphics.UI.GLUT.Initialization ( Relation )
+import Graphics.UI.GLUT.Types ( makeWindow, relationToString )
+import Graphics.UI.GLUT.Window ( Window )
 
 --------------------------------------------------------------------------------
 
@@ -55,7 +56,7 @@ data Capability'
    | RefreshRate   -- ^ Refresh rate in Hertz
    | Num'          -- ^ Match the Nth frame buffer configuration compatible with
                    --   the given capabilities (numbering starts at 1)
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 capabilityToString :: Capability' -> String
 capabilityToString Width        = "width"
@@ -67,7 +68,7 @@ capabilityToString Num'         = "num"
 -- | A single capability description for 'setGameModeCapabilities'.
 
 data CapabilityDescription' = Where' Capability' Relation CInt
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 capabilityDescriptionToString :: CapabilityDescription' -> String
 capabilityDescriptionToString (Where' c r i) =

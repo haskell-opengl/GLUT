@@ -1,12 +1,11 @@
--- #prune
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Initialization
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 -- Actions and state variables in this module are used to initialize GLUT state.
@@ -36,7 +35,6 @@ module Graphics.UI.GLUT.Initialization (
    DisplayMode(..), initialDisplayMode, isDisplayModePossible,
 
    -- * Setting the initial display mode (II)
-   relationToString,   -- used only internally
    Capability(..), Relation(..), CapabilityDescription(..),
    initialDisplayCapabilities
 ) where
@@ -62,6 +60,7 @@ import Graphics.UI.GLUT.Constants (
    glut_INIT_DISPLAY_MODE,
    glut_DISPLAY_MODE_POSSIBLE )
 import Graphics.UI.GLUT.QueryUtils ( simpleGet )
+import Graphics.UI.GLUT.Types ( Relation(..), relationToString )
 
 --------------------------------------------------------------------------------
 
@@ -218,11 +217,11 @@ data DisplayMode
    | Stereo      -- ^ Select A Stereo Window.
    | Luminance   -- ^ Select a window with a \"luminance\" color model. This model provides the functionality of OpenGL\'s
                  --   RGBA color model, but the green and blue components are not maintained in the frame buffer. Instead
-                 --   each pixel\'s red component is converted to an index between zero and  'Graphics.UI.GLUT.State.getColormapEntryCount'
+                 --   each pixel\'s red component is converted to an index between zero and  'Graphics.UI.GLUT.Colormap.numColorMapEntries'
                  --   and looked up in a per-window color map to determine the color of pixels within the window. The initial
                  --   colormap of 'Luminance' windows is initialized to be a linear gray ramp, but can be modified with GLUT\'s
                  --   colormap actions. /Implementation Notes:/ 'Luminance' is not supported on most OpenGL platforms.
-   deriving ( Eq, Ord, Enum, Bounded )
+   deriving ( Eq, Ord, Show )
 
 marshalDisplayMode :: DisplayMode -> CUInt
 marshalDisplayMode m = case m of
@@ -257,11 +256,10 @@ getInitialDisplayMode :: IO [DisplayMode]
 getInitialDisplayMode = simpleGet i2dms glut_INIT_DISPLAY_MODE
 
 i2dms :: CInt -> [DisplayMode]
-i2dms = fromBitfield marshalDisplayMode . fromIntegral
-
-fromBitfield :: (Enum a, Bounded a, Bits b) => (a -> b) -> b -> [a]
-fromBitfield marshal bitfield =
-   [ c | c <- [ minBound .. maxBound ],  (bitfield .&. marshal c) /= 0 ]
+i2dms bitfield =
+   [ c | c <- [ RGBA, RGB, Index, Single, Double, Accum, Alpha,
+                Depth, Stencil, Multisample, Stereo, Luminance ]
+       , (fromIntegral bitfield .&. marshalDisplayMode c) /= 0 ]
 
 setInitialDisplayMode :: [DisplayMode] -> IO ()
 setInitialDisplayMode = glutInitDisplayMode . toBitfield marshalDisplayMode
@@ -396,7 +394,7 @@ data Capability
                   --   System, boolean indicating if the frame buffer
                   --   configuration\'s X visual is of type @DirectColor@.
                   --   Default is \"'IsEqualTo' @1@\".
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 capabilityToString :: Capability -> String
 capabilityToString RGBA'        = "rgba"
@@ -428,37 +426,6 @@ capabilityToString XPseudoColor = "xpseudocolor"
 capabilityToString XTrueColor   = "xtruecolor"
 capabilityToString XDirectColor = "xdirectcolor"
 
--- | Relation between a 'Capability' and a numeric value.
-
-data Relation
-   = IsEqualTo        -- ^ Equal.
-   | IsNotEqualTo     -- ^ Not equal.
-   | IsLessThan       -- ^ Less than and preferring larger difference (the least
-                      --   is best).
-   | IsNotGreaterThan -- ^ Less than or equal and preferring larger difference
-                      --   (the least is best).
-   | IsGreaterThan    -- ^ Greater than and preferring larger differences (the
-                      --   most is best).
-   | IsAtLeast        -- ^ Greater than or equal and preferring more instead of
-                      --   less. This relation is useful for allocating
-                      --   resources like color precision or depth buffer
-                      --   precision where the maximum precision is generally
-                      --   preferred. Contrast with 'IsNotLessThan' relation.
-   | IsNotLessThan    -- ^ Greater than or equal but preferring less instead of
-                      --   more. This relation is useful for allocating
-                      --   resources such as stencil bits or auxillary color
-                      --   buffers where you would rather not over-allocate.
-   deriving ( Eq, Ord )
-
-relationToString :: Relation -> String
-relationToString IsEqualTo        = "="
-relationToString IsNotEqualTo     = "!="
-relationToString IsLessThan       = "<"
-relationToString IsNotGreaterThan = "<="
-relationToString IsGreaterThan    = ">"
-relationToString IsAtLeast        = ">="
-relationToString IsNotLessThan    = "~"
-
 -- | A single capability description for 'initialDisplayCapabilities'.
 
 data CapabilityDescription
@@ -468,7 +435,7 @@ data CapabilityDescription
                                     --   not specified, each capability has a
                                     --   different default, see the different
                                     --   constructors of 'Capability'.
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 capabilityDescriptionToString ::  CapabilityDescription -> String
 capabilityDescriptionToString (Where c r i) =

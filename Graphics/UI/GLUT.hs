@@ -1,11 +1,11 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 -- A Haskell binding for GLUT, the OpenGL Utility Toolkit, a window system
@@ -57,9 +57,9 @@ module Graphics.UI.GLUT (
    module Graphics.UI.GLUT.GameMode
 )  where
 
-import Graphics.UI.GLUT.Initialization hiding ( relationToString )
+import Graphics.UI.GLUT.Initialization
 import Graphics.UI.GLUT.Begin
-import Graphics.UI.GLUT.Window hiding ( makeWindow )
+import Graphics.UI.GLUT.Window
 import Graphics.UI.GLUT.Overlay
 import Graphics.UI.GLUT.Menu
 import Graphics.UI.GLUT.Callbacks

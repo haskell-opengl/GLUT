@@ -1,11 +1,11 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Menu
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 -- GLUT supports simple cascading pop-up menus. They are designed to let a user
@@ -16,7 +16,8 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Menu (
-   Menu(..), MenuItem(..), MenuCallback, attachMenu
+   Menu(..), MenuItem(..), MenuCallback, attachMenu,
+   numMenuItems
 ) where
 
 import Data.Array ( listArray, (!) )
@@ -28,8 +29,13 @@ import Foreign.Ptr ( FunPtr, freeHaskellFunPtr )
 import Control.Monad ( liftM, unless, zipWithM, when )
 import System.IO.Unsafe ( unsafePerformIO )
 import Graphics.Rendering.OpenGL.GL.StateVar (
-   HasGetter(get), HasSetter(($=)), StateVar, makeStateVar )
-import Graphics.UI.GLUT.Callbacks.Window ( MouseButton, marshalMouseButton )
+   HasGetter(get), HasSetter(($=)),
+   GettableStateVar, makeGettableStateVar,
+   StateVar, makeStateVar )
+import Graphics.UI.GLUT.Callbacks.Window ( MouseButton )
+import Graphics.UI.GLUT.Constants ( glut_MENU_NUM_ITEMS )
+import Graphics.UI.GLUT.QueryUtils ( simpleGet )
+import Graphics.UI.GLUT.Types ( marshalMouseButton )
 import Graphics.UI.GLUT.Window ( Window, currentWindow )
 
 --------------------------------------------------------------------------------
@@ -133,7 +139,8 @@ modifyMenuTable = modifyIORef theMenuTable
 -- To facilitate cleanup, we have to keep track how to destroy menus which are
 -- currently attached in a window to a mouse button.
 
-data MenuHook = MenuHook Window MouseButton deriving ( Eq, Ord )
+data MenuHook = MenuHook Window MouseButton
+   deriving ( Eq, Ord, Show )
 
 type Destructor = IO ()
 
@@ -290,3 +297,10 @@ detachMenu_ :: MouseButton -> IO ()
 detachMenu_ = glutDetachMenu . marshalMouseButton
 
 foreign import CALLCONV unsafe "glutDetachMenu" glutDetachMenu :: CInt -> IO ()
+
+--------------------------------------------------------------------------------
+
+-- | Contains the number of menu items in the /current menu./
+
+numMenuItems :: GettableStateVar Int
+numMenuItems = makeGettableStateVar $ simpleGet fromIntegral glut_MENU_NUM_ITEMS

@@ -1,11 +1,11 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Fonts
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 -- GLUT supports two types of font rendering: stroke fonts, meaning each
@@ -18,25 +18,49 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Fonts (
-   -- * Fonts
    Font(..), BitmapFont(..), StrokeFont(..),
-
-   -- * Rendering and measuring Strings
-   renderString, stringWidth
 ) where
 
+import Control.Monad ( liftM )
 import Data.Char ( ord )
 import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
 import Foreign.Ptr ( Ptr )
+import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint )
 
 --------------------------------------------------------------------------------
 
--- | A GLUT font is either a bitmap font or a stroke font.
-data Font
-   = BitmapFont BitmapFont
-   | StrokeFont StrokeFont
-   deriving ( Eq, Ord )
+class Font a where
+   -- | Render the string in the named font, without using any display lists.
+   -- Rendering a nonexistent character has no effect.
+   --
+   -- If the font is a bitmap font, 'renderString' automatically sets the OpenGL
+   -- unpack pixel storage modes it needs appropriately and saves and restores
+   -- the previous modes before returning. The generated call to
+   -- 'Graphics.Rendering.OpenGL.GL.bitmap' will adjust the current raster
+   -- position based on the width of the string.
+   -- If the font is a stroke font, 'Graphics.Rendering.OpenGL.GL.translatef' is
+   -- used to translate the current model view matrix to advance the width of
+   -- the string.
+
+   renderString :: a -> String -> IO ()
+
+   -- | For a bitmap font, return the width in pixels of a string. For a stroke
+   -- font, return the width in units. While the width of characters in a font
+   -- may vary (though fixed width fonts do not vary), the maximum height
+   -- characteristics of a particular font are fixed.
+
+   stringWidth :: a -> String -> IO GLint
+
+
+instance Font BitmapFont where
+   renderString   = bitmapString
+   stringWidth  f = liftM fromIntegral . bitmapLength f
+
+
+instance Font StrokeFont where
+   renderString   = strokeString
+   stringWidth  f = liftM fromIntegral . strokeLength f
 
 --------------------------------------------------------------------------------
 
@@ -60,7 +84,7 @@ data BitmapFont
                   --   (@-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1@)
    | Helvetica18  -- ^ A 18-point proportional spaced Helvetica font.
                   --   (@-adobe-helvetica-medium-r-normal--18-180-75-75-p-98-iso8859-1@)
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 -- Alas, fonts in GLUT are not denoted by some integral value, but by opaque
 -- pointers on the C side. Even worse: For WinDoze, they are simply small ints,
@@ -94,7 +118,7 @@ data StrokeFont
                --   'Roman') for ASCII characters 32 through 127. The maximum
                --   top character in the font is 119.05 units; the bottom
                --   descends 33.33 units. Each character is 104.76 units wide.
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 -- Same remarks as for GLUTbitmapFont
 type GLUTstrokeFont = Ptr ()
@@ -106,25 +130,6 @@ marhshalStrokeFont :: StrokeFont -> IO GLUTstrokeFont
 marhshalStrokeFont f = case f of
    Roman     -> hOpenGL_marshalStrokeFont 0
    MonoRoman -> hOpenGL_marshalStrokeFont 1
-
---------------------------------------------------------------------------------
-
--- | Render the string in the named font, without using any display lists.
--- Rendering a nonexistent character has no effect.
---
--- If the font is a bitmap font, 'renderString' automatically sets the OpenGL
--- unpack pixel storage modes it needs appropriately and saves and restores the
--- previous modes before returning. The generated call to
--- 'Graphics.Rendering.OpenGL.GL.bitmap' will adjust the current raster position
--- based on the width of the string.
---
--- If the font is a stroke font, 'Graphics.Rendering.OpenGL.GL.translatef' is
--- used to translate the current model view matrix to advance the width of the
--- string.
-
-renderString :: Font -> String -> IO ()
-renderString (BitmapFont f) s = bitmapString f s
-renderString (StrokeFont f) s = strokeString f s
 
 --------------------------------------------------------------------------------
 
@@ -148,17 +153,6 @@ strokeString f s = do
 
 foreign import CALLCONV unsafe "glutStrokeCharacter" glutStrokeCharacter ::
    GLUTstrokeFont -> CInt -> IO ()
-
---------------------------------------------------------------------------------
-
--- | For a bitmap font, return the width in pixels of a string. For a stroke
--- font, return the width in units. While the width of characters in a font may
--- vary (though fixed width fonts do not vary), the maximum height
--- characteristics of a particular font are fixed.
-
-stringWidth :: Font -> String -> IO CInt
-stringWidth (BitmapFont f) s = bitmapLength f s
-stringWidth (StrokeFont f) s = strokeLength f s
 
 --------------------------------------------------------------------------------
 

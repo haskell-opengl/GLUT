@@ -1,11 +1,11 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.DeviceControl
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 -- GLUT offers some routines for controlling the key repeat and polling the
@@ -102,7 +102,7 @@ unmarshalPerWindowKeyRepeat _ = PerWindowKeyRepeatOn
 
 -- | Controls if auto repeat keystrokes are reported to the /current window./
 -- Ignoring auto repeated keystrokes is generally done in conjunction with using
--- the 'Graphics.UI.GLUT.Callbacks.Window.setKeyboardMouseCallback'. If you do
+-- the 'Graphics.UI.GLUT.Callbacks.Window.keyboardMouseCallback'. If you do
 -- not ignore auto repeated keystrokes, your GLUT application will experience
 -- repeated release\/press callbacks. Games using the keyboard will typically
 -- want to ignore key repeat.
@@ -119,7 +119,7 @@ foreign import CALLCONV unsafe "glutIgnoreKeyRepeat" glutIgnoreKeyRepeat ::
 --------------------------------------------------------------------------------
 
 -- | Execute the joystick callback set by
--- 'Graphics.UI.GLUT.Callbacks.Window.setJoystickCallback' once (if one exists).
+-- 'Graphics.UI.GLUT.Callbacks.Window.joystickCallback' once (if one exists).
 -- This is done in a synchronous fashion within the current context, i.e. when
 -- 'forceJoystickCallback' returns, the callback will have already happened.
 		

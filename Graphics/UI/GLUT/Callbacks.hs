@@ -1,11 +1,11 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Callbacks
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 --
@@ -20,9 +20,9 @@
 -- Callbacks for input events should be delivered to the window the event occurs
 -- in. Events should not propagate to parent windows.
 --
--- A callback of type @Foo@ can registered by passing 'Just' the callback to
--- @setFooCallback@. Almost all callbacks can be de-registered by passing
--- 'Nothing' to the corresponding @setFooCallback@, the only exceptions being
+-- A callback of type @Foo@ can registered by setting @fooCallback@ to 'Just'
+-- the callback. Almost all callbacks can be de-registered by setting
+-- the corresponding @fooCallback@ to 'Nothing', the only exceptions being
 -- 'Graphics.UI.GLUT.Callbacks.Window.DisplayCallback' (can only be
 -- re-registered) and 'Graphics.UI.GLUT.Callbacks.Global.TimerCallback' (can\'t
 -- be unregistered).
@@ -43,5 +43,5 @@ module Graphics.UI.GLUT.Callbacks (
    module Graphics.UI.GLUT.Callbacks.Global
 ) where
 
-import Graphics.UI.GLUT.Callbacks.Window hiding ( marshalMouseButton )
+import Graphics.UI.GLUT.Callbacks.Window
 import Graphics.UI.GLUT.Callbacks.Global

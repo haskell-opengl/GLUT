@@ -2,11 +2,11 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Callbacks.Registration
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 --------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ data CallbackType
    | SpaceballButtonCB | ButtonBoxCB       | DialsCB
    | TabletMotionCB    | TabletButtonCB    | JoystickCB
    | MenuStatusCB      | IdleCB
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 isGlobal :: CallbackType -> Bool
 isGlobal MenuStatusCB = True
@@ -49,7 +49,8 @@ isGlobal _            = False
 -- To uniquely identify a particular callback, the associated window is needed
 -- for window callbacks.
 
-data CallbackID = CallbackID (Maybe Window) CallbackType   deriving (Eq, Ord)
+data CallbackID = CallbackID (Maybe Window) CallbackType
+   deriving ( Eq, Ord, Show )
 
 getCallbackID :: CallbackType -> IO CallbackID
 getCallbackID callbackType = do

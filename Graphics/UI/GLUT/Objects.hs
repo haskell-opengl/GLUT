@@ -1,11 +1,11 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Objects
--- Copyright   :  (c) Sven Panne 2002
+-- Copyright   :  (c) Sven Panne 2003
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven_panne@yahoo.com
--- Stability   :  experimental
+-- Stability   :  provisional
 -- Portability :  portable
 --
 -- GLUT includes a number of routines for generating easily recognizable 3D
@@ -44,7 +44,7 @@ data Flavour
      Solid
    | -- | Object is rendered as a wireframe without surface normals.
      Wireframe
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 --------------------------------------------------------------------------------
 
@@ -91,7 +91,7 @@ data Object
      Torus Radius Radius Sides Rings
    | -- | A teapot with a given relative size.
      Teapot Height
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Show )
 
 --------------------------------------------------------------------------------
 
