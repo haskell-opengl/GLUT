@@ -20,4 +20,4 @@ module Graphics.UI.GLUT.Debugging (
 -- | Report any pending GL errors to stderr (which is typically the console).
 -- If there are no pending errors, this routine does nothing.
 
-foreign import ccall unsafe "glutReportErrors" reportErrors :: IO ()
+foreign import CALLCONV unsafe "glutReportErrors" reportErrors :: IO ()

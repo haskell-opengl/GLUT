@@ -180,7 +180,7 @@ type MenuCB = CInt -> IO ()
 -- @SERVER_OVERLAY_VISUALS@ convention is used to determine if overlay visuals
 -- are available.
 
-foreign import ccall unsafe "glutCreateMenu" glutCreateMenu ::
+foreign import CALLCONV unsafe "glutCreateMenu" glutCreateMenu ::
    FunPtr MenuCB -> IO MenuID
 
 foreign import ccall "wrapper" makeMenuFunc :: MenuCB -> IO (FunPtr MenuCB)
@@ -188,14 +188,14 @@ foreign import ccall "wrapper" makeMenuFunc :: MenuCB -> IO (FunPtr MenuCB)
 -- | Destroy the specified menu. If it was the /current menu/, the /current
 -- menu/ becomes invalid and 'getMenu' will return 'Nothing'.
 
-foreign import ccall unsafe "glutDestroyMenu" glutDestroyMenu ::
+foreign import CALLCONV unsafe "glutDestroyMenu" glutDestroyMenu ::
    MenuID -> IO ()
 
 --------------------------------------------------------------------------------
 
 -- | Set the /current menu./
 
-foreign import ccall unsafe "glutSetMenu" setMenu :: MenuID -> IO ()
+foreign import CALLCONV unsafe "glutSetMenu" setMenu :: MenuID -> IO ()
 
 -- | Return 'Just' the identifier of the /current menu./ 'Nothing' is returned
 -- if no menus exist or the previous /current menu/ was destroyed.
@@ -203,7 +203,7 @@ foreign import ccall unsafe "glutSetMenu" setMenu :: MenuID -> IO ()
 getMenu :: IO (Maybe MenuID)
 getMenu = liftM (\i -> if i == 0 then Nothing else Just i) glutGetMenu
 
-foreign import ccall unsafe "glutGetMenu" glutGetMenu :: IO MenuID
+foreign import CALLCONV unsafe "glutGetMenu" glutGetMenu :: IO MenuID
 
 --------------------------------------------------------------------------------
 
@@ -215,7 +215,7 @@ foreign import ccall unsafe "glutGetMenu" glutGetMenu :: IO MenuID
 addMenuEntry :: String -> Value -> IO ()
 addMenuEntry name value = withCString name $ \n -> glutAddMenuEntry n value
 
-foreign import ccall unsafe "glutAddMenuEntry" glutAddMenuEntry ::
+foreign import CALLCONV unsafe "glutAddMenuEntry" glutAddMenuEntry ::
    CString -> Value -> IO ()
 
 -- | Add a sub-menu trigger to the bottom of the /current menu./ The given
@@ -226,7 +226,7 @@ foreign import ccall unsafe "glutAddMenuEntry" glutAddMenuEntry ::
 addSubMenu :: String -> MenuID -> IO ()
 addSubMenu name menuID = withCString name $ \n -> glutAddSubMenu n menuID
 
-foreign import ccall unsafe "glutAddSubMenu" glutAddSubMenu ::
+foreign import CALLCONV unsafe "glutAddSubMenu" glutAddSubMenu ::
    CString -> MenuID -> IO ()
 
 --------------------------------------------------------------------------------
@@ -240,7 +240,7 @@ foreign import ccall unsafe "glutAddSubMenu" glutAddSubMenu ::
 -- for the newly changed menu entry. The given value will be returned to the
 -- menu\'s callback if this menu entry is selected.
 
-foreign import ccall unsafe "glutChangeToMenuEntry" glutChangeToMenuEntry ::
+foreign import CALLCONV unsafe "glutChangeToMenuEntry" glutChangeToMenuEntry ::
    Item -> CString -> Value -> IO ()
 
 -- | Change the specified menu item in the /current menu/ into a sub-menu
@@ -251,7 +251,7 @@ foreign import ccall unsafe "glutChangeToMenuEntry" glutChangeToMenuEntry ::
 -- given menu identifier names the sub-menu to cascade from the newly added
 -- sub-menu trigger.
 
-foreign import ccall unsafe "glutChangeToSubMenu" glutChangeToSubMenu ::
+foreign import CALLCONV unsafe "glutChangeToSubMenu" glutChangeToSubMenu ::
    Item -> CString -> MenuID -> IO ()
 -}
 
@@ -262,7 +262,7 @@ foreign import ccall unsafe "glutChangeToSubMenu" glutChangeToSubMenu ::
 -- menu item) and 'Graphics.UI.GLUT.State.getNumMenuItems' inclusive. Menu items
 -- below the removed menu item are renumbered.
 
-foreign import ccall unsafe "glutRemoveMenuItem" glutRemoveMenuItem ::
+foreign import CALLCONV unsafe "glutRemoveMenuItem" glutRemoveMenuItem ::
    Item -> IO ()
 
 --------------------------------------------------------------------------------
@@ -276,11 +276,11 @@ foreign import ccall unsafe "glutRemoveMenuItem" glutRemoveMenuItem ::
 attachMenu_ :: MouseButton -> IO ()
 attachMenu_ = glutAttachMenu . marshalMouseButton
 
-foreign import ccall unsafe "glutAttachMenu" glutAttachMenu :: CInt -> IO ()
+foreign import CALLCONV unsafe "glutAttachMenu" glutAttachMenu :: CInt -> IO ()
 
 -- | Detach an attached mouse button from the /current window./
 
 detachMenu_ :: MouseButton -> IO ()
 detachMenu_ = glutDetachMenu . marshalMouseButton
 
-foreign import ccall unsafe "glutDetachMenu" glutDetachMenu :: CInt -> IO ()
+foreign import CALLCONV unsafe "glutDetachMenu" glutDetachMenu :: CInt -> IO ()

@@ -484,6 +484,6 @@ get       = makeGetter glutGet
 layerGet  = makeGetter glutLayerGet
 deviceGet = makeGetter glutDeviceGet
 
-foreign import ccall unsafe "glutGet"       glutGet       :: PrimGetter
-foreign import ccall unsafe "glutLayerGet"  glutLayerGet  :: PrimGetter
-foreign import ccall unsafe "glutDeviceGet" glutDeviceGet :: PrimGetter
+foreign import CALLCONV unsafe "glutGet"       glutGet       :: PrimGetter
+foreign import CALLCONV unsafe "glutLayerGet"  glutLayerGet  :: PrimGetter
+foreign import CALLCONV unsafe "glutDeviceGet" glutDeviceGet :: PrimGetter

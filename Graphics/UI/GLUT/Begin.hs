@@ -23,4 +23,4 @@ module Graphics.UI.GLUT.Begin (
 -- once in a GLUT program. Once called, this routine will never return. It will
 -- call as necessary any callbacks that have been registered.
 
-foreign import ccall safe "glutMainLoop" mainLoop :: IO ()
+foreign import CALLCONV safe "glutMainLoop" mainLoop :: IO ()

@@ -70,8 +70,8 @@ data BitmapFont
 -- small C wrappers around those macros. *sigh*
 type GLUTbitmapFont = Ptr ()
 
-foreign import ccall "hOpenGL_marshalBitmapFont" hOpenGL_marshalBitmapFont ::
-   CInt -> IO GLUTbitmapFont
+foreign import ccall unsafe "hOpenGL_marshalBitmapFont"
+   hOpenGL_marshalBitmapFont :: CInt -> IO GLUTbitmapFont
 
 marhshalBitmapFont :: BitmapFont -> IO GLUTbitmapFont
 marhshalBitmapFont f = case f of
@@ -99,8 +99,8 @@ data StrokeFont
 -- Same remarks as for GLUTbitmapFont
 type GLUTstrokeFont = Ptr ()
 
-foreign import ccall "hOpenGL_marshalStrokeFont" hOpenGL_marshalStrokeFont ::
-   CInt -> IO GLUTstrokeFont
+foreign import ccall unsafe "hOpenGL_marshalStrokeFont"
+   hOpenGL_marshalStrokeFont :: CInt -> IO GLUTstrokeFont
 
 marhshalStrokeFont :: StrokeFont -> IO GLUTstrokeFont
 marhshalStrokeFont f = case f of
@@ -136,7 +136,7 @@ bitmapString f s = do
 withChar :: Char -> (CInt -> IO a) -> IO a
 withChar c f = f . fromIntegral . ord $ c
 
-foreign import ccall "glutBitmapCharacter" glutBitmapCharacter ::
+foreign import CALLCONV "glutBitmapCharacter" glutBitmapCharacter ::
    GLUTbitmapFont -> CInt -> IO ()
 
 --------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ strokeString f s = do
    i <- marhshalStrokeFont f
    mapM_ (\c -> withChar c (glutStrokeCharacter i)) s
 
-foreign import ccall "glutStrokeCharacter" glutStrokeCharacter ::
+foreign import CALLCONV unsafe "glutStrokeCharacter" glutStrokeCharacter ::
    GLUTstrokeFont -> CInt -> IO ()
 
 --------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ bitmapLength f s = do
    i <- marhshalBitmapFont f
    withCString s (glutBitmapLength i)
 
-foreign import ccall "glutBitmapLength" glutBitmapLength ::
+foreign import CALLCONV unsafe "glutBitmapLength" glutBitmapLength ::
    GLUTbitmapFont -> CString -> IO CInt
 
 --------------------------------------------------------------------------------
@@ -183,5 +183,5 @@ strokeLength f s = do
    i <- marhshalStrokeFont f
    withCString s (glutStrokeLength i)
 
-foreign import ccall "glutStrokeLength" glutStrokeLength ::
+foreign import CALLCONV unsafe "glutStrokeLength" glutStrokeLength ::
    GLUTstrokeFont -> CString -> IO CInt

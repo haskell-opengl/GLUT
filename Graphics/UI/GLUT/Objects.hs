@@ -131,14 +131,14 @@ renderObject Wireframe (Teapot h)      = wireTeapot  h
 -- | Render a solid cube centered at the modeling coordinates origin with sides
 -- of the given length.
 
-foreign import ccall unsafe "glutSolidCube" solidCube
+foreign import CALLCONV unsafe "glutSolidCube" solidCube
    :: Height -- ^ Length of the cube sides
    -> IO ()
 
 -- | Render a wireframe cube centered at the modeling coordinates origin with sides
 -- of the given length.
 
-foreign import ccall unsafe "glutWireCube" wireCube
+foreign import CALLCONV unsafe "glutWireCube" wireCube
    :: Height -- ^ Length of the cube sides
    -> IO ()
 
@@ -147,48 +147,48 @@ foreign import ccall unsafe "glutWireCube" wireCube
 -- | Render a solid dodecahedron (12-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of @sqrt 3@.
 
-foreign import ccall unsafe "glutSolidDodecahedron" solidDodecahedron :: IO ()
+foreign import CALLCONV unsafe "glutSolidDodecahedron" solidDodecahedron :: IO ()
 
 -- | Render a wireframe dodecahedron (12-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of @sqrt 3@.
 
-foreign import ccall unsafe "glutWireDodecahedron" wireDodecahedron :: IO ()
+foreign import CALLCONV unsafe "glutWireDodecahedron" wireDodecahedron :: IO ()
 
 --------------------------------------------------------------------------------
 
 -- | Render a solid icosahedron (20-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of 1.0.
 
-foreign import ccall unsafe "glutWireIcosahedron" wireIcosahedron :: IO ()
+foreign import CALLCONV unsafe "glutWireIcosahedron" wireIcosahedron :: IO ()
 
 -- | Render a wireframe icosahedron (20-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of 1.0.
 
-foreign import ccall unsafe "glutSolidIcosahedron" solidIcosahedron :: IO ()
+foreign import CALLCONV unsafe "glutSolidIcosahedron" solidIcosahedron :: IO ()
 
 --------------------------------------------------------------------------------
 
 -- | Render a solid octahedron (8-sided regular solid) centered at the modeling
 -- coordinates origin with a radius of 1.0.
 
-foreign import ccall unsafe "glutSolidOctahedron" solidOctahedron :: IO ()
+foreign import CALLCONV unsafe "glutSolidOctahedron" solidOctahedron :: IO ()
 
 -- | Render a wireframe octahedron (8-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of 1.0.
 
-foreign import ccall unsafe "glutWireOctahedron" wireOctahedron :: IO ()
+foreign import CALLCONV unsafe "glutWireOctahedron" wireOctahedron :: IO ()
 
 --------------------------------------------------------------------------------
 
 -- | Render a solid tetrahedron (4-sided regular solid) centered at the modeling
 -- coordinates origin with a radius of @sqrt 3@.
 
-foreign import ccall unsafe "glutWireTetrahedron"   wireTetrahedron   :: IO ()
+foreign import CALLCONV unsafe "glutWireTetrahedron"   wireTetrahedron   :: IO ()
 
 -- | Render a wireframe tetrahedron (4-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of @sqrt 3@.
 
-foreign import ccall unsafe "glutSolidTetrahedron"  solidTetrahedron  :: IO ()
+foreign import CALLCONV unsafe "glutSolidTetrahedron"  solidTetrahedron  :: IO ()
 
 --------------------------------------------------------------------------------
 
@@ -196,7 +196,7 @@ foreign import ccall unsafe "glutSolidTetrahedron"  solidTetrahedron  :: IO ()
 -- specified radius. The sphere is subdivided around the Z axis into slices
 -- and along the Z axis into stacks.
 
-foreign import ccall unsafe "glutSolidSphere" solidSphere
+foreign import CALLCONV unsafe "glutSolidSphere" solidSphere
    :: Radius   -- ^ Radius of the sphere.
    -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar to lines of longitude.
    -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis, similar to lines of latitude.
@@ -206,7 +206,7 @@ foreign import ccall unsafe "glutSolidSphere" solidSphere
 -- specified radius. The sphere is subdivided around the Z axis into slices
 -- and along the Z axis into stacks.
 
-foreign import ccall unsafe "glutWireSphere" wireSphere
+foreign import CALLCONV unsafe "glutWireSphere" wireSphere
    :: Radius   -- ^ Radius of the sphere.
    -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar to lines of longitude.
    -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis, similar to lines of latitude.
@@ -218,7 +218,7 @@ foreign import ccall unsafe "glutWireSphere" wireSphere
 -- placed at Z = 0, and the top at Z = height. The cone is subdivided around the
 -- Z axis into slices, and along the Z axis into stacks.
 
-foreign import ccall unsafe "glutSolidCone" solidCone
+foreign import CALLCONV unsafe "glutSolidCone" solidCone
    :: Radius   -- ^ Radius of the base of the cone.
    -> Height   -- ^ Height of the cone.
    -> Slices   -- ^ Number of subdivisions around the Z axis.
@@ -229,7 +229,7 @@ foreign import ccall unsafe "glutSolidCone" solidCone
 -- placed at Z = 0, and the top at Z = height. The cone is subdivided around the
 -- Z axis into slices, and along the Z axis into stacks.
 
-foreign import ccall unsafe "glutWireCone" wireCone
+foreign import CALLCONV unsafe "glutWireCone" wireCone
    :: Radius   -- ^ Radius of the base of the cone.
    -> Height   -- ^ Height of the cone.
    -> Slices   -- ^ Number of subdivisions around the Z axis.
@@ -241,7 +241,7 @@ foreign import ccall unsafe "glutWireCone" wireCone
 -- | Render a solid torus (doughnut) centered at the modeling coordinates origin
 -- whose axis is aligned with the Z axis.
 
-foreign import ccall unsafe "glutSolidTorus" solidTorus
+foreign import CALLCONV unsafe "glutSolidTorus" solidTorus
    :: Radius   -- ^ Inner radius of the torus.
    -> Radius   -- ^ Outer radius of the torus.
    -> Slices   -- ^ Number of sides for each radial section.
@@ -251,7 +251,7 @@ foreign import ccall unsafe "glutSolidTorus" solidTorus
 -- | Render a wireframe torus (doughnut) centered at the modeling coordinates
 -- origin whose axis is aligned with the Z axis.
 
-foreign import ccall unsafe "glutWireTorus" wireTorus
+foreign import CALLCONV unsafe "glutWireTorus" wireTorus
    :: Radius   -- ^ Inner radius of the torus.
    -> Radius   -- ^ Outer radius of the torus.
    -> Slices   -- ^ Number of sides for each radial section.
@@ -262,12 +262,12 @@ foreign import ccall unsafe "glutWireTorus" wireTorus
 
 -- | Render a solid teapot.
 
-foreign import ccall unsafe "glutSolidTeapot" solidTeapot  
+foreign import CALLCONV unsafe "glutSolidTeapot" solidTeapot  
    :: Height -- ^ Relative size of the teapot
    -> IO ()
 
 -- | Render a wireframe teapot.
 
-foreign import ccall unsafe "glutWireTeapot" wireTeapot
+foreign import CALLCONV unsafe "glutWireTeapot" wireTeapot
    :: Height -- ^ Relative size of the teapot
    -> IO ()

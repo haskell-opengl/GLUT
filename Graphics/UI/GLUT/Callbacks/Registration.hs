@@ -123,7 +123,7 @@ type TimerCallback = CInt -> IO ()
 foreign import ccall "wrapper" makeTimerCallback ::
    TimerCallback -> IO (FunPtr TimerCallback)
 
-foreign import ccall unsafe "glutTimerFunc" glutTimerFunc ::
+foreign import CALLCONV unsafe "glutTimerFunc" glutTimerFunc ::
    CUInt -> FunPtr TimerCallback -> CInt -> IO ()
 
 --------------------------------------------------------------------------------

@@ -100,7 +100,7 @@ setDisplayCallback =
 foreign import ccall "wrapper" makeDisplayCallback ::
    DisplayCallback -> IO (FunPtr DisplayCallback)
 
-foreign import ccall unsafe "glutDisplayFunc" glutDisplayFunc ::
+foreign import CALLCONV unsafe "glutDisplayFunc" glutDisplayFunc ::
    FunPtr DisplayCallback -> IO ()
 
 --------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ setOverlayDisplayCallback :: Maybe DisplayCallback -> IO ()
 setOverlayDisplayCallback =
    setCallback OverlayDisplayCB glutOverlayDisplayFunc makeDisplayCallback
 
-foreign import ccall unsafe "glutOverlayDisplayFunc" glutOverlayDisplayFunc ::
+foreign import CALLCONV unsafe "glutOverlayDisplayFunc" glutOverlayDisplayFunc ::
    FunPtr DisplayCallback -> IO ()
 
 --------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ setReshapeCallback =
 foreign import ccall "wrapper" makeReshapeCallback ::
    ReshapeCallback' -> IO (FunPtr ReshapeCallback')
 
-foreign import ccall unsafe "glutReshapeFunc" glutReshapeFunc ::
+foreign import CALLCONV unsafe "glutReshapeFunc" glutReshapeFunc ::
    FunPtr ReshapeCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -225,7 +225,7 @@ setVisibilityCallback = setCallback VisibilityCB glutVisibilityFunc
 foreign import ccall "wrapper" makeVisibilityCallback ::
    VisibilityCallback' -> IO (FunPtr VisibilityCallback')
 
-foreign import ccall unsafe "glutVisibilityFunc" glutVisibilityFunc ::
+foreign import CALLCONV unsafe "glutVisibilityFunc" glutVisibilityFunc ::
    FunPtr VisibilityCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -242,7 +242,7 @@ setKeyboardCallback =
 foreign import ccall "wrapper" makeKeyboardCallback ::
    KeyboardCallback' -> IO (FunPtr KeyboardCallback')
 
-foreign import ccall unsafe "glutKeyboardFunc" glutKeyboardFunc ::
+foreign import CALLCONV unsafe "glutKeyboardFunc" glutKeyboardFunc ::
    FunPtr KeyboardCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -252,7 +252,7 @@ setKeyboardUpCallback =
    setCallback KeyboardUpCB glutKeyboardUpFunc (makeKeyboardCallback . unmarshal)
    where unmarshal cb c x y = cb (chr (fromIntegral c)) (WindowPosition x y)
 
-foreign import ccall unsafe "glutKeyboardUpFunc" glutKeyboardUpFunc ::
+foreign import CALLCONV unsafe "glutKeyboardUpFunc" glutKeyboardUpFunc ::
    FunPtr KeyboardCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -320,7 +320,7 @@ setSpecialCallback =
 foreign import ccall "wrapper" makeSpecialCallback ::
    SpecialCallback' -> IO (FunPtr SpecialCallback')
 
-foreign import ccall unsafe "glutSpecialFunc" glutSpecialFunc ::
+foreign import CALLCONV unsafe "glutSpecialFunc" glutSpecialFunc ::
    FunPtr SpecialCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -330,7 +330,7 @@ setSpecialUpCallback =
    setCallback SpecialUpCB glutSpecialUpFunc (makeSpecialCallback . unmarshal)
    where unmarshal cb k x y = cb (unmarshalSpecialKey k) (WindowPosition x y)
 
-foreign import ccall unsafe "glutSpecialUpFunc" glutSpecialUpFunc ::
+foreign import CALLCONV unsafe "glutSpecialUpFunc" glutSpecialUpFunc ::
    FunPtr SpecialCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -387,7 +387,7 @@ setMouseCallback =
 foreign import ccall "wrapper" makeMouseCallback ::
    MouseCallback' -> IO (FunPtr MouseCallback')
 
-foreign import ccall unsafe "glutMouseFunc" glutMouseFunc ::
+foreign import CALLCONV unsafe "glutMouseFunc" glutMouseFunc ::
    FunPtr MouseCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -404,7 +404,7 @@ unmarshalModifiers m = Modifiers {
 getModifiers :: IO Modifiers
 getModifiers = liftM unmarshalModifiers glutGetModifiers
 
-foreign import ccall unsafe "glutGetModifiers" glutGetModifiers :: IO CInt
+foreign import CALLCONV unsafe "glutGetModifiers" glutGetModifiers :: IO CInt
 
 --------------------------------------------------------------------------------
 
@@ -455,7 +455,7 @@ setMotionCallback =
 foreign import ccall "wrapper" makeMotionCallback ::
    MotionCallback' -> IO (FunPtr MotionCallback')
 
-foreign import ccall unsafe "glutMotionFunc" glutMotionFunc ::
+foreign import CALLCONV unsafe "glutMotionFunc" glutMotionFunc ::
    FunPtr MotionCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -470,7 +470,7 @@ setPassiveMotionCallback =
    setCallback MotionCB glutPassiveMotionFunc (makeMotionCallback . unmarshal)
    where unmarshal cb x y  = cb (WindowPosition x y)
 
-foreign import ccall unsafe "glutPassiveMotionFunc" glutPassiveMotionFunc ::
+foreign import CALLCONV unsafe "glutPassiveMotionFunc" glutPassiveMotionFunc ::
    FunPtr MotionCallback' -> IO ()
 
 
@@ -507,7 +507,7 @@ setCrossingCallback =
 foreign import ccall "wrapper" makeCrossingCallback ::
    CrossingCallback' -> IO (FunPtr CrossingCallback')
 
-foreign import ccall unsafe "glutEntryFunc" glutEntryFunc ::
+foreign import CALLCONV unsafe "glutEntryFunc" glutEntryFunc ::
    FunPtr CrossingCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -561,7 +561,7 @@ setSpaceballMotionCallback =
 foreign import ccall "wrapper" makeSpaceballMotionCallback ::
    SpaceballMotionCallback -> IO (FunPtr SpaceballMotionCallback)
 
-foreign import ccall unsafe "glutSpaceballMotionFunc" glutSpaceballMotionFunc ::
+foreign import CALLCONV unsafe "glutSpaceballMotionFunc" glutSpaceballMotionFunc ::
    FunPtr SpaceballMotionCallback -> IO ()
 
 --------------------------------------------------------------------------------
@@ -578,7 +578,7 @@ setSpaceballRotationCallback =
 foreign import ccall "wrapper" makeSpaceballRotationCallback ::
    SpaceballRotationCallback -> IO (FunPtr SpaceballRotationCallback)
 
-foreign import ccall unsafe "glutSpaceballRotateFunc" glutSpaceballRotateFunc ::
+foreign import CALLCONV unsafe "glutSpaceballRotateFunc" glutSpaceballRotateFunc ::
    FunPtr SpaceballRotationCallback -> IO ()
 
 --------------------------------------------------------------------------------
@@ -596,7 +596,7 @@ setSpaceballButtonCallback =
 foreign import ccall "wrapper" makeSpaceballButtonCallback ::
    SpaceballButtonCallback' -> IO (FunPtr SpaceballButtonCallback')
 
-foreign import ccall unsafe "glutSpaceballButtonFunc"
+foreign import CALLCONV unsafe "glutSpaceballButtonFunc"
    glutSpaceballButtonFunc :: FunPtr SpaceballButtonCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -642,7 +642,7 @@ setButtonBoxCallback =
 foreign import ccall "wrapper" makeButtonBoxFunc ::
    ButtonBoxCallback' -> IO (FunPtr ButtonBoxCallback')
 
-foreign import ccall unsafe "glutButtonBoxFunc" glutButtonBoxFunc ::
+foreign import CALLCONV unsafe "glutButtonBoxFunc" glutButtonBoxFunc ::
    FunPtr ButtonBoxCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -657,7 +657,7 @@ setDialsCallback =
 foreign import ccall "wrapper" makeDialsFunc ::
    DialsCallback -> IO (FunPtr DialsCallback)
 
-foreign import ccall unsafe "glutDialsFunc" glutDialsFunc ::
+foreign import CALLCONV unsafe "glutDialsFunc" glutDialsFunc ::
    FunPtr DialsCallback -> IO ()
 
 --------------------------------------------------------------------------------
@@ -705,7 +705,7 @@ setTabletMotionCallback =
 foreign import ccall "wrapper" makeTabletMotionFunc ::
    TabletMotionCallback' -> IO (FunPtr TabletMotionCallback')
 
-foreign import ccall unsafe "glutTabletMotionFunc" glutTabletMotionFunc ::
+foreign import CALLCONV unsafe "glutTabletMotionFunc" glutTabletMotionFunc ::
    FunPtr TabletMotionCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -723,5 +723,5 @@ setTabletButtonCallback =
 foreign import ccall "wrapper" makeTabletButtonFunc ::
    TabletButtonCallback' -> IO (FunPtr TabletButtonCallback')
 
-foreign import ccall unsafe "glutTabletButtonFunc" glutTabletButtonFunc ::
+foreign import CALLCONV unsafe "glutTabletButtonFunc" glutTabletButtonFunc ::
    FunPtr TabletButtonCallback' -> IO ()

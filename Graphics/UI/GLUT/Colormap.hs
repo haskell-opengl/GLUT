@@ -61,7 +61,7 @@ setColor :: ColorIndex CInt
          -> IO ()
 setColor cell (Color3 r g b) = glutSetColor cell r g b
 
-foreign import ccall unsafe "glutSetColor" glutSetColor ::
+foreign import CALLCONV unsafe "glutSetColor" glutSetColor ::
    ColorIndex CInt -> GLfloat -> GLfloat -> GLfloat -> IO ()
 
 -- | Retrieve the entry for a given color index colormap entry for the
@@ -82,7 +82,7 @@ getColor cell = do
    b <- glutGetColor cell glut_BLUE
    return $ if r < 0.0 then Nothing else Just (Color3 r g b)
 
-foreign import ccall unsafe "glutGetColor" glutGetColor ::
+foreign import CALLCONV unsafe "glutGetColor" glutGetColor ::
    ColorIndex CInt -> CInt -> IO GLfloat
 
 -- | Copy (lazily if possible to promote sharing) the logical colormap
@@ -94,5 +94,5 @@ foreign import ccall unsafe "glutGetColor" glutGetColor ::
 -- was previously copied by reference. 'copyColormap' should only be
 -- called when both the /current window/ and the specified window are
 -- color index windows.
-foreign import ccall unsafe "glutCopyColormap" copyColormap ::
+foreign import CALLCONV unsafe "glutCopyColormap" copyColormap ::
       Window -> IO ()

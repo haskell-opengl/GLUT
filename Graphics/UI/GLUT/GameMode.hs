@@ -97,7 +97,7 @@ initGameMode settings =
       (concat . intersperse " " . map capabilityDescriptionToString $ settings)
       glutGameModeString
 
-foreign import ccall unsafe "glutGameModeString" glutGameModeString ::
+foreign import CALLCONV unsafe "glutGameModeString" glutGameModeString ::
    CString -> IO ()
 
 --------------------------------------------------------------------------------
@@ -120,14 +120,14 @@ enterGameMode = do
    c <- getBool glut_GAME_MODE_DISPLAY_CHANGED
    return (Window w, c)
 
-foreign import ccall unsafe "glutEnterGameMode" glutEnterGameMode :: IO CInt
+foreign import CALLCONV unsafe "glutEnterGameMode" glutEnterGameMode :: IO CInt
 
 --------------------------------------------------------------------------------
 
 -- | Leave /game mode/, restoring the old display mode and destroying the game
 -- mode window.
 
-foreign import ccall unsafe "glutLeaveGameMode" leaveGameMode :: IO ()
+foreign import CALLCONV unsafe "glutLeaveGameMode" leaveGameMode :: IO ()
 
 --------------------------------------------------------------------------------
 
@@ -164,7 +164,7 @@ getGameModeInfo = do
 getBool :: GLenum -> IO Bool
 getBool = liftM (/= 0) . glutGameModeGet
 
-foreign import ccall unsafe "glutGameModeGet" glutGameModeGet ::
+foreign import CALLCONV unsafe "glutGameModeGet" glutGameModeGet ::
    GLenum -> IO CInt
 
 --------------------------------------------------------------------------------

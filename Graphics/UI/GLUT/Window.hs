@@ -95,7 +95,7 @@ createWindow
    -> IO Window -- ^ The identifier for the newly created window
 createWindow name = withCString name glutCreateWindow
 
-foreign import ccall unsafe "glutCreateWindow" glutCreateWindow ::
+foreign import CALLCONV unsafe "glutCreateWindow" glutCreateWindow ::
       CString -> IO Window
 
 -- | Create a subwindow of the identified window with the given relative
@@ -110,7 +110,7 @@ createSubWindow
 createSubWindow win (WindowPosition x y) (WindowSize w h) =
    glutCreateSubWindow win x y w h
 
-foreign import ccall unsafe "glutCreateSubWindow" glutCreateSubWindow ::
+foreign import CALLCONV unsafe "glutCreateSubWindow" glutCreateSubWindow ::
       Window -> CInt -> CInt -> CInt -> CInt -> IO Window
 
 -- | Destroy the specified window and the window\'s associated OpenGL context,
@@ -120,14 +120,14 @@ foreign import ccall unsafe "glutCreateSubWindow" glutCreateSubWindow ::
 -- /current window/, the /current window/ becomes invalid ('getWindow' will
 -- return 'Nothing').
 
-foreign import ccall unsafe "glutDestroyWindow" destroyWindow :: Window -> IO ()
+foreign import CALLCONV unsafe "glutDestroyWindow" destroyWindow :: Window -> IO ()
 
 --------------------------------------------------------------------------------
 
 -- | Set the /current window/. It does /not/ change the /layer in use/ for the
 -- window; this is done using 'Graphics.UI.GLUT.Overlay.useLayer'.
 
-foreign import ccall unsafe "glutSetWindow" setWindow :: Window -> IO ()
+foreign import CALLCONV unsafe "glutSetWindow" setWindow :: Window -> IO ()
 
 -- | Return 'Just' the identifier of the /current window/. If no windows exist
 -- or the previously /current window/ was destroyed, 'Nothing' is returned.
@@ -137,7 +137,7 @@ getWindow = do
    w <- glutGetWindow
    return $ if w == Window 0 then Nothing else Just w
 
-foreign import ccall unsafe "glutGetWindow" glutGetWindow :: IO Window
+foreign import CALLCONV unsafe "glutGetWindow" glutGetWindow :: IO Window
 
 --------------------------------------------------------------------------------
 
@@ -156,7 +156,7 @@ foreign import ccall unsafe "glutGetWindow" glutGetWindow :: IO Window
 --
 -- Also, see 'Graphics.UI.GLUT.Overlay.postOverlayRedisplay'.
 
-foreign import ccall unsafe "glutPostRedisplay" postRedisplay :: IO ()
+foreign import CALLCONV unsafe "glutPostRedisplay" postRedisplay :: IO ()
 
 -- | Mark the normal plane of the given window as needing to be redisplayed,
 -- otherwise the same as 'postRedisplay'.
@@ -167,7 +167,7 @@ foreign import ccall unsafe "glutPostRedisplay" postRedisplay :: IO ()
 --
 -- Also, see 'Graphics.UI.GLUT.Overlay.postWindowOverlayRedisplay'.
 
-foreign import ccall unsafe "glutPostWindowRedisplay" postWindowRedisplay ::
+foreign import CALLCONV unsafe "glutPostWindowRedisplay" postWindowRedisplay ::
    Window -> IO ()
 
 -- | Perform a buffer swap on the /layer in use/ for the /current window/.
@@ -184,7 +184,7 @@ foreign import ccall unsafe "glutPostWindowRedisplay" postWindowRedisplay ::
 --
 -- If the /layer in use/ is not double buffered, 'swapBuffers' has no effect.
 
-foreign import ccall unsafe "glutSwapBuffers" swapBuffers :: IO ()
+foreign import CALLCONV unsafe "glutSwapBuffers" swapBuffers :: IO ()
 
 --------------------------------------------------------------------------------
 
@@ -210,7 +210,7 @@ foreign import ccall unsafe "glutSwapBuffers" swapBuffers :: IO ()
 positionWindow :: WindowPosition -> IO ()
 positionWindow (WindowPosition x y) = glutPositionWindow x y
 
-foreign import ccall unsafe "glutPositionWindow" glutPositionWindow ::
+foreign import CALLCONV unsafe "glutPositionWindow" glutPositionWindow ::
    CInt -> CInt -> IO ()
 
 -- | Request a change in the size of the /current window/. The parameters of
@@ -227,7 +227,7 @@ foreign import ccall unsafe "glutPositionWindow" glutPositionWindow ::
 reshapeWindow :: WindowSize -> IO ()
 reshapeWindow (WindowSize w h) = glutReshapeWindow w h
 
-foreign import ccall unsafe "glutReshapeWindow" glutReshapeWindow ::
+foreign import CALLCONV unsafe "glutReshapeWindow" glutReshapeWindow ::
    CInt -> CInt -> IO ()
 
 -- | Request that the /current window/ be made full screen. The exact semantics
@@ -245,7 +245,7 @@ foreign import ccall unsafe "glutReshapeWindow" glutReshapeWindow ::
 -- absolutely no decorations. Non-Motif window managers may not respond to
 -- @_MOTIF_WM_HINTS@.
 
-foreign import ccall unsafe "glutFullScreen" fullScreen :: IO ()
+foreign import CALLCONV unsafe "glutFullScreen" fullScreen :: IO ()
 
 --------------------------------------------------------------------------------
 
@@ -260,12 +260,12 @@ foreign import ccall unsafe "glutFullScreen" fullScreen :: IO ()
 -- | Change the stacking order of the /current window/ relative to its siblings
 -- (lowering it).
 
-foreign import ccall unsafe "glutPushWindow" pushWindow :: IO ()
+foreign import CALLCONV unsafe "glutPushWindow" pushWindow :: IO ()
 
 -- | Change the stacking order of the /current window/ relative to its siblings,
 -- bringing the /current window/ closer to the top.
 
-foreign import ccall unsafe "glutPopWindow" popWindow :: IO ()
+foreign import CALLCONV unsafe "glutPopWindow" popWindow :: IO ()
 
 --------------------------------------------------------------------------------
 
@@ -281,16 +281,16 @@ foreign import ccall unsafe "glutPopWindow" popWindow :: IO ()
 -- | Show the /current window/ (though it may still not be visible if obscured by
 -- other shown windows).
 
-foreign import ccall unsafe "glutShowWindow" showWindow :: IO ()
+foreign import CALLCONV unsafe "glutShowWindow" showWindow :: IO ()
 
 -- | Hide the /current window/.
 
-foreign import ccall unsafe "glutHideWindow" hideWindow :: IO ()
+foreign import CALLCONV unsafe "glutHideWindow" hideWindow :: IO ()
 
 -- | Iconify a top-level window. Note that GLUT prohibits iconification of a
 -- subwindow.
 
-foreign import ccall unsafe "glutIconifyWindow" iconifyWindow :: IO ()
+foreign import CALLCONV unsafe "glutIconifyWindow" iconifyWindow :: IO ()
 
 --------------------------------------------------------------------------------
 
@@ -309,7 +309,7 @@ foreign import ccall unsafe "glutIconifyWindow" iconifyWindow :: IO ()
 setWindowTitle :: String -> IO ()
 setWindowTitle name = withCString name glutSetWindowTitle
 
-foreign import ccall unsafe "glutSetWindowTitle" glutSetWindowTitle ::
+foreign import CALLCONV unsafe "glutSetWindowTitle" glutSetWindowTitle ::
       CString -> IO ()
 
 -- | Set the icon title of the /current top-level window/.
@@ -317,7 +317,7 @@ foreign import ccall unsafe "glutSetWindowTitle" glutSetWindowTitle ::
 setIconTitle :: String -> IO ()
 setIconTitle name = withCString name glutSetIconTitle
 
-foreign import ccall unsafe "glutSetIconTitle" glutSetIconTitle ::
+foreign import CALLCONV unsafe "glutSetIconTitle" glutSetIconTitle ::
       CString -> IO ()
 
 --------------------------------------------------------------------------------
@@ -389,7 +389,7 @@ marshalCursor c = case c of
 setCursor :: Cursor -> IO ()
 setCursor = glutSetCursor . marshalCursor
 
-foreign import ccall unsafe "glutSetCursor" glutSetCursor :: CInt -> IO ()
+foreign import CALLCONV unsafe "glutSetCursor" glutSetCursor :: CInt -> IO ()
 
 -- | Warp the window system\'s pointer to a new location relative to the origin
 -- of the /current window/ by the specified pixel offset, which may be negative.
@@ -407,5 +407,5 @@ foreign import ccall unsafe "glutSetCursor" glutSetCursor :: CInt -> IO ()
 warpPointer :: WindowPosition -> IO ()
 warpPointer (WindowPosition x y) = glutWarpPointer x y
 
-foreign import ccall unsafe "glutWarpPointer" glutWarpPointer ::
+foreign import CALLCONV unsafe "glutWarpPointer" glutWarpPointer ::
    CInt -> CInt -> IO ()

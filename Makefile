@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# $Id: Makefile,v 1.12 2002/08/11 16:34:36 panne Exp $
+# $Id: Makefile,v 1.13 2002/08/27 20:03:31 panne Exp $
 
 TOP = ..
 include $(TOP)/mk/boilerplate.mk
@@ -17,7 +17,14 @@ PACKAGE = GLUT
 PACKAGE_DEPS = base OpenGL
 
 SRC_HC_OPTS += -Wall -fglasgow-exts -package OpenGL \
-               -Iinclude '-\#include "HsGLUT.h"'
+               -Iinclude '-\#include "HsGLUT.h"' -cpp
+
+# WinDoze DLL hell
+ifeq "$(TARGETPLATFORM)" "i386-unknown-mingw32"
+SRC_HC_OPTS += -DCALLCONV=stdcall
+else
+SRC_HC_OPTS += -DCALLCONV=ccall
+endif
 
 SRC_HADDOCK_OPTS += -t "HOpenGL Libraries (GLUT package)" -p prologue.txt
 

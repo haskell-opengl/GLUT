@@ -112,7 +112,7 @@ init prog args =
    newArgv <- mapM peekCString newArgvPtrs
    return $ tail newArgv
 
-foreign import ccall unsafe "glutInit" glutInit ::
+foreign import CALLCONV unsafe "glutInit" glutInit ::
    Ptr CInt -> Ptr CString -> IO ()
 
 -- | Convenience action: Initialize GLUT, returning the program name and any
@@ -145,7 +145,7 @@ data WindowPosition = WindowPosition CInt CInt
 initWindowPosition :: WindowPosition -> IO ()
 initWindowPosition (WindowPosition x y) = glutInitWindowPosition x y
 
-foreign import ccall unsafe "glutInitWindowPosition" glutInitWindowPosition
+foreign import CALLCONV unsafe "glutInitWindowPosition" glutInitWindowPosition
    :: CInt -> CInt -> IO ()
 
 -- | Window size, measured in pixels.
@@ -167,7 +167,7 @@ data WindowSize = WindowSize CInt CInt
 initWindowSize :: WindowSize -> IO ()
 initWindowSize (WindowSize w h) = glutInitWindowSize w h
 
-foreign import ccall unsafe "glutInitWindowSize" glutInitWindowSize ::
+foreign import CALLCONV unsafe "glutInitWindowSize" glutInitWindowSize ::
    CInt -> CInt -> IO ()
 
 --------------------------------------------------------------------------------
@@ -227,7 +227,7 @@ initDisplayMode = glutInitDisplayMode . toBitfield marshalDisplayMode
 toBitfield :: (Bits b) => (a -> b) -> [a] -> b
 toBitfield marshal = foldl (.|.) 0 . map marshal
 
-foreign import ccall unsafe "glutInitDisplayMode" glutInitDisplayMode ::
+foreign import CALLCONV unsafe "glutInitDisplayMode" glutInitDisplayMode ::
    CUInt -> IO ()
 
 --------------------------------------------------------------------------------
@@ -464,5 +464,5 @@ initDisplay settings =
       (concat . intersperse " " . map capabilityDescriptionToString $ settings)
       glutInitDisplayString
 
-foreign import ccall unsafe "glutInitDisplayString" glutInitDisplayString ::
+foreign import CALLCONV unsafe "glutInitDisplayString" glutInitDisplayString ::
   CString -> IO ()

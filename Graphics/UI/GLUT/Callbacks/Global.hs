@@ -72,7 +72,7 @@ setMenuStatusCallback = setCallback MenuStatusCB glutMenuStatusFunc
 foreign import ccall "wrapper" makeMenuStatusCallback ::
    MenuStatusCallback' -> IO (FunPtr MenuStatusCallback')
 
-foreign import ccall unsafe "glutMenuStatusFunc" glutMenuStatusFunc ::
+foreign import CALLCONV unsafe "glutMenuStatusFunc" glutMenuStatusFunc ::
    FunPtr MenuStatusCallback' -> IO ()
 
 --------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ setIdleCallback = setCallback IdleCB glutIdleFunc makeIdleCallback
 foreign import ccall "wrapper" makeIdleCallback ::
    IdleCallback -> IO (FunPtr IdleCallback)
 
-foreign import ccall unsafe "glutIdleFunc" glutIdleFunc ::
+foreign import CALLCONV unsafe "glutIdleFunc" glutIdleFunc ::
    FunPtr IdleCallback -> IO ()
 
 --------------------------------------------------------------------------------
@@ -127,5 +127,5 @@ setTimerCallback msecs timerCallback = do
 foreign import ccall "wrapper" makeTimerCallback ::
    TimerCallback' -> IO (FunPtr TimerCallback')
 
-foreign import ccall unsafe "glutTimerFunc" glutTimerFunc ::
+foreign import CALLCONV unsafe "glutTimerFunc" glutTimerFunc ::
    Timeout -> FunPtr TimerCallback' -> CInt -> IO ()
