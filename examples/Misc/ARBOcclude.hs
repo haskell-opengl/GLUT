@@ -152,7 +152,7 @@ myInit :: IO ()
 myInit = do
    exts <- get glExtensions
    unless ("GL_ARB_occlusion_query" `elem` exts) $ do
-      putStrLn "Sorry, this demo requires the GL_ARB_occlusion_query extension"
+      putStrLn "Sorry, this demo requires the GL_ARB_occlusion_query extension."
       exitFailure
 
    bits <- get (queryCounterBits SamplesPassed)
