@@ -12,10 +12,10 @@
 -- GLUT supports a number of callbacks to respond to events. There are three
 -- types of callbacks: window, menu, and global. Window callbacks indicate when
 -- to redisplay or reshape a window, when the visibility of the window changes,
--- and when input is available for the window. The menu callback is set by the
--- 'Graphics.UI.GLUT.Menu.createMenu' call described already. The global
--- callbacks manage the passing of time and menu usage. The calling order of
--- callbacks between different windows is undefined.
+-- and when input is available for the window. Menu callbacks are described in
+-- "Graphics.UI.GLUT.Menu". The global callbacks manage the passing of time and
+-- menu usage. The calling order of callbacks between different windows is
+-- undefined.
 --
 -- Callbacks for input events should be delivered to the window the event occurs
 -- in. Events should not propagate to parent windows.
