@@ -46,7 +46,8 @@ module Graphics.UI.GLUT.State (
   ScreenInfo(..), getScreenInfo,
 
   -- ** Keyboard information
-  KeyRepeat(..), KeyboardInfo(..), getKeyboardInfo,
+  GlobalKeyRepeat(..), PerWindowKeyRepeat(..), KeyboardInfo(..),
+  getKeyboardInfo,
 
   -- ** Mouse information
   MouseInfo(..), getMouseInfo,
@@ -331,26 +332,39 @@ getScreenInfo = do
 
 --------------------------------------------------------------------------------
 
-data KeyRepeat
-   = KeyRepeatOn
-   | KeyRepeatOff
-   | KeyRepeatDefault
+data GlobalKeyRepeat
+   = GlobalKeyRepeatOff
+   | GlobalKeyRepeatOn
+   | GlobalKeyRepeatDefault
    deriving ( Eq, Ord )
 
-unmarshalKeyRepeat :: CInt -> KeyRepeat
-unmarshalKeyRepeat r
-   | r == glut_KEY_REPEAT_ON      = KeyRepeatOn
-   | r == glut_KEY_REPEAT_OFF     = KeyRepeatOff
-   | r == glut_KEY_REPEAT_DEFAULT = KeyRepeatDefault
-   | otherwise = error "unmarshalKeyRepeat"
+unmarshalGlobalKeyRepeat :: CInt -> GlobalKeyRepeat
+unmarshalGlobalKeyRepeat r
+   | r == glut_KEY_REPEAT_OFF     = GlobalKeyRepeatOff
+   | r == glut_KEY_REPEAT_ON      = GlobalKeyRepeatOn
+   | r == glut_KEY_REPEAT_DEFAULT = GlobalKeyRepeatDefault
+   | otherwise = error "unmarshalGlobalKeyRepeat"
 
-data KeyboardInfo = KeyboardInfo KeyRepeat Bool
+--------------------------------------------------------------------------------
+
+data PerWindowKeyRepeat
+   = PerWindowKeyRepeatOff
+   | PerWindowKeyRepeatOn
+   deriving ( Eq, Ord )
+
+unmarshalPerWindowKeyRepeat :: CInt -> PerWindowKeyRepeat
+unmarshalPerWindowKeyRepeat 0 = PerWindowKeyRepeatOff
+unmarshalPerWindowKeyRepeat _ = PerWindowKeyRepeatOn
+
+--------------------------------------------------------------------------------
+
+data KeyboardInfo = KeyboardInfo GlobalKeyRepeat PerWindowKeyRepeat
    deriving ( Eq, Ord )
 
 getKeyboardInfo :: IO (Maybe KeyboardInfo)
 getKeyboardInfo = getDeviceInfo glut_HAS_KEYBOARD $ do
-   r <- deviceGet unmarshalKeyRepeat glut_DEVICE_KEY_REPEAT
-   i <- deviceGet i2b glut_DEVICE_IGNORE_KEY_REPEAT
+   r <- deviceGet unmarshalGlobalKeyRepeat glut_DEVICE_KEY_REPEAT
+   i <- deviceGet unmarshalPerWindowKeyRepeat glut_DEVICE_IGNORE_KEY_REPEAT
    return $ KeyboardInfo r i
 
 getDeviceInfo :: GLenum -> IO a -> IO (Maybe a)
