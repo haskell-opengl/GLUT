@@ -13,27 +13,36 @@ import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
+-- we lump together our global state (and still call this Haskell :-)
+data State = State { shoulder, elbow :: IORef GLint }
+
+makeState :: IO State
+makeState = do
+   s <- newIORef 0
+   e <- newIORef 0
+   return $ State { shoulder = s, elbow = e }
+
 myInit :: IO ()
 myInit = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Flat
 
-display :: IORef Int -> IORef Int -> DisplayCallback
-display shoulder elbow = do
+display :: State -> DisplayCallback
+display state = do
    clear [ ColorBuffer ]
    -- resolve overloading, not needed in "real" programs
    let translatef = translate :: Vector3 GLfloat -> IO ()
        scalef = scale :: GLfloat -> GLfloat -> GLfloat -> IO ()
    preservingMatrix $ do
       translatef (Vector3 (-1) 0 0)
-      s <- get shoulder
+      s <- get (shoulder state)
       rotate (fromIntegral s :: GLfloat) (Vector3 0 0 1)
       translatef (Vector3 1 0 0)
       preservingMatrix $ do
          scalef 2 0.4 1
          renderObject Wireframe (Cube 1)
       translatef (Vector3 1 0 0)
-      e <- get elbow
+      e <- get (elbow state)
       rotate (fromIntegral e :: GLfloat) (Vector3 0 0 1)
       translatef (Vector3 1 0 0)
       preservingMatrix $ do
@@ -53,18 +62,18 @@ reshape size@(Size w h) = do
    let translatef = translate :: Vector3 GLfloat -> IO ()
    translatef (Vector3 0 0 (-5))
 
-keyboard :: IORef Int -> IORef Int -> KeyboardMouseCallback
-keyboard shoulder _     (Char 's')   Down _ _ = update shoulder   5
-keyboard shoulder _     (Char 'S')   Down _ _ = update shoulder (-5)
-keyboard _        elbow (Char 'e')   Down _ _ = update elbow      5
-keyboard _        elbow (Char 'E')   Down _ _ = update elbow    (-5)
-keyboard _        _     (Char '\27') Down _ _ = exitWith ExitSuccess
-keyboard _        _     _            _    _ _ = return ()
-
-update :: IORef Int -> Int -> IO ()
-update angle inc = do
-   angle $~ ((`mod` 360) . (+ inc))
-   postRedisplay Nothing
+keyboard :: State -> KeyboardMouseCallback
+keyboard state (Char c) Down _ _ = case c of
+   's'   -> update shoulder   5
+   'S'   -> update shoulder (-5)
+   'e'   -> update elbow      5
+   'E'   -> update elbow    (-5)
+   '\27' -> exitWith ExitSuccess
+   _     -> return ()
+   where update joint inc = do
+            joint state $~ ((`mod` 360) . (+ inc))
+            postRedisplay Nothing
+keyboard _ _ _ _ _ = return ()
 
 main :: IO ()
 main = do
@@ -74,9 +83,8 @@ main = do
    initialWindowPosition $= Position 100 100
    createWindow progName
    myInit
-   shoulder <- newIORef 0
-   elbow <- newIORef 0
-   displayCallback $= display shoulder elbow
+   state <- makeState
+   displayCallback $= display state
    reshapeCallback $= Just reshape
-   keyboardMouseCallback $= Just (keyboard shoulder elbow)
+   keyboardMouseCallback $= Just (keyboard state)
    mainLoop
