@@ -17,6 +17,11 @@ module Graphics.UI.GLUT.FreeGLUT where
 
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
+import Graphics.UI.GLUT.Extensions
+
+--------------------------------------------------------------------------------
+
+#include "HsGLUTExt.h"
 
 -----------------------------------------------------------------------------
 -- New glutGet parameters
@@ -63,5 +68,4 @@ glut_USE_CURRENT_CONTEXT               = 1
 -----------------------------------------------------------------------------
 -- State setting and retrieval functions
 
-foreign import CALLCONV unsafe "glutSetOption"
-   glutSetOption :: GLenum -> CInt -> IO ()
+EXTENSION_ENTRY(unsafe,"freeglut",glutSetOption,GLenum -> CInt -> IO ())

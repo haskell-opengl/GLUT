@@ -52,7 +52,6 @@ import Data.Bits ( Bits((.&.)) )
 import Data.Char ( chr )
 import Data.Maybe ( fromJust )
 import Foreign.C.Types ( CInt, CUInt, CUChar )
-import Foreign.Ptr ( FunPtr )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
 import Graphics.Rendering.OpenGL.GL.StateVar (
    SettableStateVar, makeSettableStateVar )
@@ -71,6 +70,11 @@ import Graphics.UI.GLUT.Constants (
    glut_JOYSTICK_BUTTON_C, glut_JOYSTICK_BUTTON_D )
 import Graphics.UI.GLUT.State ( PollRate )
 import Graphics.UI.GLUT.Types ( MouseButton(..), unmarshalMouseButton )
+import Graphics.UI.GLUT.Extensions
+
+--------------------------------------------------------------------------------
+
+#include "HsGLUTExt.h"
 
 --------------------------------------------------------------------------------
 
@@ -265,8 +269,7 @@ closeCallback = makeSettableStateVar $
 foreign import ccall "wrapper"
    makeCloseCallback :: CloseCallback -> IO (FunPtr CloseCallback)
 
-foreign import CALLCONV unsafe "glutCloseFunc"
-   glutCloseFunc :: FunPtr CloseCallback -> IO ()
+EXTENSION_ENTRY(unsafe,"freeglut",glutCloseFunc,FunPtr CloseCallback -> IO ())
 
 --------------------------------------------------------------------------------
 
