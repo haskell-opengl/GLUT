@@ -1,0 +1,249 @@
+#! /bin/sh
+
+QUIP=quip
+SKRIPTE=scripts
+JAVAC="javac -source 1.5 -encoding iso-8859-1 -Xlint:unchecked"
+# TODO: This should be ghc-inplace...
+GHC="ghc -O -Wall"
+
+rm -rf src obj bin
+mkdir src obj bin
+
+${QUIP} -input tutorial.xml -o header.xml -include  ${SKRIPTE}/deleteTags.xquery -query '
+let $withoutDeleted := deleteTags(input())
+return $withoutDeleted//code[@lang="h"]'
+
+X=1
+Y=`${QUIP} -unwrapped_result -input header.xml -query 'count(distinct-values(input()//code/@class))';`
+
+echo ======================================================================
+echo "found $Y headers"
+
+while test $X -le $Y; do 
+   ${QUIP} -unwrapped_result -input header.xml -o name.txt -query 'let $klassen := distinct-values(input()//code[@class]/@class) return (string($klassen['$X']))'
+
+   NAME=`${QUIP} -unwrapped_result -input header.xml -query 'let $klassen := distinct-values(input()//code[@class]/@class) return (string($klassen['$X']))';`
+
+   OPTION=`${QUIP} -unwrapped_result -input header.xml -query 'let $klassen := distinct-values(input()//code[@class]) return (string($klassen['$X']/@compileoptions))';`
+
+   LANG=`${QUIP} -unwrapped_result -input header.xml -query 'let $klassen := input()//code[string(@class)="'$NAME'"]  return if (count($klassen/@lang)=0) then "java" else string(($klassen/@lang)[1])';`
+
+   PACK=`${QUIP} -unwrapped_result -input header.xml -query 'let $klassen := input()//code[string(@class)="'$NAME'"]  return if (count($klassen/@package)=0) then "." else string(($klassen/@package)[1])';`
+
+   MAIN=`${QUIP} -unwrapped_result -input header.xml -query 'let $klassen := input()//code[string(@class)="'$NAME'"]  return if (count($klassen/@main)=0) then "no" else string(($klassen/@main)[1])';`
+
+   echo "*** header no. $X, name $NAME, option $OPTION, language $LANG, package $PACK, main $MAIN"
+
+   mkdir src/$PACK
+   mkdir obj/$PACK
+
+   ${QUIP} -value_output -unwrapped_result  -input header.xml  -o src/$PACK/$NAME.$LANG -query 'define function further($x) {if (node-kind($x) = "text") then $x  else if (name($x)=QName("w")) then " " else if (name($x)=QName("nl")) then "
+" else   for $y in $x/node() return further($y)} string(for $code in input()//code[@class="'$NAME'"] return ((further($code)),"
+
+"))';
+
+   X=$((X+1))
+done
+
+##############################################
+${QUIP}  -unwrapped_result -input tutorial.xml -include ${SKRIPTE}/deleteTags.xquery -o code.xml -query '
+<codes>{
+let $withoutDeleted := deleteTags(input())
+return $withoutDeleted//code[not(@lang="h")]}</codes>
+'
+
+X=1
+Y=`${QUIP} -unwrapped_result -input code.xml -query 'count(distinct-values(
+let $in := input()
+for $at in $in/*/codes/code/@class return $at))';`
+
+echo ======================================================================
+echo "found $Y non-headers"
+
+while test $X -le $Y; do 
+   ${QUIP} -unwrapped_result -input code.xml -o klasse.xml -query '
+     let $codes       := input()/*/codes/code[@class]
+     let $klassenname := string(distinct-values($codes/@class)['$X'])
+     let $klasse      := ($codes[@class=$klassenname])[1]
+     return   <klasse>
+                <name>{string($klasse/@class)}</name>
+                <option>{string($klasse/@compileoptions)}</option>
+                <lang>{string($klasse/@lang)}</lang>
+                <pack>{string($klasse/@package)}</pack>
+                <main>{string($klasse/@main)}</main>
+              </klasse>'
+
+   NAME=`${QUIP} -unwrapped_result -input klasse.xml -query 'string(input()/*/*/name)';`
+
+   OPTION=`${QUIP} -unwrapped_result -input klasse.xml -query 'string(input()/*/*/option)';`
+
+   LANG=`${QUIP} -unwrapped_result -input klasse.xml -query '
+      let $l := string(input()/*/*/lang)
+      return if ($l="") then "java" else $l';`
+
+   PACK=`${QUIP} -unwrapped_result -input klasse.xml -query '
+      let $l := string(input()/*/*/pack)
+      return if ($l="") then "." else $l';`
+
+   MAIN=`${QUIP} -unwrapped_result -input klasse.xml -query '
+      let $l := string(input()/*/*/main)
+      return if ($l="") then "no" else $l';`
+
+   echo "*** file no. $X, name $NAME, option $OPTION, language $LANG, package $PACK, main $MAIN"
+
+   mkdir -p src/$PACK
+
+   ${QUIP} -value_output -unwrapped_result  -input code.xml  -o src/$PACK/$NAME.$LANG -query '
+define function further($x) {
+  if (node-kind($x) = "text") then $x  
+  else if (name($x)=QName("w")) then " " 
+  else if (name($x)=QName("nl")) then "
+" else   
+   for $y in $x/node() 
+   return further($y)} 
+
+string((
+(if ("'$LANG'"="java") then "//generated class! do not change
+" else "")
+,for $code in input()//code[@class="'$NAME'"] return ((further($code)),"
+
+")))'
+
+   case $LANG in 
+      hs)
+       cd src
+       ${GHC} $OPTION -o $PACK/$NAME.o -c $PACK/$NAME.$LANG
+       case $MAIN in
+          main) ${GHC} $OPTION --make -o ../bin/$PACK/$NAME $PACK/$NAME.$LANG
+                strip ../bin/$PACK/$NAME ;;
+          no) echo "no main" ;;
+          *) echo $MAIN; $MAIN ;;
+       esac
+       cd ..
+   esac;
+   case $LANG in 
+    #  java) cd src;$JAVAC -classpath ../classes:$CLASSPATH -d ../classes $OPTION  -source 1.5 $PACK/$NAME.$LANG; cd ..;
+   esac;
+   case $LANG in 
+      jj) cd src;javacc -OUTPUT_DIRECTORY:$PACK $PACK/$NAME.$LANG; cd ..;
+   esac;
+   case $LANG in 
+      cpp) cd src;echo g++ $OPTION -o $NAME.o -c $PACK/$NAME.$LANG;g++ $OPTION -o $NAME.o -c $PACK/$NAME.$LANG;
+       case $MAIN in 
+         main) echo $NAME; g++ $OPTION -LDIR../obj -o ../bin/$NAME $PACK/$NAME.$LANG; strip ../bin/$NAME;mv $NAME.o ../obj/$PACK/$NAME.o;;
+         no) echo "no main";;
+         *) echo $MAIN > ._ttt; chmod u+x ._ttt; ./._ttt;rm ._ttt;mv $NAME ../bin/;;
+       esac;
+       cd ..
+   esac;
+   case $LANG in 
+      c) cd src;echo "-c" ;echo $NAME; gcc $OPTION -o $NAME.o -c $PACK/$NAME.$LANG;
+       case $MAIN in 
+         main) echo $NAME; gcc $OPTION -LDIR../obj -o ../bin/$NAME $PACK/$NAME.$LANG; strip ../bin/$NAME;mv $NAME.o ../obj/$PACK/$NAME.o;
+       esac;
+       cd ..
+   esac;
+   case $LANG in 
+      h) echo "../obj/$PACK/$NAME.$LANG" 
+   esac;
+
+   X=$((X+1));
+done
+
+echo ======================================================================
+
+cd src
+
+KLASSENPFAD=`${QUIP} -unwrapped_result  -query '
+ string(<a>{("../classes/",
+   for $p in document("../tutorial.xml")//use
+   return (":../../../",string($p),"/examples/classes/")
+ ,   for $p in document("../tutorial.xml")//jar
+   return (":",string($p)) 
+)}</a>)';`
+
+FIRST=`${QUIP} -unwrapped_result  -query '
+let $x :=document("../tutorial.xml")/*//@javacompilefirst
+return if ($x) then string($x) else ""
+';`
+
+echo "first $FIRST, classpath $KLASSENPFAD"
+if test x"$FIRST" != x; then
+  echo "compiling..."
+  $JAVAC -classpath $KLASSENPFAD -d ../classes $OPTION $FIRST
+fi
+
+PACKAGES=`${QUIP} -unwrapped_result  -query '
+ string(<a>{
+   for $p in distinct-values(document("../code.xml")//code[@lang="adt"]/@package) 
+   return (" ",string($p),"/*.adt")
+ }</a>)';`;
+
+echo "adt packages $PACKAGES"
+if test x"$PACKAGES" != x; then
+   echo "compiling..."
+   java -classpath ~/fh/adt/examples/classes/:/home/sep/fh/java1.5/examples/classes/ name.panitz.crempel.util.adt.ADTMain $PACKAGES
+fi
+
+PACKAGES=`${QUIP} -unwrapped_result  -query '
+ string(<a>{
+   for $p in distinct-values(document("../code.xml")//code[@lang="dtd"]/@package) 
+   return (" ",string($p),"/*.dtd")
+ }</a>)';`;
+
+echo "dtd packages $PACKAGES"
+if test x"$PACKAGES" != x; then
+   echo "compiling..."
+   java -classpath ~/fh/adt/examples/classes/:/home/sep/fh/java1.5/examples/classes/:/home/sep/fh/xmlparslib/examples/classes/ name.panitz.crempel.util.xml.dtd.parser.MainDTDParse $PACKAGES
+fi
+
+PACKAGES=`${QUIP} -unwrapped_result  -query '
+ string(<a>{
+   (for $p in distinct-values(document("../code.xml")//code/@package) 
+    return (" ",string($p),"/*.java")
+   )
+ }</a>)';`;
+
+echo "java packages $PACKAGES, classpath $KLASSENPFAD"
+if test x"$PACKAGES" != x; then
+   echo "compiling..."
+   $JAVAC -classpath $KLASSENPFAD -d ../classes $OPTION  $PACKAGES
+fi
+
+cd ..
+
+echo ======================================================================
+
+mv src/*.o src/*.hi obj
+tar czvf tutorial_examples.tar.gz src
+
+echo ======================================================================
+
+${QUIP} -unwrapped_result  -o examples.html -query '<html><head>
+<title>Examples from the Tutorial</title></head>
+<body><h1>Examples from the Tutorial</h1>
+{(let $used := document("tutorial.xml")//use
+ return if ($used)
+then
+(<h3>Library classes used</h3>
+,<ul>{for $x in $used
+     return <li>{
+  <a href="{("../",string($x),"/examples.html")}">{string($x)}</a>
+      }</li> 
+}</ul>)
+else ()),
+<h3>Defined Modules</h3>
+,<ul>{
+ let $header := (
+   for $k in distinct-values(document("header.xml")//code[@class]/@class) 
+   return (string((string($k),".h")))) 
+ let $cpp := (
+   for $k in distinct-values(
+     for $code in document("code.xml")//code[@class] 
+     let $lang := if ($code/@lang) then string(($code/@lang)) else "java"
+     return string((string($code/@package),(string($code/@class),".",$lang)))) 
+    return $k) 
+ for $n in $header | $cpp 
+ return <li><a href="src/{$n}">{$n}</a></li> 
+ sortBy (.//@href)}</ul>
+,<a href="tutorial_examples.tar.gz">all examples as a gzipped tar file</a>}</body></html>'
