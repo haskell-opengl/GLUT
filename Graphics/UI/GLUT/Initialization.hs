@@ -1,4 +1,4 @@
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Initialization
 -- Copyright   :  (c) Sven Panne 2002
@@ -21,7 +21,7 @@
 -- initial window size or position before 'init' allows the GLUT program user
 -- to specify the initial size or position using command line arguments.
 --
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Initialization (
    -- * Primary initialization
@@ -31,8 +31,11 @@ module Graphics.UI.GLUT.Initialization (
    WindowPosition(..), initWindowPosition,
    WindowSize(..), initWindowSize,
 
-   -- * Setting the initial window mode
-   DisplayMode(..), initDisplayMode, initDisplayString
+   -- * Setting the initial window mode (I)
+   DisplayMode(..), initDisplayMode,
+
+   -- * Setting the initial window mode (II)
+   Capability(..), Relation(..), CapabilityDescription(..), initDisplay
 ) where
 
 import Prelude hiding ( init )
@@ -47,7 +50,7 @@ import Foreign.Storable ( Storable(..) )
 import System.Environment ( getProgName, getArgs )
 import Graphics.UI.GLUT.Constants
 
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- | Given the program name and command line arguments, initialize the GLUT
 -- library and negotiate a session with the window system. During this
 -- process, 'init' may cause the termination of the GLUT program with an
@@ -117,7 +120,7 @@ initArgs = do
    nonGLUTArgs <- init prog args
    return (prog, nonGLUTArgs)
 
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 -- | Window position, measured in pixels.
 data WindowPosition = WindowPosition CInt CInt
@@ -162,13 +165,14 @@ initWindowSize (WindowSize w h) = glutInitWindowSize w h
 foreign import ccall unsafe "glutInitWindowSize" glutInitWindowSize ::
    CInt -> CInt -> IO ()
 
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
--- | A single aspect of a window which is to be created.
+-- | A single aspect of a window which is to be created, used in conjunction
+-- with 'initDisplayMode'.
 data DisplayMode
-   = Rgba        -- ^ Select an RGBA mode window. This is the default if neither 'Rgba' nor 'Index' are specified.
-   | Rgb         -- ^ An alias for 'Rgba'.
-   | Index       -- ^ Select a color index mode window. This overrides 'Rgba' if it is also specified.
+   = RGBA        -- ^ Select an RGBA mode window. This is the default if neither 'RGBA' nor 'Index' are specified.
+   | RGB         -- ^ An alias for 'RGBA'.
+   | Index       -- ^ Select a color index mode window. This overrides 'RGBA' if it is also specified.
    | Single      -- ^ Select a single buffered window. This is the default if neither 'Double' nor 'Single' are specified.
    | Double      -- ^ Select a double buffered window. This overrides 'Single' if it is also specified.
    | Accum       -- ^ Select a window with an accumulation buffer.
@@ -189,8 +193,8 @@ data DisplayMode
 
 marshalDisplayMode :: DisplayMode -> CUInt
 marshalDisplayMode m = case m of
-   Rgba        -> glut_RGBA
-   Rgb         -> glut_RGB
+   RGBA        -> glut_RGBA
+   RGB         -> glut_RGB
    Index       -> glut_INDEX
    Single      -> glut_SINGLE
    Double      -> glut_DOUBLE
@@ -206,7 +210,7 @@ marshalDisplayMode m = case m of
 -- subwindows, and overlays to determine the OpenGL display mode for the
 -- to-be-created window or overlay.
 --
--- Note that 'Rgba' selects the RGBA color model, but it does not request any
+-- Note that 'RGBA' selects the RGBA color model, but it does not request any
 -- bits of alpha (sometimes called an /alpha buffer/ or /destination alpha/)
 -- be allocated. To request alpha, specify 'Alpha'. The same applies to
 -- 'Luminance'.
@@ -220,178 +224,238 @@ toBitfield marshal = foldl (.|.) 0 . map marshal
 foreign import ccall unsafe "glutInitDisplayMode" glutInitDisplayMode ::
    CUInt -> IO ()
 
--- | Set the /initial display mode description string/. It is used when
--- creating top-level windows, subwindows, and overlays to determine the
--- OpenGL display mode for the to-be-created window or overlay. The string is
--- a list of zero or more capability descriptions separated by spaces and
--- tabs. Each capability description is a capability name that is optionally
--- followed by a comparator and a numeric value. For example, @\"double\"@
--- and @\"depth>=12\"@ are both valid criteria. The capability descriptions
--- are translated into a set of criteria used to select the appropriate frame
--- buffer configuration. The criteria are matched in strict left to right
--- order of precdence. That is, the first specified criteria (leftmost) takes
--- precedence over the later criteria for non-exact criteria (greater than,
--- less than, etc. comparators). Exact criteria (equal, not equal
--- comparators) must match exactly so precedence is not relevant. The numeric
--- value is an integer that is parsed according to ANSI C\'s @strtol@
--- behavior. This means that decimal, octal (leading @0@), and hexadecimal
--- values (leading @0x@) are accepeted. The valid comparators are:
+--------------------------------------------------------------------------------
+
+-- Internal class for leaving Show instances untouched
+class ToString a where
+   toString :: a -> String
+
+-- | Capabilities for 'initDisplay', most of them are extensions of
+-- 'DisplayMode'\'s constructors.
+data Capability
+   = RGBA'        -- ^ Number of bits of red, green, blue, and alpha in the RGBA
+                  --   color buffer. Default is \"'IsAtLeast' @1@\" for red,
+                  --   green, blue, and alpha capabilities, and \"'IsEqualTo'
+                  --   @1@\" for the RGBA color model capability.
+   | RGB'         -- ^ Number of bits of red, green, and blue in the RGBA color
+                  --   buffer and zero bits of alpha color buffer precision.
+                  --   Default is \"'IsAtLeast' @1@\" for the red, green, and
+                  --   blue capabilities, and \"'IsNotLessThan' @0@\" for alpha
+                  --   capability, and \"'IsEqualTo' @1@\" for the RGBA color
+                  --   model capability.
+   | Red          -- ^ Red color buffer precision in bits. Default is
+                  --   \"'IsAtLeast' @1@\".
+   | Green        -- ^ Green color buffer precision in bits. Default is
+                  --   \"'IsAtLeast' @1@\".
+   | Blue         -- ^ Blue color buffer precision in bits. Default is
+                  --   \"'IsAtLeast' @1@\".
+   | Index'       -- ^ Boolean if the color model is color index or not. True is
+                  --   color index. Default is \"'IsAtLeast' @1@\".
+   | Buffer       -- ^ Number of bits in the color index color buffer. Default
+                  --   is \"'IsAtLeast' @1@\".
+   | Single'      -- ^ Boolean indicate the color buffer is single buffered.
+                  --   Defaultis \"'IsEqualTo' @1@\".
+   | Double'      -- ^ Boolean indicating if the color buffer is double
+                  --   buffered. Default is \"'IsEqualTo' @1@\".
+   | AccA         -- ^ Red, green, blue, and alpha accumulation buffer precision
+                  --   in  bits. Default is \"'IsAtLeast' @1@\" for red, green,
+                  --   blue, and alpha capabilities.
+   | Acc          -- ^ Red, green, and green accumulation buffer precision in
+                  --   bits and zero bits of alpha accumulation buffer precision.
+                  --   Default is \"'IsAtLeast' @1@\" for red, green, and blue
+                  --   capabilities, and \"'IsNotLessThan' @0@\" for the alpha
+                  --   capability.
+   | Alpha'       -- ^ Alpha color buffer precision in bits. Default is
+                  --   \"'IsAtLeast' @1@\".
+   | Depth'       -- ^ Number of bits of precsion in the depth buffer. Default
+                  --   is \"'IsAtLeast' @12@\".
+   | Stencil'     -- ^ Number of bits in the stencil buffer. Default is
+                  --   \"'IsNotLessThan' @1@\".
+   | Samples      -- ^ Indicates the number of multisamples to use based on
+                  --   GLX\'s @SGIS_multisample@ extension (for antialiasing).
+                  --   Default is \"'IsNotGreaterThan' @4@\". This default means
+                  --   that a GLUT application can request multisampling if
+                  --   available by simply specifying \"'With' 'Samples'\".
+   | Stereo'      -- ^ Boolean indicating the color buffer is supports
+                  --   OpenGL-style stereo. Default is \"'IsEqualTo' @1@\".
+   | Luminance'   -- ^ Number of bits of red in the RGBA and zero bits of green,
+                  --   blue (alpha not specified) of color buffer precision.
+                  --   Default is \"'IsAtLeast' @1@\" for the red capabilitis,
+                  --   and \"'IsEqualTo' @0@\" for the green and blue
+                  --   capabilities, and \"'IsEqualTo' @1@\" for the RGBA color
+                  --   model capability, and, for X11, \"'IsEqualTo' @1@\" for
+                  --   the 'XStaticGray' capability. SGI InfiniteReality (and
+                  --   other future machines) support a 16-bit luminance (single
+                  --   channel) display mode (an additional 16-bit alpha channel
+                  --   can also be requested). The red channel maps to gray
+                  --   scale and green and blue channels are not available. A
+                  --   16-bit precision luminance display mode is often
+                  --   appropriate for medical imaging applications. Do not
+                  --   expect many machines to support extended precision
+                  --   luminance display modes.
+   | Num          -- ^ A special capability name indicating where the value
+                  --   represents the Nth frame buffer configuration matching
+                  --   the description string. When not specified,
+                  --   'initDisplayString' also returns the first (best
+                  --   matching) configuration. 'Num' requires a relation and
+                  --   numeric value.
+   | Conformant   -- ^ Boolean indicating if the frame buffer configuration is
+                  --   conformant or not. Conformance information is based on
+                  --   GLX\'s @EXT_visual_rating@ extension if supported. If the
+                  --   extension is not supported, all visuals are assumed
+                  --   conformant. Default is \"'IsEqualTo' @1@\".
+   | Slow         -- ^ Boolean indicating if the frame buffer configuration is
+                  --   slow or not. Slowness information is based on GLX\'s
+                  --   @EXT_visual_rating@ extension if supported. If the
+                  --   extension is not supported, all visuals are assumed fast.
+                  --   Note that slowness is a relative designation relative to
+                  --   other frame buffer configurations available. The intent
+                  --   of the slow capability is to help programs avoid frame
+                  --   buffer configurations that are slower (but perhaps higher
+                  --   precision) for the current machine. Default is
+                  --   \"'IsAtLeast' @0@\". This default means that slow visuals
+                  --   are used in preference to fast visuals, but fast visuals
+                  --   will still be allowed.
+   | Win32PFD     -- ^ Only recognized on GLUT implementations for Win32, this
+                  --   capability name matches the Win32 Pixel Format Descriptor
+                  --   by number. 'Win32PFD' can only be used with 'Where'.
+   | XVisual      -- ^ Only recongized on GLUT implementations for the X Window
+                  --   System, this capability name matches the X visual ID by
+                  --   number. 'XVisual' requires a relation and numeric value.
+   | XStaticGray  -- ^ Only recongized on GLUT implementations for the X Window
+                  --   System, boolean indicating if the frame buffer
+                  --   configuration\'s X visual is of type @StaticGray@.
+                  --   Default is \"'IsEqualTo' @1@\".
+   | XGrayScale   -- ^ Only recongized on GLUT implementations for the X Window
+                  --   System, boolean indicating if the frame buffer
+                  --   configuration\'s X visual is of type @GrayScale@. Default
+                  --   is \"'IsEqualTo' @1@\".
+   | XStaticColor -- ^ Only recongized on GLUT implementations for the X Window
+                  --   System, boolean indicating if the frame buffer
+                  --   configuration\'s X visual is of type @StaticColor@.
+                  --   Default is \"'IsEqualTo' @1@\".
+   | XPseudoColor -- ^ Only recongized on GLUT implementations for the X Window
+                  --   System, boolean indicating if the frame buffer
+                  --   configuration\'s X visual is of type @PsuedoColor@.
+                  --   Default is \"'IsEqualTo' @1@\".
+   | XTrueColor   -- ^ Only recongized on GLUT implementations for the X Window
+                  --   System, boolean indicating if the frame buffer
+                  --   configuration\'s X visual is of type @TrueColor@. Default
+                  --   is \"'IsEqualTo' @1@\".
+   | XDirectColor -- ^ Only recongized on GLUT implementations for the X Window
+                  --   System, boolean indicating if the frame buffer
+                  --   configuration\'s X visual is of type @DirectColor@.
+                  --   Default is \"'IsEqualTo' @1@\".
+   deriving ( Eq, Ord )
+
+instance ToString Capability where
+   toString RGBA'        = "rgba"
+   toString RGB'         = "rgb"
+   toString Red          = "red"
+   toString Green        = "green"
+   toString Blue         = "blue"
+   toString Index'       = "index"
+   toString Buffer       = "buffer"
+   toString Single'      = "single"
+   toString Double'      = "double"
+   toString AccA         = "acca"
+   toString Acc          = "acc"
+   toString Alpha'       = "alpha"
+   toString Depth'       = "depth"
+   toString Stencil'     = "stencil"
+   toString Samples      = "samples"
+   toString Stereo'      = "stereo"
+   toString Luminance'   = "luminance"
+   toString Num          = "num"
+   toString Conformant   = "conformant"
+   toString Slow         = "slow"
+   toString Win32PFD     = "win32pfd"
+   toString XVisual      = "xvisual"
+   toString XStaticGray  = "xstaticgray"
+   toString XGrayScale   = "xgrayscale"
+   toString XStaticColor = "xstaticcolor"
+   toString XPseudoColor = "xpseudocolor"
+   toString XTrueColor   = "xtruecolor"
+   toString XDirectColor = "xdirectcolor"
+
+-- | Relation between a 'Capability' and a numeric value.
+data Relation
+   = IsEqualTo        -- ^ Equal.
+   | IsNotEqualTo     -- ^ Not equal.
+   | IsLessThan       -- ^ Less than and preferring larger difference (the least
+                      --   is best).
+   | IsNotGreaterThan -- ^ Less than or equal and preferring larger difference
+                      --   (the least is best).
+   | IsGreaterThan    -- ^ Greater than and preferring larger differences (the
+                      --   most is best).
+   | IsAtLeast        -- ^ Greater than or equal and preferring more instead of
+                      --   less. This relation is useful for allocating
+                      --   resources like color precision or depth buffer
+                      --   precision where the maximum precision is generally
+                      --   preferred. Contrast with 'IsNotLessThan' relation.
+   | IsNotLessThan    -- ^ Greater than or equal but preferring less instead of
+                      --   more. This relation is useful for allocating
+                      --   resources such as stencil bits or auxillary color
+                      --   buffers where you would rather not over-allocate.
+   deriving ( Eq, Ord )
+
+instance ToString Relation where
+   toString IsEqualTo        = "="
+   toString IsNotEqualTo     = "!="
+   toString IsLessThan       = "<"
+   toString IsNotGreaterThan = "<="
+   toString IsGreaterThan    = ">"
+   toString IsAtLeast        = ">="
+   toString IsNotLessThan    = "~"
+
+-- | A single capability description for 'initDisplay'.
+data CapabilityDescription
+   = Where Capability Relation Int -- ^ A description of a capability with a
+                                   --   specific relation to a numeric value.
+   | With  Capability              -- ^ When the relation and numeric value are
+                                   --   not specified, each capability has a
+                                   --   different default, see the different
+                                   --   constructors of 'Capability'.
+   deriving ( Eq, Ord )
+
+instance ToString CapabilityDescription where
+   toString (Where c r i) = toString c ++ toString r ++ show i
+   toString (With c)      = toString c
+
+-- | Set the /initial display mode/ used when creating top-level windows,
+-- subwindows, and overlays to determine the OpenGL display mode for the
+-- to-be-created window or overlay. It is described by a list of zero or more
+-- capability descriptions, which are translated into a set of criteria used to
+-- select the appropriate frame buffer configuration. The criteria are matched
+-- in strict left to right order of precdence. That is, the first specified
+-- criterion (leftmost) takes precedence over the later criteria for non-exact
+-- criteria ('IsGreaterThan', 'IsLessThan', etc.). Exact criteria ('IsEqualTo',
+-- 'IsNotEqualTo') must match exactly so precedence is not relevant.
 --
--- * @=@: Equal.
+-- Unspecified capability descriptions will result in unspecified criteria being
+-- generated. These unspecified criteria help 'initDisplay' behave sensibly with
+-- terse display mode descriptions.
 --
--- * @!=@: Not equal.
+-- Here is an example using 'initDisplay':
 --
--- * @\<@: Less than and preferring larger difference (the least is best).
---
--- * @>@: Greater than and preferring larger differences (the most is best).
---
--- * @\<=@: Less than or equal and preferring larger difference (the least is
---   best).
---
--- * @>=@: Greater than or equal and preferring more instead of less. This
---   comparator is useful for allocating resources like color precision or
---   depth buffer precision where the maximum precision is generally
---   preferred. Contrast with the tilde (@~@) comparator.
---
--- * @~@: Greater than or equal but preferring less instead of more. This
---   comparator is useful for allocating resources such as stencil bits or
---   auxillary color buffers where you would rather not over-allocate. When
---   the comparator and numeric value are not specified, each capability name
---   has a different default (one default is to require a a comparator and
---   numeric value).
---
--- The valid capability names are:
---
--- * @rgba@: Number of bits of red, green, blue, and alpha in the RGBA color
---   buffer. Default is @\">=1\"@ for red, green, blue, and alpha
---   capabilities, and @\"=1\"@ for the RGBA color model capability.
---
--- * @rgb@: Number of bits of red, green, and blue in the RGBA color buffer
---   and zero bits of alpha color buffer precision. Default is @\">=1\"@ for
---   the red, green, and blue capabilities, and @\"~0\"@ for alpha
---   capability, and @\"=1\"@ for the RGBA color model capability.
---
--- * @red@: Red color buffer precision in bits. Default is @\">=1\"@.
---
--- * @green@: Green color buffer precision in bits. Default is @\">=1\"@.
---
--- * @blue@: Blue color buffer precision in bits. Default is @\">=1\"@.
---
--- * @alpha@: Alpha color buffer precision in bits. Default is @\">=1\"@.
---
--- * @index@: Boolean if the color model is color index or not. True is color
---   index. Default is @\">=1\"@.
---
--- * @buffer@: Number of bits in the color index color buffer. Default is
---   @\">=1\"@.
---
--- * @acca@: Red, green, blue, and alpha accumulation buffer precision in
---   bits. Default is @\">=1\"@ for red, green, blue, and alpha capabilities.
---
--- * @acc@: Red, green, and green accumulation buffer precision in bits and
---   zero bits of alpha accumulation buffer precision. Default is @\">=1\"@
---   for red, green, and blue capabilities, and @\"~0\"@ for the alpha
---   capability.
---
--- * @depth@: Number of bits of precsion in the depth buffer. Default is
---   @\">=12\"@.
---
--- * @stencil@: Number of bits in the stencil buffer.
---
--- * @luminance@: Number of bits of red in the RGBA and zero bits of green,
---   blue (alpha not specified) of color buffer precision. Default is
---   @\">=1\" for the red capabilitis, and @\"=0\" for the green and blue
---   capabilities, and @\"=1\" for the RGBA color model capability, and, for
---   X11, @\"=1\" for the @StaticGray@ (@\"xstaticgray\"@) capability. SGI
---   InfiniteReality (and other future machines) support a 16-bit luminance
---   (single channel) display mode (an additional 16-bit alpha channel can
---   also be requested). The red channel maps to gray scale and green and
---   blue channels are not available. A 16-bit precision luminance display
---   mode is often appropriate for medical imaging applications. Do not
---   expect many machines to support extended precision luminance display
---   modes.
---
--- * @single@: Boolean indicate the color buffer is single buffered. Double
---   buffer capability @\"=1\"@.
---
--- * @double@: Boolean indicating if the color buffer is double buffered.
---   Default is @\"=1\"@.
---
--- * @stereo@: Boolean indicating the color buffer is supports OpenGL-style
---   stereo. Default is @\"=1\"@.
---
--- * @samples@: Indicates the number of multisamples to use based on GLX\'s
---   @SGIS_multisample@ extension (for antialiasing). Default is @\"\<=4\"@.
---   This default means that a GLUT application can request multisampling if
---   available by simply specifying @\"samples\"@.
---
--- * @num@: A special capability name indicating where the value represents
---   the Nth frame buffer configuration matching the description string. When
---   not specified, 'initDisplayString' also returns the first (best
---   matching) configuration. @num@ requires a comparator and numeric value.
---
--- * @conformant@: Boolean indicating if the frame buffer configuration is
---   conformant or not. Conformance information is based on GLX\'s
---   @EXT_visual_rating@ extension if supported. If the extension is not
---   supported, all visuals are assumed conformat. Default is @\"=1\"@.
---
--- * @slow@: Boolean indicating if the frame buffer configuration is slow or
---   not. Slowness information is based on GLX\'s @EXT_visual_rating@
---   extension if supported. If the extension is not supported, all visuals
---   are assumed fast. Note that slowness is a relative designation relative
---   to other frame buffer configurations available. The intent of the slow
---   capability is to help programs avoid frame buffer configurations that
---   are slower (but perhaps higher precision) for the current machine.
---   Default is @\">=0\"@. This default means that slow visuals are used in
---   preference to fast visuals, but fast visuals will still be allowed.
---
--- * @win32pfd@: Only recognized on GLUT implementations for Win32, this
---   capability name matches the Win32 Pixel Format Descriptor by number.
---   @win32pfd@ requires a comparator and numeric value.
---
--- * @xvisual@: Only recongized on GLUT implementations for the X Window
---   System, this capability name matches the X visual ID by number.
---   @xvisual@ requires a comparator and numeric value.
---
--- * @xstaticgray@: Only recongized on GLUT implementations for the X Window
---   System, boolean indicating if the frame buffer configuration\'s X visual
---   is of type @StaticGray@. Default is @\"=1\"@.
---
--- * @xgrayscale@: Only recongized on GLUT implementations for the X Window
---   System, boolean indicating if the frame buffer configuration\'s X visual
---   is of type @GrayScale@. Default is @\"=1\"@.
---
--- * @xstaticcolor@: Only recongized on GLUT implementations for the X Window
---   System, boolean indicating if the frame buffer configuration\'s X visual
---   is of type @StaticColor@. Default is @\"=1\"@.
---
--- * @xpseudocolor@: Only recongized on GLUT implementations for the X Window
---   System, boolean indicating if the frame buffer configuration\'s X visual
---   is of type @PsuedoColor@. Default is @\"=1\"@.
---
--- * @xtruecolor@: Only recongized on GLUT implementations for the X Window
---   System, boolean indicating if the frame buffer configuration\'s X visual
---   is of type @TrueColor@. Default is @\"=1\"@.
---
--- * @xdirectcolor@: Only recongized on GLUT implementations for the X Window
---   System, boolean indicating if the frame buffer configuration\'s X visual
---   is of type @DirectColor@. Default is @\"=1\"@.
---
--- Unspecified capability descriptions will result in unspecified criteria
--- being generated. These unspecified criteria help 'initDisplayString'
--- behave sensibly with terse display mode description strings.
---
--- Here is an example using 'initDisplayString':
---
--- @   'initDisplayString' \"stencil~2 rgb double depth>=16 samples\"@
+-- @
+--    initDisplay [ With  RGB\',
+--                  Where Depth\' IsAtLeast 16,
+--                  With  Samples,
+--                  Where Stencil\' IsNotLessThan 2,
+--                  With  Double\' ]
+-- @
 --
 -- The above call requests a window with an RGBA color model (but requesting
 -- no bits of alpha), a depth buffer with at least 16 bits of precision but
--- preferring more, multisampling if available, and at least 2 bits of
--- stencil (favoring less stencil to more as long as 2 bits are available).  
+-- preferring more, multisampling if available, at least 2 bits of stencil
+-- (favoring less stencil to more as long as 2 bits are available), and double
+-- buffering.
 
-initDisplayString :: String -> IO ()
-initDisplayString s = withCString s glutInitDisplayString
+initDisplay :: [CapabilityDescription] -> IO ()
+initDisplay settings =
+   withCString (concat . intersperse " " . map toString $ settings)
+               glutInitDisplayString
 
 foreign import ccall unsafe "glutInitDisplayString" glutInitDisplayString ::
   CString -> IO ()
