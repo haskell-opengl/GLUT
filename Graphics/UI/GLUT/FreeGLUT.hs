@@ -15,8 +15,7 @@
 
 module Graphics.UI.GLUT.FreeGLUT where
 
-import Foreign.Ptr ( Ptr, FunPtr )
-import Foreign.C.String ( CString )
+import Foreign.Ptr ( Ptr )
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes (
    GLint, GLenum, GLfloat, GLdouble )
@@ -64,49 +63,10 @@ glut_CREATE_NEW_CONTEXT                = 0
 glut_USE_CURRENT_CONTEXT               = 1
 
 -----------------------------------------------------------------------------
--- Process loop function
-
-foreign import CALLCONV unsafe "glutMainLoopEvent"
-   glutMainLoopEvent :: IO ()
-
-foreign import CALLCONV unsafe "glutLeaveMainLoop"
-   glutLeaveMainLoop :: IO ()
-
------------------------------------------------------------------------------
--- Window-specific callback functions
-{-
-foreign import CALLCONV unsafe "glutMouseWheelFunc"
-   void glutMouseWheelFunc( void (* callback)( int, int, int, int ) );
-
-foreign import CALLCONV unsafe "glutCloseFunc"
-   void glutCloseFunc( void (* callback)( void ) );
-
-foreign import CALLCONV unsafe "glutWMCloseFunc"
-   void glutWMCloseFunc( void (* callback)( void ) );
-
-foreign import CALLCONV unsafe "glutMenuDestroyFunc"
-   void glutMenuDestroyFunc( void (* callback)( void ) );
--}
------------------------------------------------------------------------------
 -- State setting and retrieval functions
 
 foreign import CALLCONV unsafe "glutSetOption"
    glutSetOption :: GLenum -> CInt -> IO ()
-
------------------------------------------------------------------------------
--- User-data manipulation
-
-foreign import CALLCONV unsafe "glutGetWindowData"
-   glutGetWindowData :: IO (Ptr a)
-
-foreign import CALLCONV unsafe "glutSetWindowData"
-   glutSetWindowData :: Ptr a -> IO ()
-
-foreign import CALLCONV unsafe "glutGetMenuData"
-   glutGetMenuData :: IO (Ptr a)
-
-foreign import CALLCONV unsafe "glutSetMenuData"
-   glutSetMenuData :: Ptr a -> IO ()
 
 -----------------------------------------------------------------------------
 -- Font stuff
@@ -116,12 +76,6 @@ foreign import CALLCONV unsafe "glutBitmapHeight"
 
 foreign import CALLCONV unsafe "glutStrokeHeight"
    glutStrokeHeight :: Ptr a -> IO GLfloat
-
-foreign import CALLCONV unsafe "glutBitmapString"
-   glutBitmapString :: Ptr a -> CString -> IO ()
-
-foreign import CALLCONV unsafe "glutStrokeString"
-   glutStrokeString :: Ptr a -> CString -> IO ()
 
 -----------------------------------------------------------------------------
 -- Geometry functions
@@ -143,8 +97,3 @@ foreign import CALLCONV unsafe "glutWireCylinder"
 
 foreign import CALLCONV unsafe "glutSolidCylinder"
    glutSolidCylinder :: GLdouble -> GLdouble -> GLint -> GLint -> IO ()
-
------------------------------------------------------------------------------
--- Extension functions
-foreign import CALLCONV unsafe "glutGetProcAddress"
-   glutGetProcAddress :: CString -> IO (FunPtr a)

@@ -20,6 +20,9 @@ module Graphics.UI.GLUT.Callbacks.Window (
    -- * Callback for visibility changes
    Visibility(..), VisibilityCallback, visibilityCallback,
 
+   -- * Window close callback
+   CloseCallback, closeCallback,
+
    -- * Keyboard and mouse input callback
    Key(..), SpecialKey(..), MouseButton(..), KeyState(..), Modifiers(..),
    KeyboardMouseCallback, keyboardMouseCallback,
@@ -250,6 +253,20 @@ foreign import ccall "wrapper" makeVisibilityCallback ::
 
 foreign import CALLCONV unsafe "glutVisibilityFunc" glutVisibilityFunc ::
    FunPtr VisibilityCallback' -> IO ()
+
+--------------------------------------------------------------------------------
+
+type CloseCallback = IO ()
+
+closeCallback :: SettableStateVar (Maybe CloseCallback)
+closeCallback = makeSettableStateVar $
+   setCallback CloseCB glutCloseFunc makeCloseCallback
+
+foreign import ccall "wrapper"
+   makeCloseCallback :: CloseCallback -> IO (FunPtr CloseCallback)
+
+foreign import CALLCONV unsafe "glutCloseFunc"
+   glutCloseFunc :: FunPtr CloseCallback -> IO ()
 
 --------------------------------------------------------------------------------
 

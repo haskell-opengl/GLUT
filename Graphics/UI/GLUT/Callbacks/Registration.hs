@@ -38,6 +38,7 @@ data CallbackType
    | SpaceballButtonCB | ButtonBoxCB       | DialsCB
    | TabletMotionCB    | TabletButtonCB    | JoystickCB
    | MenuStatusCB      | IdleCB
+   | CloseCB   -- freeglut only
    deriving ( Eq, Ord )
 
 isGlobal :: CallbackType -> Bool
