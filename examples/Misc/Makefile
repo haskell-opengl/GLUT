@@ -6,8 +6,8 @@ include $(TOP)/mk/boilerplate.mk
 # -----------------------------------------------------------------------------
 
 EXAMPLES    := $(wildcard *.hs)
-BINS        := $(EXAMPLES:.hs=)
-CLEAN_FILES += $(addsuffix $(exeext), $(BINS))
+BINS        := $(addsuffix $(exeext),$(EXAMPLES:.hs=))
+CLEAN_FILES += $(BINS)
 
 HC           = $(GHC_INPLACE)
 SRC_HC_OPTS += -Wall -O -package GLUT
