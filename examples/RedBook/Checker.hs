@@ -10,7 +10,7 @@
 -}
 
 import Data.Bits ( (.&.) )
-import Foreign ( newArray )
+import Foreign ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -18,23 +18,21 @@ import Graphics.UI.GLUT
 checkImageSize :: TextureSize2D
 checkImageSize = TextureSize2D 64 64
 
-makeCheckImage :: IO (PixelData (Color4 GLubyte))
-makeCheckImage = do
-   let TextureSize2D w h = checkImageSize
-   buf <- newArray [ Color4 c c c 255 |
-                     i <- [ 0 .. w - 1 ],
-                     j <- [ 0 .. h - 1 ],
-                     let c | (i .&. 0x8) == (j .&. 0x8) = 0
-                           | otherwise                  = 255 ]
-   return $ PixelData RGBA UnsignedByte buf
+withCheckImage :: TextureSize2D -> GLsizei -> (GLubyte -> (Color4 GLubyte))
+               -> (PixelData (Color4 GLubyte) -> IO ()) -> IO ()
+withCheckImage (TextureSize2D w h) n f act =
+   withArray [ f c |
+               i <- [ 0 .. w - 1 ],
+               j <- [ 0 .. h - 1 ],
+               let c | (i .&. n) == (j .&. n) = 0
+                     | otherwise              = 255 ] $
+   act. PixelData RGBA UnsignedByte
 
 myInit :: IO (Maybe TextureObject)
 myInit = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Flat
    depthFunc $= Just Less
-
-   checkImage <- makeCheckImage
    rowAlignment Unpack $= 1
 
    exts <- get glExtensions
@@ -47,7 +45,8 @@ myInit = do
    textureWrapMode Texture2D S $= (Repeated, Repeat)
    textureWrapMode Texture2D T $= (Repeated, Repeat)
    textureFilter Texture2D $= ((Nearest, Nothing), Nearest)
-   texImage2D NoProxy 0  RGBA' checkImageSize 0 checkImage
+   withCheckImage checkImageSize 0x8 (\c -> Color4 c c c 255) $
+      texImage2D NoProxy 0  RGBA' checkImageSize 0
    return mbTexName
 
 display ::  Maybe TextureObject -> DisplayCallback
