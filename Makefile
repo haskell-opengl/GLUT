@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# $Id: Makefile,v 1.13 2002/08/27 20:03:31 panne Exp $
+# $Id: Makefile,v 1.14 2003/01/23 18:57:32 panne Exp $
 
 TOP = ..
 include $(TOP)/mk/boilerplate.mk
@@ -16,8 +16,7 @@ ALL_DIRS = \
 PACKAGE = GLUT
 PACKAGE_DEPS = base OpenGL
 
-SRC_HC_OPTS += -Wall -fglasgow-exts -package OpenGL \
-               -Iinclude '-\#include "HsGLUT.h"' -cpp
+SRC_HC_OPTS += -Wall -fffi -Iinclude '-\#include "HsGLUT.h"' -cpp
 
 # WinDoze DLL hell
 ifeq "$(TARGETPLATFORM)" "i386-unknown-mingw32"
