@@ -47,7 +47,6 @@ import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLfloat )
 import Graphics.Rendering.OpenGL.GL.VertexSpec ( Color3(..), ColorIndex )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Window ( Window )
-import Data.Maybe ( Maybe(..) ) -- for Haddock only
 
 -- | Set the cell color index colormap entry of the /current window/\'s
 -- logical colormap for the /layer in use/ with the specified color. The
