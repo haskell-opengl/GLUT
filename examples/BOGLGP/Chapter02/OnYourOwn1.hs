@@ -1,5 +1,5 @@
 {-
-   OpenGLApplication.hs (adapted from OpenGLApplication which is (c) 2004 Astle/Hawkins)
+   OnYourOwn1.hs (adapted from OpenGLApplication which is (c) 2004 Astle/Hawkins)
    Copyright (c) Sven Panne 2004 <sven.panne@aedion.de>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
@@ -52,7 +52,7 @@ windowedMode :: Options -> IO ()
 windowedMode opts = do
    initialDisplayMode $= [ DoubleBuffered, RGBMode, WithDepthBuffer ]
    initialWindowSize $= getSize opts
-   createWindow "BOGLGP - Chapter 2 - OpenGL Application"
+   createWindow "BOGLGP - Chapter 2 - On Your Own 1"
    return ()
 
 ----------------------------------------------------------------------------
