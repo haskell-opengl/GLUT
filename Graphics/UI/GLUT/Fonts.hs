@@ -151,9 +151,10 @@ foreign import ccall "glutStrokeCharacter" glutStrokeCharacter ::
 
 --------------------------------------------------------------------------------
 
--- | Return the width in pixels of a string in a supported font. While the width
--- of characters in a font may vary (though fixed width fonts do not vary), the
--- maximum height characteristics of a particular font are fixed.
+-- | For a bitmap font, return the width in pixels of a string. For a stroke
+-- font, return the width in units. While the width of characters in a font may
+-- vary (though fixed width fonts do not vary), the maximum height
+-- characteristics of a particular font are fixed.
 
 stringWidth :: Font -> String -> IO CInt
 stringWidth (BitmapFont f) s = bitmapLength f s
@@ -177,7 +178,7 @@ foreign import ccall "glutBitmapLength" glutBitmapLength ::
 strokeLength :: StrokeFont -- ^ Stroke font to use.
              -> String     -- ^ String to return width of (not confined to 8
                            --   bits).
-             -> IO CInt    -- ^ Width in pixels.
+             -> IO CInt    -- ^ Width in units.
 strokeLength f s = do
    i <- marhshalStrokeFont f
    withCString s (glutStrokeLength i)
