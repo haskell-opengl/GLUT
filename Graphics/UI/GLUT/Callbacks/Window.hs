@@ -492,12 +492,12 @@ foreign import CALLCONV unsafe "glutMotionFunc" glutMotionFunc ::
 
 passiveMotionCallback :: SettableStateVar (Maybe MotionCallback)
 passiveMotionCallback = makeSettableStateVar $
-   setCallback MotionCB glutPassiveMotionFunc (makeMotionCallback . unmarshal)
+   setCallback PassiveMotionCB glutPassiveMotionFunc
+               (makeMotionCallback . unmarshal)
    where unmarshal cb x y = cb (Position (fromIntegral x) (fromIntegral y))
 
 foreign import CALLCONV unsafe "glutPassiveMotionFunc" glutPassiveMotionFunc ::
    FunPtr MotionCallback' -> IO ()
-
 
 --------------------------------------------------------------------------------
 
