@@ -243,10 +243,6 @@ import Graphics.UI.GLUT.GameMode
 -- * /Geometric Shape Rendering:/ These routines allow the rendering of 3D
 --   geometric objects including spheres, cones, icosahedrons, and teapots.
 --
--- * /Video Resizing:/ These routines provide a means for doing swap or frame
---   synchronous resizing\/panning of the area that is to be magnified (or passed
---   through) to the output video resolution.
---
 -- * /Debugging:/ This routine reports any pending GL errors.
 --
 -- * /Device Control:/ These routines allow setting the key repeat and polling
@@ -254,6 +250,12 @@ import Graphics.UI.GLUT.GameMode
 --
 -- * /Game Mode:/ These routines allow programs to enter\/leave a full-screen
 --   mode with specified properties.
+
+-- Note that the following item has been left out intentionally, its
+-- implementation is too SGI-specific:
+-- * /Video Resizing:/ These routines provide a means for doing swap or frame
+--   synchronous resizing\/panning of the area that is to be magnified (or passed
+--   through) to the output video resolution.
 
 -----------------------------------------------------------------------------
 -- $APIVersions
