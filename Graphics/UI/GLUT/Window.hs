@@ -91,8 +91,8 @@ newtype Window = Window CInt deriving ( Eq, Ord )
 -- established for the first window created.
 
 createWindow
-   :: String    -- @ The window name
-   -> IO Window -- @ The identifier for the newly created window
+   :: String    -- ^ The window name
+   -> IO Window -- ^ The identifier for the newly created window
 createWindow name = withCString name glutCreateWindow
 
 foreign import ccall unsafe "glutCreateWindow" glutCreateWindow ::
@@ -103,10 +103,10 @@ foreign import ccall unsafe "glutCreateWindow" glutCreateWindow ::
 -- newly created subwindow. Subwindows can be nested arbitrarily deep.
 
 createSubWindow
-   :: Window         -- @ Identifier of the subwindow\'s parent window.
-   -> WindowPosition -- @ Window position in pixels relative to parent window\'s origin.
-   -> WindowSize     -- @ Window size in pixels
-   -> IO Window      -- @ The identifier for the newly created subwindow
+   :: Window         -- ^ Identifier of the subwindow\'s parent window.
+   -> WindowPosition -- ^ Window position in pixels relative to parent window\'s origin.
+   -> WindowSize     -- ^ Window size in pixels
+   -> IO Window      -- ^ The identifier for the newly created subwindow
 createSubWindow win (WindowPosition x y) (WindowSize w h) =
    glutCreateSubWindow win x y w h
 

@@ -95,9 +95,9 @@ import Graphics.UI.GLUT.Constants
 -- * @-sync@: Enable synchronous X protocol transactions. This option makes
 --   it easier to track down potential X protocol errors.
 
-init :: String      -- @ The program name.
-     -> [String]    -- @ The command line arguments
-     -> IO [String] -- @ Non-GLUT command line arguments
+init :: String      -- ^ The program name.
+     -> [String]    -- ^ The command line arguments
+     -> IO [String] -- ^ Non-GLUT command line arguments
 init prog args =
    with (1 + genericLength args) $ \argcBuf ->
    withMany withCString (prog : args) $ \argvPtrs ->
