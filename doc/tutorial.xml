@@ -9,7 +9,7 @@ A small Tutorial
 <white/><p/><b>(Draft)</b></titel>
 <semester></semester>
 <autor>Sven Eric Panitz</autor>
-<institution>TFH Berlin</institution> 
+<institution>TFH Berlin</institution>
 
 <disclaimer>
 Publish early and publish often. That is the reason why you can read this. I
@@ -222,7 +222,7 @@ displayPoints = do
 The resulting window can be found in figure<white/><ref name="APolygon"></ref>.
 
 <bild name="APolygon" pdfscale="0.6" psscale="0.5"
- caption="A simple polygon."/> 
+ caption="A simple polygon."/>
 </example>
 </subsubsection>
 </subsection>
@@ -306,12 +306,12 @@ functions around.
 If you want to start programming OpenGL in Haskell, you need to be one
 of the brave, who compile sources from the functional programming CVS
 repository in Glasgow. There is not yet a precompiled version of the
-current HOpenGL library. Go to 
+current HOpenGL library. Go to
 the <exlink address="www.haskell.org/ghc">website</exlink> of the Glasgow
-Haskell Compiler (GHC), follow closely the instructions on the 
+Haskell Compiler (GHC), follow closely the instructions on the
 page <em>CVS cheat sheet</em>. When doing the <tt>./configure</tt
 > step, then use the option <tt>--enable-hopengl</tt>. i.e. start the
-command <tt>./configure --enable-hopengl</tt>. This will ensure 
+command <tt>./configure --enable-hopengl</tt>. This will ensure
 that the Haskell OpenGL library will be build and the packages <tt
 >OpenGL</tt> and <tt>GLUT</tt> are added to your GHC installation.<p/>
 
@@ -349,19 +349,19 @@ From what we have learnt in the introduction, we know that we are
 dealing with a state machine and will write a sequence of monadic
 functions which effect this machine. Before we start drawing fancy
 pictures let us explore the way values are set and retrieved in
-HOpenGL. 
+HOpenGL.
 
 <subsection titel="Setting values">
 The most basic operation is to
 assign values to variables in the state machine. In HOpenGL this is
 done by means of the operator <tt>$=</tt><footnote>A nicer choice for
 this operator would have been <ttt>:=</ttt>, but this is not allowed
-for a function operator in Haskell, but denotes an infix 
+for a function operator in Haskell, but denotes an infix
 constructor.</footnote> You do not need to understand, how this
 operator is implemented. You simply can imagine that it is an
 assignment operator. The left operand is a variable which gets
 assigned the right operand. We can revisit the first program, which
-simply opened a window. 
+simply opened a window.
 
 <example>
 When we have created a window, we assign a
@@ -377,13 +377,13 @@ main = do
 
 myWindow :: String -> IO ()
 myWindow name = do
-  createWindow name 
+  createWindow name
   ]]><redv>windowSize $= Size 800 500</redv><![CDATA[
   displayCallback $= clear [ColorBuffer]]]></code>
 </example>
 
 
-One example of the assignment operator we have allready seen. In the
+One example of the assignment operator we have already seen. In the
 last line we assign a function to the variable <tt
 >displayCallback</tt>. This function will be executed, whenever the
 window is displayed.
@@ -392,7 +392,7 @@ As you see, more you do not need to know about <tt>$=</tt>. But if you
 want to learn more about it read the next section.
 
 <subsubsection titel="Implementation of set">
-The operator <tt>$=</tt> is defined in the module<br/> 
+The operator <tt>$=</tt> is defined in the module<br/>
 <tt>Graphics.Rendering.OpenGL.GL.StateVar</tt> as a member function of
 a type class:
 <code><![CDATA[infixr 2 $=
@@ -400,7 +400,7 @@ a type class:
 class HasSetter s where
    ($=) :: s a -> a -> IO ()]]></code>
 
-The variables of HOpenGL, which can be set are of 
+The variables of HOpenGL, which can be set are of
 type <tt>SettableStateVar</tt> e.g.:<br/>
 <tt>windowTitle :: SettableStateVar String</tt>. Further variables
 that can be set for windows are: <tt
@@ -409,8 +409,8 @@ that can be set for windows are: <tt
 </subsection>
 
 <subsection titel="Getting values">
-You might want to retrieve certain values from the state. 
-This can be done with the function <tt>get</tt>, which is in 
+You might want to retrieve certain values from the state.
+This can be done with the function <tt>get</tt>, which is in
 a way the corresponding function to the operator <tt>$=</tt>.
 
 <example>You can retrieve the size of the screen:
@@ -437,7 +437,7 @@ retrieved from a variable:
 <code><![CDATA[class HasGetter g where
    get :: g a -> IO a]]></code>
 Variables which implement this class are of
-type <tt>GettableStateVar a</tt>. 
+type <tt>GettableStateVar a</tt>.
 </subsubsection>
 </subsection>
 
@@ -463,7 +463,7 @@ main = do
 
 myWindow :: String -> IO ()
 myWindow name = do
-  createWindow name 
+  createWindow name
   windowSize $= Size 800 500
   x<-get windowSize
   print x
@@ -487,7 +487,7 @@ actual size. By the way: you can try <tt>initialWindowSize</tt> without
 getting such complecated surprising results.
 </example>
 <delete>
-<kommentar who="Sven Panne"> 
+<kommentar who="Sven Panne">
    windowSize spezifiziert nämlich nur einen *Wunsch*  an den
    Window-Manager. Da das Fenster direkt nach createWindow aber noch
    nicht wirklich da ist (passiert erst in mainLoop) und somit auch gar
@@ -504,7 +504,7 @@ getting such complecated surprising results.
 <subsection titel="What do the variables refer to">
 The state machine contains variables and stacks of objects, which are
 effectedly mutated by calls to monadic functions. However not only the
-get and set statements modify the state but also statements 
+get and set statements modify the state but also statements
 like <tt>createWindow</tt>. This makes it in the beginning a bit hard
 to understand, when the state is changed in which way.<p/>
 
@@ -517,7 +517,7 @@ window object.
 <delete>
 <kommentar who="Sven Panne">
 Hier wäre eine kurze Erklärung gut, welche Arten von Zustand es gibt:
- 
+
       * OpenGL state (global pro Rendering-Context, z.B. Window)
       * global GLUT state
       * window-local GLUT state
@@ -531,7 +531,7 @@ Hier wäre eine kurze Erklärung gut, welche Arten von Zustand es gibt:
 <section titel="Basic Drawing">
 
 <subsection titel="Display Functions">
-There is a window specific variable which stores the function 
+There is a window specific variable which stores the function
 that is to be executed
 whenever a window is to be displayed, the variable <tt
 >displayCallback</tt>. Since Haskell is a higher order language, it is
@@ -549,7 +549,7 @@ frame.</footnote
 function <tt>clear</tt>, which does exactly this job. It has one
 argument. It is a list of objects to be cleared. Generally you will
 clear the so called color buffer, which contains the color displayed
-for every pixel on the screen. 
+for every pixel on the screen.
 
 <example>
 The following simple program opens a window and clears its content
@@ -585,13 +585,13 @@ For colors several data types are defined. An easy to use one is:
 The four parameters of this constructor specify the red, green and
 blue values of the color and additionally a fourth argument, which
 denotes the opaqueness of the color. The values are usually
-specified by floating numbers of type <tt>GLfloat</tt>. Values for 
+specified by floating numbers of type <tt>GLfloat</tt>. Values for
 number attributes are between 0 and 1.<p/>
 
 You may wonder, why there is a special type <tt>GLfloat</tt> for
 numbers in HOpenGL. The reason is that OpenGL is defined in a way that
 it is as independent from concrete types in any implementation as
-possible. 
+possible.
 However you do not have to worry too much
 about this type. You can use ordinary float literals for numbers of
 type <tt>GLfloat</tt>. Haskells overloading mechanism ensures that
@@ -608,7 +608,7 @@ these literals can create <tt>GLfloat</tt> numbers.
 
 <example>This program opens a window with a red background.
 <code class="BackgroundColor" lang="hs" main="main"
-><![CDATA[import Graphics.UI.GLUT 
+><![CDATA[import Graphics.UI.GLUT
 
 main :: IO ()
 main = do
@@ -667,17 +667,17 @@ universe with the coordinates <math>x, y, z</math> then you can use
 the following expression in HOpenGL:
 <quote><tt>vertex (Vertex3 x y z)</tt></quote>
 or, if you prefer the use of the standard prelude operator <tt>$</tt>:
-<quote><tt>vertex$Vertex3 x y z</tt></quote>
+<quote><tt>vertex $ Vertex3 x y z</tt></quote>
 
 <subsubsection titel="Points">
 We have seen in the introductory example that we can draw
-points. We can simply define  a vertex and use this in the 
-function <tt>renderPrimitiv</tt>.
+points. We can simply define  a vertex and use this in the
+function <tt>renderPrimitive</tt>.
 
 <example>
 This program draws one single yellow point on a black screen.
 <code class="SinglePoints" lang ="hs" main="main"
-><![CDATA[import Graphics.UI.GLUT 
+><![CDATA[import Graphics.UI.GLUT
 
 main :: IO ()
 main = do
@@ -697,13 +697,13 @@ display = do
   ]]><redv>renderPrimitive Points</redv><![CDATA[
      (vertex (Vertex3 (0.1::GLfloat) 0.5 0))
   flush]]></code>
-If you do not like parantheses then you can of course use the 
+If you do not like parantheses then you can of course use the
 operator  <tt>$</tt> from the prelude and rewrite the line:<br/>
-<tt>renderPrimitive Points$vertex$Vertex3 (0.1::GLfloat) 0.5 0</tt>
+<tt>renderPrimitive Points $ vertex $ Vertex3 (0.1::GLfloat) 0.5 0</tt>
 </example>
 
 Unfortunately Haskell needs sometimes a little bit of help for
-overloaded type classes. Therefore you find the type 
+overloaded type classes. Therefore you find the type
 annotation <tt>(0.1::GLfloat)</tt> on one of the float literals. In
 larger applications Haskell can usually infer this information from
 the context. Just in smaller applications you will sometimes need to
@@ -718,7 +718,7 @@ In this program we use a nested <em>do statement</em> to define more
 points.
 
 <code class="MorePoints" lang="hs" main="main"
-><![CDATA[import Graphics.UI.GLUT 
+><![CDATA[import Graphics.UI.GLUT
 
 main :: IO ()
 main = do
@@ -736,7 +736,7 @@ display = do
   clear [ColorBuffer]
   currentColor $= Color4 1 1 0 1
   renderPrimitive Points $
-   ]]><redv>do 
+   ]]><redv>do
 </redv><![CDATA[  
 ]]><redv>
       vertex (Vertex3 (0.1::GLfloat) 0.6 0)</redv><![CDATA[    
@@ -748,22 +748,22 @@ display = do
 If you want to think of points mainly as triples then you can convert
 a list of points into a sequence of monadic statements by first maping
 every triple into a vertex, e.g.<white/>by:<br/> <tt
->map (\(x,y,z)->vertex$Vertex3 x y z)</tt><br/> and then combining the
+>map (\(x,y,z)->vertex $ Vertex3 x y z)</tt><br/> and then combining the
 sequence of monadic statements into one monadic statement. Therefore
 you can use the standard function for monads: <tt>sequence_</tt>. The
 standard function <tt>mapM_</tt> is simply the composition of <tt
 >map</tt> and <tt>sequence_</tt>, such that a list of triples can be
 converted to a monadic vertex statement by:<br/>
-<tt>mapM_ (\(x,y,z) -> vertex$Vertex3 x y z)</tt><br/>
+<tt>mapM_ (\(x,y,z) -> vertex $ Vertex3 x y z)</tt><br/>
 which is the technique used in the introductory example.
 
 
 <example>
-Thus we can rewrite a points example in the following way: points are 
+Thus we can rewrite a points example in the following way: points are
 defined as a list of triples. Furthermore we define
 some useful auxilliary functions:
 <code class="EvenMorePoints" lang="hs" main="main"
-><![CDATA[import Graphics.UI.GLUT 
+><![CDATA[import Graphics.UI.GLUT
 
 main :: IO ()
 main = do
@@ -804,19 +804,23 @@ renderAs figure ps = renderPrimitive figure $ makeVertexes ps]]></code>
 <subsubsection titel="Some useful functions">
 In the following we want to explore all the other different shapes
 which can be rendered by OpenGL. All shapes are defined in terms of
-vertexes which you can think of as points. We have allready seen how
+vertexes which you can think of as points. We have already seen how
 to define vertexes and how to open a window and such things. We
 provide a simple module, which will be used in the consecutive
 examples. Some useful functions are defined in this module.
 
 <code class="PointsForRendering" lang="hs"
-><![CDATA[module PointsForRendering where
+><![CDATA[module PointsForRendering (
+  module PointsForRendering,
+  module Graphics.UI.GLUT
+) where
+
 import Graphics.UI.GLUT]]></code>
 A first function will open a window und use a given display function
 for the window graphics:
 <code class="PointsForRendering" lang="hs" sequel="true"
 ><![CDATA[renderInWindow :: DisplayCallback -> IO ()
-renderInWindow displayFunction = do 
+renderInWindow displayFunction = do
   (progName,_) <- getArgsAndInitialize
   createWindow progName
   displayCallback $= displayFunction
@@ -828,7 +832,7 @@ desired shape.
 
 <code class="PointsForRendering" lang="hs" sequel="true"
 ><![CDATA[displayPoints :: [(GLfloat,GLfloat,GLfloat)] -> PrimitiveMode -> IO ()
-displayPoints points primitiveShape = do 
+displayPoints points primitiveShape = do
   renderAs primitiveShape points
   flush
 
@@ -842,16 +846,16 @@ function for easy use of these points:
 <code class="PointsForRendering" lang="hs" sequel="true"
 ><![CDATA[mainFor :: PrimitiveMode -> IO ()
 mainFor primitiveShape
- = renderInWindow (displayMyPoints primitiveShape) 
+ = renderInWindow (displayMyPoints primitiveShape)
 
 displayMyPoints :: PrimitiveMode -> IO ()
 displayMyPoints primitiveShape = do
   clear [ColorBuffer]
   currentColor $= Color4 1 1 0 1
-  displayPoints myPoints primitiveShape 
+  displayPoints myPoints primitiveShape
 
 myPoints :: [(GLfloat,GLfloat,GLfloat)]
-myPoints 
+myPoints
  = [(0.2,-0.4,0)
    ,(0.46,-0.26,0)
    ,(0.6,0,0)
@@ -869,7 +873,6 @@ myPoints
 <example>
 We can now render the example points in a oneliner:
 <code class="RenderPoints" lang="hs" main="main">import PointsForRendering
-import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>Points</redv></code>
@@ -894,7 +897,6 @@ Connecting our example points by lines. Pairs of points define
 singleton lines.
 <code class="RenderLines" lang="hs" main="main"
 >import PointsForRendering
-import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>Lines</redv></code>
@@ -915,7 +917,6 @@ that a closed loop of lines is created.
 <example>Now we make a loop of lines with our example points.
 <code class="RenderLineLoop" lang="hs" main="main"
 >import PointsForRendering
-import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>LineLoop</redv></code>
@@ -925,7 +926,7 @@ The resulting window can be found in figure<white/>
 
 <bild name="RenderLineLoop" pdfscale="0.6" psscale="0.5"
 caption="A loop of lines."
-/> 
+/>
 </example>
 </paragraph>
 
@@ -934,13 +935,12 @@ caption="A loop of lines."
 <paragraph titel="Line Strip">
 A strip of lines is very close to a loop of lines. The only thing
 missing is the last line which connects the last point with the first
-one again. 
+one again.
 
 <example>
 Now we make a strip of lines with our example points.
 <code class="RenderLineStrip" lang="hs" main="main"
 >import PointsForRendering
-import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>LineStrip</redv></code>
@@ -958,7 +958,7 @@ caption="A strip in terms of lines."
 <subsubsection titel="Triangles">
 The next basic shape which can be rendered by OpenGL are
 triangles. Triples of points are taken and triangles are drawn with
-these. As for lines there are three flavours of triangles. 
+these. As for lines there are three flavours of triangles.
 
 
 <paragraph titel="Triangle">
@@ -970,7 +970,6 @@ provided needs to be a multiple of 3.
 Our example vertexes define 12 points such that we get 4 triangles
 <code class="RenderTriangles" lang="hs" main="main"
 >import PointsForRendering
-import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>Triangles</redv></code>
@@ -991,7 +990,6 @@ uses two points of its predecessor and one new point.
 
 <code class="RenderTriangleStrip" lang="hs" main="main"
 >import PointsForRendering
-import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>TriangleStrip</redv></code>
@@ -1005,12 +1003,11 @@ caption="A triangle strip."/>
 
 <paragraph titel="TriangleFan">
 A fan has one starting point for all triangles. Triangles are always
-drawn starting from the first point. 
+drawn starting from the first point.
 
 <example>Our example points as a fan. 10 triangles are rendered.
 <code class="RenderTriangleFan" lang="hs" main="main"
 >import PointsForRendering
-import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>TriangleFan</redv></code>
@@ -1027,7 +1024,7 @@ caption="A triangle strip."/>
 <subsubsection titel="Quads">
 Lines connected two points, triangles three points, now we will connect
 four points. This is calles a <em>quad</em>. There are two flavours of
-quads. 
+quads.
 
 <paragraph titel="Singleton Quads">
 The primitive mode <tt>Quads</tt> takes quadruples of points and
@@ -1037,7 +1034,6 @@ connects them in order to render a filled figure.
 
 <code class="RenderQuads" lang="hs" main="main"
 >import PointsForRendering
-import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>Quads</redv></code>
@@ -1049,7 +1045,7 @@ caption="Quads."/>
 </example>
 
 In a three dimensional world quads are unlike triangles not
-necessarily plane areas. 
+necessarily plane areas.
 </paragraph>
 
 
@@ -1062,7 +1058,6 @@ needs to be of the form: <math>n=4+2*m</math>.
 <example>Our examples vertexes now used for a strip of quads.
 <code class="RenderQuadStrip" lang="hs" main="main"
 >import PointsForRendering
-import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>QuadStrip</redv></code>
@@ -1090,7 +1085,7 @@ a polygon. There are some restrictions for polygons:
 </itemize>
 
 <delete>
-<kommentar who="Sven Panne"> 
+<kommentar who="Sven Panne">
 Noch nicht mal allgemeine Polygone sind
 erlaubt, sondern nur einfache Polygone, d.h. planare, konvexe und
    nicht selbstüberschneidende Polygone. Kompliziertere Polygone kann
@@ -1102,8 +1097,8 @@ erlaubt, sondern nur einfache Polygone, d.h. planare, konvexe und
 
 <example>
 Eventually our vertexes are used to define a polygon.
+
 <code class="RenderPolygon" lang="hs">import PointsForRendering
-import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>Polygon</redv></code>
@@ -1114,7 +1109,7 @@ seen before.
 If you want to render polygons which hurt some of the restrictions
 above, you need to represent them by a set of smaller polygons. Since
 this is a tedious task to be done manually there is a library
-available, which does this for you: the <em>GLU</em> tessellation. 
+available, which does this for you: the <em>GLU</em> tessellation.
 </subsubsection>
 </subsection>
 
@@ -1129,20 +1124,19 @@ are. The bad news is: you have to do these by yourself.
 
 
 <subsubsection titel="Circles">
-With a bit mathematics you probably have allready guessed how to do
+With a bit mathematics you probably have already guessed how to do
 curves and especially circles. You need to approximate them with a
 large number of lines. If the lines get very small we eventually see a
 curve. Let us try this with circles. We write a module which gives us
 some utility functions for rendering circles.
 
 <code class="Circle" lang="hs"
-><![CDATA[module Circle where 
-import PointsForRendering
-import Graphics.Rendering.OpenGL]]></code>
+><![CDATA[module Circle where
+import PointsForRendering]]></code>
 
 The crucial function calculates a list of points which are all on the
 circle. You need a bit of basic  geometrical knowledge for this.
-The coordinates of the points on a circle can be determined 
+The coordinates of the points on a circle can be determined
 by <math>\sin(\alpha)</math> and <math>\cos(\alpha)</math
 > where <math>\alpha</math> is between <math>0</math
 > and <math>2\pi</math>.<p/>
@@ -1153,11 +1147,11 @@ points on a circle:
 <code class="Circle" lang="hs" sequel="true"
 ><![CDATA[circlePoints :: Floating a => a -> Int -> [(a,a,a)]
 circlePoints radius number =
-  [let alpha = 2 * pi * fromIntegral i / fromIntegral number 
+  [let alpha = 2 * pi * fromIntegral i / fromIntegral number
    in (radius * sin alpha, radius * cos alpha, 0)
   | i <- [1, 2 .. number]]
 ]]></code>
-If we take a large enough number then we will eventually get a circle: 
+If we take a large enough number then we will eventually get a circle:
 <code class="Circle" lang="hs" sequel="true"
 ><![CDATA[circle :: GLfloat -> [(GLfloat,GLfloat,GLfloat)]
 circle radius = circlePoints radius 100]]></code>
@@ -1175,17 +1169,15 @@ fillCircle r = displayPoints (circle r) Polygon]]></code>
 
 <example>
 First we test what kind of shape we get for small approximation
-numbers. 
+numbers.
 <code class="ApproxCircle" lang="hs" main="main"
 >import PointsForRendering
 import Circle
 
-import Graphics.Rendering.OpenGL
-
 main :: IO ()
 main = renderInWindow $ do
-        clear [ColorBuffer]
-        renderCircleApprox 0.8 10</code>
+  clear [ColorBuffer]
+  renderCircleApprox 0.8 10</code>
 
 The resulting graphic can be seen in figure<white/>
 <ref name="ApproxCircle"></ref>.
@@ -1201,12 +1193,10 @@ Now we can test, if the resulting circle is, what we expected.
 ><![CDATA[import PointsForRendering
 import Circle
 
-import Graphics.Rendering.OpenGL
-
 main :: IO ()
 main = renderInWindow $ do
-          clear [ColorBuffer]
-          renderCircle 0.8]]></code>
+  clear [ColorBuffer]
+  renderCircle 0.8]]></code>
 
 The resulting graphic can be seen in figure<white/>
 <ref name="TestCircle"></ref>.
@@ -1222,13 +1212,10 @@ And eventually have a look at the filled circle.
 ><![CDATA[import PointsForRendering
 import Circle
 
-import Graphics.Rendering.OpenGL
-
 main :: IO ()
-main 
- = renderInWindow $ do
-     clear [ColorBuffer]
-     fillCircle 0.8 ]]></code>
+main = renderInWindow $ do
+  clear [ColorBuffer]
+  fillCircle 0.8]]></code>
 The resulting graphic can be seen in figure<white/>
 <ref name="FillCircle"></ref>.
 
@@ -1250,17 +1237,16 @@ rings and render quads between them.
 ><![CDATA[module Ring where
 
 import PointsForRendering
-import Circle
-import Graphics.Rendering.OpenGL]]></code>
+import Circle]]></code>
 
 We can simply define the points of the inner and outer ring and merge
-these. The resulting list of points can then be rendered as 
+these. The resulting list of points can then be rendered as
 a <tt>QuadStrip</tt>. Since there is no primitive mode for quad loops,
 we need to append the first two points as the last points again:
 
 <code class="Ring" lang="hs" sequel="true"
 ><![CDATA[ringPoints :: GLfloat -> GLfloat -> [(GLfloat,GLfloat,GLfloat)]
-ringPoints innerRadius outerRadius 
+ringPoints innerRadius outerRadius
  = concat $ map (\(x,y)->[x,y]) (points++[p])
   where
     innerPoints = circle innerRadius
@@ -1270,7 +1256,7 @@ ringPoints innerRadius outerRadius
 Eventually we provide a small function for rendering ring shapes.
 <code class="Ring" lang="hs" sequel="true"
 ><![CDATA[ring :: GLfloat -> GLfloat -> IO ()
-ring innerRadius outerRadius 
+ring innerRadius outerRadius
  = displayPoints (ringPoints innerRadius outerRadius)  QuadStrip]]></code>
 
 <example>
@@ -1279,12 +1265,10 @@ We can test the ring functions:
 ><![CDATA[import PointsForRendering
 import Ring
 
-import Graphics.Rendering.OpenGL
-
 main :: IO ()
 main = renderInWindow $  do
-        clear [ColorBuffer]
-        ring 0.7 0.9]]></code>
+  clear [ColorBuffer]
+  ring 0.7 0.9]]></code>
 
 The resulting graphic can be seen in figure<white/>
 <ref name="TestRing"></ref>.
@@ -1299,7 +1283,7 @@ caption="A simple ring shape."
 
 <subsection titel="Attributes of primitives">
 There are some more attributes that can be set for primitive shapes
-(besides the color, which we have allready set).
+(besides the color, which we have already set).
 
 
 <subsubsection titel="Point Size">
@@ -1312,8 +1296,7 @@ screen pixels. The default value is, one pixel per point.
 
 <example>
 We set the point size to 10 pixels:
-<code class="PointSize" lang="hs" main="main">import Graphics.UI.GLUT
-import PointsForRendering
+<code class="PointSize" lang="hs" main="main">import PointsForRendering
 
 main :: IO ()
 main = renderInWindow display
@@ -1347,15 +1330,14 @@ for the short number <tt>0</tt> you will not see anything of your
 line, and for the value <tt>65535</tt> you will see a solid line.<p/>
 
 The integer number of the value pair denotes a factor for the chosen
-stipple. For some positiv integer  <math>n</math> every bit of the 
+stipple. For some positiv integer  <math>n</math> every bit of the
 short number stands for <math>n</math> bits.
 
 <example>
 Setting the width of lines and a stipple:
 
 <code class="LineAttributes" lang="hs" main="main"
->import Graphics.UI.GLUT
-import PointsForRendering
+>import PointsForRendering
 
 main :: IO ()
 main = renderInWindow display
@@ -1364,9 +1346,9 @@ display :: DisplayCallback
 display = do
   clearColor $= Color4 1 1 1 1
   clear [ColorBuffer]
-  <redv>lineStipple $= Just (1,255)</redv> 
+  <redv>lineStipple $= Just (1,255)</redv>
   currentColor $= Color4 0 0 0 1
-  <redv>lineWidth $= 10</redv> 
+  <redv>lineWidth $= 10</redv>
   displayPoints squarePoints LineLoop
   flush
 
@@ -1391,9 +1373,9 @@ You might have wondered, why the function <tt
 >renderPrimitive</tt> takes monadic statements as argument and not
 simply a list of vertexes? This means we could pass any monadic
 statement to the function <tt>renderPrimitive</tt>, not only
-statements that define vertexes by the call of the 
+statements that define vertexes by the call of the
 function <tt>vertex</tt>. There are some statements, which are allowed
-in the statements passed to <tt>renderPrimitive</tt>. 
+in the statements passed to <tt>renderPrimitive</tt>.
 One of these is setting the current color before
 every call of <tt>vertex</tt> to a new value. When finally rendering
 the primitive, OpenGL takes these color values into acount.
@@ -1401,19 +1383,18 @@ the primitive, OpenGL takes these color values into acount.
 
 <example>
 We define a triangle. Before the three vertexes of the triangle are
-defined, the current color is set to a new value. 
+defined, the current color is set to a new value.
 <code class="PolyColor" lang="hs" main="main"
->import Graphics.UI.GLUT
-import PointsForRendering
+>import PointsForRendering
 
 colorTriangle :: IO ()
 colorTriangle = do
   currentColor $= Color4 1 0 0 1
-  vertex$Vertex3 (-0.5) (-0.5) (0::GLfloat)
+  vertex $ Vertex3 (-0.5) (-0.5) (0::GLfloat)
   currentColor $= Color4 0 1 0 1
-  vertex$Vertex3 (0.5) (-0.5) (0::GLfloat)
+  vertex $ Vertex3 (0.5) (-0.5) (0::GLfloat)
   currentColor $= Color4 0 0 1 1
-  vertex$Vertex3 (-0.5) (0.5) (0::GLfloat)
+  vertex $ Vertex3 (-0.5) (0.5) (0::GLfloat)
 
 main :: IO ()
 main = renderInWindow display
@@ -1439,10 +1420,10 @@ caption="A triangle with different vertex colors"/>
 <subsection titel="Tessellation">
 Rendering of polygons is very limited. We cannot render polygons for
 crossing lines, or convex corners. Such polygons need to be expressed
-by a set of simpler polygons. 
+by a set of simpler polygons.
 In the module <tt
 >Graphics.Rendering.OpenGL.GLU.Tessellation</tt> there are a number of
-functions, which calculate a set of simpler polygons. 
+functions, which calculate a set of simpler polygons.
 For the time being, we will not go
 into detail, but give one single example, of how to use this library.
 
@@ -1458,7 +1439,7 @@ import List]]></code>
 We can easily calculate the points on the star rays. They are all on
 one circle. We can use our function for defining circle points and get
 a list of points. For rendering the star, we take first the points
-with odd index followed by the points with even index. 
+with odd index followed by the points with even index.
 
 <code lang="hs" class="Star" sequel="true"
 ><![CDATA[starPoints :: GLdouble -> Int -> [Vertex3 GLdouble]
@@ -1489,7 +1470,7 @@ control information, which we do not explain here.
 ><![CDATA[star :: GLdouble -> Int -> IO ()
 star radius rays = do
   starTess <-
-    tessellate 
+    tessellate
        TessWindingPositive 0 (Normal3 0 0 0) noOpCombiner $
          complexPolygon (starPoints radius rays)
   drawSimplePolygon starTess]]></code>
@@ -1501,11 +1482,11 @@ The resulting simple polygons can be rendered with the function
 ><![CDATA[drawSimplePolygon :: SimplePolygon DontCare -> IO ()
 drawSimplePolygon  (SimplePolygon primitiveParts) =
   mapM_ renderPrimitiveParts primitiveParts
-            
+
 renderPrimitiveParts :: Primitive DontCare -> IO ()
 renderPrimitiveParts (Primitive primitiveMode vertices) =
   renderPrimitive primitiveMode $
-    mapM_ (vertex . stripAnnotation) vertices 
+    mapM_ (vertex . stripAnnotation) vertices
 
 stripAnnotation :: AnnotatedVertex DontCare -> Vertex3 GLdouble
 stripAnnotation (AnnotatedVertex plainVertex _) = plainVertex
@@ -1516,7 +1497,6 @@ noOpCombiner _newVertex _weightedProperties = 0]]></code>
 Now we can test our stars. We render two stars, one with 7 and one with 5 rays.
 
 <code class="RenderStar" lang="hs" main="main">import PointsForRendering
-import Graphics.UI.GLUT
 import Star
 
 main :: IO ()
@@ -1550,10 +1530,7 @@ You probably need very often the shape of a teapot. Since this is so
 elementary a library function is provided for this.
 
 <code class="Tea" lang="hs" main="main"
->import Graphics.UI.GLUT
-import Graphics.Rendering.OpenGL
-
-import PointsForRendering
+>import PointsForRendering
 
 main :: IO ()
 main = renderInWindow display
@@ -1585,13 +1562,13 @@ operation is  performed on it. Every point will get multiplied with
 the transformation matrix. The transformation matrix is part of the
 state. So in order to transform a shape in some way, first the
 transformation matrix has to be set and then the shapes are to be
-rendered. 
+rendered.
 If not specified otherwise the transformation matrix is the identity
 operation, i.e.<white/> no transformation is performed. You can
 always reset the transformation matrix to the identity by the call of
 the monadic statement <tt>loadIdentity</tt>. Then the current matrix
 is discarded and no transformation is applied to the next rendering
-operations. 
+operations.
 
 <section titel="Translate">
 One transformation is to move a shape to another position. The
@@ -1604,27 +1581,26 @@ values of this vector.
 
 <example>
 The function <tt>ring</tt> we defined before only defined rings which
-have the center coordinates <math>(0,0,0)</math>. If we want to place 
+have the center coordinates <math>(0,0,0)</math>. If we want to place
 rings somewhere else then we need to apply a translate matrix.
 <code class="SomeRings" lang="hs" main="main" sequel="true"
 >import PointsForRendering
-import Ring
-import Graphics.UI.GLUT</code>
+import Ring</code>
 
 We define a function, which creates a ring at a given
-position. Therefore we first set the transformation to the 
+position. Therefore we first set the transformation to the
 translate transformation then define the ring and finally set the
 transformation matrix back to the identity:
 <code class="SomeRings" lang="hs" main="main" sequel="true"
->ringAt x y innerRadius outerRadius = do
-  <redv>translate$Vector3 x y (0::GLfloat)</redv>
+>ringAt :: GLfloat -> GLfloat -> GLfloat -> GLfloat -> IO ()
+ringAt x y innerRadius outerRadius = do
+  <redv>translate $ Vector3 x y 0</redv>
   ring innerRadius outerRadius</code>
 We can test this by placing some ring in different colors on the
-screen. 
+screen.
 <code class="SomeRings" lang="hs" main="main" sequel="true"
 >main :: IO ()
-main = do 
-  renderInWindow someRings
+main = renderInWindow someRings
 
 someRings :: DisplayCallback
 someRings = do
@@ -1674,47 +1650,49 @@ rotated around the <math>z</math>-axis.<p/>
 
 We write a simple module for rendering filled rectangles:
 <code class="Squares" lang="hs">module Squares where
-
-import Graphics.Rendering.OpenGL
 import PointsForRendering</code>
 Here is a function for arbitrary rectangles:
-<code lang="hs" class="Squares" sequel="true"><![CDATA[
-myRect width height = 
+<code lang="hs" class="Squares" sequel="true"><![CDATA[myRect :: GLfloat -> GLfloat -> IO ()
+myRect width height =
   displayPoints [(w,h,0),(w,-h,0),(-w,-h,0),(-w,h,0)] Quads
-   where
-     w = width/2
-     h = height/2]]></code>
-A square is just a special case: 
+  where w = width / 2
+        h = height / 2]]></code>
+A square is just a special case:
 <code lang="hs" class="Squares" sequel="true"
-><![CDATA[square width = myRect width width]]></code>
+><![CDATA[square :: GLfloat -> IO ()
+square width = myRect width width]]></code>
 
 Now we will transform squares.
 
-
-
 <code class="SomeSquares" lang="hs" main="main"
 >import PointsForRendering
-import Squares
-import Graphics.Rendering.OpenGL</code>
+import Squares</code>
 We define a function, which applies the rotate transformation to a
-square. It is rotated around the <math>z</math>-axis. 
+square. It is rotated around the <math>z</math>-axis.
+
 <code class="SomeSquares" lang="hs" main="main" sequel="true"
->rotatedSquare alpha width  = do
-  <redv>rotate alpha $Vector3 0 0 (1::GLfloat)</redv>
+>rotatedSquare :: GLfloat -> GLfloat -> IO ()
+rotatedSquare alpha width = do
+  <redv>rotate alpha $ Vector3 0 0 1</redv>
   square width</code>
+
 A further utility function moves some shape to a specified
 position. Note that this function resets the matrix again.
+
 <code class="SomeSquares" lang="hs" main="main" sequel="true"
->displayAt x y displayMe = do 
-  translate$Vector3 x y (0::GLfloat)
+>displayAt :: GLfloat -> GLfloat -> IO () -> IO ()
+displayAt x y displayMe = do
+  translate $ Vector3 x y 0
   displayMe
   loadIdentity</code>
+
 Some squares are defined and rotated:
+
 <code class="SomeSquares" lang="hs" main="main" sequel="true"
 >main :: IO ()
-main = do 
-  renderInWindow  someSquares
+main = renderInWindow someSquares
 
+someSquares :: DisplayCallback
 someSquares = do
   clearColor $= Color4 1 1 1 1
   clear [ColorBuffer]
@@ -1745,18 +1723,15 @@ caption="Squares translated and rotated."
 The third transformation enables you to scale shapes. This is not only
 useful for changing the size of some object but for stretching it in
 some direction. The transformation <tt>scale</tt> has three arguments,
-which represent the scaling factors in the three dimensional space. 
+which represent the scaling factors in the three dimensional space.
 
 
 <example>
 We apply three transformations on the tea pot example. We rotate and
 translate it and finally we stretch it a bit by a scale
-transformation. 
+transformation.
 <code class="Coffee" lang="hs" main="main"
->import Graphics.UI.GLUT
-import Graphics.Rendering.OpenGL
-
-import PointsForRendering
+>import PointsForRendering
 
 main :: IO ()
 main = renderInWindow display
@@ -1765,13 +1740,13 @@ display :: DisplayCallback
 display = do
   clear [ColorBuffer]
   <redv>scale 0.3 0.9 (0.3::GLfloat)</redv>
-  translate$Vector3 (-0.3) 0.3 (0::GLfloat)
-  rotate 30 $Vector3 0 1 (0::GLfloat)
-  renderObject Solid$ Teapot 0.6
+  translate $ Vector3 (-0.3) 0.3 (0::GLfloat)
+  rotate 30 $ Vector3 0 1 (0::GLfloat)
+  renderObject Solid $ Teapot 0.6
   loadIdentity
   flush</code>
 The resulting graphic can be seen in figure<white/>
-<ref name="Coffee"></ref>. As you see it looks now like a coffee pot. 
+<ref name="Coffee"></ref>. As you see it looks now like a coffee pot.
 
 <bild name="Coffee" pdfscale="0.6" psscale="0.5"
 caption="A coffee pot."
@@ -1794,41 +1769,36 @@ you define a composition of these transformations.<p/>
 
 The code:
 <code>rotatedSquareAt width alpha x y z = do
-  translate$Vector3 x w y
-  rotate alpha $Vector3 0 0 (1::GLfloat)
+  translate $ Vector3 x w y
+  rotate alpha $ Vector3 0 0 (1::GLfloat)
   square width</code>
 defines a composition of a translate und a rotate transformation,
   which is applied to a square figure. A sequence of transformation
   statements is composed to a single transformation in the same way as
   the standard function composition operator <tt>(.)</tt> composes
   functions: <tt>(f . g) x = f(g(x))</tt>. The compositional
-function <tt>(f . g)</tt> is the same as first applying 
+function <tt>(f . g)</tt> is the same as first applying
 function <tt>g</tt> and then applying <tt>f</tt>. For transformations
   in HOpenGL this means that for a sequence of transformations
-<code>translate$Vector3 x w y
-rotate alpha $Vector3 0 0 (1::GLfloat)</code>
+<code>translate $ Vector3 x w y
+rotate alpha $ Vector3 0 0 (1::GLfloat)</code>
 first the points are rotated and then they are translated.<p/>
 
 The order in which transformations are performed is of course not
 arbitrary. A rotation after a translation is different to a
-translation after a rotation. 
+translation after a rotation.
 
 <example>
 This example illustrates the different compositions of rotation and
-translation. 
+translation.
 <code class="Compose" lang="hs" main="main"
 ><![CDATA[import PointsForRendering
 import Squares
-import Graphics.Rendering.OpenGL
-
-displayAt x y displayMe = do 
-  displayMe
-  loadIdentity
 
 main :: IO ()
-main = do 
-  renderInWindow  someSquares
+main = renderInWindow someSquares
 
+someSquares :: DisplayCallback
 someSquares = do
   clearColor $= Color4 1 1 1 1
   clear [ColorBuffer]]]></code>
@@ -1840,27 +1810,27 @@ A black square at the origin:
 A blue square translated:
 <code class="Compose" lang="hs" sequel="true"
 >  currentColor $= Color4 0 0 1 1
-  translate$Vector3 0.5 0.5 (0::GLfloat)
+  translate $ Vector3 0.5 0.5 (0::GLfloat)
   square 0.5
   loadIdentity</code>
 A light blue square that is rotated:
 <code class="Compose" lang="hs" sequel="true"
 >  currentColor $= Color4 0 1 1 1
-  rotate 35 $Vector3 0 0 (1::GLfloat)
+  rotate 35 $ Vector3 0 0 (1::GLfloat)
   square 0.5
   loadIdentity</code>
 A red square that is first rotated and then translated:
 <code class="Compose" lang="hs" sequel="true"
 >  currentColor $= Color4 1 0 0 1
-  translate$Vector3 0.5 0.5 (0::GLfloat)
-  rotate 35 $Vector3 0 0 (1::GLfloat)
+  translate $ Vector3 0.5 0.5 (0::GLfloat)
+  rotate 35 $ Vector3 0 0 (1::GLfloat)
   square 0.5
   loadIdentity</code>
 A yellow square that is first translated and then rotated:
 <code class="Compose" lang="hs" sequel="true"
 >  currentColor $= Color4 1 1 0 1
-  rotate 35 $Vector3 0 0 (1::GLfloat)
-  translate$Vector3 0.5 0.5 (0::GLfloat)
+  rotate 35 $ Vector3 0 0 (1::GLfloat)
+  translate $ Vector3 0.5 0.5 (0::GLfloat)
   square 0.5
   loadIdentity</code>
 
@@ -1869,7 +1839,7 @@ The resulting window can be found in figure<white/>
 
 <bild name="Compose" pdfscale="0.6" psscale="0.5"
 caption="Different compositions of translation and rotation."
-/> 
+/>
 
 </example>
 
@@ -1891,10 +1861,10 @@ multiplied by the transformation matrix before it is rendered. In
 order to define a transformation, we will need to construct such a
 matrix.<p/>
 
-Internally every vertex in OpenGL is not represented by 3 
-coordinates <math>(x,y,z)</math> but by four 
+Internally every vertex in OpenGL is not represented by 3
+coordinates <math>(x,y,z)</math> but by four
 coordinates <math>(x,y,z,w)</math>. The <math>x, y, z</math> values
-are devided by <math>w</math>. Usually the value 
+are devided by <math>w</math>. Usually the value
 of <math>w</math> is <math>1.0</math>.<p/>
 
 Thus for a transformation matrix you need a matrix of four rows and four
@@ -1932,25 +1902,25 @@ matrix to the current transformation context.
 
 <subsection titel="Shear">
 We can now define our own transformations. We can define the
-transformation <em>shear</em>. Mathematical textbooks 
+transformation <em>shear</em>. Mathematical textbooks
 define <em>shear</em> in the following way:
 
 <zitat>
 <wer><exlink address="http://mathworld.wolfram.com/Shear.html">Eric
 Weissteins's world of mathematics</exlink></wer>
 <derText>
-A transformation in which all points along a given 
-line L remain fixed while other points are shifted 
-parallel to L by a distance proportional to their 
-perpendicular distance from L. 
+A transformation in which all points along a given
+line L remain fixed while other points are shifted
+parallel to L by a distance proportional to their
+perpendicular distance from L.
 Shearing a plane figure does not change its area.
 </derText>
 </zitat>
 
 We define a <em>shear</em> transformation, which leaves <math
->y</math> and <math>z</math> coordinates unchanged, and adds to 
-the <math>x</math> coordinate some value depending on the value 
-of <math>y</math>. For some <math>f</math> we need the following 
+>y</math> and <math>z</math> coordinates unchanged, and adds to
+the <math>x</math> coordinate some value depending on the value
+of <math>y</math>. For some <math>f</math> we need the following
 transformation matrix:
 
 <latex><![CDATA[\begin{displaymath}
@@ -1980,9 +1950,9 @@ import Graphics.Rendering.OpenGL
 
 shear :: GLfloat -> IO ()
 shear f = do
-  m <- newMatrix RowMajor [1,f,0,0 
+  m <- newMatrix RowMajor [1,f,0,0
                           ,0,1,0,0
-                          ,0,0,1,0 
+                          ,0,0,1,0
                           ,0,0,0,1]
   multMatrix (m :: GLmatrix GLfloat)]]></code>
 
@@ -1993,20 +1963,18 @@ import Circle
 import Squares
 import MyTransformations
 
-import Graphics.UI.GLUT
-
 main :: IO ()
 main = renderInWindow $ do
  loadIdentity
  clearColor $= Color4 1 1 1 1
  clear [ColorBuffer]
- translate$Vector3 0.5 0.5 (0::GLfloat)
+ translate $ Vector3 0.5 0.5 (0::GLfloat)
  shear 0.5
  currentColor $= Color4 0 0 1 1
  fillCircle 0.5
 
  loadIdentity
- translate$Vector3 (-0.5) (-0.5) (0::GLfloat)
+ translate $ Vector3 (-0.5) (-0.5) (0::GLfloat)
  shear 0.5
  currentColor $= Color4 1 0 0 1
  square 0.5
@@ -2017,7 +1985,7 @@ The resulting window can be found in figure<white/>
 
 <bild name="TestShear" pdfscale="0.6" psscale="0.5"
 caption="Applying shear to some shapes."
-/> 
+/>
 
 </subsection>
 </section>
@@ -2037,9 +2005,7 @@ called the contents of the ring moves a bit. Compile the program and
 hide the resulting window behind some other window. You will observe
 how the ring moves within the window, until it is no longer displayed.
 <code class="ForgottenReset" lang="hs" main="main"
->import Graphics.UI.GLUT
-
-import PointsForRendering
+>import PointsForRendering
 import Ring
 
 main :: IO ()
@@ -2048,7 +2014,7 @@ main = renderInWindow display
 display :: DisplayCallback
 display = do
   clear [ColorBuffer]
-  translate$Vector3 (-0.1) 0.1 (0::GLfloat)
+  translate $ Vector3 (-0.1) 0.1 (0::GLfloat)
   ring 0.2 0.4
   flush</code>
 </example>
@@ -2059,16 +2025,16 @@ color as last statement in your display function to some value then
 this will be the current color in the next call of the display
 function. Thus it is better to ensure that the display function leaves
 a clean state, i.e.<white/>the state it espects to find, when
-it is called, or even better let the display functions 
+it is called, or even better let the display functions
 not rely on any previously set states.
 </section>
 
 <section titel="Local transformations">
 Often you will have the situation, that you are in a context of some
 transformations. Maybe  for certain parts of you shape you want
-to add some 
+to add some
 further transformation but for other parts return to the outer
-transformation context. In such situations you cannot use 
+transformation context. In such situations you cannot use
 the statement <tt>loadIdentity</tt> since this will not only delete
 the transformations you wanted to be applied to your local part of the
 the complete shape but the whole transformation context.<p/>
@@ -2076,7 +2042,7 @@ the complete shape but the whole transformation context.<p/>
 HOpenGL provides a function which allows to add some more
 transformations to some local parts of your shape. This function is
 called <tt>preservingMatrix</tt> which refers to the fact that
-transformations are technically implemented as 
+transformations are technically implemented as
 matrixes. <tt>preservingMatrix</tt> has one argument, which is a
 monadic statement. The application of <tt>preservingMatrix</tt> is a
 monadic statement:
@@ -2091,7 +2057,7 @@ a module, which is able to render a side of the famous Rubik's
 Cube. Such a side consists of 9 squares which are of some color and
 which have a black frame. We can render such a shape, by rendering the
 single framed squares at the origin and then move them to their
-position. This movement is done within 
+position. This movement is done within
 a <tt>preservingMatrix</tt> application.
 
 <code lang="hs" class="RubikFace"><![CDATA[module RubikFace where
@@ -2099,7 +2065,7 @@ import Graphics.Rendering.OpenGL
 
 import Squares]]></code>
 Doing a frame involves the four sides of a frame. Each side is created
-at the origin and then moved to its final position: 
+at the origin and then moved to its final position:
 <code lang="hs" class="RubikFace" sequel="true"
 ><![CDATA[frame width height border = do
   let bh = border/2
@@ -2107,19 +2073,19 @@ at the origin and then moved to its final position:
   let hh = height/2-bh
 
   preservingMatrix $ do
-    translate $Vector3 0 hh (0::GLfloat)
+    translate $ Vector3 0 hh (0::GLfloat)
     myRect width  border
   preservingMatrix $ do
-    translate $Vector3 0 (-hh) (0::GLfloat)
+    translate $ Vector3 0 (-hh) (0::GLfloat)
     myRect width  border
   preservingMatrix $ do
-    translate $Vector3 (-wh) 0 (0::GLfloat)
-    myRect  border height 
+    translate $ Vector3 (-wh) 0 (0::GLfloat)
+    myRect  border height
   preservingMatrix $ do
-    translate $Vector3 wh 0 (0::GLfloat)
+    translate $ Vector3 wh 0 (0::GLfloat)
     myRect  border height ]]></code>
 Each of the nine fields is rendered by drawing its frame and its
-    colored square: 
+    colored square:
 <code lang="hs" class="RubikFace" sequel="true"
 ><![CDATA[originField width color = do
   let frameWidth = width/10
@@ -2137,14 +2103,14 @@ renderArea width css
         cps = zip cs $ areaFields width
     mapM_  (\(c,f)-> f(originField width c)) cps
 
-areaFields width = 
+areaFields width =
   [makeSquare x y |x<-[1,0,-1],y<-[1,0,-1]]
-    where 
+    where
       makeSquare xn yn = \f -> preservingMatrix $ do
        let
          x = xn*width
          y = yn*width
-       translate $Vector3 x y 0
+       translate $ Vector3 x y 0
        f
 
 red     = Color4 1 0 0 (1::GLfloat)
@@ -2158,9 +2124,6 @@ The following module tests the rendering. Two sides are
 rendered. Further transformations are applied to them.
 
 <code lang="hs" class="RenderRubikFace" main="main">import PointsForRendering
-import Graphics.Rendering.OpenGL
-
-import PointsForRendering
 import RubikFace
 
 _FIELD_WIDTH :: GLfloat
@@ -2174,11 +2137,11 @@ faces = do
   clear [ColorBuffer]
 
   loadIdentity
-  translate  $Vector3 (-0.6) 0.4 (0::GLfloat)
+  translate  $ Vector3 (-0.6) 0.4 (0::GLfloat)
   renderArea _FIELD_WIDTH r1
 
   loadIdentity
-  translate  $Vector3 (0.1) (-0.3) (0::GLfloat)
+  translate  $ Vector3 (0.1) (-0.3) (0::GLfloat)
   rotate 290 $ Vector3 0 0 (1::GLfloat)
   scale 1.5 1.5 (1::GLfloat)
   renderArea _FIELD_WIDTH r1
@@ -2192,7 +2155,7 @@ The resulting window can be found in figure<white/>
 <bild name="RenderRubikFace" pdfscale="0.6" psscale="0.5"
 caption="a Side of  Rubik's Cube with further transformations applied
 to it."
-/> 
+/>
 
 </section>
 
@@ -2210,19 +2173,16 @@ screen. Such attributes can be set in the reshape callback
 function. This function gets the window size as argument and specifies
 which coordinates are to be seen on the screen. At first glance the
 name seems to be a bit misleading, since it evokes the image that it is
-just called, when someone resizes the window. The first time the 
+just called, when someone resizes the window. The first time the
 reshape function is called is at the opening of the window.<p/>
 
 The reshape function might be empty. This is modelled by the Haskell
-data type <tt>Maybe</tt>. 
+data type <tt>Maybe</tt>.
 
 <example>
 We define the first reshape function for a window. It is the identity
-function, which does not specify anything, how to render the picture. 
-<code class="Reshape1" lang="hs" main="main">import Graphics.UI.GLUT
-import Graphics.Rendering.OpenGL
-
-import PointsForRendering
+function, which does not specify anything, how to render the picture.
+<code class="Reshape1" lang="hs" main="main">import PointsForRendering
 
 main :: IO ()
 main = do
@@ -2236,8 +2196,8 @@ display :: DisplayCallback
 display = do
  clear [ColorBuffer]
  displayPoints points Quads
-   where 
-    points 
+   where
+    points
      = [(0.5,0.5,0)
        ,(-0.5,0.5,0)
        ,(-0.5,-0.5,0)
@@ -2266,16 +2226,13 @@ window pane are to be used for rendering the picture. There is a state
 variable <tt>viewport</tt>, which contains exactly this
 information. It is a pair, of a position and a size. The position is
 the offset from the upper left corner in pixels. The size is the size
-of the screen to be used for rendering in pixels. 
+of the screen to be used for rendering in pixels.
 
 <example>
 If you want the window to be used completely for rendering the image,
 then the position needs to be set to <tt>Position 0 0</tt>. i.e. no
 offset and as size the complete window size is to be used:
-<code class="Reshape2" lang="hs" main="main">import Graphics.UI.GLUT
-import Graphics.Rendering.OpenGL
-
-import PointsForRendering
+<code class="Reshape2" lang="hs" main="main">import PointsForRendering
 
 main :: IO ()
 main = do
@@ -2289,8 +2246,8 @@ display :: DisplayCallback
 display = do
   clear [ColorBuffer]
   displayPoints points Quads
-   where 
-    points 
+   where
+    points
      = [(0.5,0.5,0)
        ,(-0.5,0.5,0)
        ,(-0.5,-0.5,0)
@@ -2307,10 +2264,7 @@ complete window pane will be used for rendering your image.
 In this example  only parts of the window are used for rendering the
 image. The image is smaller than the window.
 
-<code class="Viewport" lang="hs" main="main">import Graphics.UI.GLUT
-import Graphics.Rendering.OpenGL
-
-import PointsForRendering
+<code class="Viewport" lang="hs" main="main">import PointsForRendering
 
 main :: IO ()
 main = do
@@ -2323,7 +2277,7 @@ main = do
 
 display :: DisplayCallback
 display = do
-  clearColor $= Color4 1 1 1 1 
+  clearColor $= Color4 1 1 1 1
   clear [ColorBuffer]
   currentColor $= Color4 1 0 0 1
   displayPoints ps1 LineLoop
@@ -2341,7 +2295,7 @@ The resulting window can be found in figure<white/>
 
 <bild name="Viewport" pdfscale="0.6" psscale="0.5"
 caption="A Viewport smaller than the window."
-/> 
+/>
 </example>
 </section>
 
@@ -2359,7 +2313,7 @@ transformation or to the projection matrix. A state variabble <tt
 >matrixMode</tt> defines, which of these matrixes these statements
 refer to. Therefore it is necessary to switch this variable to the
 value <tt>Projection</tt>, before applying the function <tt
->ortho</tt> and afterwards to reset the variable back to the 
+>ortho</tt> and afterwards to reset the variable back to the
 value <tt>ModelView</tt>.
 
 
@@ -2374,16 +2328,16 @@ main = do
   (progName,_) &lt;-  getArgsAndInitialize
 
   createWindow (progName++"1")
-  displayCallback $= display 
+  displayCallback $= display
   <redv>projection (-5) 5 (-5) 5 (-5) 5</redv>
 
   createWindow (progName++"2")
-  displayCallback $= display 
+  displayCallback $= display
   <redv>projection 0 0.8 (-0.8) 0.8 (-0.5) 0.5</redv>
 
   mainLoop
 
-projection xl xu yl yu zl zu = do 
+projection xl xu yl yu zl zu = do
   <redv>matrixMode $= Projection</redv>
   loadIdentity
   <redv>ortho xl xu yl yu zl zu</redv>
@@ -2403,13 +2357,13 @@ The resulting windows can be found in figure<white/>
 
 <bild name="Ortho" pdfscale="0.6" psscale="0.5"
 caption="Two windows with different projection."
-/> 
+/>
 </example>
 
 
 <tt>ortho</tt> is the simpliest projection we can define. When we will
 consider third dimensional szeneries we will learn a more powerful
-projection. 
+projection.
 
 </section>
 
@@ -2428,7 +2382,7 @@ event. </item>
 
 In order to change your image in some coordinated way, you need a
 state which can change. An event may change your state, or over the time
-your state might be changed. 
+your state might be changed.
 
 
 <section titel="Modelling your own State">
@@ -2486,7 +2440,7 @@ shift key:
    deriving ( Eq, Ord, Show )</code>
 
 And finally the position informs about the current mouse pointer
-position. 
+position.
 
 <subsection titel="Keyboard events">
 With the close look at the event handling function above it is fairly
@@ -2503,7 +2457,7 @@ call to the function <tt>postRedisplay</tt> needs to be done.
 can be changed by use of the <tt>+</tt> and <tt>-</tt> key.
 <code class="State" lang="hs" main="main"><![CDATA[import Circle
 import StateUtil
-import Graphics.UI.GLUT 
+import Graphics.UI.GLUT
 
 main :: IO ()
 main = do
@@ -2539,11 +2493,11 @@ The keyboard callback reacts on two keyboard events. The value of the
 radius variable are changed:
 
 <code class="State" lang="hs" main="main" sequel="true"
-><![CDATA[keyboard radius (Char '+') Down _ _ = do 
+><![CDATA[keyboard radius (Char '+') Down _ _ = do
   r <- get radius
   radius $=  r+0.05
   postRedisplay Nothing
-keyboard radius (Char '-') Down _ _ = do 
+keyboard radius (Char '-') Down _ _ = do
   r <- get radius
   radius $=  r-0.05
   postRedisplay Nothing
@@ -2572,7 +2526,7 @@ usually a call to <tt>postRedisplay</tt>.
 We define our first animation. A ring is displayed with a changing
 radius.
 
-<code class="Idle" lang="hs" main="main"><![CDATA[import Ring 
+<code class="Idle" lang="hs" main="main"><![CDATA[import Ring
 import StateUtil
 
 import Graphics.UI.GLUT]]></code>
@@ -2605,10 +2559,10 @@ The idle function changes the value of the variable <tt
 >radius</tt> depending on the second state variable <tt>step</tt>.
 
 <code class="Idle" lang="hs" sequel="true"
->idle radius step = do 
+>idle radius step = do
   r &lt;- get radius
   s &lt;- get step
-  if r&gt;=1 then step $= (-_STEP) 
+  if r&gt;=1 then step $= (-_STEP)
           else if r&lt;=0 then step $= _STEP
                        else return ()
   s &lt;- get step
@@ -2622,7 +2576,7 @@ ring with changing radius was displayed, but the animation was somehow
 flickering. The reason for that was, that the display function as its
 first statement clears the screen, i.e. makes it alltogether
 black. Only afterwards the ring is rendered. For a short moment the
-screen will be completely black. This is what makes this flickering 
+screen will be completely black. This is what makes this flickering
 effect.<p/>
 
 A common solution for this problem in animated pictures is, not to
@@ -2640,13 +2594,12 @@ to the function <tt>swapBuffers</tt> needs to be done as last
 statement of the display function.
 
 <example>The ring with changing radius over time now with double
-buffering. 
-<code class="Double" lang="hs" main="main">import Ring 
+buffering.
+<code class="Double" lang="hs" main="main">import Ring
 import PointsForRendering
 import StateUtil
 
 import Data.IORef
-import Graphics.UI.GLUT
 
 _STEP = 0.001
 
@@ -2669,10 +2622,10 @@ display radius = do
   <redv>swapBuffers</redv>
 
 idle :: IORef GLfloat -> IORef GLfloat -> IdleCallback
-idle radius step = do 
+idle radius step = do
   r &lt;- get radius
   s &lt;- get step
-  if r&gt;=1 then step $= (-_STEP) 
+  if r&gt;=1 then step $= (-_STEP)
           else if r&lt;=0 then step $= _STEP
                        else return ()
   s &lt;- get step
@@ -2699,11 +2652,11 @@ Pong in action can be found in figure<white/>
 
 <bild name="Pong" pdfscale="0.6" psscale="0.5"
 caption="Pong in action."
-/> 
+/>
 
 <code class="Pong" lang="hs" main="main"
-><![CDATA[import Circle 
-import Squares 
+><![CDATA[import Circle
+import Squares
 
 import Data.IORef
 import Graphics.UI.GLUT]]></code>
@@ -2732,7 +2685,7 @@ _INITIAL_BALL_DIR = 0.002
 _INITIAL_PADDLE_DIR = 0.005]]></code>
 We define a data type, game. The game state can be characterized by
 the position of the ball and the values these coordinates change for
-the next redisplay: 
+the next redisplay:
 
 <code class="Pong" lang="hs" sequel="true"
 ><![CDATA[data Ball   = Ball (GLfloat,GLfloat) GLfloat GLfloat]]></code>
@@ -2801,14 +2754,14 @@ state and renders these:
 Paddles are simply rectangles:
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[displayPaddle (x,y,_) =  preservingMatrix$do 
-  translate$Vector3 (paddleWidth/2) (paddleHeight/2) 0
+><![CDATA[displayPaddle (x,y,_) =  preservingMatrix $ do
+  translate $ Vector3 (paddleWidth/2) (paddleHeight/2) 0
   displayAt (x,y)$myRect paddleWidth paddleHeight]]></code>
 
 We made use of the utility function which moves a shape to some position:
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[displayAt (x, y) displayMe = preservingMatrix$do 
-  translate$Vector3 x y (0::GLfloat)
+><![CDATA[displayAt (x, y) displayMe = preservingMatrix $ do
+  translate $ Vector3 x y (0::GLfloat)
   displayMe]]></code>
 
 Within the idle function ball and paddles need to be set to their next
@@ -2816,7 +2769,7 @@ position on the field:
 
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[idle game = do 
+><![CDATA[idle game = do
   g <- get game
   let fac = moveFactor g
   game
@@ -2831,25 +2784,25 @@ the field, by the left and right bound of the field and the position
 of the paddles:
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[moveBall g 
+><![CDATA[moveBall g
  = Ball (x+factor*newXDir,y+factor*newYDir) newXDir newYDir
   where
    newXDir
-    |      x-ballRadius <= xl+paddleWidth 
-       &&  y+ballRadius >=yl 
-       &&  y            <=yl+paddleHeight  
-       = -xDir 
+    |      x-ballRadius <= xl+paddleWidth
+       &&  y+ballRadius >=yl
+       &&  y            <=yl+paddleHeight
+       = -xDir
     |x <= _LEFT-ballRadius = 0
     |     x+ballRadius >= xr
-       &&  y+ballRadius >=yr 
-       &&  y            <=yr+paddleHeight       
-       = -xDir 
+       &&  y+ballRadius >=yr
+       &&  y            <=yr+paddleHeight
+       = -xDir
     |x >= _RIGHT+ballRadius = 0
     |otherwise    = xDir
    newYDir
-    |y > _TOP-ballRadius || y< _BOTTOM+ballRadius = -yDir 
+    |y > _TOP-ballRadius || y< _BOTTOM+ballRadius = -yDir
     |newXDir == 0 = 0
-    |otherwise = yDir  
+    |otherwise = yDir
    (Ball (x,y) xDir yDir) = ball g
    factor = moveFactor g
    (xl,yl,_) = leftP g
@@ -2870,18 +2823,18 @@ right paddle and the space key gets a new ball:
 
 <code class="Pong" lang="hs" sequel="true"
 ><![CDATA[
-keyboard game (Char 'a') upDown _ _ = do 
+keyboard game (Char 'a') upDown _ _ = do
   g <- get game
   let (x,y,_) = leftP g
   game $= g{leftP=(x,y,paddleDir upDown)}
-keyboard game (Char 'l') upDown _ _ = do 
+keyboard game (Char 'l') upDown _ _ = do
   g <- get game
   let (x,y,_) = rightP g
   game $= g{rightP=(x,y,paddleDir upDown)}
-keyboard game (Char '\32') Down _ _ = do 
+keyboard game (Char '\32') Down _ _ = do
   g <- get game
   let Ball (x,y) xD yD = ball g
-  let xDir 
+  let xDir
        |x<=_LEFT+3*paddleWidth = _INITIAL_BALL_DIR
        |x>=_RIGHT-3*paddleWidth = - _INITIAL_BALL_DIR
        |otherwise = xD
@@ -2926,7 +2879,7 @@ true power of OpenGL by actually rendering three dimensional objects.
 <section titel="Hidden Shapes">
 In a three dimensional space some objects will be in front of others
 and hide them. We would expect to see only those areas which are not
-hidden by areas closer to the viewer. 
+hidden by areas closer to the viewer.
 
 
 <example>
@@ -2957,7 +2910,7 @@ display = do
   currentColor $= Color4 0 0 1 1
   fillCircle 0.5
   flush</code>
-However as can be seen in figure <ref name="NotHidden"></ref>, 
+However as can be seen in figure <ref name="NotHidden"></ref>,
 the blue circle hides parts of the
   red square.
 
@@ -2971,7 +2924,7 @@ By default OpenGL does not take the depth into account. Shapes
 rendered later hide
 other shapes which were rendered earlier, neglecting the depth of the
 shapes. OpenGL provides a mechanism for automatically considering the
-depth of a shape. This simply needs to be activated. 
+depth of a shape. This simply needs to be activated.
 Three steps need to be done:
 <itemize>
 <item>as
@@ -3019,7 +2972,7 @@ display = do
   fillCircle 0.5
   flush</code>
 
-Now as can be seen in figure <ref name="Hidden"></ref>, the 
+Now as can be seen in figure <ref name="Hidden"></ref>, the
 red square hides parts of the blue  circle.
 
 <bild name="Hidden" pdfscale="0.6" psscale="0.5"
@@ -3037,7 +2990,7 @@ function."
 In the real world objects closer to the viewer appear larger than
 objects farer away from the viewer. Up to now we only learnt how to
 set up an orthographic projection. In an orthographic projection
-objects farer away have the same size as object close to the viewer. 
+objects farer away have the same size as object close to the viewer.
 
 <example>
 We can test the orthographic projection. Two squares equally in size,
@@ -3055,7 +3008,7 @@ main = do
   depthFunc $= Just Less
   displayCallback $= display
 
-  matrixMode $= Projection 
+  matrixMode $= Projection
   loadIdentity
   <redv>ortho (-5) 5  (-5) 5 (1) 40</redv>
   matrixMode $= Modelview 0
@@ -3077,7 +3030,7 @@ display = do
   square 1
   flush</code>
 
-As can be seen in figure <ref name="NotSmaller"></ref> , the 
+As can be seen in figure <ref name="NotSmaller"></ref> , the
 two squares have the same size, even though the red one is closer to
 the viewer.
 
@@ -3121,7 +3074,7 @@ main = do
   depthFunc $= Just Less
   displayCallback $= display
 
-  matrixMode $= Projection 
+  matrixMode $= Projection
   loadIdentity
   let near   = 1
       far    = 40
@@ -3148,7 +3101,7 @@ display = do
   flush</code>
 
 
-Now, as can be seen in figure <ref name="Smaller"></ref>, the 
+Now, as can be seen in figure <ref name="Smaller"></ref>, the
 blue square appears to be smaller than the red square.
 
 <bild name="Smaller" pdfscale="0.6" psscale="0.5"
@@ -3157,7 +3110,7 @@ caption="Two squares in perspective projection."
 
 </example>
 
-HopenGL provides a second function to define a perspective 
+HopenGL provides a second function to define a perspective
 projection: <tt>perspective</tt>. Here instead of left, right, top,
 bottom an angle between the top/bottom ray and the width of the
 closest plane can be specified.
@@ -3177,7 +3130,7 @@ to project the three dimensional space onto the two dimensional area
 of the screen. We did however not yet specify, where in the three
 dimensional space the viewer is situated and in what direction they
 are looking. In order to define this, OpenGL provides the
-function <tt>lookAt</tt>. It has three arguments: 
+function <tt>lookAt</tt>. It has three arguments:
 <itemize>
 <item>the point, where the viewer is situated.</item>
 <item>the point at which the viewer is looking.</item>
@@ -3188,7 +3141,7 @@ for the viewer.</item>
 <subsection titel="Oribiting around the origin">
 The point of view, where we are looking from is interesting, when we
  change it. In the following a module is defined, which allows
-the viewer to move along a sphere. The 
+the viewer to move along a sphere. The
 point of view can be set for a given sphere  position. The position is
 specified by two angles and a radius. The first angle defines which
 way to move around the x-axis the second angle, which angle to move
@@ -3205,10 +3158,10 @@ setPointOfView pPos = do
   (alpha,beta,r) <- get pPos
   let
    (x,y,z)    = calculatePointOfView alpha beta r
-   (x2,y2,z2) = calculatePointOfView ((alpha+90)`mod` 360) beta r  
+   (x2,y2,z2) = calculatePointOfView ((alpha+90)`mod` 360) beta r
   lookAt (Vertex3 x y z) (Vertex3 0 0 0) (Vector3 x2 y2 z2)
 
-calculatePointOfView  alp bet r = 
+calculatePointOfView  alp bet r =
   let alpha =  fromIntegral alp*2*pi/fromIntegral 360
       beta  =  fromIntegral bet*2*pi/fromIntegral 360
       y = r * cos alpha
@@ -3227,12 +3180,12 @@ keyForPos  _  _                     = return ()
 
 modPos pPos (ffst,fsnd,ftrd) = do
   (alpha,beta,r) <- get pPos
-  pPos $= (ffst alpha `mod` 360,fsnd beta `mod` 360,ftrd r) 
+  pPos $= (ffst alpha `mod` 360,fsnd beta `mod` 360,ftrd r)
   postRedisplay Nothing
 
 reshape screenSize@(Size w h) = do
   viewport $= ((Position 0 0), screenSize)
-  matrixMode $= Projection 
+  matrixMode $= Projection
   loadIdentity
   let near   = 0.001
       far    = 40
@@ -3263,31 +3216,31 @@ locally = preservingMatrix
 colorCube n = do
   locally $ do
     currentColor $= Color4 1 0 0 1
-    translate$Vector3 0 0 (-n/2)
+    translate $ Vector3 0 0 (-n/2)
     square n
   locally $ do
     currentColor $= Color4 0 1 0 1
-    translate$Vector3 0 0 (n/2)
+    translate $ Vector3 0 0 (n/2)
     square n
   locally $ do
     currentColor $= Color4 0 0 1 1
-    translate$Vector3 (n/2) 0 0
-    rotate 90 $Vector3 0 (1::GLfloat) 0
+    translate $ Vector3 (n/2) 0 0
+    rotate 90 $ Vector3 0 (1::GLfloat) 0
     square n
   locally $ do
     currentColor $= Color4 1 1 0 1
-    translate$Vector3 (-n/2) 0 0
-    rotate 90 $Vector3 0 (1::GLfloat) 0
+    translate $ Vector3 (-n/2) 0 0
+    rotate 90 $ Vector3 0 (1::GLfloat) 0
     square n
   locally $ do
     currentColor $= Color4 0 1 1 1
-    translate$Vector3 0 (-n/2) 0
-    rotate 90 $Vector3 (1::GLfloat) 0 0
+    translate $ Vector3 0 (-n/2) 0
+    rotate 90 $ Vector3 (1::GLfloat) 0 0
     square n
   locally $ do
     currentColor $= Color4 1 1 1 1
-    translate$Vector3 0 (n/2) 0
-    rotate 90 $Vector3 (1::GLfloat) 0 0
+    translate $ Vector3 0 (n/2) 0
+    rotate 90 $ Vector3 (1::GLfloat) 0 0
     square n</code>
 
 The following program allows to use the cursor keys to move around a
@@ -3296,7 +3249,7 @@ cube at the origin:
 <code class="OrbitAroundCube" lang="hs" main="main"
 >import Graphics.UI.GLUT
 
-import OrbitPointOfView 
+import OrbitPointOfView
 import StateUtil
 import ColorCube
 
@@ -3315,7 +3268,7 @@ main = do
   mainLoop</code>
 
 The display function sets the viewer's position before rendering the
-cube: 
+cube:
 
 <code class="OrbitAroundCube" lang="hs" sequel="true"
 >display pPos = do
@@ -3325,7 +3278,7 @@ cube:
   colorCube 1
   swapBuffers</code>
 
-As keyboard function we map directly to the function defined 
+As keyboard function we map directly to the function defined
 in <tt>OrbitPointOfView</tt>.
 
 <code class="OrbitAroundCube" lang="hs" sequel="true"
@@ -3337,14 +3290,14 @@ An example how the colored cube can now be seen
 
 <bild name="OrbitAroundCube" pdfscale="0.6" psscale="0.5"
 caption="A view of the colored cube,"
-/> 
+/>
 </example>
 </subsection>
 </section>
 
 
 <section titel="3D Game: Rubik's Cube">
-In this section we implement a primitive version of Rubik's cube. 
+In this section we implement a primitive version of Rubik's cube.
 
 
 Rubik's cube in action can be found in figure<white/>
@@ -3352,7 +3305,7 @@ Rubik's cube in action can be found in figure<white/>
 
 <bild name="RubiksCube" pdfscale="0.6" psscale="0.5"
 caption="Rubik's Cube in action."
-/> 
+/>
 
 
 <subsection titel="Cube Logics">
@@ -3363,7 +3316,7 @@ time to think of them.</footnote>. <p/>
 A data type is provided for representation of a cube:
 
 <code lang="hs" class="RubikLogic"
->module RubikLogic where 
+>module RubikLogic where
 
 data Rubik a
  = Rubik (Front a) (Top a) (Back a) (Bottom a) (Left a) (Right a)
@@ -3386,8 +3339,8 @@ We make the type <tt>Rubik</tt> an instance of the class <tt>Functor</tt>:
 
 <code lang="hs" class="RubikLogic" sequel="true"
 >instance Functor Rubik where
-  fmap f (Rubik front top back bottom left right) 
-    = Rubik (mf front) (mf top) (mf back) 
+  fmap f (Rubik front top back bottom left right)
+    = Rubik (mf front) (mf top) (mf back)
             (mf bottom) (mf left) (mf right)
    where
      mf = map (map f)</code>
@@ -3402,66 +3355,66 @@ The main operation on a cube is to turn one of its six sides. The
 function <tt>rotateArea</tt> specifies, how this effects a cube.
 
 <code lang="hs" class="RubikLogic" sequel="true"
->rotateArea RubikLogic.Front 
- (Rubik front top back bottom left right) =   
+>rotateArea RubikLogic.Front
+ (Rubik front top back bottom left right) =
   Rubik front' top' back bottom' left' right'
-   where 
-     top'    = newRow 3 (reverse$column 3 left) top 
-     bottom' = newRow 1 (reverse$column 1 right) bottom 
+   where
+     top'    = newRow 3 (reverse$column 3 left) top
+     bottom' = newRow 1 (reverse$column 1 right) bottom
      left'   = newColumn 3 (row 1 bottom) left
      right'  = newColumn 1 (row 3 top) right
      front'  = rotateBy3 front
 
 rotateArea RubikLogic.Back
- (Rubik front top back bottom left right) =   
-   Rubik front' top' back' bottom' 
+ (Rubik front top back bottom left right) =
+   Rubik front' top' back' bottom'
          (rotateBy2 left') (rotateBy2 right')
    where
     (Rubik back' bottom' front' top' left' right') =
-      rotateArea RubikLogic.Front 
-       (Rubik back bottom front top 
+      rotateArea RubikLogic.Front
+       (Rubik back bottom front top
               (rotateBy2 left) (rotateBy2 right))
 
 rotateArea RubikLogic.Bottom
- (Rubik front top back bottom left right) =   
+ (Rubik front top back bottom left right) =
   Rubik front' top back' bottom' left' right'
-   where 
-     back'   = newRow 1 (reverse$row 3 left) back 
-     front'  = newRow 3 (row 3 right) front 
+   where
+     back'   = newRow 1 (reverse$row 3 left) back
+     front'  = newRow 3 (row 3 right) front
      left'   = newRow 3 (row 3 front) left
      right'  = newRow 3 (reverse$row 1 back) right
      bottom'  = rotateBy1 bottom
 
 
 rotateArea RubikLogic.Top
- (Rubik front top back bottom left right) =   
+ (Rubik front top back bottom left right) =
   Rubik front' top' back' bottom left' right'
-   where 
-     back'   = newRow 3 (reverse$row 1 right) back 
-     front'  = newRow 1 (row 1 left) front 
+   where
+     back'   = newRow 3 (reverse$row 1 right) back
+     front'  = newRow 1 (row 1 left) front
      left'   = newRow 1 (reverse$row 3 back) left
      right'  = newRow 1 (row 1 front) right
      top'  = rotateBy1 top
 
-rotateArea RubikLogic.Left 
- (Rubik front top back bottom left right) =   
+rotateArea RubikLogic.Left
+ (Rubik front top back bottom left right) =
   Rubik front' top' back' bottom' left' right
-   where 
-     top'    = newColumn 1 (column 1 front) top 
-     bottom' = newColumn 1 (column 1 back) bottom  
+   where
+     top'    = newColumn 1 (column 1 front) top
+     bottom' = newColumn 1 (column 1 back) bottom
      left'   = rotateBy3 left
-     back'   = newColumn 1 (column 1 top) back  
-     front'  = newColumn 1 (column 1 bottom) front 
+     back'   = newColumn 1 (column 1 top) back
+     front'  = newColumn 1 (column 1 bottom) front
 
-rotateArea RubikLogic.Right 
- (Rubik front top back bottom left right) =   
+rotateArea RubikLogic.Right
+ (Rubik front top back bottom left right) =
   Rubik front' top' back' bottom' left right'
-   where 
-     top'    = newColumn 3 (column 3 back) top 
-     bottom' = newColumn 3 (column 3 front) bottom  
+   where
+     top'    = newColumn 3 (column 3 back) top
+     bottom' = newColumn 3 (column 3 front) bottom
      right'  = rotateBy3 right
-     back'   = newColumn 3 (column 3 bottom) back  
-     front'  = newColumn 3 (column 3 top) front 
+     back'   = newColumn 3 (column 3 bottom) back
+     front'  = newColumn 3 (column 3 top) front
 
 rotateBy1
   [[x1,x2,x3]
@@ -3474,7 +3427,7 @@ rotateBy1
 rotateBy2 =  rotateBy1 .rotateBy1
 rotateBy3 =  rotateBy2 .rotateBy1</code>
 
-Finally some useful functions for manipulation of an area are given. 
+Finally some useful functions for manipulation of an area are given.
 
 <code lang="hs" class="RubikLogic" sequel="true"
 >column n  = map (\row->row !! (n-1))
@@ -3484,23 +3437,23 @@ row n area = area !!(n-1)
 newRow 1 row [a,r,ea] = [row,r,ea]
 newRow 2 row [a,r,ea] = [a,row,ea]
 newRow 3 row [a,r,ea] = [a,r,row]
- 
+
 newColumn n column area = map (doIt n) areaC
   where
     areaC =  zip area column
-    doIt 1 ((r:ow),c) = c:ow 
-    doIt 2 ((r:o:w),c) = r:c:w 
+    doIt 1 ((r:ow),c) = c:ow
+    doIt 2 ((r:o:w),c) = r:c:w
     doIt 3 ((r:o:w:xs),c) = r:o:c:xs </code>
 </subsection>
 
 
 <subsection titel="Rendering the Cube">
 We have a logical modell of a cube. Now we can render this in a
-coordinate system. In an earlier section we allready provided a
+coordinate system. In an earlier section we already provided a
 function to render one single side. We simply need to render the six
 sides and move them to the correct position.
 
-<code lang="hs" class="RenderRubik"><![CDATA[module RenderRubik where 
+<code lang="hs" class="RenderRubik"><![CDATA[module RenderRubik where
 
 import Graphics.UI.GLUT hiding (Red,Green,Blue)
 
@@ -3519,34 +3472,34 @@ renderCube (Rubik front top back bottom left right) = do
  render RubikLogic.Left    left
  render RubikLogic.Right   right
 
-render Top    cs = preservingMatrix$do
-  translate $Vector3 (1.5*_FIELD_WIDTH) 0 0
+render Top    cs = preservingMatrix $ do
+  translate $ Vector3 (1.5*_FIELD_WIDTH) 0 0
   rotate (90)$Vector3  0 1 (0::GLfloat)
   renderCubeSide cs
 
 render RubikLogic.Back   cs = preservingMatrix$ do
-  translate $Vector3 0 0 (-1.5*_FIELD_WIDTH)
+  translate $ Vector3 0 0 (-1.5*_FIELD_WIDTH)
   rotate (180)$Vector3 0 0 (1::GLfloat)
   rotate (180)$Vector3 1 0 (0::GLfloat)
   renderCubeSide cs
 
 render Bottom cs = preservingMatrix$ do
-  translate $Vector3  (-1.5*_FIELD_WIDTH) 0 0
+  translate $ Vector3  (-1.5*_FIELD_WIDTH) 0 0
   rotate (270)$Vector3  0 1 (0::GLfloat)
   renderCubeSide cs
 
 render RubikLogic.Front  cs = preservingMatrix$ do
-  translate $Vector3 0 0 (1.5*_FIELD_WIDTH)
+  translate $ Vector3 0 0 (1.5*_FIELD_WIDTH)
   renderCubeSide cs
 
 render RubikLogic.Left   cs = preservingMatrix$ do
-  translate $Vector3 0 (1.5*_FIELD_WIDTH)  0
-  rotate (270) $Vector3 1 0 (0::GLfloat)
+  translate $ Vector3 0 (1.5*_FIELD_WIDTH)  0
+  rotate (270) $ Vector3 1 0 (0::GLfloat)
   renderCubeSide cs
 
 render RubikLogic.Right  cs = preservingMatrix$ do
-  translate $Vector3 0 (-1.5*_FIELD_WIDTH)  0
-  rotate (270) $Vector3 1 0 (0::GLfloat)
+  translate $ Vector3 0 (-1.5*_FIELD_WIDTH)  0
+  rotate (270) $ Vector3 1 0 (0::GLfloat)
   rotate (180)$Vector3 1 0 (0::GLfloat)
   renderCubeSide cs
 
@@ -3555,7 +3508,7 @@ renderCubeSide css = renderArea _FIELD_WIDTH  css
 field = square _FIELD_WIDTH]]></code>
 
 The following function maps our abstract color type to concrete OpenGL
-colors: 
+colors:
 
 <code lang="hs" class="RenderRubik" sequel="true"
 >doColor Red    = Color4 1 0 0 1.0
@@ -3570,107 +3523,107 @@ doColor Black  = Color4 0 0 0 1.0</code>
 renderCubik cub = do
   let cube@(Rubik front top back bottom left right) = fmap doColor cub
   renderTheStock RubikLogic.Front cube
-  renderSt 
-   (area$doColor Black) (row 2 top) (column 2 left) (row 2 bottom) (column 2 right) 
+  renderSt
+   (area$doColor Black) (row 2 top) (column 2 left) (row 2 bottom) (column 2 right)
   renderTheStock RubikLogic.Back cube
 
 renderTheStock RubikLogic.Front (Rubik front top back bottom left right) =
   preservingMatrix $ do
-    translate$Vector3 0 0 (_FIELD_WIDTH)
-    renderSt 
-     front (row 3 top) (column 3 left) (row 1 bottom) (column 1 right) 
+    translate $ Vector3 0 0 (_FIELD_WIDTH)
+    renderSt
+     front (row 3 top) (column 3 left) (row 1 bottom) (column 1 right)
 
 renderTheStock RubikLogic.Back (Rubik front top back bottom left right) =
   preservingMatrix $ do
-    translate$Vector3 0 0  (-_FIELD_WIDTH)
+    translate $ Vector3 0 0  (-_FIELD_WIDTH)
     rotate (180)$Vector3  0 1 (0::GLfloat)
     rotate (180)$Vector3  0 0 (1::GLfloat)
     renderSt
-      back (row 3 bottom) (reverse$column 1 right) (row 1 top) (reverse$column 3 left) 
+      back (row 3 bottom) (reverse$column 1 right) (row 1 top) (reverse$column 3 left)
 
-renderTheStock Top (Rubik front top back bottom left right) = 
+renderTheStock Top (Rubik front top back bottom left right) =
   preservingMatrix $ do
-    translate$Vector3  (_FIELD_WIDTH) 0 0
+    translate $ Vector3  (_FIELD_WIDTH) 0 0
     rotate (90)$Vector3  0 (1::GLfloat) 0
-    renderSt 
-     top (row 3 back) (row 1 left) (row 1 front) (reverse$row 1 right) 
+    renderSt
+     top (row 3 back) (row 1 left) (row 1 front) (reverse$row 1 right)
 
 renderTheStock Bottom (Rubik front top back bottom left right) =
   preservingMatrix $ do
-    translate$Vector3  (-_FIELD_WIDTH) 0 0
+    translate $ Vector3  (-_FIELD_WIDTH) 0 0
     rotate (-90)$Vector3  0 (1::GLfloat) 0
-    renderSt 
-     bottom (row 3 front) (reverse$row 3 left) (row 1 back) (row 3 right) 
+    renderSt
+     bottom (row 3 front) (reverse$row 3 left) (row 1 back) (row 3 right)
 
-renderTheStock RubikLogic.Left (Rubik front top back bottom left right) = 
+renderTheStock RubikLogic.Left (Rubik front top back bottom left right) =
   preservingMatrix $ do
-    translate$Vector3  0 (_FIELD_WIDTH)  0
+    translate $ Vector3  0 (_FIELD_WIDTH)  0
     rotate (-90)$Vector3  (1::GLfloat) 0 0
-    renderSt 
-     left (column 1 top) (reverse$column 1 back) (reverse$column 1 bottom) (column 1 front) 
+    renderSt
+     left (column 1 top) (reverse$column 1 back) (reverse$column 1 bottom) (column 1 front)
 
-renderTheStock RubikLogic.Right (Rubik front top back bottom left right) = 
+renderTheStock RubikLogic.Right (Rubik front top back bottom left right) =
   preservingMatrix $ do
-    translate$Vector3  0 (-_FIELD_WIDTH)  0
+    translate $ Vector3  0 (-_FIELD_WIDTH)  0
     rotate (90)$Vector3  (1::GLfloat) 0 0
-    renderSt 
-     right (reverse$column 3 top) (reverse$column 3 front) (reverse$column 3 bottom) (reverse$column 3 back) 
+    renderSt
+     right (reverse$column 3 top) (reverse$column 3 front) (reverse$column 3 bottom) (reverse$column 3 back)
 
 renderSt area top left bottom right = do
-  cube (area!!1!!1) black black black black black 
+  cube (area!!1!!1) black black black black black
   preservingMatrix $ do
-    translate$Vector3 (_FIELD_WIDTH)  (_FIELD_WIDTH) 0
-    cube (area!!0!!0) (top!!0) black black (left!!0) black 
+    translate $ Vector3 (_FIELD_WIDTH)  (_FIELD_WIDTH) 0
+    cube (area!!0!!0) (top!!0) black black (left!!0) black
   preservingMatrix $ do
-    translate$Vector3  (_FIELD_WIDTH) 0 0
-    cube (area!!0!!1) (top!!1) black black black  black 
+    translate $ Vector3  (_FIELD_WIDTH) 0 0
+    cube (area!!0!!1) (top!!1) black black black  black
   preservingMatrix $ do
-    translate$Vector3 (_FIELD_WIDTH)  (-_FIELD_WIDTH) 0
-    cube (area!!0!!2) (top!!2) black black black (right!!0)  
+    translate $ Vector3 (_FIELD_WIDTH)  (-_FIELD_WIDTH) 0
+    cube (area!!0!!2) (top!!2) black black black (right!!0)
   preservingMatrix $ do
-    translate$Vector3 0 (_FIELD_WIDTH)  0
-    cube (area!!1!!0) black black black (left!!1) black 
+    translate $ Vector3 0 (_FIELD_WIDTH)  0
+    cube (area!!1!!0) black black black (left!!1) black
   preservingMatrix $ do
-    translate$Vector3 0 (-_FIELD_WIDTH)  0 
-    cube (area!!1!!2) black black black black (right!!1)  
+    translate $ Vector3 0 (-_FIELD_WIDTH)  0
+    cube (area!!1!!2) black black black black (right!!1)
   preservingMatrix $ do
-    translate$Vector3 (-_FIELD_WIDTH)  (_FIELD_WIDTH) 0
-    cube (area!!2!!0)  black black (bottom!!0) (left!!2) black 
+    translate $ Vector3 (-_FIELD_WIDTH)  (_FIELD_WIDTH) 0
+    cube (area!!2!!0)  black black (bottom!!0) (left!!2) black
   preservingMatrix $ do
-    translate$Vector3 (-_FIELD_WIDTH)  0 0
-    cube (area!!2!!1) black black (bottom!!1) black  black 
+    translate $ Vector3 (-_FIELD_WIDTH)  0 0
+    cube (area!!2!!1) black black (bottom!!1) black  black
   preservingMatrix $ do
-    translate$Vector3 (-_FIELD_WIDTH) (-_FIELD_WIDTH) 0
-    cube (area!!2!!2) black black (bottom!!2) black (right!!2)  
+    translate $ Vector3 (-_FIELD_WIDTH) (-_FIELD_WIDTH) 0
+    cube (area!!2!!2) black black (bottom!!2) black (right!!2)
 
 cube c1 c2 c3 c4 c5 c6 = do
   preservingMatrix $ do
-    translate$Vector3 0 0 (_FIELD_WIDTH/2)
+    translate $ Vector3 0 0 (_FIELD_WIDTH/2)
     originField _FIELD_WIDTH c1
   preservingMatrix $ do
-    translate$Vector3 0 0 (-_FIELD_WIDTH/2)
+    translate $ Vector3 0 0 (-_FIELD_WIDTH/2)
     originField _FIELD_WIDTH c3
   preservingMatrix $ do
-    translate$Vector3 0 (_FIELD_WIDTH/2) 0
+    translate $ Vector3 0 (_FIELD_WIDTH/2) 0
     rotate (90)$Vector3  1 0 (0::GLfloat)
     originField _FIELD_WIDTH c5
   preservingMatrix $ do
-    translate$Vector3 0 (-_FIELD_WIDTH/2) 0
+    translate $ Vector3 0 (-_FIELD_WIDTH/2) 0
     rotate (90)$Vector3  1 0 (0::GLfloat)
     originField _FIELD_WIDTH c6
   preservingMatrix $ do
-    translate$Vector3 (-_FIELD_WIDTH/2) 0 0
+    translate $ Vector3 (-_FIELD_WIDTH/2) 0 0
     rotate (90)$Vector3  0 1 (0::GLfloat)
     originField _FIELD_WIDTH c4
   preservingMatrix $ do
-    translate$Vector3 (_FIELD_WIDTH/2) 0 0
+    translate $ Vector3 (_FIELD_WIDTH/2) 0 0
     rotate (90)$Vector3  0 1 (0::GLfloat)
     originField _FIELD_WIDTH c2
 --}
 
 
 
-{-- 
+{--
 setSurfaceColor (r,g,b) = do
   materialAmbient   OpenGL.Front $= Color4 (0.5*r) (0.5*g) (0.5*b)  1.0
   materialDiffuse   OpenGL.Front $= Color4 (0.9*r) (0.9*g) (0.9*b)  1.0
@@ -3682,12 +3635,10 @@ setSurfaceColor (r,g,b) = do
 </subsection>
 
 <subsection titel="Rubik's Cube">
-Finally we can create a simple application. 
+Finally we can create a simple application.
 
 <code lang="hs" main="main" class="RubiksCube"
 ><![CDATA[import Graphics.UI.GLUT
-
-import Data.IORef
 
 import OrbitPointOfView
 import StateUtil
@@ -3695,7 +3646,7 @@ import RubikLogic
 import RenderRubik
 
 main :: IO ()
-main = do 
+main = do
   initialDisplayMode $= [DoubleBuffered,RGBMode,WithDepthBuffer]
   (progName,_) <- getArgsAndInitialize
 
@@ -3717,24 +3668,24 @@ display pPos pCube = do
   clear [ColorBuffer,DepthBuffer]
   loadIdentity
   setPointOfView pPos
-  cube <- get pCube 
+  cube <- get pCube
   renderCube$fmap doColor  cube
   swapBuffers
 
 keyboard _ pCube (Char '1') Down _ _
-  = rot pCube RubikLogic.Top 
-keyboard _ pCube (Char '2') Down _ _ 
- = rot pCube RubikLogic.Bottom 
-keyboard _ pCube (Char '3') Down _ _ 
+  = rot pCube RubikLogic.Top
+keyboard _ pCube (Char '2') Down _ _
+ = rot pCube RubikLogic.Bottom
+keyboard _ pCube (Char '3') Down _ _
  = rot pCube RubikLogic.Front
 keyboard _ pCube (Char '4') Down _ _
   = rot pCube RubikLogic.Back
 keyboard _ pCube (Char '5') Down _ _
   = rot pCube RubikLogic.Left
-keyboard _ pCube (Char '6') Down _ _ 
+keyboard _ pCube (Char '6') Down _ _
  = rot pCube RubikLogic.Right
 keyboard pPos _   c         _    _ _
-  = keyForPos pPos c 
+  = keyForPos pPos c
 
 rot pCube p = do
   cube <- get pCube
@@ -3748,19 +3699,17 @@ rot pCube p = do
 
 <section titel="Light">
 Let us begin with a simple 3-dimensional shape: a cube.
-A cube has six squares which we can render as the primitive 
+A cube has six squares which we can render as the primitive
 shape <tt>Quad</tt>.
 
 <code class="Cube" lang="hs"
-><![CDATA[module Cube where 
-
-import Graphics.UI.GLUT
+><![CDATA[module Cube where
 
 import PointsForRendering
 
 cube :: GLfloat -> IO ()
 cube l = renderAs Quads corners
-  where 
+  where
    corners =
     [(l,0,l),(0,0,l),(0,l,l),(l,l,l)
     ,(l,l,l),(l,l,0),(l,0,0),(l,0,l)
@@ -3779,7 +3728,7 @@ cube l = renderAs Quads corners
 import Cube
 
 main :: IO ()
-main = do 
+main = do
   (progName,_) <- getArgsAndInitialize
   createWindow progName
   displayCallback $= display
@@ -3788,7 +3737,7 @@ main = do
 display :: DisplayCallback
 display = do
   clear [ColorBuffer]
-  rotate 40 (Vector3 1 1 (1::GLfloat)) 
+  rotate 40 (Vector3 1 1 (1::GLfloat))
   cube 0.5
   loadIdentity
   flush]]></code>
@@ -3801,7 +3750,7 @@ dimensional visual effect of a cube.
 
 <bild name="RenderCube" pdfscale="0.6" psscale="0.5"
 caption="An unlit cube."
-/> 
+/>
 </example>
 
 <subsection titel="Defining a light source">
@@ -3812,10 +3761,10 @@ your two dimensional computer screen, it needs to be defined what kind
 of light source lights the object.<p/>
 
 A light source can be specified fairly easy. First you need to set the
-state variable <tt>lighting</tt> to the value <tt>Enabled</tt>. Then 
+state variable <tt>lighting</tt> to the value <tt>Enabled</tt>. Then
 you need to specify the position of your light source. This can
 be done by setting a special position state variable,
-e.g.<white/> by<br/>  
+e.g.<white/> by<br/>
 <tt>position (Light 0) $= Vertex4 0.8 0 3.0 5.0</tt>.<br/>
 And finally you need to turn the light source on by setting its state
 variable to enabled: <tt>light (Light 0) $= Enabled</tt>.
@@ -3827,7 +3776,7 @@ variable to enabled: <tt>light (Light 0) $= Enabled</tt>.
 import Cube
 
 main :: IO ()
-main = do 
+main = do
   (progName,_) <- getArgsAndInitialize
 
   depthFunc $= Just Less
@@ -3844,7 +3793,7 @@ main = do
 display :: DisplayCallback
 display = do
   clear [ColorBuffer]
-  rotate 40 (Vector3 1 1 (1::GLfloat)) 
+  rotate 40 (Vector3 1 1 (1::GLfloat))
   cube 0.5
   loadIdentity
   flush]]></code>
@@ -3855,7 +3804,7 @@ The resulting window can be found in figure<white/>
 
 <bild name="LightCube" pdfscale="0.6" psscale="0.5"
 caption="A lit cube."
-/> 
+/>
 </example>
 
 You might wonder, why the vertex for the light source position has
@@ -3870,7 +3819,7 @@ three (the <math>x, y, z</math> coordinates) get divided.
 
 <subsection titel="Tux the Penguin">
 Let us render some cute object: Tux the penguin. We will roughly use the data
-from the OpenGL 
+from the OpenGL
 game <elink address="tuxracer.sourceforge.net">tuxracer</elink>.
 The nice thing about a penguin is, that you can built it almost completely out
 of spheres. We will render Tux simply by rendering spheres, which are scaled
@@ -3880,7 +3829,7 @@ to different forms and moved to the correct position.
 <code lang="hs" main="main" class="Tux"
 ><![CDATA[import Graphics.UI.GLUT
 
-import OrbitPointOfView 
+import OrbitPointOfView
 import StateUtil
 
 main :: IO ()
@@ -3903,7 +3852,7 @@ main = do
 
   displayCallback $= display pPos
   keyboardMouseCallback $= Just (keyboard pPos)
-  reshapeCallback $= Just reshape 
+  reshapeCallback $= Just reshape
   mainLoop
 
 keyboard pPos c _  _ _ = keyForPos pPos c]]></code>
@@ -3925,7 +3874,7 @@ class="Tux" sequel="true"
 
 <subsubsection titel="Auxilliary Functions">
 We will use some auxilliary functions. First of all a function, which renders a
-scaled sphere. 
+scaled sphere.
 
 <code lang="hs" main="main"
 class="Tux" sequel="true"
@@ -3946,7 +3895,7 @@ class="Tux" sequel="true"
 transl x y z = translate (Vector3 x y z)
 
 rota:: GLfloat -> GLfloat -> GLfloat -> GLfloat -> IO ()
-rota a x y z  = rotate a (Vector3 x y z) 
+rota a x y z  = rotate a (Vector3 x y z)
 
 rotateZ a = rota a 0 0 1
 rotateY a = rota a 0 1 0
@@ -3981,10 +3930,10 @@ black sphere.
 <code lang="hs" main="main"
 class="Tux" sequel="true"
 ><![CDATA[makeBody = do
-  preservingMatrix$do
+  preservingMatrix $ do
     blackPenguin
     sphere 1 0.95 1.0 0.8
-  preservingMatrix$do
+  preservingMatrix $ do
     whitePenguin
     transl 0 0 0.17
     sphere 1 0.8 0.9 0.7]]></code>
@@ -3994,37 +3943,37 @@ The resulting image can be found in figure<white/>
 
 <bild name="Body" pdfscale="0.6" psscale="0.5"
 caption="Basic part for a penguin torso."
-/> 
+/>
 
 
 Torso and shoulders are scaled body parts:
 
 <code lang="hs" main="main"
 class="Tux" sequel="true"
-><![CDATA[createTorso = preservingMatrix$do
+><![CDATA[createTorso = preservingMatrix $ do
   scal 0.9 0.9 0.9
   makeBody
 
-createShoulders = preservingMatrix$do
+createShoulders = preservingMatrix $ do
   transl 0 0.4 0.05
   leftArm
   rightArm
   scal 0.72 0.72 0.72
   makeBody]]></code>
 
-The resulting image for torso and shoulders 
+The resulting image for torso and shoulders
 can be found in figure<white/>
 <ref name="Torso"></ref>.
 
 <bild name="Torso" pdfscale="0.6" psscale="0.5"
 caption="Penguin torso and shoulders."
-/> 
+/>
 
 
 
 <code lang="hs" main="main"
 class="Tux" sequel="true"
-><![CDATA[createNeck = preservingMatrix$do
+><![CDATA[createNeck = preservingMatrix $ do
  transl 0 0.9 0.07
  createHead
  rotateY 90
@@ -4034,7 +3983,7 @@ class="Tux" sequel="true"
  whitePenguin
  sphere 0.66 0.8 0.9 0.7
 
-createHead = preservingMatrix$do
+createHead = preservingMatrix $ do
  transl 0 0.3 0.07
  createBeak
  createEyes
@@ -4043,12 +3992,12 @@ createHead = preservingMatrix$do
  sphere 1 0.42 0.5 0.42
 
 createBeak = do
-  preservingMatrix$do
+  preservingMatrix $ do
     transl 0 (-0.205) 0.3
     rotateX 10
     beakColour
     sphere 0.8 0.23 0.12 0.4
-  preservingMatrix$do
+  preservingMatrix $ do
     beakColour
     transl 0 (-0.23) 0.3
     rotateX 10
@@ -4059,13 +4008,13 @@ createBeak = do
 <subsubsection titel="Eyes">
 <code lang="hs" main="main"
 class="Tux" sequel="true"
-><![CDATA[createEyes = preservingMatrix$do
+><![CDATA[createEyes = preservingMatrix $ do
   leftEye
   leftIris
   rightEye
   rightIris
 
-leftEye = preservingMatrix$do
+leftEye = preservingMatrix $ do
   transl 0.13 (-0.03) 0.38
   rotateY 18
   rotateZ 5
@@ -4073,7 +4022,7 @@ leftEye = preservingMatrix$do
   whitePenguin
   sphere 0.66 0.1 0.13 0.03
 
-rightEye = preservingMatrix$do
+rightEye = preservingMatrix $ do
   transl (-0.13) (-0.03) 0.38
   rotateY (-18)
   rotateZ (-5)
@@ -4081,7 +4030,7 @@ rightEye = preservingMatrix$do
   whitePenguin
   sphere 0.66 0.1 0.13 0.03
 
-leftIris = preservingMatrix$do
+leftIris = preservingMatrix $ do
   transl 0.12 (-0.045) 0.4
   rotateY 18
   rotateZ 5
@@ -4089,7 +4038,7 @@ leftIris = preservingMatrix$do
   irisColour
   sphere 0.66 0.055 0.07 0.03
 
-rightIris = preservingMatrix$do
+rightIris = preservingMatrix $ do
   transl (-0.12) (-0.045) 0.4
   rotateY (-18)
   rotateZ (-5)
@@ -4102,7 +4051,7 @@ rightIris = preservingMatrix$do
 <subsubsection titel="Legs">
 <code lang="hs" main="main"
 class="Tux" sequel="true"
-><![CDATA[leftArm = preservingMatrix$do
+><![CDATA[leftArm = preservingMatrix $ do
   rotateY 180
   transl (-0.56) 0.3 0
   rotateZ 45
@@ -4111,7 +4060,7 @@ class="Tux" sequel="true"
   blackPenguin
   sphere 0.66 0.34 0.1 0.2
 
-rightArm = preservingMatrix$do
+rightArm = preservingMatrix $ do
   transl (-0.56) 0.3 0
   rotateZ 45
   rotateX(-90)
@@ -4119,7 +4068,7 @@ rightArm = preservingMatrix$do
   blackPenguin
   sphere 0.66 0.34 0.1 0.2
 
-leftForeArm = preservingMatrix$do
+leftForeArm = preservingMatrix $ do
   transl (-0.23) 0 0
   rotateZ 20
   rotateX 90
@@ -4129,14 +4078,14 @@ leftForeArm = preservingMatrix$do
 
 rightForeArm = leftForeArm
 
-leftHand = preservingMatrix$do
+leftHand = preservingMatrix $ do
   transl (-0.24) 0 0
   rotateZ 20
   rotateX 90
   blackPenguin
   sphere 0.5 0.12 0.05 0.12
 
-leftTigh = preservingMatrix$do
+leftTigh = preservingMatrix $ do
   rotateY 180
   transl (-0.28) (-0.8) 0
   rotateY 110
@@ -4148,11 +4097,11 @@ leftTigh = preservingMatrix$do
   beakColour
   sphere 0.5 0.07 0.3 0.07
 
-leftHipBall = preservingMatrix$do 
+leftHipBall = preservingMatrix $ do
   blackPenguin
   sphere 0.5 0.09 0.18 0.09
 
-rightTigh = preservingMatrix$do
+rightTigh = preservingMatrix $ do
   transl (-0.28) (-0.8) 0
   rotateY (-110)
   rightHipBall
@@ -4162,18 +4111,18 @@ rightTigh = preservingMatrix$do
   beakColour
   sphere 0.5 0.07 0.3 0.07
 
-rightHipBall = preservingMatrix$do 
+rightHipBall = preservingMatrix $ do
   blackPenguin
   sphere 0.5 0.09 0.18 0.09
 
-leftCalf = preservingMatrix$do
+leftCalf = preservingMatrix $ do
  transl 0 (-0.21) 0
  rotateY 90
  leftFoot
  beakColour
  sphere 0.5 0.06 0.18 0.06
 
-rightCalf = preservingMatrix$do
+rightCalf = preservingMatrix $ do
  transl 0 (-0.21) 0
  rightFoot
  beakColour
@@ -4184,38 +4133,38 @@ rightCalf = preservingMatrix$do
 
 <code lang="hs" main="main"
 class="Tux" sequel="true"
-><![CDATA[foot = preservingMatrix$do
-  scal  1.1 1.0 1.3 
+><![CDATA[foot = preservingMatrix $ do
+  scal  1.1 1.0 1.3
   beakColour
   footBase
   toe1
   toe2
   toe3
 
-footBase = preservingMatrix$do
+footBase = preservingMatrix $ do
   sphere 0.66 0.25 0.08 0.18
 
-toe1 = preservingMatrix$do
+toe1 = preservingMatrix $ do
   transl (-0.07) 0 0.1
   rotateY 30
   scal 0.27 0.07 0.11
   createSphere 0.66
 
-toe2 = preservingMatrix$do
+toe2 = preservingMatrix $ do
  transl (-0.07) 0 (-0.1)
  rotateY (-30)
  sphere 0.66  0.27 0.07 0.11
 
-toe3 = preservingMatrix$do
+toe3 = preservingMatrix $ do
   transl (-0.08) 0 0
   sphere 0.66  0.27 0.07 0.10
 
-leftFoot = preservingMatrix$do
+leftFoot = preservingMatrix $ do
   transl 0 (-0.09) 0
-  rotateY (100) 
+  rotateY (100)
   foot
 
-rightFoot = preservingMatrix$do
+rightFoot = preservingMatrix $ do
   transl 0 (-0.09) 0
   rotateY 180
   foot]]></code>
@@ -4225,7 +4174,7 @@ The resulting image can be found in figure<white/>
 
 <bild name="Foot" pdfscale="0.6" psscale="0.5"
 caption="A penguin foot."
-/> 
+/>
 
 </subsubsection>
 
@@ -4241,10 +4190,10 @@ class="Tux" sequel="true"
 </subsubsection>
 
 <subsubsection titel="The complete penguin">
-We can use all the parts to define Tux. 
+We can use all the parts to define Tux.
 <code lang="hs" main="main"
 class="Tux" sequel="true"
-><![CDATA[tux = preservingMatrix$do
+><![CDATA[tux = preservingMatrix $ do
   scale 0.35 0.35 (0.35::GLfloat)
   rotateY (-180)
   rotateZ (-180)
@@ -4262,7 +4211,7 @@ The resulting window can be found in figure<white/>
 
 <bild name="Tux" pdfscale="0.6" psscale="0.5"
 caption="Tux the penguin.."
-/> 
+/>
 </subsubsection>
 </subsection>
 
@@ -4271,7 +4220,7 @@ caption="Tux the penguin.."
 
 <anhang>
 <printindex name="Klassen" titel="Haskell Examples"/>
-<listoffigures></listoffigures> 
-<bibliography></bibliography> 
+<listoffigures></listoffigures>
+<bibliography></bibliography>
 </anhang>
 </skript>
