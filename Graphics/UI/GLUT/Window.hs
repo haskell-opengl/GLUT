@@ -130,7 +130,7 @@ foreign import ccall unsafe "glutDestroyWindow" destroyWindow :: Window -> IO ()
 foreign import ccall unsafe "glutSetWindow" setWindow :: Window -> IO ()
 
 -- | Return 'Just' the identifier of the /current window/. If no windows exist
--- or thepreviously /current window/ was destroyed, 'Nothing' is returned.
+-- or the previously /current window/ was destroyed, 'Nothing' is returned.
 
 getWindow :: IO (Maybe Window)
 getWindow = do
