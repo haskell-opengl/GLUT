@@ -10,10 +10,11 @@
 --
 -- GLUT supports two types of font rendering: stroke fonts, meaning each
 -- character is rendered as a set of line segments; and bitmap fonts, where each
--- character is a bitmap generated with 'Graphics.Rendering.OpenGL.GL.bitmap'.
--- Stroke fonts have the advantage that because they are geometry, they can be
--- arbitrarily scale and rendered. Bitmap fonts are less flexible since they are
--- rendered as bitmaps but are usually faster than stroke fonts.
+-- character is a bitmap generated with
+-- 'Graphics.Rendering.OpenGL.GL.Bitmaps.bitmap'. Stroke fonts have the
+-- advantage that because they are geometry, they can be arbitrarily scale and
+-- rendered. Bitmap fonts are less flexible since they are rendered as bitmaps
+-- but are usually faster than stroke fonts.
 --
 --------------------------------------------------------------------------------
 
