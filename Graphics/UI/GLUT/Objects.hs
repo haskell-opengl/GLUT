@@ -20,33 +20,111 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Objects (
-   -- * Platonic solids
+   -- * Rendering flavour
+   Flavour(..),
 
-   -- $PlatonicSolids
-   solidCube, wireCube,
-   solidDodecahedron, wireDodecahedron,
-   solidIcosahedron, wireIcosahedron,
-   solidOctahedron, wireOctahedron,
-   solidTetrahedron, wireTetrahedron,
+   -- * Object description
+   Object(..),
 
-   -- * Rounded objects
-   solidSphere, wireSphere,
-   solidCone, wireCone,
-   solidTorus, wireTorus,
+   -- * Type synonyms
+   Radius, Height, Slices, Stacks, Sides, Rings,
 
-   -- * Newell\'s teapot
-
-   -- $NewellsTeapot
-   solidTeapot, wireTeapot
+   -- * Rendering
+   renderObject
 ) where
 
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLdouble, GLint )
 
 --------------------------------------------------------------------------------
--- $PlatonicSolids
--- The following routines render the five Platonic solids (see
--- <http://mathworld.wolfram.com/PlatonicSolid.html>), either in solid or
--- wireframe form.
+
+-- | Flavour of object rendering
+
+data Flavour
+   = -- | Object is rendered as a solid with shading and surface normals.
+     Solid
+   | -- | Object is rendered as a wireframe without surface normals.
+     Wireframe
+   deriving ( Eq, Ord )
+
+--------------------------------------------------------------------------------
+
+-- | GLUT offers three types of objects:
+--
+-- *  The five Platonic solids, see
+--    <http://mathworld.wolfram.com/PlatonicSolid.html>.
+--
+-- * Approximations to rounded objects.
+--
+-- * The classic teapot modeled by Martin Newell in 1975. Both surface normals
+--   and texture coordinates for the teapot are generated. The teapot is
+--   generated with OpenGL evaluators.
+
+data Object
+   = -- | A cube centered at the modeling coordinates origin with sides of the
+     --   given length.
+     Cube Height
+   | -- | A dodecahedron (12-sided regular solid) centered at the modeling
+     --   coordinates origin with a radius of @sqrt 3@.
+     Dodecahedron
+   | -- | A icosahedron (20-sided regular solid) centered at the modeling
+     --   coordinates origin with a radius of 1.0.
+     Icosahedron
+   | -- | Render a solid octahedron (8-sided regular solid) centered at the
+     --   modeling coordinates origin with a radius of 1.0.
+     Octahedron
+   | -- | Render a solid tetrahedron (4-sided regular solid) centered at the
+     --   modeling coordinates origin with a radius of @sqrt 3@.
+     Tetrahedron
+   | -- | A sphere centered at the modeling coordinates origin of the specified
+     --   radius. The sphere is subdivided around the Z axis into slices
+     --   (similar to lines of longitude) and along the Z axis into stacks
+     --   (similar to lines of latitude).
+     Sphere Radius Slices Stacks
+   | -- | A cone oriented along the Z axis. The base of the cone is placed at Z
+     --   = 0, and the top at Z = the given height. The cone is subdivided
+     --   around the Z axis into slices, and along the Z axis into stacks.
+     Cone Radius Height Slices Stacks
+   | -- | A torus (doughnut) centered at the modeling coordinates origin
+     -- whose axis is aligned with the Z axis. The torus is described by its
+     -- inner and outer radius, the number of sides for each radial section,
+     -- and the number of radial divisions (rings).
+     Torus Radius Radius Sides Rings
+   | -- | A teapot with a given relative size.
+     Teapot Height
+   deriving ( Eq, Ord )
+
+--------------------------------------------------------------------------------
+
+type Radius = GLdouble
+type Height = GLdouble
+type Slices = GLint
+type Stacks = GLint
+type Sides  = GLint
+type Rings  = GLint
+
+--------------------------------------------------------------------------------
+
+-- | Render an object in the given flavour.
+
+renderObject :: Flavour -> Object -> IO ()
+renderObject Solid     (Cube h)        = solidCube h
+renderObject Wireframe (Cube h)        = wireCube  h
+renderObject Solid     Dodecahedron    = solidDodecahedron
+renderObject Wireframe Dodecahedron    = wireDodecahedron
+renderObject Solid     Icosahedron     = solidIcosahedron
+renderObject Wireframe Icosahedron     = wireIcosahedron
+renderObject Solid     Octahedron      = solidOctahedron
+renderObject Wireframe Octahedron      = wireOctahedron
+renderObject Solid     Tetrahedron     = solidTetrahedron
+renderObject Wireframe Tetrahedron     = wireTetrahedron
+renderObject Solid     (Sphere r s t)  = solidSphere r s t
+renderObject Wireframe (Sphere r s t)  = wireSphere  r s t 
+renderObject Solid     (Cone r h s t)  = solidCone r h s t
+renderObject Wireframe (Cone r h s t)  = wireCone  r h s t
+renderObject Solid     (Torus i o s r) = solidTorus i o s r
+renderObject Wireframe (Torus i o s r) = wireTorus  i o s r 
+renderObject Solid     (Teapot h)      = solidTeapot h
+renderObject Wireframe (Teapot h)      = wireTeapot  h
 
 --------------------------------------------------------------------------------
 
@@ -54,14 +132,14 @@ import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLdouble, GLint )
 -- of the given length.
 
 foreign import ccall unsafe "glutSolidCube" solidCube
-   :: GLdouble -- ^ Length of the cube sides
+   :: Height -- ^ Length of the cube sides
    -> IO ()
 
 -- | Render a wireframe cube centered at the modeling coordinates origin with sides
 -- of the given length.
 
 foreign import ccall unsafe "glutWireCube" wireCube
-   :: GLdouble -- ^ Length of the cube sides
+   :: Height -- ^ Length of the cube sides
    -> IO ()
 
 --------------------------------------------------------------------------------
@@ -119,9 +197,9 @@ foreign import ccall unsafe "glutSolidTetrahedron"  solidTetrahedron  :: IO ()
 -- and along the Z axis into stacks.
 
 foreign import ccall unsafe "glutSolidSphere" solidSphere
-   :: GLdouble -- ^ Radius of the sphere.
-   -> GLint    -- ^ Number of subdivisions (slices) around the Z axis, similar to lines of longitude.
-   -> GLint    -- ^ The number of subdivisions (stacks) along the Z axis, similar to lines of latitude.
+   :: Radius   -- ^ Radius of the sphere.
+   -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar to lines of longitude.
+   -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis, similar to lines of latitude.
    -> IO ()
 
 -- | Render a wireframe sphere centered at the modeling coordinates origin of the
@@ -129,9 +207,9 @@ foreign import ccall unsafe "glutSolidSphere" solidSphere
 -- and along the Z axis into stacks.
 
 foreign import ccall unsafe "glutWireSphere" wireSphere
-   :: GLdouble -- ^ Radius of the sphere.
-   -> GLint    -- ^ Number of subdivisions (slices) around the Z axis, similar to lines of longitude.
-   -> GLint    -- ^ The number of subdivisions (stacks) along the Z axis, similar to lines of latitude.
+   :: Radius   -- ^ Radius of the sphere.
+   -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar to lines of longitude.
+   -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis, similar to lines of latitude.
    -> IO ()
 
 --------------------------------------------------------------------------------
@@ -141,10 +219,10 @@ foreign import ccall unsafe "glutWireSphere" wireSphere
 -- Z axis into slices, and along the Z axis into stacks.
 
 foreign import ccall unsafe "glutSolidCone" solidCone
-   :: GLdouble -- ^ Radius of the base of the cone.
-   -> GLdouble -- ^ Height of the cone.
-   -> GLint    -- ^ Number of subdivisions around the Z axis.
-   -> GLint    -- ^ The number of subdivisions along the Z axis.
+   :: Radius   -- ^ Radius of the base of the cone.
+   -> Height   -- ^ Height of the cone.
+   -> Slices   -- ^ Number of subdivisions around the Z axis.
+   -> Stacks   -- ^ The number of subdivisions along the Z axis.
    -> IO ()
 
 -- | Render a wireframe cone oriented along the Z axis. The base of the cone is
@@ -152,10 +230,10 @@ foreign import ccall unsafe "glutSolidCone" solidCone
 -- Z axis into slices, and along the Z axis into stacks.
 
 foreign import ccall unsafe "glutWireCone" wireCone
-   :: GLdouble -- ^ Radius of the base of the cone.
-   -> GLdouble -- ^ Height of the cone.
-   -> GLint    -- ^ Number of subdivisions around the Z axis.
-   -> GLint    -- ^ The number of subdivisions along the Z axis.
+   :: Radius   -- ^ Radius of the base of the cone.
+   -> Height   -- ^ Height of the cone.
+   -> Slices   -- ^ Number of subdivisions around the Z axis.
+   -> Stacks   -- ^ The number of subdivisions along the Z axis.
    -> IO ()
 
 --------------------------------------------------------------------------------
@@ -164,36 +242,32 @@ foreign import ccall unsafe "glutWireCone" wireCone
 -- whose axis is aligned with the Z axis.
 
 foreign import ccall unsafe "glutSolidTorus" solidTorus
-   :: GLdouble -- ^ Inner radius of the torus.
-   -> GLdouble -- ^ Outer radius of the torus.
-   -> GLint    -- ^ Number of sides for each radial section.
-   -> GLint    -- ^ Number of radial divisions for the torus.
+   :: Radius   -- ^ Inner radius of the torus.
+   -> Radius   -- ^ Outer radius of the torus.
+   -> Slices   -- ^ Number of sides for each radial section.
+   -> Stacks   -- ^ Number of radial divisions for the torus.
    -> IO ()
 
 -- | Render a wireframe torus (doughnut) centered at the modeling coordinates
 -- origin whose axis is aligned with the Z axis.
 
 foreign import ccall unsafe "glutWireTorus" wireTorus
-   :: GLdouble -- ^ Inner radius of the torus.
-   -> GLdouble -- ^ Outer radius of the torus.
-   -> GLint    -- ^ Number of sides for each radial section.
-   -> GLint    -- ^ Number of radial divisions for the torus.
+   :: Radius   -- ^ Inner radius of the torus.
+   -> Radius   -- ^ Outer radius of the torus.
+   -> Slices   -- ^ Number of sides for each radial section.
+   -> Stacks   -- ^ Number of radial divisions for the torus.
    -> IO ()
 
 --------------------------------------------------------------------------------
--- $NewellsTeapot
--- The following routines render the classic teapot modeled by Martin Newell in
--- 1975. Both surface normals and texture coordinates for the teapot are
--- generated. The teapot is generated with OpenGL evaluators.
 
 -- | Render a solid teapot.
 
 foreign import ccall unsafe "glutSolidTeapot" solidTeapot  
-   :: GLdouble -- ^ Relative size of the teapot
+   :: Height -- ^ Relative size of the teapot
    -> IO ()
 
 -- | Render a wireframe teapot.
 
 foreign import ccall unsafe "glutWireTeapot" wireTeapot
-   :: GLdouble -- ^ Relative size of the teapot
+   :: Height -- ^ Relative size of the teapot
    -> IO ()
