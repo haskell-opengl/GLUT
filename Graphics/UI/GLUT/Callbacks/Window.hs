@@ -72,12 +72,12 @@ type DisplayCallback = IO ()
 
 setDisplayCallback :: DisplayCallback -> IO ()
 setDisplayCallback =
-   trackWindowCallback makeDisplayCallback glutDisplayCallback . Just
+   trackWindowCallback makeDisplayCallback glutDisplayFunc . Just
 
 foreign import ccall "wrapper" makeDisplayCallback ::
    DisplayCallback -> IO (FunPtr DisplayCallback)
 
-foreign import ccall unsafe "glutDisplayCallback" glutDisplayCallback ::
+foreign import ccall unsafe "glutDisplayFunc" glutDisplayFunc ::
    FunPtr DisplayCallback -> IO ()
 
 --------------------------------------------------------------------------------
