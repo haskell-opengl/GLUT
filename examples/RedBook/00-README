@@ -30,7 +30,7 @@ Chapter 4: Color
 Chapter 5: Lighting
 
         Light.hs        (1.0)
-        Movelight.hs    (1.0)
+        MoveLight.hs    (1.0)
         Material.hs     (1.0)
         ColorMat.hs     (1.1)
         Scene.hs        (1.0)
