@@ -38,10 +38,13 @@ glut_LUMINANCE                         = 0x0200
 
 -----------------------------------------------------------------------------
 -- * Mouse buttons
-glut_LEFT_BUTTON, glut_MIDDLE_BUTTON, glut_RIGHT_BUTTON :: CInt
+glut_LEFT_BUTTON, glut_MIDDLE_BUTTON, glut_RIGHT_BUTTON, glut_WHEEL_UP,
+   glut_WHEEL_DOWN :: CInt
 glut_LEFT_BUTTON                       = 0
 glut_MIDDLE_BUTTON                     = 1
 glut_RIGHT_BUTTON                      = 2
+glut_WHEEL_UP                          = 3
+glut_WHEEL_DOWN                        = 4
 
 -----------------------------------------------------------------------------
 -- * Mouse button  state

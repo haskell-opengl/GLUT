@@ -332,6 +332,8 @@ data MouseButton
    = LeftButton
    | MiddleButton
    | RightButton
+   | WheelUp
+   | WheelDown
    deriving ( Eq, Ord )
 
 unmarshalMouseButton :: CInt -> MouseButton
@@ -339,6 +341,8 @@ unmarshalMouseButton b
    | b == glut_LEFT_BUTTON   = LeftButton
    | b == glut_MIDDLE_BUTTON = MiddleButton
    | b == glut_RIGHT_BUTTON  = RightButton
+   | b == glut_WHEEL_UP      = WheelUp
+   | b == glut_WHEEL_DOWN    = WheelDown
    | otherwise = error "unmarshalMouseButton"
 
 --------------------------------------------------------------------------------
