@@ -39,9 +39,9 @@ class Font a where
    -- the previous modes before returning. The generated call to
    -- 'Graphics.Rendering.OpenGL.GL.bitmap' will adjust the current raster
    -- position based on the width of the string.
-   -- If the font is a stroke font, 'Graphics.Rendering.OpenGL.GL.translatef' is
-   -- used to translate the current model view matrix to advance the width of
-   -- the string.
+   -- If the font is a stroke font,
+   -- 'Graphics.Rendering.OpenGL.GL.CoordTrans.translate' is used to translate
+   -- the current model view matrix to advance the width of the string.
 
    renderString :: a -> String -> IO ()
 

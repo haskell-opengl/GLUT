@@ -193,7 +193,7 @@ isRealWindow = (/= makeWindow 0)
 -- Logically, normal plane damage notification for a window is treated as a
 -- 'postRedisplay' on the damaged window. Unlike damage reported by the window
 -- system, 'postRedisplay' will /not/ set to true the normal plane\'s damaged
--- status (returned by 'Graphics.UI.GLUT.State.isNormalDamaged').
+-- status (see 'Graphics.UI.GLUT.State.damaged').
 --
 -- Also, see 'Graphics.UI.GLUT.Overlay.postOverlayRedisplay'.
 

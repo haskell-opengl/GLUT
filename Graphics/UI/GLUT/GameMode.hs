@@ -24,10 +24,10 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.GameMode (
-   Capability'(..), CapabilityDescription'(..), setGameModeCapabilities,
+   Capability'(..), CapabilityDescription'(..), gameModeCapabilities,
    enterGameMode, leaveGameMode,
-   BitsPerPlane, RefreshRate, GameModeInfo(..), getGameModeInfo,
-   isGameModeActive
+   BitsPerPlane, RefreshRate, GameModeInfo(..), gameModeInfo,
+   gameModeActive
 ) where
 
 import Control.Monad ( liftM )
@@ -36,6 +36,9 @@ import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Size(..) )
+import Graphics.Rendering.OpenGL.GL.StateVar (
+   GettableStateVar, makeGettableStateVar,
+   SettableStateVar, makeSettableStateVar )
 import Graphics.UI.GLUT.Constants (
    glut_GAME_MODE_DISPLAY_CHANGED, glut_GAME_MODE_POSSIBLE,
    glut_GAME_MODE_WIDTH, glut_GAME_MODE_HEIGHT,
@@ -47,7 +50,7 @@ import Graphics.UI.GLUT.Window ( Window )
 
 --------------------------------------------------------------------------------
 
--- | Capabilities for 'setGameModeCapabilities'
+-- | Capabilities for 'gameModeCapabilities'
 
 data Capability'
    = Width         -- ^ Width of the screen resolution in pixels
@@ -65,9 +68,9 @@ capabilityToString BitsPerPlane = "bpp"
 capabilityToString RefreshRate  = "hertz"
 capabilityToString Num'         = "num"
 
--- | A single capability description for 'setGameModeCapabilities'.
+-- | A single capability description for 'gameModeCapabilities'.
 
-data CapabilityDescription' = Where' Capability' Relation CInt
+data CapabilityDescription' = Where' Capability' Relation Int
    deriving ( Eq, Ord, Show )
 
 capabilityDescriptionToString :: CapabilityDescription' -> String
@@ -76,7 +79,7 @@ capabilityDescriptionToString (Where' c r i) =
 
 --------------------------------------------------------------------------------
 
--- | Set the /game mode/ to be used when 'enterGameMode' is called. It is
+-- | Controls the /game mode/ to be used when 'enterGameMode' is called. It is
 -- described by a list of zero or more capability descriptions, which are
 -- translated into a set of criteria used to select the appropriate screen
 -- configuration. The criteria are matched in strict left to right order of
@@ -89,7 +92,7 @@ capabilityDescriptionToString (Where' c r i) =
 -- precedence is not relevant.
 --
 -- To determine which configuration will actually be tried by 'enterGameMode'
--- (if any), use 'getGameModeInfo'.
+-- (if any), use 'gameModeInfo'.
 --
 -- Note that even for game mode the current values of
 -- 'Graphics.UI.GLUT.Initialization.initialDisplayMode'or
@@ -97,8 +100,8 @@ capabilityDescriptionToString (Where' c r i) =
 -- determine which buffers are available, if double buffering is used or not,
 -- etc.
 
-setGameModeCapabilities :: [CapabilityDescription'] -> IO ()
-setGameModeCapabilities settings =
+gameModeCapabilities :: SettableStateVar [CapabilityDescription']
+gameModeCapabilities = makeSettableStateVar $ \settings ->
    withCString
       (concat . intersperse " " . map capabilityDescriptionToString $ settings)
       glutGameModeString
@@ -109,7 +112,7 @@ foreign import CALLCONV unsafe "glutGameModeString" glutGameModeString ::
 --------------------------------------------------------------------------------
 
 -- | Enter /game mode/, trying to change resolution, refresh rate, etc., as
--- specified by the last call to 'setGameModeCapabilities'. An identifier for
+-- specified by the current value of 'gameModeCapabilities'. An identifier for
 -- the game mode window and a flag, indicating if the display mode actually
 -- changed, are returned. The game mode window is made the /current window/.
 --
@@ -139,33 +142,34 @@ foreign import CALLCONV unsafe "glutLeaveGameMode" leaveGameMode :: IO ()
 
 -- | The color depth of the screen, measured in bits (e.g. 8, 16, 24, 32, ...)
 
-type BitsPerPlane = CInt
+type BitsPerPlane = Int
 
 -- | The refresh rate of the screen, measured in Hertz (e.g. 60, 75, 100, ...)
 
-type RefreshRate = CInt
+type RefreshRate = Int
 
 data GameModeInfo = GameModeInfo Size BitsPerPlane RefreshRate
 
 --------------------------------------------------------------------------------
 
 -- | Return 'Just' the mode which would be tried by the next call to
--- 'enterGameMode'. Returns 'Nothing' if the mode requested by the last call to
--- 'setGameModeCapabilities' is not possible, in which case 'enterGameMode'
+-- 'enterGameMode'. Returns 'Nothing' if the mode requested by the current value
+-- of 'gameModeCapabilities' is not possible, in which case 'enterGameMode'
 -- would simply create a full screen window using the current mode.
 --
 -- /X Implementation Notes:/ GLUT for X will always return 'Nothing'.
 
-getGameModeInfo :: IO (Maybe GameModeInfo)
-getGameModeInfo = do
+gameModeInfo :: GettableStateVar (Maybe GameModeInfo)
+gameModeInfo = makeGettableStateVar $ do
    possible <- getBool glut_GAME_MODE_POSSIBLE
    if possible
-      then do w <- glutGameModeGet glut_GAME_MODE_WIDTH
-              h <- glutGameModeGet glut_GAME_MODE_HEIGHT
-              let size = Size (fromIntegral w) (fromIntegral h)
-              b <- glutGameModeGet glut_GAME_MODE_PIXEL_DEPTH
-              r <- glutGameModeGet glut_GAME_MODE_REFRESH_RATE
-              return $ Just $ GameModeInfo size b r
+      then do
+         w <- glutGameModeGet glut_GAME_MODE_WIDTH
+         h <- glutGameModeGet glut_GAME_MODE_HEIGHT
+         let size = Size (fromIntegral w) (fromIntegral h)
+         b <- glutGameModeGet glut_GAME_MODE_PIXEL_DEPTH
+         r <- glutGameModeGet glut_GAME_MODE_REFRESH_RATE
+         return $ Just $ GameModeInfo size (fromIntegral b) (fromIntegral r)
       else return Nothing
 
 getBool :: GLenum -> IO Bool
@@ -176,7 +180,7 @@ foreign import CALLCONV unsafe "glutGameModeGet" glutGameModeGet ::
 
 --------------------------------------------------------------------------------
 
--- | Test whether /game mode/ is active or not.
+-- | Contains 'True' when the /game mode/ is active, 'False' otherwise.
 
-isGameModeActive :: IO Bool
-isGameModeActive = getBool glut_GAME_MODE_ACTIVE
+gameModeActive :: GettableStateVar Bool
+gameModeActive = makeGettableStateVar $ getBool glut_GAME_MODE_ACTIVE

@@ -174,7 +174,7 @@ getLayerInUse = layerGet (unmarshalLayer . fromIntegral) glut_LAYER_IN_USE
 -- Logically, overlay damage notification for a window is treated as a
 -- 'postOverlayRedisplay' on the damaged window. Unlike damage reported by the
 -- window system, 'postOverlayRedisplay' will not set to true the overlay\'s
--- damaged status (see 'Graphics.UI.GLUT.State.isOverlayDamaged').
+-- damaged status (see 'Graphics.UI.GLUT.State.damaged').
 --
 -- Also, see 'Graphics.UI.GLUT.Window.postRedisplay'.
 

@@ -429,12 +429,12 @@ capabilityToString XDirectColor = "xdirectcolor"
 -- | A single capability description for 'initialDisplayCapabilities'.
 
 data CapabilityDescription
-   = Where Capability Relation CInt -- ^ A description of a capability with a
-                                    --   specific relation to a numeric value.
-   | With  Capability               -- ^ When the relation and numeric value are
-                                    --   not specified, each capability has a
-                                    --   different default, see the different
-                                    --   constructors of 'Capability'.
+   = Where Capability Relation Int -- ^ A description of a capability with a
+                                   --   specific relation to a numeric value.
+   | With  Capability              -- ^ When the relation and numeric value are
+                                   --   not specified, each capability has a
+                                   --   different default, see the different
+                                   --   constructors of 'Capability'.
    deriving ( Eq, Ord, Show )
 
 capabilityDescriptionToString ::  CapabilityDescription -> String

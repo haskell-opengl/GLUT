@@ -15,17 +15,17 @@
 
 module Graphics.UI.GLUT.State (
   -- * State of the /current window/
-  isRGBA,
-  BufferDepth, getRGBABufferDepths, getColorBufferDepth,
-  isDoubleBuffered, isStereo,
-  getAccumBufferDepths, getDepthBufferDepth, getStencilBufferDepth,
-  SampleCount, getSampleCount, getFormatID,
+  rgba,
+  BufferDepth, rgbaBufferDepths, colorBufferDepth,
+  doubleBuffered, stereo,
+  accumBufferDepths, depthBufferDepth, stencilBufferDepth,
+  SampleCount, sampleCount, formatID,
 
   -- * Timing
   elapsedTime,
 
   -- * GLUT state pertaining to the layers of the /current window/
-  isNormalDamaged, isOverlayDamaged,
+  damaged,
 
   -- * Device information
 
@@ -64,88 +64,97 @@ import Graphics.UI.GLUT.Constants (
    glut_HAS_TABLET, glut_NUM_TABLET_BUTTONS,
    glut_HAS_JOYSTICK, glut_JOYSTICK_BUTTONS, glut_JOYSTICK_POLL_RATE,
    glut_JOYSTICK_AXES )
+import Graphics.UI.GLUT.Overlay ( Layer(..) )
 import Graphics.UI.GLUT.QueryUtils ( simpleGet, layerGet, deviceGet )
 
 --------------------------------------------------------------------------------
 
--- | Test whether the current layer of the /current window/ is in RGBA mode.
--- 'False' means color index mode.
+-- | Contains 'True' when the current layer of the /current window/ is in RGBA
+-- mode, 'False' means color index mode.
 
-isRGBA :: IO Bool
-isRGBA = simpleGet i2b glut_WINDOW_RGBA
+rgba :: GettableStateVar Bool
+rgba = makeGettableStateVar$ simpleGet i2b glut_WINDOW_RGBA
 
 -- | Bit depth of a buffer
 
-type BufferDepth = CInt
+type BufferDepth = Int
 
--- | Return the number of red, green, blue, and alpha bits in the color buffer
+-- | Contains the number of red, green, blue, and alpha bits in the color buffer
 -- of the /current window\'s/ current layer (0 in color index mode).
 
-getRGBABufferDepths :: IO (BufferDepth, BufferDepth, BufferDepth, BufferDepth)
-getRGBABufferDepths = do
-   r <- simpleGet id glut_WINDOW_RED_SIZE
-   g <- simpleGet id glut_WINDOW_GREEN_SIZE
-   b <- simpleGet id glut_WINDOW_BLUE_SIZE
-   a <- simpleGet id glut_WINDOW_ALPHA_SIZE
+rgbaBufferDepths ::
+   GettableStateVar (BufferDepth, BufferDepth, BufferDepth, BufferDepth)
+rgbaBufferDepths = makeGettableStateVar $ do
+   r <- simpleGet fromIntegral glut_WINDOW_RED_SIZE
+   g <- simpleGet fromIntegral glut_WINDOW_GREEN_SIZE
+   b <- simpleGet fromIntegral glut_WINDOW_BLUE_SIZE
+   a <- simpleGet fromIntegral glut_WINDOW_ALPHA_SIZE
    return (r, g, b, a)
 
--- | Return the total number of bits in the color buffer of the /current
+-- | Contains the total number of bits in the color buffer of the /current
 -- window\'s/ current layer. For an RGBA layer, this is the sum of the red,
 -- green, blue, and alpha bits. For an color index layer, this is the number
 -- of bits of the color indexes.
 
-getColorBufferDepth :: IO BufferDepth
-getColorBufferDepth = simpleGet id glut_WINDOW_BUFFER_SIZE
+colorBufferDepth :: GettableStateVar BufferDepth
+colorBufferDepth =
+   makeGettableStateVar $ simpleGet fromIntegral glut_WINDOW_BUFFER_SIZE
 
--- | Test whether the current layer of the /current window/ is double buffered.
+-- | Contains 'True' when the current layer of the /current window/ is double
+-- buffered, 'False' otherwise.
 
-isDoubleBuffered :: IO Bool
-isDoubleBuffered = simpleGet i2b glut_WINDOW_DOUBLEBUFFER
+doubleBuffered :: GettableStateVar Bool
+doubleBuffered = makeGettableStateVar $ simpleGet i2b glut_WINDOW_DOUBLEBUFFER
 
--- | Test whether the current layer of the /current window/ is stereo.
+-- | Contains 'True' when the current layer of the /current window/ is stereo,
+-- 'False' otherwise.
 
-isStereo :: IO Bool
-isStereo = simpleGet i2b glut_WINDOW_STEREO
+stereo :: GettableStateVar Bool
+stereo = makeGettableStateVar $ simpleGet i2b glut_WINDOW_STEREO
 
--- | Return the number of red, green, blue, and alpha bits in the accumulation
+-- | Contains the number of red, green, blue, and alpha bits in the accumulation
 -- buffer of the /current window\'s/ current layer (0 in color index mode).
 
-getAccumBufferDepths :: IO (BufferDepth, BufferDepth, BufferDepth, BufferDepth)
-getAccumBufferDepths = do
-   r <- simpleGet id glut_WINDOW_ACCUM_RED_SIZE
-   g <- simpleGet id glut_WINDOW_ACCUM_GREEN_SIZE
-   b <- simpleGet id glut_WINDOW_ACCUM_BLUE_SIZE
-   a <- simpleGet id glut_WINDOW_ACCUM_ALPHA_SIZE
+accumBufferDepths ::
+   GettableStateVar (BufferDepth, BufferDepth, BufferDepth, BufferDepth)
+accumBufferDepths = makeGettableStateVar $ do
+   r <- simpleGet fromIntegral glut_WINDOW_ACCUM_RED_SIZE
+   g <- simpleGet fromIntegral glut_WINDOW_ACCUM_GREEN_SIZE
+   b <- simpleGet fromIntegral glut_WINDOW_ACCUM_BLUE_SIZE
+   a <- simpleGet fromIntegral glut_WINDOW_ACCUM_ALPHA_SIZE
    return (r, g, b, a)
 
--- | Return the number of bits in the depth buffer of the /current window\'s/
+-- | Contains the number of bits in the depth buffer of the /current window\'s/
 -- current layer.
 
-getDepthBufferDepth :: IO BufferDepth
-getDepthBufferDepth = simpleGet id glut_WINDOW_DEPTH_SIZE
+depthBufferDepth :: GettableStateVar BufferDepth
+depthBufferDepth =
+   makeGettableStateVar $ simpleGet fromIntegral glut_WINDOW_DEPTH_SIZE
 
--- | Return the number of bits in the stencil buffer of the /current window\'s/
--- current layer.
+-- | Contains the number of bits in the stencil buffer of the /current
+-- window\'s/ current layer.
 
-getStencilBufferDepth :: IO BufferDepth
-getStencilBufferDepth = simpleGet id glut_WINDOW_STENCIL_SIZE
+stencilBufferDepth :: GettableStateVar BufferDepth
+stencilBufferDepth =
+   makeGettableStateVar $ simpleGet fromIntegral glut_WINDOW_STENCIL_SIZE
 
 -- | Number of samples for multisampling
 
-type SampleCount = CInt
+type SampleCount = Int
 
--- | Return the number of samples for multisampling for the /current window./
+-- | Contains the number of samples for multisampling for the /current window./
 
-getSampleCount :: IO SampleCount
-getSampleCount = simpleGet id glut_WINDOW_NUM_SAMPLES
+sampleCount :: GettableStateVar SampleCount
+sampleCount =
+   makeGettableStateVar $ simpleGet fromIntegral glut_WINDOW_NUM_SAMPLES
 
--- | Return the window system dependent format ID for the current layer of the
+-- | Contains the window system dependent format ID for the current layer of the
 -- /current window/. On X11 GLUT implementations, this is the X visual ID. On
 -- Win32 GLUT implementations, this is the Win32 Pixel Format Descriptor number.
 -- This value is returned for debugging, benchmarking, and testing ease.
 
-getFormatID :: IO CInt
-getFormatID = simpleGet id glut_WINDOW_FORMAT_ID
+formatID :: GettableStateVar Int
+formatID = makeGettableStateVar $ simpleGet fromIntegral glut_WINDOW_FORMAT_ID
 
 --------------------------------------------------------------------------------
 
@@ -157,21 +166,16 @@ elapsedTime = makeGettableStateVar $ simpleGet fromIntegral glut_ELAPSED_TIME
 
 --------------------------------------------------------------------------------
 
--- | Test if the normal plane of the /current window/ has been damaged (by
--- window system activity) since the last display callback was triggered.
--- Calling 'Graphics.UI.GLUT.Window.postRedisplay' will not set this 'True'.
-
-isNormalDamaged :: IO Bool
-isNormalDamaged  = layerGet i2b glut_NORMAL_DAMAGED
-
--- | Test if the overlay plane of the /current window/ has been damaged (by
--- window system activity) since the last display callback was triggered.
--- Calling 'Graphics.UI.GLUT.Window.postRedisplay' or
+-- | Contains 'True' if the given plane of the /current window/ has been
+-- damaged (by window system activity) since the last display callback was
+-- triggered. Calling 'Graphics.UI.GLUT.Window.postRedisplay' or
 -- 'Graphics.UI.GLUT.Overlay.postOverlayRedisplay' will not set this 'True'.
--- Return 'Nothing' if no overlay is in use.
 
-isOverlayDamaged :: IO (Maybe Bool)
-isOverlayDamaged = layerGet i2mb glut_OVERLAY_DAMAGED
+damaged :: Layer -> GettableStateVar Bool
+damaged l = makeGettableStateVar $ layerGet isDamaged (marshalDamagedLayer l)
+   where isDamaged d = d /= 0 && d /= -1
+         marshalDamagedLayer Normal  = glut_NORMAL_DAMAGED
+         marshalDamagedLayer Overlay = glut_OVERLAY_DAMAGED
 
 --------------------------------------------------------------------------------
 
@@ -211,7 +215,7 @@ hasKeyboard = makeGettableStateVar $ deviceGet i2b glut_HAS_KEYBOARD
 
 -- | Number of buttons of an input device
 
-type ButtonCount = CInt
+type ButtonCount = Int
 
 -- | Contains 'Just' the number of buttons of an attached mouse or 'Nothing' if
 -- there is none.
@@ -219,7 +223,7 @@ type ButtonCount = CInt
 numMouseButtons :: GettableStateVar (Maybe ButtonCount)
 numMouseButtons =
    getDeviceInfo glut_HAS_MOUSE $
-      deviceGet id glut_NUM_MOUSE_BUTTONS
+      deviceGet fromIntegral glut_NUM_MOUSE_BUTTONS
 
 --------------------------------------------------------------------------------
 
@@ -229,13 +233,13 @@ numMouseButtons =
 numSpaceballButtons :: GettableStateVar (Maybe ButtonCount)
 numSpaceballButtons =
    getDeviceInfo glut_HAS_SPACEBALL $
-      deviceGet id glut_NUM_SPACEBALL_BUTTONS
+      deviceGet fromIntegral glut_NUM_SPACEBALL_BUTTONS
 
 --------------------------------------------------------------------------------
 
 -- | Number of dials of a dial and button box
 
-type DialCount = CInt
+type DialCount = Int
 
 -- | Contains 'Just' the number of dials and buttons of an attached dial &
 -- button box or 'Nothing' if there is none.
@@ -243,8 +247,8 @@ type DialCount = CInt
 numDialsAndButtons :: GettableStateVar (Maybe (DialCount, ButtonCount))
 numDialsAndButtons =
    getDeviceInfo glut_HAS_DIAL_AND_BUTTON_BOX $ do
-      d <- deviceGet id glut_NUM_DIALS
-      b <- deviceGet id glut_NUM_BUTTON_BOX_BUTTONS
+      d <- deviceGet fromIntegral glut_NUM_DIALS
+      b <- deviceGet fromIntegral glut_NUM_BUTTON_BOX_BUTTONS
       return (d, b)
 
 --------------------------------------------------------------------------------
@@ -255,17 +259,17 @@ numDialsAndButtons =
 numTabletButtons :: GettableStateVar (Maybe ButtonCount)
 numTabletButtons =
    getDeviceInfo glut_HAS_TABLET $
-      deviceGet id glut_NUM_TABLET_BUTTONS
+      deviceGet fromIntegral glut_NUM_TABLET_BUTTONS
 
 --------------------------------------------------------------------------------
 
 -- | Number of axes of a joystick
 
-type AxisCount  = CInt
+type AxisCount = Int
 
 -- | The a rate at which a joystick is polled (in milliseconds)
 
-type PollRate = CInt
+type PollRate = Int
 
 -- | Contains 'Just' the number of buttons of an attached joystick, the number
 -- of joystick axes, and the rate at which the joystick is polled. Contains
@@ -274,9 +278,9 @@ type PollRate = CInt
 joystickInfo :: GettableStateVar (Maybe (ButtonCount, PollRate, AxisCount))
 joystickInfo =
    getDeviceInfo glut_HAS_JOYSTICK $ do
-      b <- deviceGet id glut_JOYSTICK_BUTTONS
-      a <- deviceGet id glut_JOYSTICK_AXES
-      r <- deviceGet id glut_JOYSTICK_POLL_RATE
+      b <- deviceGet fromIntegral glut_JOYSTICK_BUTTONS
+      a <- deviceGet fromIntegral glut_JOYSTICK_AXES
+      r <- deviceGet fromIntegral glut_JOYSTICK_POLL_RATE
       return (b, a, r)
 
 --------------------------------------------------------------------------------
@@ -284,9 +288,6 @@ joystickInfo =
 
 i2b :: CInt -> Bool
 i2b = (/= 0)
-
-i2mb :: CInt -> Maybe Bool
-i2mb i = if i < 0 then Nothing else Just (i /= 0)
 
 --------------------------------------------------------------------------------
 

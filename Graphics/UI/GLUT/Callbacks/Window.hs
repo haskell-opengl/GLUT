@@ -47,6 +47,7 @@ module Graphics.UI.GLUT.Callbacks.Window (
 import Control.Monad ( liftM )
 import Data.Bits ( Bits((.&.)) )
 import Data.Char ( chr )
+import Data.Maybe ( fromJust )
 import Foreign.C.Types ( CInt, CUInt, CUChar )
 import Foreign.Ptr ( FunPtr )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
@@ -107,10 +108,9 @@ type DisplayCallback = IO ()
 -- be registered).
 --
 -- Upon return from the display callback, the normal damaged state of the window
--- (returned by calling 'Graphics.UI.GLUT.State.isNormalDamaged') is cleared. If
--- there is no overlay display callback registered the overlay damaged state of
--- the window (returned by calling 'Graphics.UI.GLUT.State.isOverlayDamaged') is
--- also cleared.
+-- (see 'Graphics.UI.GLUT.State.damaged') is cleared. If there is no overlay
+-- display callback registered the overlay damaged state of the window (see
+-- 'Graphics.UI.GLUT.State.damaged') is also cleared.
 
 displayCallback :: SettableStateVar DisplayCallback
 displayCallback = makeSettableStateVar $
@@ -145,8 +145,7 @@ foreign import CALLCONV unsafe "glutDisplayFunc" glutDisplayFunc ::
 -- overlay display callbacks called.
 --
 -- Upon return from the overlay display callback, the overlay damaged state of
--- the window (returned by calling 'Graphics.UI.GLUT.State.isOverlayDamaged')
--- is cleared.
+-- the window (see 'Graphics.UI.GLUT.State.damaged') is cleared.
 --
 -- Initially there is no overlay display callback registered when an overlay is
 -- established. See 'displayCallback' to understand how the display callback
@@ -174,8 +173,8 @@ type ReshapeCallback' = CInt -> CInt -> IO ()
 -- of the callback specifies the new window size in pixels. Before the callback,
 -- the /current window/ is set to the window that has been reshaped.
 --
--- If a reshape callback is not registered for a window or 'Nothing' is passed
--- to setReshapeCallback (to deregister a previously registered callback), the
+-- If a reshape callback is not registered for a window or 'reshapeCallback' is
+-- set to 'Nothing' (to deregister a previously registered callback), the
 -- default reshape callback is used. This default callback will simply call
 --
 -- @
@@ -546,16 +545,16 @@ foreign import CALLCONV unsafe "glutEntryFunc" glutEntryFunc ::
 -- | Translation of the Spaceball along one axis, normalized to be in the range
 -- of -1000 to +1000 inclusive
 
-type SpaceballMotion = CInt
+type SpaceballMotion = Int
 
 -- | Rotation of the Spaceball along one axis, normalized to be in the range
 -- of -1800 .. +1800 inclusive
 
-type SpaceballRotation = CInt
+type SpaceballRotation = Int
 
 -- | The index of a specific buttons of an input device.
 
-type ButtonIndex = CInt
+type ButtonIndex = Int
 
 -- | The state of the Spaceball has changed.
 
@@ -600,7 +599,8 @@ setSpaceballMotionCallback :: Maybe SpaceballMotionCallback -> IO ()
 setSpaceballMotionCallback =
    setCallback SpaceballMotionCB glutSpaceballMotionFunc
                (makeSpaceballMotionCallback . unmarshal)
-   where unmarshal cb x y z = cb x y z
+   where unmarshal cb x y z =
+            cb (fromIntegral x) (fromIntegral y) (fromIntegral z)
 
 foreign import ccall "wrapper" makeSpaceballMotionCallback ::
    SpaceballMotionCallback -> IO (FunPtr SpaceballMotionCallback)
@@ -617,7 +617,8 @@ setSpaceballRotationCallback :: Maybe SpaceballRotationCallback -> IO ()
 setSpaceballRotationCallback =
    setCallback SpaceballRotateCB glutSpaceballRotateFunc
                (makeSpaceballRotationCallback . unmarshal)
-   where unmarshal cb x y z = cb x y z
+   where unmarshal cb x y z =
+            cb (fromIntegral x) (fromIntegral y) (fromIntegral z)
 
 foreign import ccall "wrapper" makeSpaceballRotationCallback ::
    SpaceballRotationCallback -> IO (FunPtr SpaceballRotationCallback)
@@ -635,7 +636,7 @@ setSpaceballButtonCallback :: Maybe SpaceballButtonCallback -> IO ()
 setSpaceballButtonCallback =
    setCallback SpaceballButtonCB glutSpaceballButtonFunc
                (makeSpaceballButtonCallback . unmarshal)
-   where unmarshal cb b s = cb b (unmarshalKeyState s)
+   where unmarshal cb b s = cb (fromIntegral b) (unmarshalKeyState s)
 
 foreign import ccall "wrapper" makeSpaceballButtonCallback ::
    SpaceballButtonCallback' -> IO (FunPtr SpaceballButtonCallback')
@@ -647,13 +648,13 @@ foreign import CALLCONV unsafe "glutSpaceballButtonFunc"
 
 -- | The index of a specific dial of a dial and button box.
 
-type DialIndex = CInt
+type DialIndex = Int
 
 -- | The dial & button box state has changed.
 
 data DialAndButtonBoxInput
    = DialAndButtonBoxButton ButtonIndex KeyState
-   | DialAndButtonBoxDial   DialIndex CInt
+   | DialAndButtonBoxDial   DialIndex Int
    deriving ( Eq, Ord, Show )
 
 -- | A dial & button box callback
@@ -691,7 +692,7 @@ type ButtonBoxCallback' = CInt -> CInt -> IO ()
 setButtonBoxCallback :: Maybe ButtonBoxCallback -> IO ()
 setButtonBoxCallback =
    setCallback ButtonBoxCB glutButtonBoxFunc (makeButtonBoxFunc . unmarshal)
-   where unmarshal cb b s = cb b (unmarshalKeyState s)
+   where unmarshal cb b s = cb (fromIntegral b) (unmarshalKeyState s)
 
 foreign import ccall "wrapper" makeButtonBoxFunc ::
    ButtonBoxCallback' -> IO (FunPtr ButtonBoxCallback')
@@ -701,25 +702,27 @@ foreign import CALLCONV unsafe "glutButtonBoxFunc" glutButtonBoxFunc ::
 
 --------------------------------------------------------------------------------
 
-type DialsCallback = DialIndex -> CInt -> IO ()
+type DialsCallback = DialIndex -> Int -> IO ()
+
+type DialsCallback' = CInt -> CInt -> IO ()
 
 setDialsCallback :: Maybe DialsCallback -> IO ()
 setDialsCallback =
     setCallback DialsCB glutDialsFunc (makeDialsFunc . unmarshal)
-    where unmarshal cb d x = cb d x
+    where unmarshal cb d x = cb (fromIntegral d) (fromIntegral x)
 
 foreign import ccall "wrapper" makeDialsFunc ::
-   DialsCallback -> IO (FunPtr DialsCallback)
+   DialsCallback -> IO (FunPtr DialsCallback')
 
 foreign import CALLCONV unsafe "glutDialsFunc" glutDialsFunc ::
-   FunPtr DialsCallback -> IO ()
+   FunPtr DialsCallback' -> IO ()
 
 --------------------------------------------------------------------------------
 
 -- | Absolute tablet position, with coordinates normalized to be in the range of
 -- 0 to 2000 inclusive
 
-data TabletPosition = TabletPosition CInt CInt
+data TabletPosition = TabletPosition Int Int
 
 -- | The table state has changed.
 
@@ -762,7 +765,8 @@ setTabletMotionCallback :: Maybe TabletMotionCallback -> IO ()
 setTabletMotionCallback =
     setCallback TabletMotionCB glutTabletMotionFunc
                 (makeTabletMotionFunc . unmarshal)
-    where unmarshal cb x y = cb (TabletPosition x y)
+    where unmarshal cb x y =
+             cb (TabletPosition (fromIntegral x) (fromIntegral y))
 
 foreign import ccall "wrapper" makeTabletMotionFunc ::
    TabletMotionCallback' -> IO (FunPtr TabletMotionCallback')
@@ -780,7 +784,9 @@ setTabletButtonCallback :: Maybe TabletButtonCallback -> IO ()
 setTabletButtonCallback =
     setCallback TabletButtonCB glutTabletButtonFunc
                 (makeTabletButtonFunc . unmarshal)
-    where unmarshal cb b s x y = cb b (unmarshalKeyState s) (TabletPosition x y)
+    where unmarshal cb b s x y =
+             cb (fromIntegral b) (unmarshalKeyState s)
+                (TabletPosition (fromIntegral x) (fromIntegral y))
 
 foreign import ccall "wrapper" makeTabletButtonFunc ::
    TabletButtonCallback' -> IO (FunPtr TabletButtonCallback')
@@ -817,7 +823,7 @@ unmarshalJoystickButtons m = JoystickButtons {
 --
 -- * if available (e.g. rudder): negative = down, positive = up
 
-data JoystickPosition = JoystickPosition CInt CInt CInt
+data JoystickPosition = JoystickPosition Int Int Int
    deriving ( Eq, Ord, Show )
 
 --------------------------------------------------------------------------------
@@ -835,12 +841,18 @@ type JoystickCallback' = CUInt -> CInt -> CInt -> CInt -> IO ()
 --
 -- /X Implementation Notes:/ Currently GLUT has no joystick support for X11.
 
-joystickCallback :: SettableStateVar (Maybe JoystickCallback, PollRate)
-joystickCallback = makeSettableStateVar $ \(c, rate) ->
-    setCallback JoystickCB (\f -> glutJoystickFunc f rate)
-                (makeJoystickFunc . unmarshal) c
+-- joystickCallback :: SettableStateVar (Maybe JoystickCallback, PollRate)
+joystickCallback :: SettableStateVar (Maybe (JoystickCallback, PollRate))
+joystickCallback =
+   makeSettableStateVar $ \maybeCBAndRate ->
+      setCallback JoystickCB
+                  (\f -> glutJoystickFunc f (fromIntegral (snd (fromJust maybeCBAndRate))))
+                  (makeJoystickFunc . unmarshal)
+                  (fmap fst maybeCBAndRate)
     where unmarshal cb b x y z = cb (unmarshalJoystickButtons b)
-                                    (JoystickPosition x y z)
+                                    (JoystickPosition (fromIntegral x)
+                                                      (fromIntegral y)
+                                                      (fromIntegral z))
 
 foreign import ccall "wrapper" makeJoystickFunc ::
    JoystickCallback' -> IO (FunPtr JoystickCallback')

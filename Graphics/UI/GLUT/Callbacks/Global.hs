@@ -110,7 +110,7 @@ foreign import CALLCONV unsafe "glutIdleFunc" glutIdleFunc ::
 --------------------------------------------------------------------------------
 
 -- | Timeout for the timer callback in milliseconds
-type Timeout = CUInt
+type Timeout = Int
 
 type TimerCallback  = IO ()
 
@@ -129,10 +129,10 @@ addTimerCallback :: Timeout -> TimerCallback -> IO ()
 addTimerCallback msecs timerCallback = do
    funPtr <- mfix (\self -> makeTimerCallback (\_ -> do registerForCleanup self
                                                         timerCallback))
-   glutTimerFunc msecs funPtr 0
+   glutTimerFunc (fromIntegral msecs) funPtr 0
 
 foreign import ccall "wrapper" makeTimerCallback ::
    TimerCallback' -> IO (FunPtr TimerCallback')
 
 foreign import CALLCONV unsafe "glutTimerFunc" glutTimerFunc ::
-   Timeout -> FunPtr TimerCallback' -> CInt -> IO ()
+   CUInt -> FunPtr TimerCallback' -> CInt -> IO ()
