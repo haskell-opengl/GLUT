@@ -19,8 +19,6 @@ ALL_DIRS = \
 	Graphics/UI/GLUT \
 	Graphics/UI/GLUT/Callbacks
 
-PACKAGE = GLUT
-VERSION = 1.0
 PACKAGE_DEPS = base OpenGL
 
 SRC_HC_OPTS += -Wall -fffi -Iinclude '-\#include "HsGLUT.h"' -cpp
@@ -31,6 +29,8 @@ SRC_HC_OPTS += -DCALLCONV=stdcall
 else
 SRC_HC_OPTS += -DCALLCONV=ccall
 endif
+
+PACKAGE_CPP_OPTS += -DMAINTAINER=$(MAINTAINER)
 
 SRC_HADDOCK_OPTS += -t "HOpenGL Libraries (GLUT package)"
 
