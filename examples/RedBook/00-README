@@ -1,0 +1,120 @@
+This file lists the programs that are referenced in the OpenGL Programming
+Guide, Fourth Edition, by chapter. For each program, the version of OpenGL
+that is required is listed with the program.
+
+Chapter 1: Introduction to OpenGL
+
+        Hello.hs        (1.0)
+        Double.hs       (1.0)
+
+Chapter 2: State Management and Drawing Geometric Objects
+
+        Lines.hs        (1.0)
+        Polys.hs        (1.0)
+        VArray.hs       (1.1)
+        MVarray.hs      (1.4)
+
+Chapter 3: Viewing
+
+        Cube.hs         (1.0)
+        Model.hs        (1.0)
+        Clip.hs         (1.0)
+        Planet.hs       (1.0)
+        Robot.hs        (1.0)
+        Unproject.hs    (1.1)
+
+Chapter 4: Color
+
+        Smooth.hs       (1.0)
+
+Chapter 5: Lighting
+
+        Light.hs        (1.0)
+        Movelight.hs    (1.0)
+        Material.hs     (1.0)
+        ColorMat.hs     (1.1)
+        Scene.hs        (1.0)
+
+qChapter 6: Blending, Antialiasing, Fog, and Polygon Offset
+
+        BlendEqn.hs     (1.3 or ARB_imaging_subset)
+        Alpha.hs        (1.0)
+        Alpha3D.hs      (1.1)
+        AARGB.hs        (1.1)
+        AAIndex.hs      (1.1)
+        Multisamp.hs    (1.3)
+        Fog.hs          (1.0)
+        FogIndex.hs     (1.0)
+        FogCoord.hs     (1.4)
+        PointP.hs       (1.4)
+        PolyOff.hs      (1.1)
+
+Chapter 7: Display Lists
+
+        Torus.hs        (1.0)
+        DList.hs        (1.0)
+        Stroke.hs       (1.0)
+
+Chapter 8: Drawing Pixels, Bitmaps, Fonts, and Images
+
+        Drawf.hs        (1.0)
+        Font.hs         (1.0)
+        Image.hs        (1.1)
+        ColorTable.hs   (ARB_imaging_subset)
+        Convolution.hs  (ARB_imaging_subset)
+        ColorMatrix.hs  (ARB_imaging_subset)
+        Histogram.hs    (ARB_imaging_subset)
+        MinMax.hs       (ARB_imaging_subset)
+
+Chapter 9: Texture Mapping
+
+        Checker.hs      (1.0)
+        Texsub.hs       (1.1)
+        Texture3D.hs    (1.2)
+        Mipmap.hs       (1.0)
+        TexBind.hs      (1.1)
+        TexGen.hs       (1.1)
+        CubeMap.hs      (1.3)
+        MultiTex.hs     (1.3 or ARB_multitexture)
+        Combiner.hs     (1.3)
+        ShadowMap.hs    (1.4)
+        Wrap.hs         (1.0)
+        TexProx.hs      (1.1)
+
+Chapter 10: The Framebuffer
+
+        Stencil.hs      (1.0)
+        AccPersp.hs     (1.0)
+        AccAnti.hs      (1.0)
+        DOF.hs          (1.0)
+
+Chapter 11: Tessellators and Quadrics
+
+        Tess.hs         (1.1)
+        TessWind.hs     (1.1)
+        Quadric.hs      (1.1)
+
+Chapter 12: Evaluators and NURBS
+
+        BezCurve.hs     (1.1)
+        BezSurf.hs      (1.1)
+        BezMesh.hs      (1.1)
+        Texturesurf.hs  (1.1)
+        Surface.hs      (1.1)
+        SurfPoints.hs   (1.2)
+        Trim.hs         (1.1)
+
+Chapter 13: Selection and Feedback
+
+        Select.hs       (1.1)
+        PickSquare.hs   (1.0)
+        PickDepth.hs    (1.0)
+        Feedback.hs     (1.0)
+
+Chapter 14: Now That You Know
+
+        <No programs included>
+
+Color Plates:
+
+      Teapots.hs        (1.1)
