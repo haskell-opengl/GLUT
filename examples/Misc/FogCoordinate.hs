@@ -16,7 +16,7 @@ myInit = do
    clearColor $= c
    fogColor $= c
    fogMode $= Exp2 0.4;
-   fogCoordinateSource $= FogCoordinate
+   fogCoordSrc $= FogCoord
    shadeModel $= Smooth
 
 triangle :: IO ()
