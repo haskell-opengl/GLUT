@@ -9,9 +9,7 @@
 -}
 
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
-
-import Graphics.Rendering.OpenGL
-import Graphics.UI.GLUT as GLUT
+import Graphics.UI.GLUT
 
 myInit :: IO ()
 myInit = do
@@ -56,7 +54,7 @@ keyboard _            _    _ _ = return ()
 main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
-   initialDisplayMode $= [ Single, GLUT.RGB ]
+   initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 500 500
    initialWindowPosition $= Position 100 100
    createWindow progName

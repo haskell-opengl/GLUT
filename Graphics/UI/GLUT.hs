@@ -42,6 +42,8 @@ module Graphics.UI.GLUT (
 
    -- $Terminology
 
+   module Graphics.Rendering.OpenGL,
+
    module Graphics.UI.GLUT.Initialization,
    module Graphics.UI.GLUT.Begin,
    module Graphics.UI.GLUT.Window,
@@ -56,6 +58,8 @@ module Graphics.UI.GLUT (
    module Graphics.UI.GLUT.DeviceControl,
    module Graphics.UI.GLUT.GameMode
 )  where
+
+import Graphics.Rendering.OpenGL
 
 import Graphics.UI.GLUT.Initialization
 import Graphics.UI.GLUT.Begin

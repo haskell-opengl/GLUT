@@ -13,9 +13,7 @@ import Data.Char ( toLower )
 import Data.Either ( Either(..) )
 import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
-
-import Graphics.Rendering.OpenGL
-import Graphics.UI.GLUT as GLUT
+import Graphics.UI.GLUT
 
 type DisplayLists = (DisplayList, DisplayList, DisplayList, DisplayList)
 
@@ -192,7 +190,7 @@ nextWindingRule r = case r of
 main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
-   initialDisplayMode $= [ Single, GLUT.RGB ]
+   initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 500 500
    createWindow progName
    currentWindingRule <- newIORef TessWindingOdd

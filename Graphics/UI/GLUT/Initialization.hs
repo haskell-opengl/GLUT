@@ -204,41 +204,41 @@ foreign import CALLCONV unsafe "glutInitWindowSize" glutInitWindowSize ::
 -- with 'initialDisplayMode'.
 
 data DisplayMode
-   = RGBA        -- ^ Select an RGBA mode window. This is the default if neither 'RGBA' nor 'Index' are specified.
-   | RGB         -- ^ An alias for 'RGBA'.
-   | Index       -- ^ Select a color index mode window. This overrides 'RGBA' if it is also specified.
-   | Single      -- ^ Select a single buffered window. This is the default if neither 'Double' nor 'Single' are specified.
-   | Double      -- ^ Select a double buffered window. This overrides 'Single' if it is also specified.
-   | Accum       -- ^ Select a window with an accumulation buffer.
-   | Alpha       -- ^ Select a window with an alpha component to the color buffer(s).
-   | Depth       -- ^ Select a window with a depth buffer.
-   | Stencil     -- ^ Select a window with a stencil buffer.
-   | Multisample -- ^ Select a window with multisampling support. If multisampling is not available, a non-multisampling
-                 --   window will automatically be chosen. Note: both the OpenGL client-side and server-side implementations
-                 --   must support the @GLX_SAMPLE_SGIS@ extension for multisampling to be available.
-   | Stereo      -- ^ Select A Stereo Window.
-   | Luminance   -- ^ Select a window with a \"luminance\" color model. This model provides the functionality of OpenGL\'s
-                 --   RGBA color model, but the green and blue components are not maintained in the frame buffer. Instead
-                 --   each pixel\'s red component is converted to an index between zero and  'Graphics.UI.GLUT.Colormap.numColorMapEntries'
-                 --   and looked up in a per-window color map to determine the color of pixels within the window. The initial
-                 --   colormap of 'Luminance' windows is initialized to be a linear gray ramp, but can be modified with GLUT\'s
-                 --   colormap actions. /Implementation Notes:/ 'Luminance' is not supported on most OpenGL platforms.
+   = RGBAMode           -- ^ Select an RGBA mode window. This is the default if neither 'RGBAMode' nor 'IndexMode' are specified.
+   | RGBMode            -- ^ An alias for 'RGBAMode'.
+   | IndexMode          -- ^ Select a color index mode window. This overrides 'RGBAMode' if it is also specified.
+   | LuminanceMode      -- ^ Select a window with a \"luminance\" color model. This model provides the functionality of OpenGL\'s
+                        --   RGBA color model, but the green and blue components are not maintained in the frame buffer. Instead
+                        --   each pixel\'s red component is converted to an index between zero and  'Graphics.UI.GLUT.Colormap.numColorMapEntries'
+                        --   and looked up in a per-window color map to determine the color of pixels within the window. The initial
+                        --   colormap of 'LuminanceMode' windows is initialized to be a linear gray ramp, but can be modified with GLUT\'s
+                        --   colormap actions. /Implementation Notes:/ 'LuminanceMode' is not supported on most OpenGL platforms.
+   | WithAlphaComponent -- ^ Select a window with an alpha component to the color buffer(s).
+   | WithAccumBuffer    -- ^ Select a window with an accumulation buffer.
+   | WithDepthBuffer    -- ^ Select a window with a depth buffer.
+   | WithStencilBuffer  -- ^ Select a window with a stencil buffer.
+   | SingleBuffered     -- ^ Select a single buffered window. This is the default if neither 'DoubleBuffered' nor 'SingleBuffered' are specified.
+   | DoubleBuffered     -- ^ Select a double buffered window. This overrides 'SingleBuffered' if it is also specified.
+   | Multisampling      -- ^ Select a window with multisampling support. If multisampling is not available, a non-multisampling
+                        --   window will automatically be chosen. Note: both the OpenGL client-side and server-side implementations
+                        --   must support the @GLX_SAMPLE_SGIS@ extension for multisampling to be available.
+   | Stereoscopic       -- ^ Select A Stereo Window.
    deriving ( Eq, Ord, Show )
 
 marshalDisplayMode :: DisplayMode -> CUInt
 marshalDisplayMode m = case m of
-   RGBA        -> glut_RGBA
-   RGB         -> glut_RGB
-   Index       -> glut_INDEX
-   Single      -> glut_SINGLE
-   Double      -> glut_DOUBLE
-   Accum       -> glut_ACCUM
-   Alpha       -> glut_ALPHA
-   Depth       -> glut_DEPTH
-   Stencil     -> glut_STENCIL
-   Multisample -> glut_MULTISAMPLE
-   Stereo      -> glut_STEREO
-   Luminance   -> glut_LUMINANCE
+   RGBAMode           -> glut_RGBA
+   RGBMode            -> glut_RGB
+   IndexMode          -> glut_INDEX
+   SingleBuffered     -> glut_SINGLE
+   DoubleBuffered     -> glut_DOUBLE
+   WithAccumBuffer    -> glut_ACCUM
+   WithAlphaComponent -> glut_ALPHA
+   WithDepthBuffer    -> glut_DEPTH
+   WithStencilBuffer  -> glut_STENCIL
+   Multisampling      -> glut_MULTISAMPLE
+   Stereoscopic       -> glut_STEREO
+   LuminanceMode      -> glut_LUMINANCE
 
 --------------------------------------------------------------------------------
 
@@ -246,10 +246,10 @@ marshalDisplayMode m = case m of
 -- subwindows, and overlays to determine the OpenGL display mode for the
 -- to-be-created window or overlay.
 --
--- Note that 'RGBA' selects the RGBA color model, but it does not request any
+-- Note that 'RGBAMode' selects the RGBA color model, but it does not request any
 -- bits of alpha (sometimes called an /alpha buffer/ or /destination alpha/)
--- be allocated. To request alpha, specify 'Alpha'. The same applies to
--- 'Luminance'.
+-- be allocated. To request alpha, specify 'WithAlphaComponent'. The same
+-- applies to 'LuminanceMode'.
 
 initialDisplayMode :: StateVar [DisplayMode]
 initialDisplayMode = makeStateVar getInitialDisplayMode setInitialDisplayMode
@@ -259,8 +259,9 @@ getInitialDisplayMode = simpleGet i2dms glut_INIT_DISPLAY_MODE
 
 i2dms :: CInt -> [DisplayMode]
 i2dms bitfield =
-   [ c | c <- [ RGBA, RGB, Index, Single, Double, Accum, Alpha,
-                Depth, Stencil, Multisample, Stereo, Luminance ]
+   [ c | c <- [ RGBAMode, RGBMode, IndexMode, SingleBuffered, DoubleBuffered,
+                WithAccumBuffer, WithAlphaComponent, WithDepthBuffer,
+                WithStencilBuffer, Multisampling, Stereoscopic, LuminanceMode ]
        , (fromIntegral bitfield .&. marshalDisplayMode c) /= 0 ]
 
 setInitialDisplayMode :: [DisplayMode] -> IO ()
@@ -285,52 +286,52 @@ displayModePossible =
 -- of 'DisplayMode'\'s constructors.
 
 data DisplayCapability
-   = RGBA'        -- ^ Number of bits of red, green, blue, and alpha in the RGBA
+   = DisplayRGBA  -- ^ Number of bits of red, green, blue, and alpha in the RGBA
                   --   color buffer. Default is \"'IsAtLeast' @1@\" for red,
                   --   green, blue, and alpha capabilities, and \"'IsEqualTo'
                   --   @1@\" for the RGBA color model capability.
-   | RGB'         -- ^ Number of bits of red, green, and blue in the RGBA color
+   | DisplayRGB   -- ^ Number of bits of red, green, and blue in the RGBA color
                   --   buffer and zero bits of alpha color buffer precision.
                   --   Default is \"'IsAtLeast' @1@\" for the red, green, and
                   --   blue capabilities, and \"'IsNotLessThan' @0@\" for alpha
                   --   capability, and \"'IsEqualTo' @1@\" for the RGBA color
                   --   model capability.
-   | Red          -- ^ Red color buffer precision in bits. Default is
+   | DisplayRed   -- ^ Red color buffer precision in bits. Default is
                   --   \"'IsAtLeast' @1@\".
-   | Green        -- ^ Green color buffer precision in bits. Default is
+   | DisplayGreen -- ^ Green color buffer precision in bits. Default is
                   --   \"'IsAtLeast' @1@\".
-   | Blue         -- ^ Blue color buffer precision in bits. Default is
+   | DisplayBlue  -- ^ Blue color buffer precision in bits. Default is
                   --   \"'IsAtLeast' @1@\".
-   | Index'       -- ^ Boolean if the color model is color index or not. True is
+   | DisplayIndex -- ^ Boolean if the color model is color index or not. True is
                   --   color index. Default is \"'IsAtLeast' @1@\".
-   | Buffer       -- ^ Number of bits in the color index color buffer. Default
+   | DisplayBuffer -- ^ Number of bits in the color index color buffer. Default
                   --   is \"'IsAtLeast' @1@\".
-   | Single'      -- ^ Boolean indicate the color buffer is single buffered.
-                  --   Defaultis \"'IsEqualTo' @1@\".
-   | Double'      -- ^ Boolean indicating if the color buffer is double
+   | DisplaySingle -- ^ Boolean indicate the color buffer is single buffered.
+                  --   Default is \"'IsEqualTo' @1@\".
+   | DisplayDouble -- ^ Boolean indicating if the color buffer is double
                   --   buffered. Default is \"'IsEqualTo' @1@\".
-   | AccA         -- ^ Red, green, blue, and alpha accumulation buffer precision
+   | DisplayAccA  -- ^ Red, green, blue, and alpha accumulation buffer precision
                   --   in  bits. Default is \"'IsAtLeast' @1@\" for red, green,
                   --   blue, and alpha capabilities.
-   | Acc          -- ^ Red, green, and green accumulation buffer precision in
+   | DisplayAcc   -- ^ Red, green, and green accumulation buffer precision in
                   --   bits and zero bits of alpha accumulation buffer precision.
                   --   Default is \"'IsAtLeast' @1@\" for red, green, and blue
                   --   capabilities, and \"'IsNotLessThan' @0@\" for the alpha
                   --   capability.
-   | Alpha'       -- ^ Alpha color buffer precision in bits. Default is
+   | DisplayAlpha -- ^ Alpha color buffer precision in bits. Default is
                   --   \"'IsAtLeast' @1@\".
-   | Depth'       -- ^ Number of bits of precsion in the depth buffer. Default
+   | DisplayDepth -- ^ Number of bits of precsion in the depth buffer. Default
                   --   is \"'IsAtLeast' @12@\".
-   | Stencil'     -- ^ Number of bits in the stencil buffer. Default is
+   | DisplayStencil -- ^ Number of bits in the stencil buffer. Default is
                   --   \"'IsNotLessThan' @1@\".
-   | Samples      -- ^ Indicates the number of multisamples to use based on
+   | DisplaySamples -- ^ Indicates the number of multisamples to use based on
                   --   GLX\'s @SGIS_multisample@ extension (for antialiasing).
                   --   Default is \"'IsNotGreaterThan' @4@\". This default means
                   --   that a GLUT application can request multisampling if
                   --   available by simply specifying \"'With' 'Samples'\".
-   | Stereo'      -- ^ Boolean indicating the color buffer is supports
+   | DisplayStereo -- ^ Boolean indicating the color buffer is supports
                   --   OpenGL-style stereo. Default is \"'IsEqualTo' @1@\".
-   | Luminance'   -- ^ Number of bits of red in the RGBA and zero bits of green,
+   | DisplayLuminance -- ^ Number of bits of red in the RGBA and zero bits of green,
                   --   blue (alpha not specified) of color buffer precision.
                   --   Default is \"'IsAtLeast' @1@\" for the red capabilitis,
                   --   and \"'IsEqualTo' @0@\" for the green and blue
@@ -345,18 +346,18 @@ data DisplayCapability
                   --   appropriate for medical imaging applications. Do not
                   --   expect many machines to support extended precision
                   --   luminance display modes.
-   | Num          -- ^ A special capability name indicating where the value
+   | DisplayNum   -- ^ A special capability name indicating where the value
                   --   represents the Nth frame buffer configuration matching
                   --   the description string. When not specified,
                   --   'initialDisplayCapabilitiesString' also returns the first
                   --   (best matching) configuration. 'Num' requires a relation
                   --   and numeric value.
-   | Conformant   -- ^ Boolean indicating if the frame buffer configuration is
+   | DisplayConformant -- ^ Boolean indicating if the frame buffer configuration is
                   --   conformant or not. Conformance information is based on
                   --   GLX\'s @EXT_visual_rating@ extension if supported. If the
                   --   extension is not supported, all visuals are assumed
                   --   conformant. Default is \"'IsEqualTo' @1@\".
-   | Slow         -- ^ Boolean indicating if the frame buffer configuration is
+   | DisplaySlow  -- ^ Boolean indicating if the frame buffer configuration is
                   --   slow or not. Slowness information is based on GLX\'s
                   --   @EXT_visual_rating@ extension if supported. If the
                   --   extension is not supported, all visuals are assumed fast.
@@ -368,33 +369,33 @@ data DisplayCapability
                   --   \"'IsAtLeast' @0@\". This default means that slow visuals
                   --   are used in preference to fast visuals, but fast visuals
                   --   will still be allowed.
-   | Win32PFD     -- ^ Only recognized on GLUT implementations for Win32, this
+   | DisplayWin32PFD -- ^ Only recognized on GLUT implementations for Win32, this
                   --   capability name matches the Win32 Pixel Format Descriptor
                   --   by number. 'Win32PFD' can only be used with 'Where'.
-   | XVisual      -- ^ Only recongized on GLUT implementations for the X Window
+   | DisplayXVisual -- ^ Only recongized on GLUT implementations for the X Window
                   --   System, this capability name matches the X visual ID by
                   --   number. 'XVisual' requires a relation and numeric value.
-   | XStaticGray  -- ^ Only recongized on GLUT implementations for the X Window
+   | DisplayXStaticGray -- ^ Only recongized on GLUT implementations for the X Window
                   --   System, boolean indicating if the frame buffer
                   --   configuration\'s X visual is of type @StaticGray@.
                   --   Default is \"'IsEqualTo' @1@\".
-   | XGrayScale   -- ^ Only recongized on GLUT implementations for the X Window
+   | DisplayXGrayScale -- ^ Only recongized on GLUT implementations for the X Window
                   --   System, boolean indicating if the frame buffer
                   --   configuration\'s X visual is of type @GrayScale@. Default
                   --   is \"'IsEqualTo' @1@\".
-   | XStaticColor -- ^ Only recongized on GLUT implementations for the X Window
+   | DisplayXStaticColor -- ^ Only recongized on GLUT implementations for the X Window
                   --   System, boolean indicating if the frame buffer
                   --   configuration\'s X visual is of type @StaticColor@.
                   --   Default is \"'IsEqualTo' @1@\".
-   | XPseudoColor -- ^ Only recongized on GLUT implementations for the X Window
+   | DisplayXPseudoColor -- ^ Only recongized on GLUT implementations for the X Window
                   --   System, boolean indicating if the frame buffer
                   --   configuration\'s X visual is of type @PsuedoColor@.
                   --   Default is \"'IsEqualTo' @1@\".
-   | XTrueColor   -- ^ Only recongized on GLUT implementations for the X Window
+   | DisplayXTrueColor -- ^ Only recongized on GLUT implementations for the X Window
                   --   System, boolean indicating if the frame buffer
                   --   configuration\'s X visual is of type @TrueColor@. Default
                   --   is \"'IsEqualTo' @1@\".
-   | XDirectColor -- ^ Only recongized on GLUT implementations for the X Window
+   | DisplayXDirectColor -- ^ Only recongized on GLUT implementations for the X Window
                   --   System, boolean indicating if the frame buffer
                   --   configuration\'s X visual is of type @DirectColor@.
                   --   Default is \"'IsEqualTo' @1@\".
@@ -402,34 +403,34 @@ data DisplayCapability
 
 displayCapabilityToString :: DisplayCapability -> String
 displayCapabilityToString x = case x of
-   RGBA'        -> "rgba"
-   RGB'         -> "rgb"
-   Red          -> "red"
-   Green        -> "green"
-   Blue         -> "blue"
-   Index'       -> "index"
-   Buffer       -> "buffer"
-   Single'      -> "single"
-   Double'      -> "double"
-   AccA         -> "acca"
-   Acc          -> "acc"
-   Alpha'       -> "alpha"
-   Depth'       -> "depth"
-   Stencil'     -> "stencil"
-   Samples      -> "samples"
-   Stereo'      -> "stereo"
-   Luminance'   -> "luminance"
-   Num          -> "num"
-   Conformant   -> "conformant"
-   Slow         -> "slow"
-   Win32PFD     -> "win32pfd"
-   XVisual      -> "xvisual"
-   XStaticGray  -> "xstaticgray"
-   XGrayScale   -> "xgrayscale"
-   XStaticColor -> "xstaticcolor"
-   XPseudoColor -> "xpseudocolor"
-   XTrueColor   -> "xtruecolor"
-   XDirectColor -> "xdirectcolor"
+   DisplayRGBA         -> "rgba"
+   DisplayRGB          -> "rgb"
+   DisplayRed          -> "red"
+   DisplayGreen        -> "green"
+   DisplayBlue         -> "blue"
+   DisplayIndex        -> "index"
+   DisplayBuffer       -> "buffer"
+   DisplaySingle       -> "single"
+   DisplayDouble       -> "double"
+   DisplayAccA         -> "acca"
+   DisplayAcc          -> "acc"
+   DisplayAlpha        -> "alpha"
+   DisplayDepth        -> "depth"
+   DisplayStencil      -> "stencil"
+   DisplaySamples      -> "samples"
+   DisplayStereo       -> "stereo"
+   DisplayLuminance    -> "luminance"
+   DisplayNum          -> "num"
+   DisplayConformant   -> "conformant"
+   DisplaySlow         -> "slow"
+   DisplayWin32PFD     -> "win32pfd"
+   DisplayXVisual      -> "xvisual"
+   DisplayXStaticGray  -> "xstaticgray"
+   DisplayXGrayScale   -> "xgrayscale"
+   DisplayXStaticColor -> "xstaticcolor"
+   DisplayXPseudoColor -> "xpseudocolor"
+   DisplayXTrueColor   -> "xtruecolor"
+   DisplayXDirectColor -> "xdirectcolor"
 
 -- | A single capability description for 'initialDisplayCapabilities'.
 
@@ -465,11 +466,11 @@ displayCapabilityDescriptionToString (With c) = displayCapabilityToString c
 -- Here is an example using 'initialDisplayCapabilities':
 --
 -- @
---    initialDisplayCapabilities $= [ With  RGB\',
---                                    Where Depth\' IsAtLeast 16,
---                                    With  Samples,
---                                    Where Stencil\' IsNotLessThan 2,
---                                    With  Double\' ]
+--    initialDisplayCapabilities $= [ With  DisplayRGB,
+--                                    Where DisplayDepth IsAtLeast 16,
+--                                    With  DisplaySamples,
+--                                    Where DisplayStencil IsNotLessThan 2,
+--                                    With  DisplayDouble ]
 -- @
 --
 -- The above call requests a window with an RGBA color model (but requesting

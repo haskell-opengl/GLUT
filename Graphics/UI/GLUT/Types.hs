@@ -40,8 +40,8 @@ makeWindow = Window
 
 --------------------------------------------------------------------------------
 
--- | A relation between a 'Graphics.UI.GLUT.Initialization.Capability' and a
--- numeric value.
+-- | A relation between a 'Graphics.UI.GLUT.Initialization.DisplayCapability'
+-- and a numeric value.
 
 data Relation
    = IsEqualTo        -- ^ Equal.

@@ -12,9 +12,7 @@
 -}
 
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
-
-import Graphics.Rendering.OpenGL
-import Graphics.UI.GLUT as GLUT
+import Graphics.UI.GLUT
 
 myInit :: IO ()
 myInit = do
@@ -117,7 +115,7 @@ reshape size = do
 main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
-   initialDisplayMode $= [ Single, GLUT.RGB, Depth ]
+   initialDisplayMode $= [ SingleBuffered, RGBMode, WithDepthBuffer ]
    initialWindowSize $= Size 200 200
    initialWindowPosition $= Position 100 100
    createWindow progName

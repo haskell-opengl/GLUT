@@ -13,9 +13,7 @@
 
 import Data.Char ( toLower )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
-
-import Graphics.Rendering.OpenGL
-import Graphics.UI.GLUT as GLUT
+import Graphics.UI.GLUT
 
 myInit :: IO ()
 myInit = do
@@ -82,7 +80,7 @@ keyboard _ _ _ _ = return ()
 main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
-   initialDisplayMode $= [ Single, GLUT.RGB, Depth ]
+   initialDisplayMode $= [ SingleBuffered, RGBMode, WithDepthBuffer ]
    initialWindowSize $= Size 500 500
    createWindow progName
    myInit

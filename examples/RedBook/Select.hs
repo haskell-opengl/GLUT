@@ -16,9 +16,7 @@
 -}
 
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
-
-import Graphics.Rendering.OpenGL
-import Graphics.UI.GLUT as GLUT
+import Graphics.UI.GLUT
 
 -- draw a triangle with vertices at (x1, y1), (x2, y2) and (x3, y3) at z units
 -- away from the origin.
@@ -142,7 +140,7 @@ keyboard _            _    _ _ = return ()
 main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
-   initialDisplayMode $= [ Single, GLUT.RGB, Depth ]
+   initialDisplayMode $= [ SingleBuffered, RGBMode, WithDepthBuffer ]
    initialWindowSize $= Size 200 200
    initialWindowPosition $= Position 100 100
    createWindow progName

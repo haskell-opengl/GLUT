@@ -17,9 +17,7 @@
 import Data.Either ( Either(..) )
 import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
 import System.Random ( randomIO )
-
-import Graphics.Rendering.OpenGL
-import Graphics.UI.GLUT as GLUT
+import Graphics.UI.GLUT
 
 display :: [DisplayList] -> DisplayCallback
 display displayLists = do
@@ -126,7 +124,7 @@ keyboard _            _    _ _ = return ()
 main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
-   initialDisplayMode $= [ Single, GLUT.RGB ]
+   initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 500 500
    createWindow progName
    displayLists <- myInit

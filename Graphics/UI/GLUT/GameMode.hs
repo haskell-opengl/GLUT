@@ -53,21 +53,22 @@ import Graphics.UI.GLUT.Initialization ( Relation(..) )
 -- | Capabilities for 'gameModeCapabilities'
 
 data GameModeCapability
-   = Width         -- ^ Width of the screen resolution in pixels
-   | Height        -- ^ Height of the screen resolution in pixels
-   | BitsPerPlane  -- ^ Color depth of the screen in bits
-   | RefreshRate   -- ^ Refresh rate in Hertz
-   | Num'          -- ^ Match the Nth frame buffer configuration compatible with
-                   --   the given capabilities (numbering starts at 1)
+   = GameModeWidth         -- ^ Width of the screen resolution in pixels
+   | GameModeHeight        -- ^ Height of the screen resolution in pixels
+   | GameModeBitsPerPlane  -- ^ Color depth of the screen in bits
+   | GameModeRefreshRate   -- ^ Refresh rate in Hertz
+   | GameModeNum           -- ^ Match the Nth frame buffer configuration
+                           --   compatible with the given capabilities
+                           --   (numbering starts at 1)
    deriving ( Eq, Ord, Show )
 
 gameModeCapabilityToString :: GameModeCapability -> String
 gameModeCapabilityToString x = case x of
-   Width        -> "width"
-   Height       -> "height"
-   BitsPerPlane -> "bpp"
-   RefreshRate  -> "hertz"
-   Num'         -> "num"
+   GameModeWidth        -> "width"
+   GameModeHeight       -> "height"
+   GameModeBitsPerPlane -> "bpp"
+   GameModeRefreshRate  -> "hertz"
+   GameModeNum          -> "num"
 
 -- | A single capability description for 'gameModeCapabilities'.
 

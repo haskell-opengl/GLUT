@@ -7,8 +7,7 @@
    This is a simple, introductory OpenGL program.
 -}
 
-import Graphics.Rendering.OpenGL
-import Graphics.UI.GLUT as GLUT
+import Graphics.UI.GLUT
 
 display :: DisplayCallback
 display = do
@@ -48,7 +47,7 @@ myInit = do
 main :: IO ()
 main = do
    getArgsAndInitialize
-   initialDisplayMode $= [ Single, GLUT.RGB ]
+   initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 250 250
    initialWindowPosition $= Position 100 100
    createWindow "hello"
