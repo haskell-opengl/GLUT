@@ -27,7 +27,7 @@ module Graphics.UI.GLUT.Objects (
    Object(..),
 
    -- * Type synonyms
-   Sides, Rings,
+   Sides, Rings, NumLevels,
 
    -- * Rendering
    renderObject
