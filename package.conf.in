@@ -25,6 +25,6 @@ Package {
 	c_includes	= [ "HsGLUT.h" ],
 	package_deps	= [ "base", "OpenGL" ],
 	extra_ghc_opts	= [],
-	extra_cc_opts	= [ "" GL_CFLAGS ],
-	extra_ld_opts	= [ "" GL_LIBS ]
+	extra_cc_opts	= [],
+	extra_ld_opts	= []
 }
