@@ -17,8 +17,8 @@ myInit = do
    let c = Color4 0.5 0.5 0.5 1.0
    clearColor $= c
    fogColor $= c
-   fog $= True
-   fogMode $= FogCoordinate
+   fogMode $= Exp2 0.4;
+   fogCoordinateSource $= FogCoordinate
    shadeModel $= Smooth
 
 triangle :: IO ()
@@ -29,19 +29,25 @@ triangle =
        color3f = color :: Color3 GLfloat -> IO ()
    in renderPrimitive Triangles $ do
       color3f (Color3 1 0 0)
-      fogCoordf (FogCoord1 0.0)
+      fogCoordf (FogCoord1 0)
       vertex2f (Vertex2 5 5)
       color3f (Color3 0 1 0)
-      fogCoordf (FogCoord1 0.5)
-      vertex2f (Vertex2 25 5)
+      fogCoordf (FogCoord1 3)
+      vertex2f (Vertex2 12.5 5)
       color3f (Color3 0 0 1)
-      fogCoordf (FogCoord1 1.0)
+      fogCoordf (FogCoord1 7)
       vertex2f (Vertex2 5 25)
 
 display :: DisplayCallback
 display = do
    clear [ ColorBuffer ]
+   fog $= False
    triangle
+   matrixExcursion $ do
+      let translatef = translate :: Vector3 GLfloat -> IO ()
+      translatef (Vector3 12.5 0 0)
+      fog $= True
+      triangle
    flush
 
 reshape :: ReshapeCallback
