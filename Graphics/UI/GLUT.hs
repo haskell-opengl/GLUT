@@ -9,7 +9,10 @@
 -- Portability :  portable
 --
 -- A Haskell binding for GLUT, the OpenGL Utility Toolkit, a window system
--- independent toolkit for writing OpenGL programs.
+-- independent toolkit for writing OpenGL programs. It includes support for
+-- the extended functionality available in freeglut (see
+-- <http://freeglut.sourceforge.net/>) and OpenGLUT (see
+-- <http://openglut.sourceforge.net/>), too.
 --
 -----------------------------------------------------------------------------
 
