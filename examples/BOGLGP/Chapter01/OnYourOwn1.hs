@@ -1,5 +1,5 @@
 {-
-   Simple.hs (adapted from Simple.cpp which is (c) Astle/Hawkins)
+   OnYourOwn1.hs (adapted from Simple.cpp which is (c) 2004 Astle/Hawkins)
    Copyright (c) Sven Panne 2004 <sven.panne@aedion.de>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
@@ -10,7 +10,7 @@ import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT hiding ( initialize )
 
 ----------------------------------------------------------------------------
--- Setup GLUT and OpenGL, drop into the event loop
+-- Setup GLUT and OpenGL, drop into the event loop.
 ----------------------------------------------------------------------------
 main :: IO ()
 main = do
@@ -21,7 +21,7 @@ main = do
    -- Create the window
    initialWindowSize $= Size 1024 768
    initialWindowPosition $= Position 100 150
-   createWindow "BOGLGP Chapter 1"
+   createWindow "BOGLGP Chapter 1 - On Your Own 1"
 
    initialize
 
@@ -57,7 +57,7 @@ keyboardMouseHandler (Char 'q')              _ _ _ = exitWith ExitSuccess
 keyboardMouseHandler _                       _ _ _ = postRedisplay Nothing
 
 ----------------------------------------------------------------------------
--- Reset the viewport for window changes
+-- Reset the viewport for window changes.
 ----------------------------------------------------------------------------
 reshape :: ReshapeCallback
 reshape size@(Size width height) =
@@ -89,22 +89,22 @@ display = do
    renderPrimitive Triangles $ do
       color3f (Color3 1 0 0)
       vertex3f (Vertex3 2 2.5 (-1))
-      color3f (Color3 0 1 0)
+      color3f (Color3 1 0 0)
       vertex3f (Vertex3 (-3.5) (-2.5) (-1))
-      color3f (Color3 0 0 1)
+      color3f (Color3 1 0 0)
       vertex3f (Vertex3 2 (-4) 0)
 
    -- draw a polygon
    renderPrimitive Polygon $ do
-      color3f (Color3 1 1 1)
+      color3f (Color3 0 0 1)
       vertex3f (Vertex3 (-1) 2 0)
-      color3f (Color3 1 1 0)
+      color3f (Color3 0 0 1)
       vertex3f (Vertex3 (-3) (-0.5) 0)
-      color3f (Color3 0 1 1)
+      color3f (Color3 0 0 1)
       vertex3f (Vertex3 (-1.5) (-3) 0)
-      color3f (Color3 0 0 0)
+      color3f (Color3 0 0 1)
       vertex3f (Vertex3 1 (-2) 0)
-      color3f (Color3 1 0 1)
+      color3f (Color3 0 0 1)
       vertex3f (Vertex3 1 1 0)
 
    -- draw everything and swap the display buffer

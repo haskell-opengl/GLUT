@@ -1,11 +1,22 @@
 # -----------------------------------------------------------------------------
 
-TOP = ../../..
+TOP = ../../../..
 include $(TOP)/mk/boilerplate.mk
 
 # -----------------------------------------------------------------------------
 
-SUBDIRS = Chapter01 Chapter02 Chapter03
+EXAMPLES    := $(wildcard *.hs)
+BINS        := $(addsuffix $(exeext),$(EXAMPLES:.hs=))
+CLEAN_FILES += $(BINS)
+
+HC           = $(GHC_INPLACE)
+MKDEPENDHS   = $(GHC_INPLACE)
+SRC_HC_OPTS += -Wall -O -package GLUT
+
+all:: $(BINS)
+
+$(BINS): %$(exeext): %.o
+	$(HC) -o $@ $(HC_OPTS) $(LD_OPTS) $<
 
 # -----------------------------------------------------------------------------
 
