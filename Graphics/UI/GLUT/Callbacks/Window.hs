@@ -41,8 +41,7 @@ module Graphics.UI.GLUT.Callbacks.Window (
    TabletPosition(..), TabletInput(..), TabletCallback, setTabletCallback,
 
    -- * Joystick callback
-   JoystickButtons(..), JoystickPosition(..), setJoystickCallback,
-   forceJoystickCallback
+   JoystickButtons(..), JoystickPosition(..), setJoystickCallback
 ) where
 
 import Control.Monad ( liftM )
@@ -768,7 +767,7 @@ type JoystickCallback' = CUInt -> CInt -> CInt -> CInt -> IO ()
 -- | Set the joystick callback for the /current window./ The joystick callback
 -- is called either due to polling of the joystick at the uniform timer interval
 -- specified (if > 0) or in response to an explicit call of
--- 'forceJoystickCallback'.
+-- 'Graphics.UI.GLUT.DeviceControl.forceJoystickCallback'.
 --
 -- /X Implementation Notes:/ Currently GLUT has no joystick support for X11.
 
@@ -784,10 +783,3 @@ foreign import ccall "wrapper" makeJoystickFunc ::
 
 foreign import CALLCONV unsafe "glutJoystickFunc" glutJoystickFunc ::
    FunPtr JoystickCallback' -> CInt -> IO ()
-
--- | Execute the joystick callback once (if one exists). This is done in a
--- synchronous fashion within the current context, i.e. when
--- 'forceJoystickCallback' returns, the callback will have already happened.
-		
-foreign import CALLCONV unsafe "glutForceJoystickFunc" forceJoystickCallback ::
-   IO ()

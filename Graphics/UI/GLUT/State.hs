@@ -46,8 +46,11 @@ module Graphics.UI.GLUT.State (
   ScreenInfo(..), getScreenInfo,
 
   -- ** Keyboard information
-  GlobalKeyRepeat(..), PerWindowKeyRepeat(..), KeyboardInfo(..),
-  getKeyboardInfo,
+  GlobalKeyRepeat(..),
+  marshalGlobalKeyRepeat,   -- used only internally
+  PerWindowKeyRepeat(..),
+  marshalPerWindowKeyRepeat,   -- used only internally
+  KeyboardInfo(..), getKeyboardInfo,
 
   -- ** Mouse information
   MouseInfo(..), getMouseInfo,
@@ -338,6 +341,11 @@ data GlobalKeyRepeat
    | GlobalKeyRepeatDefault
    deriving ( Eq, Ord )
 
+marshalGlobalKeyRepeat :: GlobalKeyRepeat -> CInt
+marshalGlobalKeyRepeat GlobalKeyRepeatOff     = glut_KEY_REPEAT_OFF
+marshalGlobalKeyRepeat GlobalKeyRepeatOn      = glut_KEY_REPEAT_ON
+marshalGlobalKeyRepeat GlobalKeyRepeatDefault = glut_KEY_REPEAT_DEFAULT
+
 unmarshalGlobalKeyRepeat :: CInt -> GlobalKeyRepeat
 unmarshalGlobalKeyRepeat r
    | r == glut_KEY_REPEAT_OFF     = GlobalKeyRepeatOff
@@ -351,6 +359,10 @@ data PerWindowKeyRepeat
    = PerWindowKeyRepeatOff
    | PerWindowKeyRepeatOn
    deriving ( Eq, Ord )
+
+marshalPerWindowKeyRepeat :: PerWindowKeyRepeat -> CInt
+marshalPerWindowKeyRepeat PerWindowKeyRepeatOff = 0
+marshalPerWindowKeyRepeat PerWindowKeyRepeatOn  = 1
 
 unmarshalPerWindowKeyRepeat :: CInt -> PerWindowKeyRepeat
 unmarshalPerWindowKeyRepeat 0 = PerWindowKeyRepeatOff
