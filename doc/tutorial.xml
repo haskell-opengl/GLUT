@@ -275,7 +275,7 @@ Monads are so essential to functional programming, that they have a special
 syntactic construct in Haskell, the <em>do notation</em>. Consider the following
 simple Haskell program, which uses monads:
 
-<code class="Print" lang="hs" main="main"
+<code class="Print" lang="hs" main="main" compileoptions="-fno-warn-name-shadowing"
 ><![CDATA[main :: IO ()
 main = do
   let x = True
@@ -1449,11 +1449,11 @@ starPoints radius rays =
                   zip [1 :: Int, 2 ..] $
                   circlePoints radius rays]]></code>
 
-For tesselation we need to create a <tt>ComplexPolygon</tt>, which has a list of
-<tt>ComplexContour</tt>s. A <tt>ComplexContour</tt> contains a list of
-<tt>AnnotatedVertex</tt>es. The annotation can be used for color or similar
-information, but we do not make use of this annotation and simple annotate every
-vertex with 0.
+For tessellation we need to create a <tt>ComplexPolygon</tt>, which consists of
+a list of <tt>ComplexContour</tt>s and a <tt>ComplexContour</tt> consists of a
+list of <tt>AnnotatedVertex</tt>es. The annotation can be used for color or
+similar information, but we do not make use of this annotation and simple
+annotate every vertex with 0.
 
 <code lang="hs" class="Star" sequel="true"
 ><![CDATA[type DontCare = Int
@@ -1463,8 +1463,8 @@ complexPolygon points =
    ComplexPolygon
      [ComplexContour $ map (\v -> AnnotatedVertex v 0) points]]]></code>
 
-The function <tt>tesselate</tt> creates a list of simple polygons. It needs some
-control information, which we do not explain here.
+The function <tt>tessellate</tt> creates a list of simple polygons. It needs
+some control information, which we do not explain here.
 
 <code lang="hs" class="Star" sequel="true"
 ><![CDATA[star :: GLdouble -> Int -> IO ()
@@ -2062,63 +2062,65 @@ a <tt>preservingMatrix</tt> application.
 
 <code lang="hs" class="RubikFace"><![CDATA[module RubikFace where
 import Graphics.Rendering.OpenGL
-
 import Squares]]></code>
+
 Doing a frame involves the four sides of a frame. Each side is created
 at the origin and then moved to its final position:
 <code lang="hs" class="RubikFace" sequel="true"
-><![CDATA[frame width height border = do
-  let bh = border/2
-  let wh = width/2-bh
-  let hh = height/2-bh
+><![CDATA[frame :: GLfloat -> GLfloat -> GLfloat -> IO ()
+frame width height border = do
+  let bh = border / 2
+  let wh = width  / 2 - bh
+  let hh = height / 2 - bh
 
   preservingMatrix $ do
-    translate $ Vector3 0 hh (0::GLfloat)
+    translate $ Vector3 0 hh 0
     myRect width  border
   preservingMatrix $ do
-    translate $ Vector3 0 (-hh) (0::GLfloat)
+    translate $ Vector3 0 (-hh) 0
     myRect width  border
   preservingMatrix $ do
-    translate $ Vector3 (-wh) 0 (0::GLfloat)
-    myRect  border height
+    translate $ Vector3 (-wh) 0 0
+    myRect border height
   preservingMatrix $ do
-    translate $ Vector3 wh 0 (0::GLfloat)
-    myRect  border height ]]></code>
-Each of the nine fields is rendered by drawing its frame and its
-    colored square:
+    translate $ Vector3 wh 0 0
+    myRect border height]]></code>
+
+Each of the nine fields is rendered by drawing its frame and its colored square:
+
 <code lang="hs" class="RubikFace" sequel="true"
-><![CDATA[originField width color = do
-  let frameWidth = width/10
+><![CDATA[originField :: GLfloat -> Color4 GLfloat -> IO ()
+originField width col = do
+  let frameWidth = width / 10
   currentColor $= Color4 0 0 0 1
   frame width width frameWidth
-  let sc = 18/20::GLfloat
-  currentColor $= color
-  square (width-frameWidth)]]></code>
- Eventually the side of Rubik's Cube can be drawn
+  currentColor $= col
+  square (width - frameWidth)]]></code>
+
+Eventually the side of Rubik's Cube can be drawn:
+
 <code lang="hs" class="RubikFace" sequel="true"
 ><![CDATA[renderArea :: GLfloat -> [[Color4 GLfloat]] -> IO ()
-renderArea width css
- = do
-    let cs  = concat css
-        cps = zip cs $ areaFields width
-    mapM_  (\(c,f)-> f(originField width c)) cps
+renderArea width css = do
+  let cs  = concat css
+      cps = zip cs $ areaFields width
+  mapM_  (\(c,f) -> f (originField width c)) cps
 
+areaFields :: GLfloat -> [IO () -> IO ()]
 areaFields width =
-  [makeSquare x y |x<-[1,0,-1],y<-[1,0,-1]]
-    where
-      makeSquare xn yn = \f -> preservingMatrix $ do
-       let
-         x = xn*width
-         y = yn*width
-       translate $ Vector3 x y 0
-       f
-
-red     = Color4 1 0 0 (1::GLfloat)
-green   = Color4 0 1 0 (1::GLfloat)
-blue    = Color4 0 0 1 (1::GLfloat)
-yellow  = Color4 1 1 0 (1::GLfloat)
-white   = Color4 1 1 1 (1::GLfloat)
-black   = Color4 0 0 0 (1::GLfloat)]]></code>
+  [makeSquare x y | x<-[1,0,-1], y<-[1,0,-1]]
+  where makeSquare xn yn = \f -> preservingMatrix $ do
+          let x = xn * width
+              y = yn * width
+          translate $ Vector3 x y 0
+          f
+red, green, blue, yellow, white, black :: Color4 GLfloat
+red    = Color4 1 0 0 1
+green  = Color4 0 1 0 1
+blue   = Color4 0 0 1 1
+yellow = Color4 1 1 0 1
+white  = Color4 1 1 1 1
+black  = Color4 0 0 0 1]]></code>
 
 The following module tests the rendering. Two sides are
 rendered. Further transformations are applied to them.
@@ -2132,12 +2134,13 @@ _FIELD_WIDTH = 1/5
 main :: IO ()
 main =  renderInWindow faces
 
+faces :: DisplayCallback
 faces = do
   clearColor $= white
   clear [ColorBuffer]
 
   loadIdentity
-  translate  $ Vector3 (-0.6) 0.4 (0::GLfloat)
+  translate $ Vector3 (-0.6) 0.4 (0::GLfloat)
   renderArea _FIELD_WIDTH r1
 
   loadIdentity
@@ -2146,7 +2149,8 @@ faces = do
   scale 1.5 1.5 (1::GLfloat)
   renderArea _FIELD_WIDTH r1
 
-r1=[[red,blue,yellow],[white,green,red],[green,yellow,blue]]</code>
+r1 :: [[Color4 GLfloat]]
+r1 = [[red,blue,yellow],[white,green,red],[green,yellow,blue]]</code>
 </example>
 
 The resulting window can be found in figure<white/>
@@ -2182,36 +2186,35 @@ data type <tt>Maybe</tt>.
 <example>
 We define the first reshape function for a window. It is the identity
 function, which does not specify anything, how to render the picture.
-<code class="Reshape1" lang="hs" main="main">import PointsForRendering
+<code class="Reshape1" lang="hs" main="main"
+><![CDATA[import PointsForRendering
 
 main :: IO ()
 main = do
-  (progName,_) &lt;- getArgsAndInitialize
+  (progName,_) <- getArgsAndInitialize
   createWindow progName
   displayCallback $= display
-  <redv>reshapeCallback $= Just reshape</redv>
+  ]]><redv>reshapeCallback $= Just reshape</redv><![CDATA[
   mainLoop
 
 display :: DisplayCallback
 display = do
- clear [ColorBuffer]
- displayPoints points Quads
-   where
-    points
-     = [(0.5,0.5,0)
-       ,(-0.5,0.5,0)
-       ,(-0.5,-0.5,0)
-       ,(0.5,-0.5,0)]
+  clear [ColorBuffer]
+  displayPoints points Quads
+  where points = [( 0.5,  0.5, 0),
+                  (-0.5,  0.5, 0),
+                  (-0.5, -0.5, 0),
+                  ( 0.5, -0.5, 0)]
 
-reshape s = return ()</code>
-Run this example. You will see a white square in the middle of a black
-screen. Now resize the window. You will notice that the size of the
-square will not change. If you make the window smaller parts of the
-picture are not displayed, if you enlarge the window parts of the
-window contain no image (which means it might be some arbitrary
-image). Figure <white/>
-<ref name="Reshape1"></ref> shows how the window looks after enlarging
-it a bit.
+reshape :: ReshapeCallback
+reshape _ = return ()]]></code>
+
+When you run this example, you will see a white square in the middle of a black
+screen. Now resize the window, and you will notice that the size of the square
+will not change. If you make the window smaller, parts of the picture are not
+displayed, if you enlarge the window, parts of the window contain no image
+(which means it might be some arbitrary image). Figure<white/><ref
+name="Reshape1"></ref> shows how the window looks after enlarging it a bit.
 
 <bild name="Reshape1" pdfscale="0.6" psscale="0.5"
 caption="Enlarging a window with the empty reshape function."
@@ -2232,30 +2235,29 @@ of the screen to be used for rendering in pixels.
 If you want the window to be used completely for rendering the image,
 then the position needs to be set to <tt>Position 0 0</tt>. i.e. no
 offset and as size the complete window size is to be used:
-<code class="Reshape2" lang="hs" main="main">import PointsForRendering
+<code class="Reshape2" lang="hs" main="main"
+><![CDATA[import PointsForRendering
 
 main :: IO ()
 main = do
-  (progName,_) &lt;- getArgsAndInitialize
+  (progName,_) <- getArgsAndInitialize
   createWindow progName
   displayCallback $= display
-  <redv>reshapeCallback $= Just reshape</redv>
+  ]]><redv>reshapeCallback $= Just reshape</redv><![CDATA[
   mainLoop
 
 display :: DisplayCallback
 display = do
   clear [ColorBuffer]
   displayPoints points Quads
-   where
-    points
-     = [(0.5,0.5,0)
-       ,(-0.5,0.5,0)
-       ,(-0.5,-0.5,0)
-       ,(0.5,-0.5,0)]
+  where points = [( 0.5,  0.5, 0),
+                  (-0.5,  0.5, 0),
+                  (-0.5, -0.5, 0),
+                  ( 0.5, -0.5, 0)]
 
-reshape s@(Size w h) = do
-  <redv>viewport $= (Position 0 0, s)</redv>
-</code>
+reshape :: ReshapeCallback
+reshape s = ]]><redv>viewport $= (Position 0 0, s)</redv></code>
+
 If you start this program and resize the window, then always the
 complete window pane will be used for rendering your image.
 </example>
@@ -2286,7 +2288,8 @@ display = do
     ps1=[(0.5,0.5,0),(-0.5,0.5,0),(-0.5,-0.5,0),(0.5,-0.5,0)]
     ps2=[(1,1,0),(-1,-1,0),(-1,1,0),(1,-1,0) ]
 
-reshape s@(Size w h) = do
+reshape :: ReshapeCallback
+reshape (Size w h) = do
   <redv>viewport $= (Position 50 50, Size (w-80) (h-60))</redv>
 </code>
 
@@ -2337,6 +2340,8 @@ main = do
 
   mainLoop
 
+projection :: GLdouble -> GLdouble -> GLdouble
+           -> GLdouble -> GLdouble -> GLdouble -> IO ()
 projection xl xu yl yu zl zu = do
   <redv>matrixMode $= Projection</redv>
   loadIdentity
@@ -2396,18 +2401,7 @@ variables: <tt>Data.IORef</tt>. This provides functions for creation,
 setting, retrieving and modification of state variables. These functions are
 called:<br/>
  <tt>newIORef, writeIORef, readIORef, modifyIORef</tt>.<p/>
-
-If you think these names a bit too technical, then you might use the
-following module, which makes <tt>IORef</tt> variables instances of
-the type classes <tt>HasGetter</tt> and <tt>HasSetter</tt>. Thus we
-can use our own state variables in the same way, we use the HOpenGL
-state variables.
-
-<code class="StateUtil" lang="hs">module StateUtil where
-import Data.IORef
-new = newIORef</code>
 </section>
-
 
 <section titel="Handling of Events">
 Now we know how to modell our own state. We can use this for reacting
@@ -2455,9 +2449,9 @@ call to the function <tt>postRedisplay</tt> needs to be done.
 
 <example>In this example we draw a circle. The radius of the circle
 can be changed by use of the <tt>+</tt> and <tt>-</tt> key.
-<code class="State" lang="hs" main="main"><![CDATA[import Circle
-import StateUtil
+<code class="State" lang="hs" main="main"><![CDATA[import Data.IORef
 import Graphics.UI.GLUT
+import Circle
 
 main :: IO ()
 main = do
@@ -2467,7 +2461,7 @@ main = do
 We create a state variable which stores the current radius of the circle:
 
 <code class="State" lang="hs" main="main" sequel="true"
-><redv>  radius &lt;- new 0.1</redv></code>
+><redv>  radius &lt;- newIORef 0.1</redv></code>
 
 The display function gets this state variable  as first argument:
 
@@ -2484,7 +2478,8 @@ The display function gets the current value for the radius and draws a
 filled circle:
 
 <code class="State" lang="hs" main="main" sequel="true"
->display radius = do
+>display :: IORef GLfloat -> DisplayCallback
+display radius = do
   clear [ColorBuffer]
   <redv>r &lt;- get radius</redv>
   fillCircle r</code>
@@ -2493,7 +2488,8 @@ The keyboard callback reacts on two keyboard events. The value of the
 radius variable are changed:
 
 <code class="State" lang="hs" main="main" sequel="true"
-><![CDATA[keyboard radius (Char '+') Down _ _ = do
+><![CDATA[keyboard :: IORef GLfloat -> KeyboardMouseCallback
+keyboard radius (Char '+') Down _ _ = do
   r <- get radius
   radius $=  r+0.05
   postRedisplay Nothing
@@ -2526,15 +2522,16 @@ usually a call to <tt>postRedisplay</tt>.
 We define our first animation. A ring is displayed with a changing
 radius.
 
-<code class="Idle" lang="hs" main="main"><![CDATA[import Ring
-import StateUtil
+<code class="Idle" lang="hs" main="main"><![CDATA[import Data.IORef
+import Graphics.UI.GLUT
+import Ring]]></code>
 
-import Graphics.UI.GLUT]]></code>
 We define a constant which denotes the value by which the radius
 changes between every redisplay:
 <code class="Idle" lang="hs" sequel="true"
-><![CDATA[
+><![CDATA[_STEP :: GLfloat
 _STEP = 0.001]]></code>
+
 Within the main function an <em>idle</em> callback is added to the window:
 
 <code class="Idle" lang="hs" sequel="true"
@@ -2542,26 +2539,30 @@ Within the main function an <em>idle</em> callback is added to the window:
 main = do
   (progName,_) &lt;-  getArgsAndInitialize
   createWindow progName
-  radius &lt;- new 0.1
-  step   &lt;- new _STEP
+  radius &lt;- newIORef 0.1
+  step   &lt;- newIORef _STEP
   displayCallback $= display radius
   <redv>idleCallback $= Just (idle radius step)</redv>
   mainLoop</code>
-The display function renders a ring, depending on the state variable
-  for the radius:
+
+The display function renders a ring, depending on the state variable for the
+radius:
+
 <code class="Idle" lang="hs" sequel="true"
-><![CDATA[display radius = do
+><![CDATA[display :: IORef GLfloat -> DisplayCallback
+display radius = do
   clear [ColorBuffer]
   r <- get radius
   ring r (r+0.2)
   flush]]></code>
-The idle function changes the value of the variable <tt
->radius</tt> depending on the second state variable <tt>step</tt>.
+
+The idle function changes the value of the variable <tt >radius</tt> depending
+on the second state variable <tt>step</tt>.
 
 <code class="Idle" lang="hs" sequel="true"
->idle radius step = do
+>idle :: IORef GLfloat -> IORef GLfloat -> IdleCallback
+idle radius step = do
   r &lt;- get radius
-  s &lt;- get step
   if r&gt;=1 then step $= (-_STEP)
           else if r&lt;=0 then step $= _STEP
                        else return ()
@@ -2595,12 +2596,11 @@ statement of the display function.
 
 <example>The ring with changing radius over time now with double
 buffering.
-<code class="Double" lang="hs" main="main">import Ring
+<code class="Double" lang="hs" main="main">import Data.IORef
+import Ring
 import PointsForRendering
-import StateUtil
 
-import Data.IORef
-
+_STEP :: GLfloat
 _STEP = 0.001
 
 main :: IO ()
@@ -2608,8 +2608,8 @@ main = do
   (progName,_) &lt;-  getArgsAndInitialize
   <redv>initialDisplayMode $= [DoubleBuffered]</redv>
   createWindow progName
-  radius &lt;- new 0.1
-  step   &lt;- new _STEP
+  radius &lt;- newIORef 0.1
+  step   &lt;- newIORef _STEP
   displayCallback $= display radius
   idleCallback $= Just (idle radius step)
   mainLoop
@@ -2624,7 +2624,6 @@ display radius = do
 idle :: IORef GLfloat -> IORef GLfloat -> IdleCallback
 idle radius step = do
   r &lt;- get radius
-  s &lt;- get step
   if r&gt;=1 then step $= (-_STEP)
           else if r&lt;=0 then step $= _STEP
                        else return ()
@@ -2641,85 +2640,85 @@ idle radius step = do
 
 
 <section titel="Pong: A first Game">
-By now you have seen a lot of tiny examples. It is time to draw the
-techniques together and do an application with HOpenGL. In this
-section we will implement one of the first animated computer games
-ever: <tt>Pong</tt>. It consists of a small white circle which moves
-over a black screen and two paddles which can move on a vertical line.
+By now you have seen a lot of tiny examples. It is time to draw the techniques
+together and do an application with HOpenGL. In this section we will implement
+one of the first animated computer games ever: <tt>Pong</tt>. It consists of a
+small white circle which moves over a black screen and two paddles which can
+move on a vertical line.
 
-Pong in action can be found in figure<white/>
-<ref name="Pong"></ref>.
+Pong in action can be found in figure<white/> <ref name="Pong"></ref>.
 
 <bild name="Pong" pdfscale="0.6" psscale="0.5"
 caption="Pong in action."
 />
 
 <code class="Pong" lang="hs" main="main"
-><![CDATA[import Circle
-import Squares
-
+><![CDATA[import Graphics.UI.GLUT
 import Data.IORef
-import Graphics.UI.GLUT]]></code>
+import Circle
+import Squares]]></code>
 
-First of all we define some constant values for the game:
-x-, y-coordinates of the game, width and height of a paddle, the
-radius of the ball, initial factor, how a ball and a paddle changes
-its position, and an initial board size.
+First of all we define some constant values for the game: x-, y-coordinates of
+the game, width and height of a paddle, the radius of the ball, initial factor,
+how a ball and a paddle changes its position, and an initial board size.
+
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[_LEFT  = -2
+><![CDATA[_LEFT, _RIGHT, _TOP, _BOTTOM :: GLfloat
+_LEFT  = -2
 _RIGHT =  1
 _TOP   =  1
 _BOTTOM= -1
 
+paddleWidth, paddleHeight, ballRadius :: GLfloat
 paddleWidth  = 0.07
 paddleHeight = 0.2
 ballRadius   = 0.035
 
-_INITIAL_WIDTH :: GLsizei
-_INITIAL_WIDTH=400
+_INITIAL_WIDTH, _INITIAL_HEIGHT :: GLsizei
+_INITIAL_WIDTH = 400
+_INITIAL_HEIGHT = 200
 
-_INITIAL_HEIGHT::GLsizei
-_INITIAL_HEIGHT=200
-
+_INITIAL_BALL_DIR, _INITIAL_PADDLE_DIR :: GLfloat
 _INITIAL_BALL_DIR = 0.002
 _INITIAL_PADDLE_DIR = 0.005]]></code>
-We define a data type, game. The game state can be characterized by
-the position of the ball and the values these coordinates change for
-the next redisplay:
+
+We define a data type, game. The game state can be characterized by the position
+of the ball and the values these coordinates change for the next redisplay:
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[data Ball   = Ball (GLfloat,GLfloat) GLfloat GLfloat]]></code>
+><![CDATA[data Ball = Ball (GLfloat,GLfloat) GLfloat GLfloat]]></code>
 
-The paddles, which are characterized by their position and the
-position change on the y-axis (x-axis is fixed for a paddle).
+The paddles, which are characterized by their position and the position change
+on the y-axis (x-axis is fixed for a paddle).
 
 <code class="Pong" lang="hs" sequel="true"
 ><![CDATA[type Paddle = (GLfloat,GLfloat,GLfloat)]]></code>
 
-Additionally a game has points for the left and the right player and a
-factor which denotes how fast ball and paddles move:
+Additionally a game has points for the left and the right player and a factor
+which denotes how fast ball and paddles move:
 
 <code class="Pong" lang="hs" sequel="true"
 ><![CDATA[data Game
  = Game { ball ::Ball
         , leftP,rightP :: Paddle
         , points ::(Int,Int)
-        , moveFactor::GLfloat}
-]]></code>
+        , moveFactor::GLfloat}]]></code>
 
 For a starting game we provide the following initial game state:
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[initGame
+><![CDATA[initGame :: Game
+initGame
  = Game {ball=Ball (-0.8,0.3) _INITIAL_BALL_DIR _INITIAL_BALL_DIR
         ,leftP=(_LEFT+paddleWidth,_BOTTOM,0)
         ,rightP=(_RIGHT-2*paddleWidth,_BOTTOM,0)
         ,points=(0,0)
         ,moveFactor=1
         }]]></code>
-The main function creates a double buffering window in fullscreen
-mode. An initial game state is created and passed to the keyboard,
-display, idle and reshape function:
+
+The main function creates a double buffering window in fullscreen mode. An
+initial game state is created and passed to the keyboard, display, idle and
+reshape function:
 
 
 <code class="Pong" lang="hs" sequel="true"
@@ -2737,39 +2736,43 @@ main = do
   reshapeCallback $= Just (reshape game)
   mainLoop]]></code>
 
-The display function simply gets the ball and paddles from the game
-state and renders these:
+The display function simply gets the ball and paddles from the game state and
+renders these:
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[display game = do
+><![CDATA[display :: IORef Game -> DisplayCallback
+display game = do
   clear [ColorBuffer]
   g <- get game
-  let (Ball  pos xDir yDir) = ball g
-  --a ball is a circle
+  let (Ball pos _xDir _yDir) = ball g
+  -- a ball is a circle
   displayAt pos $ fillCircle ballRadius
-  displayPaddle$leftP g
-  displayPaddle$rightP g
+  displayPaddle $ leftP g
+  displayPaddle $ rightP g
   swapBuffers]]></code>
 
 Paddles are simply rectangles:
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[displayPaddle (x,y,_) =  preservingMatrix $ do
+><![CDATA[displayPaddle :: Paddle -> IO ()
+displayPaddle (x,y,_) = preservingMatrix $ do
   translate $ Vector3 (paddleWidth/2) (paddleHeight/2) 0
-  displayAt (x,y)$myRect paddleWidth paddleHeight]]></code>
+  displayAt (x,y) $ myRect paddleWidth paddleHeight]]></code>
 
 We made use of the utility function which moves a shape to some position:
+
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[displayAt (x, y) displayMe = preservingMatrix $ do
-  translate $ Vector3 x y (0::GLfloat)
+><![CDATA[displayAt :: (GLfloat, GLfloat) -> IO () -> IO ()
+displayAt (x, y) displayMe = preservingMatrix $ do
+  translate $ Vector3 x y 0
   displayMe]]></code>
 
-Within the idle function ball and paddles need to be set to their next
-position on the field:
-
+Within the idle function ball and paddles need to be set to their next position
+on the field:
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[idle game = do
+><![CDATA[idle :: IORef Game -> IdleCallback
+idle game = do
   g <- get game
   let fac = moveFactor g
   game
@@ -2784,7 +2787,8 @@ the field, by the left and right bound of the field and the position
 of the paddles:
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[moveBall g
+><![CDATA[moveBall :: Game -> Ball
+moveBall g
  = Ball (x+factor*newXDir,y+factor*newYDir) newXDir newYDir
   where
    newXDir
@@ -2806,14 +2810,14 @@ of the paddles:
    (Ball (x,y) xDir yDir) = ball g
    factor = moveFactor g
    (xl,yl,_) = leftP g
-   (xr,yr,_) = rightP g
-]]></code>
+   (xr,yr,_) = rightP g]]></code>
 
 A paddle moves only on the y-axis. We just need to ensure that it
 does not leaves the field. There are maximum and minimum values for y:
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[movePaddle (x,y,dir) factor =
+><![CDATA[movePaddle :: Paddle -> GLfloat -> Paddle
+movePaddle (x,y,dir) factor =
   let y1 = y+ factor*dir
       newY = min  (_TOP-paddleHeight) $max _BOTTOM y1
   in (x,newY,dir)]]></code>
@@ -2822,7 +2826,7 @@ The keyboard function: key 'a' moves the left paddle, key 'l' the
 right paddle and the space key gets a new ball:
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[
+><![CDATA[keyboard :: IORef Game -> KeyboardMouseCallback
 keyboard game (Char 'a') upDown _ _ = do
   g <- get game
   let (x,y,_) = leftP g
@@ -2833,7 +2837,7 @@ keyboard game (Char 'l') upDown _ _ = do
   game $= g{rightP=(x,y,paddleDir upDown)}
 keyboard game (Char '\32') Down _ _ = do
   g <- get game
-  let Ball (x,y) xD yD = ball g
+  let Ball (x,y) xD _yD = ball g
   let xDir
        |x<=_LEFT+3*paddleWidth = _INITIAL_BALL_DIR
        |x>=_RIGHT-3*paddleWidth = - _INITIAL_BALL_DIR
@@ -2843,6 +2847,7 @@ keyboard game (Char '\32') Down _ _ = do
     else return ()
 keyboard _ _ _ _ _ = return ()
 
+paddleDir :: KeyState -> GLfloat
 paddleDir Down = _INITIAL_PADDLE_DIR
 paddleDir Up   = -_INITIAL_PADDLE_DIR]]></code>
 
@@ -2850,7 +2855,8 @@ Finally we define the visual part of the screen. The movement factor
 of the ball depends on the width of the screen:
 
 <code class="Pong" lang="hs" sequel="true"
-><![CDATA[reshape game s@(Size w h)  = do
+><![CDATA[reshape :: IORef Game -> ReshapeCallback
+reshape game s@(Size w _) = do
   viewport $= (Position 0 0, s)
   matrixMode $= Projection
   loadIdentity
@@ -2898,6 +2904,7 @@ main = do
   clearColor $= Color4 1 1 1 1
   mainLoop
 
+display :: DisplayCallback
 display = do
   clear [ColorBuffer,DepthBuffer]
   loadIdentity
@@ -2942,7 +2949,6 @@ Now we render the same to shapes as in the example before, but the
 depth machanism of OpenGL is activated.
 
 <code class="Hidden" lang="hs" main="main">import Graphics.UI.GLUT
-
 import Squares
 import Circle
 
@@ -2997,7 +3003,6 @@ We can test the orthographic projection. Two squares equally in size,
 but in different distances from the viewer are rendered:
 
 <code class="NotSmaller" lang="hs" main="main">import Graphics.UI.GLUT
-
 import Squares
 
 main :: IO ()
@@ -3151,9 +3156,10 @@ The position can be changed through keyboard events.
 
 <code lang="hs" class="OrbitPointOfView"
 ><![CDATA[module OrbitPointOfView where
-
+import Data.IORef
 import Graphics.UI.GLUT
 
+setPointOfView :: IORef (Int,Int,GLdouble) -> IO ()
 setPointOfView pPos = do
   (alpha,beta,r) <- get pPos
   let
@@ -3161,15 +3167,17 @@ setPointOfView pPos = do
    (x2,y2,z2) = calculatePointOfView ((alpha+90)`mod` 360) beta r
   lookAt (Vertex3 x y z) (Vertex3 0 0 0) (Vector3 x2 y2 z2)
 
-calculatePointOfView  alp bet r =
-  let alpha =  fromIntegral alp*2*pi/fromIntegral 360
-      beta  =  fromIntegral bet*2*pi/fromIntegral 360
+calculatePointOfView :: Int -> Int -> GLdouble -> (GLdouble,GLdouble,GLdouble)
+calculatePointOfView alp bet r =
+  let alpha =  fromIntegral alp * 2 * pi / 360
+      beta  =  fromIntegral bet * 2 * pi / 360
       y = r * cos alpha
       u = r * sin alpha
       x = u * cos beta
       z = u * sin beta
   in (x,y,z)
 
+keyForPos :: IORef (Int,Int,GLdouble) -> Key -> IO ()
 keyForPos pPos (Char '+')         = modPos pPos (id,id,\x->x-0.1)
 keyForPos pPos (Char '-')         = modPos pPos (id,id,(+)0.1)
 keyForPos pPos (SpecialKey KeyLeft) = modPos pPos (id,(+)359,id)
@@ -3178,13 +3186,15 @@ keyForPos pPos (SpecialKey KeyUp)   = modPos pPos ((+)1,id,id)
 keyForPos pPos (SpecialKey KeyDown) = modPos pPos ((+)359,id,id)
 keyForPos  _  _                     = return ()
 
+modPos :: IORef (Int,Int,GLdouble) -> (Int -> Int, Int -> Int, GLdouble -> GLdouble) -> IO ()
 modPos pPos (ffst,fsnd,ftrd) = do
   (alpha,beta,r) <- get pPos
   pPos $= (ffst alpha `mod` 360,fsnd beta `mod` 360,ftrd r)
   postRedisplay Nothing
 
-reshape screenSize@(Size w h) = do
-  viewport $= ((Position 0 0), screenSize)
+reshape :: ReshapeCallback
+reshape s@(Size w h) = do
+  viewport $= (Position 0 0, s)
   matrixMode $= Projection
   loadIdentity
   let near   = 0.001
@@ -3198,59 +3208,53 @@ reshape screenSize@(Size w h) = do
   matrixMode $= Modelview 0]]></code>
 
 <example>
-Let us use the module above, to orbit around a cube. Therefore we
-a define simple module, which renders a cube with differently colored
-areas. The cube is situated at the origin.
-We render the six areas by rendering a square at the origin and
-translate and rotate it into its final position.
-
+Let us use the module above, to orbit around a cube. Therefore we a define
+simple module, which renders a cube with differently colored areas. The cube is
+situated at the origin.  We render the six areas by rendering a square at the
+origin and translate and rotate it into its final position.
 
 <code class="ColorCube" lang="hs">module ColorCube where
-
 import Graphics.UI.GLUT
-
 import Squares
 
-locally = preservingMatrix
-
+colorCube :: GLfloat -> IO ()
 colorCube n = do
-  locally $ do
+  preservingMatrix $ do
     currentColor $= Color4 1 0 0 1
     translate $ Vector3 0 0 (-n/2)
     square n
-  locally $ do
+  preservingMatrix $ do
     currentColor $= Color4 0 1 0 1
     translate $ Vector3 0 0 (n/2)
     square n
-  locally $ do
+  preservingMatrix $ do
     currentColor $= Color4 0 0 1 1
     translate $ Vector3 (n/2) 0 0
     rotate 90 $ Vector3 0 (1::GLfloat) 0
     square n
-  locally $ do
+  preservingMatrix $ do
     currentColor $= Color4 1 1 0 1
     translate $ Vector3 (-n/2) 0 0
     rotate 90 $ Vector3 0 (1::GLfloat) 0
     square n
-  locally $ do
+  preservingMatrix $ do
     currentColor $= Color4 0 1 1 1
     translate $ Vector3 0 (-n/2) 0
     rotate 90 $ Vector3 (1::GLfloat) 0 0
     square n
-  locally $ do
+  preservingMatrix $ do
     currentColor $= Color4 1 1 1 1
     translate $ Vector3 0 (n/2) 0
     rotate 90 $ Vector3 (1::GLfloat) 0 0
     square n</code>
 
-The following program allows to use the cursor keys to move around a
-cube at the origin:
+The following program allows to use the cursor keys to move around a cube at the
+origin:
 
 <code class="OrbitAroundCube" lang="hs" main="main"
->import Graphics.UI.GLUT
-
+>import Data.IORef
+import Graphics.UI.GLUT
 import OrbitPointOfView
-import StateUtil
 import ColorCube
 
 main :: IO ()
@@ -3260,29 +3264,30 @@ main = do
   createWindow progName
   depthFunc $= Just Less
 
-  <redv>pPos &lt;- new (90::Int,270::Int,2.0)</redv>
+  <redv>pPos &lt;- newIORef (90, 270, 2)</redv>
   keyboardMouseCallback $= Just (keyboard pPos)
 
   displayCallback $= display pPos
   reshapeCallback $= Just reshape
   mainLoop</code>
 
-The display function sets the viewer's position before rendering the
-cube:
+The display function sets the viewer's position before rendering the cube:
 
 <code class="OrbitAroundCube" lang="hs" sequel="true"
->display pPos = do
+>display :: IORef (Int,Int,GLdouble) -> DisplayCallback
+display pPos = do
   loadIdentity
   <redv>setPointOfView pPos</redv>
   clear [ColorBuffer,DepthBuffer]
   colorCube 1
   swapBuffers</code>
 
-As keyboard function we map directly to the function defined
-in <tt>OrbitPointOfView</tt>.
+The keyboard function is directly mapped to the function defined in
+<tt>OrbitPointOfView</tt>.
 
 <code class="OrbitAroundCube" lang="hs" sequel="true"
-><redv>keyboard pPos c _  _ _ = keyForPos pPos c</redv></code>
+><![CDATA[keyboard :: IORef (Int,Int,GLdouble) -> KeyboardMouseCallback
+]]><redv>keyboard pPos c _  _ _ = keyForPos pPos c</redv></code>
 
 An example how the colored cube can now be seen
  is given in figure<white/>
@@ -3346,16 +3351,19 @@ We make the type <tt>Rubik</tt> an instance of the class <tt>Functor</tt>:
      mf = map (map f)</code>
 The initial cube is defined
 <code lang="hs" class="RubikLogic" sequel="true"
->initCube  = Rubik (area Red)  (area Blue)  (area Yellow)
+>initCube :: Rubik RubikColor
+initCube  = Rubik (area Red)  (area Blue)  (area Yellow)
                   (area Green)(area Orange)(area White)
 
+area :: RubikColor -> Area RubikColor
 area c  = [[c,c,c],[c,c,c],[c,c,c]]</code>
 
 The main operation on a cube is to turn one of its six sides. The
 function <tt>rotateArea</tt> specifies, how this effects a cube.
 
 <code lang="hs" class="RubikLogic" sequel="true"
->rotateArea RubikLogic.Front
+>rotateArea :: AreaPosition -> Rubik RubikColor -> Rubik RubikColor
+rotateArea RubikLogic.Front
  (Rubik front top back bottom left right) =
   Rubik front' top' back bottom' left' right'
    where
@@ -3416,6 +3424,7 @@ rotateArea RubikLogic.Right
      back'   = newColumn 3 (column 3 bottom) back
      front'  = newColumn 3 (column 3 top) front
 
+rotateBy1, rotateBy2, rotateBy3 :: Area a -> Area a
 rotateBy1
   [[x1,x2,x3]
   ,[x8,x,x4]
@@ -3423,6 +3432,7 @@ rotateBy1
   [[x3,x4,x5]
   ,[x2,x,x6]
   ,[x1,x8,x7]]
+rotateBy1 _ = error "rotateBy1: should not happen"
 
 rotateBy2 =  rotateBy1 .rotateBy1
 rotateBy3 =  rotateBy2 .rotateBy1</code>
@@ -3430,33 +3440,37 @@ rotateBy3 =  rotateBy2 .rotateBy1</code>
 Finally some useful functions for manipulation of an area are given.
 
 <code lang="hs" class="RubikLogic" sequel="true"
->column n  = map (\row->row !! (n-1))
+>column :: Int -> Area a -> Row a
+column n  = map (\row_ -> row_ !! (n-1))
 
-row n area = area !!(n-1)
+row :: Int -> Area a -> Row a
+row n area_ = area_ !! (n-1)
 
-newRow 1 row [a,r,ea] = [row,r,ea]
-newRow 2 row [a,r,ea] = [a,row,ea]
-newRow 3 row [a,r,ea] = [a,r,row]
+newRow :: Int -> Row a -> Area a -> Area a
+newRow 1 row_ [_,r,ea] = [row_,r,ea]
+newRow 2 row_ [a,_,ea] = [a,row_,ea]
+newRow 3 row_ [a,r,_ ] = [a,r,row_]
+newRow _ _ _ = error "newRow: should not happen"
 
-newColumn n column area = map (doIt n) areaC
+newColumn :: Int -> Row a -> Area a -> Area a
+newColumn n column_ area_ = map (doIt n) areaC
   where
-    areaC =  zip area column
-    doIt 1 ((r:ow),c) = c:ow
-    doIt 2 ((r:o:w),c) = r:c:w
-    doIt 3 ((r:o:w:xs),c) = r:o:c:xs </code>
+    areaC =  zip area_ column_
+    doIt 1 ((_:ow),c) = c:ow
+    doIt 2 ((r:_:w),c) = r:c:w
+    doIt 3 ((r:o:_:xs),c) = r:o:c:xs
+    doIt _ _ = error "doIt: should not happen"</code>
 </subsection>
 
 
 <subsection titel="Rendering the Cube">
-We have a logical modell of a cube. Now we can render this in a
-coordinate system. In an earlier section we already provided a
-function to render one single side. We simply need to render the six
-sides and move them to the correct position.
+We have a logical model of a cube. Now we can render this in a coordinate
+system. In an earlier section we already provided a function to render one
+single side. We simply need to render the six sides and move them to the correct
+position.
 
 <code lang="hs" class="RenderRubik"><![CDATA[module RenderRubik where
-
-import Graphics.UI.GLUT hiding (Red,Green,Blue)
-
+import Graphics.UI.GLUT hiding (Red, Green, Blue)
 import RubikLogic
 import RubikFace
 import Squares
@@ -3464,60 +3478,65 @@ import Squares
 _FIELD_WIDTH :: GLfloat
 _FIELD_WIDTH = 1/3
 
+renderCube :: Rubik (Color4 GLfloat) -> IO ()
 renderCube (Rubik front top back bottom left right) = do
- render RubikLogic.Top     top
- render RubikLogic.Back    back
- render RubikLogic.Front   front
- render RubikLogic.Bottom  bottom
- render RubikLogic.Left    left
- render RubikLogic.Right   right
+  render RubikLogic.Top    top
+  render RubikLogic.Back   back
+  render RubikLogic.Front  front
+  render RubikLogic.Bottom bottom
+  render RubikLogic.Left   left
+  render RubikLogic.Right  right
 
-render Top    cs = preservingMatrix $ do
-  translate $ Vector3 (1.5*_FIELD_WIDTH) 0 0
-  rotate (90)$Vector3  0 1 (0::GLfloat)
+render :: AreaPosition -> [[Color4 GLfloat]] -> IO ()
+render Top cs = preservingMatrix $ do
+  translate $ Vector3 (1.5 * _FIELD_WIDTH) 0 0
+  rotate 90 $ Vector3 0 1 (0 :: GLfloat)
   renderCubeSide cs
 
-render RubikLogic.Back   cs = preservingMatrix$ do
-  translate $ Vector3 0 0 (-1.5*_FIELD_WIDTH)
-  rotate (180)$Vector3 0 0 (1::GLfloat)
-  rotate (180)$Vector3 1 0 (0::GLfloat)
+render RubikLogic.Back cs = preservingMatrix $ do
+  translate $ Vector3 0 0 (-1.5 * _FIELD_WIDTH)
+  rotate 180 $ Vector3 0 0 (1 :: GLfloat)
+  rotate 180 $ Vector3 1 0 (0 :: GLfloat)
   renderCubeSide cs
 
-render Bottom cs = preservingMatrix$ do
-  translate $ Vector3  (-1.5*_FIELD_WIDTH) 0 0
-  rotate (270)$Vector3  0 1 (0::GLfloat)
+render Bottom cs = preservingMatrix $ do
+  translate $ Vector3  (-1.5 * _FIELD_WIDTH) 0 0
+  rotate 270 $ Vector3 0 1 (0::GLfloat)
   renderCubeSide cs
 
-render RubikLogic.Front  cs = preservingMatrix$ do
-  translate $ Vector3 0 0 (1.5*_FIELD_WIDTH)
+render RubikLogic.Front cs = preservingMatrix $ do
+  translate $ Vector3 0 0 (1.5 * _FIELD_WIDTH)
   renderCubeSide cs
 
-render RubikLogic.Left   cs = preservingMatrix$ do
-  translate $ Vector3 0 (1.5*_FIELD_WIDTH)  0
-  rotate (270) $ Vector3 1 0 (0::GLfloat)
+render RubikLogic.Left cs = preservingMatrix $ do
+  translate $ Vector3 0 (1.5 * _FIELD_WIDTH) 0
+  rotate 270 $ Vector3 1 0 (0 :: GLfloat)
   renderCubeSide cs
 
-render RubikLogic.Right  cs = preservingMatrix$ do
-  translate $ Vector3 0 (-1.5*_FIELD_WIDTH)  0
-  rotate (270) $ Vector3 1 0 (0::GLfloat)
-  rotate (180)$Vector3 1 0 (0::GLfloat)
+render RubikLogic.Right cs = preservingMatrix $ do
+  translate $ Vector3 0 (-1.5*_FIELD_WIDTH) 0
+  rotate 270 $ Vector3 1 0 (0 :: GLfloat)
+  rotate 180 $ Vector3 1 0 (0 :: GLfloat)
   renderCubeSide cs
 
+renderCubeSide :: [[Color4 GLfloat]] -> IO ()
 renderCubeSide css = renderArea _FIELD_WIDTH  css
 
+field :: IO ()
 field = square _FIELD_WIDTH]]></code>
 
 The following function maps our abstract color type to concrete OpenGL
 colors:
 
 <code lang="hs" class="RenderRubik" sequel="true"
->doColor Red    = Color4 1 0 0 1.0
-doColor Green  = Color4 0 1 0 1.0
-doColor Blue   = Color4 0 0 1 1.0
-doColor Yellow = Color4 1 1 0 1.0
+>doColor :: RubikColor -> Color4 GLfloat
+doColor Red    = Color4 1   0   0 1
+doColor Green  = Color4 0   1   0 1
+doColor Blue   = Color4 0   0   1 1
+doColor Yellow = Color4 1   1   0 1
 doColor Orange = Color4 1 0.5 0.5 1
-doColor White  = Color4 1 1 1 1.0
-doColor Black  = Color4 0 0 0 1.0</code>
+doColor White  = Color4 1   1   1 1
+doColor Black  = Color4 0   0   0 1</code>
 <delete><code><![CDATA[
 {--
 renderCubik cub = do
@@ -3638,10 +3657,9 @@ setSurfaceColor (r,g,b) = do
 Finally we can create a simple application.
 
 <code lang="hs" main="main" class="RubiksCube"
-><![CDATA[import Graphics.UI.GLUT
-
+><![CDATA[import Data.IORef
+import Graphics.UI.GLUT
 import OrbitPointOfView
-import StateUtil
 import RubikLogic
 import RenderRubik
 
@@ -3654,8 +3672,8 @@ main = do
 
   depthFunc $= Just Less
 
-  pPos  <- new (90::Int,270::Int,2.0)
-  pCube <- new initCube
+  pPos  <- newIORef (90, 270, 2)
+  pCube <- newIORef initCube
 
   displayCallback $= display pPos pCube
   keyboardMouseCallback $= Just (keyboard pPos pCube)
@@ -3663,6 +3681,7 @@ main = do
   reshapeCallback $= Just reshape
   mainLoop
 
+display :: IORef (Int, Int, GLdouble) -> IORef (Rubik RubikColor) -> DisplayCallback
 display pPos pCube = do
   clearColor $= Color4 1 1 1 1
   clear [ColorBuffer,DepthBuffer]
@@ -3672,6 +3691,7 @@ display pPos pCube = do
   renderCube$fmap doColor  cube
   swapBuffers
 
+keyboard :: IORef (Int, Int, GLdouble) -> IORef (Rubik RubikColor) -> KeyboardMouseCallback
 keyboard _ pCube (Char '1') Down _ _
   = rot pCube RubikLogic.Top
 keyboard _ pCube (Char '2') Down _ _
@@ -3687,15 +3707,14 @@ keyboard _ pCube (Char '6') Down _ _
 keyboard pPos _   c         _    _ _
   = keyForPos pPos c
 
+rot :: IORef (Rubik RubikColor) -> AreaPosition -> IO ()
 rot pCube p = do
   cube <- get pCube
   pCube $= rotateArea p cube
-  postRedisplay Nothing]]></code></subsection>
+  postRedisplay Nothing]]></code>
 
+</subsection>
 </section>
-
-
-
 
 <section titel="Light">
 Let us begin with a simple 3-dimensional shape: a cube.
@@ -3704,7 +3723,6 @@ shape <tt>Quad</tt>.
 
 <code class="Cube" lang="hs"
 ><![CDATA[module Cube where
-
 import PointsForRendering
 
 cube :: GLfloat -> IO ()
@@ -3724,7 +3742,6 @@ cube l = renderAs Quads corners
 <example>We make a first try at rendering a cube:
 <code class="RenderCube" lang="hs" main="main"
 ><![CDATA[import Graphics.UI.GLUT
-
 import Cube
 
 main :: IO ()
@@ -3772,7 +3789,6 @@ variable to enabled: <tt>light (Light 0) $= Enabled</tt>.
 <example>Now we can render a cube with a defined light source:
 <code class="LightCube" lang="hs" main="main"
 ><![CDATA[import Graphics.UI.GLUT
-
 import Cube
 
 main :: IO ()
@@ -3827,16 +3843,15 @@ to different forms and moved to the correct position.
 
 <subsubsection titel="Overall Setup">
 <code lang="hs" main="main" class="Tux"
-><![CDATA[import Graphics.UI.GLUT
-
+><![CDATA[import Data.IORef
+import Graphics.UI.GLUT
 import OrbitPointOfView
-import StateUtil
 
 main :: IO ()
 main = do
   (progName,_) <- getArgsAndInitialize
   initialDisplayMode $= [WithDepthBuffer,DoubleBuffered]
-  pPos <- new (90::Int,270::Int,1.0)	
+  pPos <- newIORef (90::Int,270::Int,1.0)	
   depthFunc $= Just Less
   createWindow progName
 
