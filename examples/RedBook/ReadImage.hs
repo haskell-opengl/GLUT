@@ -17,9 +17,7 @@ import Control.Exception ( bracket )
 import Control.Monad ( liftM, when )
 import System.IO ( Handle, IOMode(ReadMode), openBinaryFile, hGetBuf, hClose )
 import System.IO.Error ( mkIOError, eofErrorType )
-import Foreign.Ptr ( Ptr )
-import Foreign.Marshal.Alloc ( alloca, mallocBytes )
-import Foreign.Storable ( Storable(..) )
+import Foreign ( Ptr, alloca, mallocBytes, Storable(..) )
 import Graphics.UI.GLUT
 
 -- This is probably overkill, but anyway...

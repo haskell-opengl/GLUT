@@ -17,7 +17,7 @@
 
 import Data.Bits ( (.&.) )
 import Data.IORef ( IORef, newIORef, readIORef, writeIORef, modifyIORef )
-import Foreign.Marshal.Array ( newArray )
+import Foreign ( newArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 

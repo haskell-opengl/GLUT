@@ -10,7 +10,7 @@
 -}
 
 import Data.Bits ( (.&.) )
-import Foreign.Marshal.Array ( newArray )
+import Foreign ( newArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 

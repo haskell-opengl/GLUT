@@ -9,7 +9,7 @@
 -}
 
 import Control.Monad ( zipWithM_ )
-import Foreign.Marshal.Array ( allocaArray, peekArray )
+import Foreign ( allocaArray, peekArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 import ReadImage

@@ -8,7 +8,7 @@
    colorTable function.
 -}
 
-import Foreign.Marshal.Array ( withArray )
+import Foreign ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 import ReadImage
