@@ -69,7 +69,7 @@ Chapter 8: Drawing Pixels, Bitmaps, Fonts, and Images
 Chapter 9: Texture Mapping
 
         Checker.hs      (1.0)
-        Texsub.hs       (1.1)
+        TexSub.hs       (1.1)
         Texture3D.hs    (1.2)
         Mipmap.hs       (1.0)
         TexBind.hs      (1.1)
