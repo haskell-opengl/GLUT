@@ -108,7 +108,7 @@ init prog args =
    glutInit argcBuf argvBuf
    newArgc <- peek argcBuf
    newArgvPtrs <- peekArray (fromIntegral newArgc) argvBuf
-   newArgv <- mapM peekCString argvPtrs
+   newArgv <- mapM peekCString newArgvPtrs
    return $ tail newArgv
 
 foreign import ccall unsafe "glutInit" glutInit ::
