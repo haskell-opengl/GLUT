@@ -31,8 +31,8 @@ module Graphics.UI.GLUT.State (
   getNumAccumBits, getNumDepthBits, getNumStencilBits,
   getNumSamples, getFormatID,
 
-  -- * Elapsed time
-  getElapsedTime,
+  -- * Miscellaneous
+  getElapsedTime, getNumMenuItems,
 
   -- * GLUT state pertaining to the layers of the  /current window/
   isOverlayPossible, getLayerInUse, isOverlayEstablished, getTransparentIndex,
@@ -256,6 +256,11 @@ getFormatID = get id glut_WINDOW_FORMAT_ID
 
 getElapsedTime :: IO CInt
 getElapsedTime = get id glut_ELAPSED_TIME
+
+-- | Return the number of menu items in the /current menu./
+
+getNumMenuItems :: IO CInt
+getNumMenuItems = get id glut_MENU_NUM_ITEMS
 
 --------------------------------------------------------------------------------
 
