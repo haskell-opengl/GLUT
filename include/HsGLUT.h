@@ -13,6 +13,8 @@
 #ifndef HSGLUT_H
 #define HSGLUT_H
 
+#include <GL/glut.h>
+
 extern void* hOpenGL_marshalBitmapFont(int fontID);
 extern void* hOpenGL_marshalStrokeFont(int fontID);
 

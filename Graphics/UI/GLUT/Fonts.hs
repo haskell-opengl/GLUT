@@ -59,8 +59,8 @@ data BitmapFont
 -- small C wrappers around those macros. *sigh*
 type GLUTbitmapFont = Ptr ()
 
-foreign import ccall "HsGLUT.h hOpenGL_marshalBitmapFont"
-   hOpenGL_marshalBitmapFont :: CInt -> IO GLUTbitmapFont
+foreign import ccall "hOpenGL_marshalBitmapFont" hOpenGL_marshalBitmapFont ::
+   CInt -> IO GLUTbitmapFont
 
 marhshalBitmapFont :: BitmapFont -> IO GLUTbitmapFont
 marhshalBitmapFont f = case f of
@@ -117,8 +117,8 @@ data StrokeFont
 -- Same remarks as for GLUTstrokeFont
 type GLUTstrokeFont = Ptr ()
 
-foreign import ccall "HsGLUT.h hOpenGL_marshalStrokeFont"
-   hOpenGL_marshalStrokeFont :: CInt -> IO GLUTstrokeFont
+foreign import ccall "hOpenGL_marshalStrokeFont" hOpenGL_marshalStrokeFont ::
+   CInt -> IO GLUTstrokeFont
 
 marhshalStrokeFont :: StrokeFont -> IO GLUTstrokeFont
 marhshalStrokeFont f = case f of
