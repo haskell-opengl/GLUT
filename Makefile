@@ -37,6 +37,8 @@ SRC_HADDOCK_OPTS += -t "HOpenGL Libraries (GLUT package)"
 comma = ,
 PACKAGE_CPP_OPTS += -DGLUT_CFLAGS='$(patsubst %,$(comma)"%",$(GLUT_CFLAGS))'
 PACKAGE_CPP_OPTS += -DGLUT_LIBS='$(patsubst %,$(comma)"%",$(GLUT_LIBS))'
+PACKAGE_CPP_OPTS += -DGLUT_EXTRA_LIBS='$(patsubst %,$(comma)"%",$(GLUT_EXTRA_LIBS))'
+PACKAGE_CPP_OPTS += -DGLUT_FRAMEWORKS='"$(GLUT_FRAMEWORKS)"'
 
 # -----------------------------------------------------------------------------
 
