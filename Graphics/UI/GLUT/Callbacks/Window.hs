@@ -21,7 +21,7 @@ module Graphics.UI.GLUT.Callbacks.Window (
    Visibility(..), VisibilityCallback, setVisibilityCallback,
 
    -- * Keyboard and mouse input callback
-   Key(..), SpecialKey(..), MouseButton(..), KeyState(..), Modifier(..),
+   Key(..), SpecialKey(..), MouseButton(..), KeyState(..), Modifiers(..),
    KeyboardMouseCallback, setKeyboardMouseCallback,
 
    -- * Mouse movement callbacks
@@ -374,20 +374,16 @@ foreign import ccall unsafe "glutMouseFunc" glutMouseFunc ::
 
 --------------------------------------------------------------------------------
 
-data Modifier
-   = Shift
-   | Ctrl
-   | Alt
-   deriving ( Eq, Ord )
+data Modifiers = Modifiers { shift, ctrl, alt :: Bool } deriving ( Eq, Ord )
 
 -- Could use fromBitfield + Enum/Bounded instances + marshalModifier instead...
-unmarshalModifiers :: CInt -> [Modifier]
-unmarshalModifiers m = 
-   (if (m .&. glut_ACTIVE_SHIFT) /= 0 then (Shift :) else id) .
-   (if (m .&. glut_ACTIVE_CTRL ) /= 0 then (Ctrl  :) else id) .
-   (if (m .&. glut_ACTIVE_ALT  ) /= 0 then (Alt   :) else id) $ []
+unmarshalModifiers :: CInt -> Modifiers
+unmarshalModifiers m = Modifiers {
+   shift = (m .&. glut_ACTIVE_SHIFT) /= 0,
+   ctrl  = (m .&. glut_ACTIVE_CTRL ) /= 0,
+   alt   = (m .&. glut_ACTIVE_ALT  ) /= 0 }
 
-getModifiers :: IO [Modifier]
+getModifiers :: IO Modifiers
 getModifiers = liftM unmarshalModifiers glutGetModifiers
 
 foreign import ccall unsafe "glutGetModifiers" glutGetModifiers :: IO CInt
@@ -401,7 +397,7 @@ data Key
    deriving ( Eq, Ord )
 
 type KeyboardMouseCallback =
-   Key -> KeyState -> [Modifier] -> WindowPosition -> IO ()
+   Key -> KeyState -> Modifiers -> WindowPosition -> IO ()
 
 setKeyboardMouseCallback :: Maybe KeyboardMouseCallback -> IO ()
 setKeyboardMouseCallback Nothing = do
@@ -418,9 +414,9 @@ setKeyboardMouseCallback (Just cb) = do
    setSpecialCallback    (Just (\s   p -> do m <- getModifiers
                                              cb (SpecialKey  s) Down m p))
    setSpecialUpCallback  (Just (\s   p -> do m <- getModifiers
-                                             cb (SpecialKey  s) Up   [] p))
+                                             cb (SpecialKey  s) Up   m p))
    setMouseCallback      (Just (\b s p -> do m <- getModifiers
-                                             cb (MouseButton b) s    [] p))
+                                             cb (MouseButton b) s    m p))
 
 --------------------------------------------------------------------------------
 
