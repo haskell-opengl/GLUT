@@ -118,3 +118,72 @@ Chapter 14: Now That You Know
 Color Plates:
 
         Teapots.hs      (1.1)
+
+Some remarks regarding the style of the programs:
+
+To ease comparisons, the Haskell programs in this directory try to stay as
+close to the original examples in C as possible. Consequently, they should
+not be considered as examples for the best way to implement things in
+Haskell.
+
+The Haskell OpenGL binding uses overloading quite extensively, which makes
+its use quite flexible, e.g.:
+
+   class Vertex a where
+      vertex  ::     a -> IO ()
+      vertexv :: Ptr a -> IO ()
+
+This single class subsumes all 24 vertex specification calls in OpenGL's C
+binding, i.e. glVertex{234}{sifd}[v](), with the help of the following
+class and instances:
+
+   class VertexComponent a  -- an opaque class
+
+   VertexComponent GLshort
+   VertexComponent GLint
+   VertexComponent GLfloat
+   VertexComponent GLdouble
+
+   VertexComponent a => Vertex (Vertex2 a)
+   VertexComponent a => Vertex (Vertex3 a)
+   VertexComponent a => Vertex (Vertex4 a)
+
+There is a small inconvenience with this when used in "toy" programs:
+Haskell's numeric literals are overloaded, too, so the programmer's help is
+needed to disambiguate the type of expressions like:
+
+   vertex (Vertex3 0 0 1)
+
+Let's assume we mean the equivalent of glVertex3f() here. One can either
+use an explicitly typed helper function:
+
+   let vertex3f = vertex :: Vertex3 GLfloat -> IO ()
+   in vertex3f (Vertex3 0 0 1)
+
+This comes in handy when there are a lot of uses of vertex3f. An
+alternative is to use a type annotation for the literal:
+
+   vertex (Vertex3 0 0 (1 :: GLfloat))
+
+or a type annotation for the vertex:
+
+   vertex (Vertex3 0 0 1 :: Vertex3 GLfloat)
+
+This is largely a matter of taste and normally not a problem in "real"
+programs with type signatures for functions.
+
+Sometimes different callbacks need to share some state, which is done via
+global variables in the C examples. To achieve a unified presentation, all
+Haskell examples use a `State' type for this purpose, which collects the
+different parts of the global state, i.e. one or more IORefs. There are
+alternatives for modeling this, which should be considered in own programs,
+depending on the use cases:
+
+ * Separate IORefs: This makes it explicit which parts of the program need
+   which parts of the state.
+
+ * A single IORef/MVar containing all the state: This enables one to change
+   the whole state atomically, which is often quite handy in multithreaded
+   programs.
+
+ * A custom monad: This can hide all the state threading behind the scenes.
