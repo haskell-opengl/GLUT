@@ -29,7 +29,7 @@ Package {
 	c_includes	= [ "HsGLUT.h" ],
 	package_deps	= [ "base", "OpenGL" ],
 	extra_ghc_opts	= [],
-	extra_cc_opts	= [ "" GL_CFLAGS ],
+	extra_cc_opts	= [ "" GLUT_CFLAGS ],
 #ifdef USE_QUARTZ_OPENGL
 	extra_frameworks = [ "GLUT" ],
 #endif

@@ -26,9 +26,9 @@ endif
 
 SRC_HADDOCK_OPTS += -t "HOpenGL Libraries (GLUT package)"
 
-# yeuch, have to get GL_CFLAGS & GLUT_LIBS in through CPP to package.conf.in
+# yeuch, have to get GLUT_CFLAGS & GLUT_LIBS in through CPP to package.conf.in
 comma = ,
-PACKAGE_CPP_OPTS += -DGL_CFLAGS='$(patsubst %,$(comma)"%",$(GL_CFLAGS))'
+PACKAGE_CPP_OPTS += -DGLUT_CFLAGS='$(patsubst %,$(comma)"%",$(GLUT_CFLAGS))'
 PACKAGE_CPP_OPTS += -DGLUT_LIBS='$(patsubst %,$(comma)"%",$(GLUT_LIBS))'
 
 # -----------------------------------------------------------------------------
