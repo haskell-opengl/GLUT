@@ -20,7 +20,7 @@ import Graphics.UI.GLUT as GLUT
 
 myInit :: IO ()
 myInit = do
-   depthTest $= True
+   depthFunc $= Just Less
 
    position (Light 0) $= Vertex4 0.5 0.5 3.0 0.0
    lighting $= True
