@@ -44,7 +44,7 @@ module Graphics.UI.GLUT.Colormap (
 
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLfloat )
-import Graphics.Rendering.OpenGL.GL.VertexSpec ( Color3(..), ColorIndex )
+import Graphics.Rendering.OpenGL.GL.VertexSpec ( Color3(..), Index1 )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Window ( Window )
 
@@ -56,13 +56,13 @@ import Graphics.UI.GLUT.Window ( Window )
 -- colormap was copied by reference, a 'setColor' call will force the
 -- duplication of the colormap. Do not attempt to set the color of an
 -- overlay\'s transparent index.
-setColor :: ColorIndex CInt
+setColor :: Index1 CInt
          -> Color3 GLfloat
          -> IO ()
 setColor cell (Color3 r g b) = glutSetColor cell r g b
 
 foreign import CALLCONV unsafe "glutSetColor" glutSetColor ::
-   ColorIndex CInt -> GLfloat -> GLfloat -> GLfloat -> IO ()
+   Index1 CInt -> GLfloat -> GLfloat -> GLfloat -> IO ()
 
 -- | Retrieve the entry for a given color index colormap entry for the
 -- /current window/\'s logical colormap. The /current window/ should be a
@@ -74,7 +74,7 @@ foreign import CALLCONV unsafe "glutSetColor" glutSetColor ::
 -- than zero, or greater or equal to the value returned by @'get'
 -- 'WindowColormapSize'@, that is if the color index is transparent or
 -- outside the valid range of color indices.
-getColor :: ColorIndex CInt
+getColor :: Index1 CInt
          -> IO (Maybe (Color3 GLfloat))
 getColor cell = do
    r <- glutGetColor cell glut_RED
@@ -83,7 +83,7 @@ getColor cell = do
    return $ if r < 0.0 then Nothing else Just (Color3 r g b)
 
 foreign import CALLCONV unsafe "glutGetColor" glutGetColor ::
-   ColorIndex CInt -> CInt -> IO GLfloat
+   Index1 CInt -> CInt -> IO GLfloat
 
 -- | Copy (lazily if possible to promote sharing) the logical colormap
 -- from a specified window to the /current window/\'s /layer in use/.

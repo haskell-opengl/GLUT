@@ -74,7 +74,7 @@ import Control.Monad ( liftM )
 import Data.Bits ( Bits((.&.)) )
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
-import Graphics.Rendering.OpenGL.GL.VertexSpec ( ColorIndex(..) )
+import Graphics.Rendering.OpenGL.GL.VertexSpec ( Index1(..) )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Overlay ( Layer(..) )
 import Graphics.UI.GLUT.Initialization ( WindowPosition(..), WindowSize(..),
@@ -300,7 +300,7 @@ isOverlayEstablished = layerGet i2b glut_HAS_OVERLAY
 -- | Return 'Just' the transparent color index of the overlay of the /current
 -- window/; 'Nothing' is returned if no overlay is in use.
 
-getTransparentIndex :: IO (Maybe (ColorIndex CInt))
+getTransparentIndex :: IO (Maybe (Index1 CInt))
 getTransparentIndex = layerGet i2c glut_TRANSPARENT_INDEX
 
 -- | Test if the normal plane of the /current window/ has been damaged (by
@@ -486,8 +486,8 @@ i2b = (/= 0)
 i2l :: CInt -> Layer
 i2l = unmarshalLayer . fromIntegral
 
-i2c :: CInt -> Maybe (ColorIndex CInt)
-i2c i = if i < 0 then Nothing else Just (ColorIndex i)
+i2c :: CInt -> Maybe (Index1 CInt)
+i2c i = if i < 0 then Nothing else Just (Index1 i)
 
 i2mb :: CInt -> Maybe Bool
 i2mb i = if i < 0 then Nothing else Just (i /= 0)
