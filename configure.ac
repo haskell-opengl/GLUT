@@ -28,7 +28,7 @@ else
 glut_found_header=no
 fp_save_cppflags="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-AC_CHECK_HEADERS([GL/glut.h OpenGL/glut.h], [glut_found_header=yes])
+AC_CHECK_HEADERS([GL/glut.h GLUT/glut.h], [glut_found_header=yes])
 CPPFLAGS="$fp_save_cppflags"
 
 if test "$glut_found_header" = no; then
