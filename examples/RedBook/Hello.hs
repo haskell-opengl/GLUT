@@ -31,12 +31,12 @@ display = do
 myInit :: IO () 
 myInit = do
    -- select clearing color
-   clearColor $= Color4 0.0 0.0 0.0 0.0
+   clearColor $= Color4 0 0 0 0
 
    -- initialize viewing values
    matrixMode $= Projection
    loadIdentity
-   ortho 0.0 1.0 0.0 1.0 (-1.0) 1.0
+   ortho 0 1 0 1 (-1) 1
 
 {-
    Declare initial window size, position, and display mode
