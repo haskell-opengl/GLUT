@@ -1,3 +1,4 @@
+-- #prune
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.State
@@ -335,6 +336,8 @@ getScreenInfo = do
 
 --------------------------------------------------------------------------------
 
+-- | The state of the global key repeat
+
 data GlobalKeyRepeat
    = GlobalKeyRepeatOff
    | GlobalKeyRepeatOn
@@ -355,6 +358,8 @@ unmarshalGlobalKeyRepeat r
 
 --------------------------------------------------------------------------------
 
+-- | The state of the per-window key repeat
+
 data PerWindowKeyRepeat
    = PerWindowKeyRepeatOff
    | PerWindowKeyRepeatOn
@@ -370,8 +375,12 @@ unmarshalPerWindowKeyRepeat _ = PerWindowKeyRepeatOn
 
 --------------------------------------------------------------------------------
 
+-- | The key repeat state
+
 data KeyboardInfo = KeyboardInfo GlobalKeyRepeat PerWindowKeyRepeat
    deriving ( Eq, Ord )
+
+-- | Return the current key repeat state.
 
 getKeyboardInfo :: IO (Maybe KeyboardInfo)
 getKeyboardInfo = getDeviceInfo glut_HAS_KEYBOARD $ do
@@ -386,8 +395,13 @@ getDeviceInfo dev act = do
 
 --------------------------------------------------------------------------------
 
+-- | The number of buttons of a mouse
+
 newtype MouseInfo = MouseInfo NumButtons
    deriving ( Eq, Ord )
+
+-- | Return 'Just' the number of buttons of an attached mouse or 'Nothing' if
+-- there is none.
 
 getMouseInfo :: IO (Maybe MouseInfo)
 getMouseInfo = getDeviceInfo glut_HAS_MOUSE $
@@ -395,8 +409,13 @@ getMouseInfo = getDeviceInfo glut_HAS_MOUSE $
 
 --------------------------------------------------------------------------------
 
+-- | The number of buttons of a Spaceball
+
 newtype SpaceballInfo = SpaceballInfo NumButtons
    deriving ( Eq, Ord )
+
+-- | Return 'Just' the number of buttons of the attached Spaceball or 'Nothing'
+-- if there is none.
 
 getSpaceballInfo :: IO (Maybe SpaceballInfo)
 getSpaceballInfo = getDeviceInfo glut_HAS_SPACEBALL $
@@ -404,19 +423,29 @@ getSpaceballInfo = getDeviceInfo glut_HAS_SPACEBALL $
 
 --------------------------------------------------------------------------------
 
-data DialAndButtonBoxInfo = DialAndButtonBoxInfo NumButtons NumDials
+-- | The number of dials and buttons of a dial & button box
+
+data DialAndButtonBoxInfo = DialAndButtonBoxInfo NumDials NumButtons
    deriving ( Eq, Ord )
+
+-- | Return 'Just' the number of dials and buttons of an attached dial & button
+--  box or 'Nothing' if there is none.
 
 getDialAndButtonBoxInfo :: IO (Maybe DialAndButtonBoxInfo)
 getDialAndButtonBoxInfo = getDeviceInfo glut_HAS_DIAL_AND_BUTTON_BOX $ do
-   b <- deviceGet id glut_NUM_BUTTON_BOX_BUTTONS
    d <- deviceGet id glut_NUM_DIALS
-   return $ DialAndButtonBoxInfo b d
+   b <- deviceGet id glut_NUM_BUTTON_BOX_BUTTONS
+   return $ DialAndButtonBoxInfo d b
 
 --------------------------------------------------------------------------------
 
+-- | The number of buttons of a tablet
+
 newtype TabletInfo = TabletInfo NumButtons
    deriving ( Eq, Ord )
+
+-- | Return 'Just' the number of buttons of an attached tablet or 'Nothing' if
+-- there is none.
 
 getTabletInfo :: IO (Maybe TabletInfo)
 getTabletInfo = getDeviceInfo glut_HAS_TABLET $
@@ -424,8 +453,13 @@ getTabletInfo = getDeviceInfo glut_HAS_TABLET $
 
 --------------------------------------------------------------------------------
 
+-- | Information about a joystick
+
 data JoystickInfo = JoystickInfo NumButtons PollRate NumAxes
    deriving ( Eq, Ord )
+
+-- | Return 'Just' some information about an attached joystick or 'Nothing' if
+-- there is none.
 
 getJoystickInfo :: IO (Maybe JoystickInfo)
 getJoystickInfo = getDeviceInfo glut_HAS_JOYSTICK $ do

@@ -1,3 +1,4 @@
+-- #prune
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Callbacks.Window
@@ -55,6 +56,8 @@ import Graphics.UI.GLUT.State ( NumButtons, NumDials, PollRate )
 import Graphics.UI.GLUT.Constants
 
 --------------------------------------------------------------------------------
+
+-- | A display callback
 
 type DisplayCallback = IO ()
 
@@ -145,6 +148,8 @@ foreign import CALLCONV unsafe "glutOverlayDisplayFunc" glutOverlayDisplayFunc
 
 --------------------------------------------------------------------------------
 
+-- | A reshape callback
+
 type ReshapeCallback = WindowSize -> IO ()
 
 type ReshapeCallback' = CInt -> CInt -> IO ()
@@ -208,6 +213,8 @@ unmarshalVisibility v
 
 --------------------------------------------------------------------------------
 
+-- | A visibilty callback
+
 type VisibilityCallback = Visibility -> IO ()
 
 type VisibilityCallback' = CInt -> IO ()
@@ -260,6 +267,8 @@ foreign import CALLCONV unsafe "glutKeyboardUpFunc" glutKeyboardUpFunc ::
    FunPtr KeyboardCallback' -> IO ()
 
 --------------------------------------------------------------------------------
+
+-- | Special keys
 
 data SpecialKey
    = KeyF1
@@ -339,6 +348,8 @@ foreign import CALLCONV unsafe "glutSpecialUpFunc" glutSpecialUpFunc ::
 
 --------------------------------------------------------------------------------
 
+-- | Mouse buttons, including a wheel
+
 data MouseButton
    = LeftButton
    | MiddleButton
@@ -364,6 +375,8 @@ unmarshalMouseButton b
    | otherwise = error "unmarshalMouseButton"
 
 --------------------------------------------------------------------------------
+
+-- | The current state of a key or button
 
 data KeyState
    = Down
@@ -396,14 +409,16 @@ foreign import CALLCONV unsafe "glutMouseFunc" glutMouseFunc ::
 
 --------------------------------------------------------------------------------
 
-data Modifiers = Modifiers { shift, ctrl, alt :: Bool } deriving ( Eq, Ord )
+-- | The state of the keyboard modifiers
+
+data Modifiers = Modifiers { shift, ctrl, alt :: KeyState } deriving ( Eq, Ord )
 
 -- Could use fromBitfield + Enum/Bounded instances + marshalModifier instead...
 unmarshalModifiers :: CInt -> Modifiers
 unmarshalModifiers m = Modifiers {
-   shift = (m .&. glut_ACTIVE_SHIFT) /= 0,
-   ctrl  = (m .&. glut_ACTIVE_CTRL ) /= 0,
-   alt   = (m .&. glut_ACTIVE_ALT  ) /= 0 }
+   shift = if (m .&. glut_ACTIVE_SHIFT) /= 0 then Down else Up,
+   ctrl  = if (m .&. glut_ACTIVE_CTRL ) /= 0 then Down else Up,
+   alt   = if (m .&. glut_ACTIVE_ALT  ) /= 0 then Down else Up }
 
 getModifiers :: IO Modifiers
 getModifiers = liftM unmarshalModifiers glutGetModifiers
@@ -412,14 +427,24 @@ foreign import CALLCONV unsafe "glutGetModifiers" glutGetModifiers :: IO CInt
 
 --------------------------------------------------------------------------------
 
+-- | A generalized view of keys
+
 data Key
    = Char Char
    | SpecialKey SpecialKey
    | MouseButton MouseButton
    deriving ( Eq, Ord )
 
+-- | A keyboard\/mouse callback
+
 type KeyboardMouseCallback =
    Key -> KeyState -> Modifiers -> WindowPosition -> IO ()
+
+-- | Set the keyboard\/mouse callback for the /current window./ The
+-- keyboard\/mouse callback for a window is called when the state of a key or
+-- mouse button changes. The callback parameters indicate the new state of the
+-- key\/button, the state of the keyboard modifiers, and the mouse location in
+-- window relative coordinates.
 
 setKeyboardMouseCallback :: Maybe KeyboardMouseCallback -> IO ()
 setKeyboardMouseCallback Nothing = do
@@ -441,6 +466,8 @@ setKeyboardMouseCallback (Just cb) = do
                                              cb (MouseButton b) s    m p))
 
 --------------------------------------------------------------------------------
+
+-- | A motion callback
 
 type MotionCallback = WindowPosition -> IO ()
 
@@ -480,6 +507,9 @@ foreign import CALLCONV unsafe "glutPassiveMotionFunc" glutPassiveMotionFunc ::
 
 --------------------------------------------------------------------------------
 
+-- | The relation between the mouse pointer and the /current window/ has
+-- changed.
+
 data Crossing
    = WindowLeft    -- ^ The mouse pointer has left the /current window./
    | WindowEntered -- ^ The mouse pointer has entered the /current window./
@@ -492,6 +522,8 @@ unmarshalCrossing c
    | otherwise = error "unmarshalCrossing"
 
 --------------------------------------------------------------------------------
+
+-- | An enter\/leave callback
 
 type CrossingCallback = Crossing -> IO ()
 
@@ -518,16 +550,22 @@ foreign import CALLCONV unsafe "glutEntryFunc" glutEntryFunc ::
 
 -- | Translation of the Spaceball along one axis, normalized to be in the range
 -- of -1000 to +1000 inclusive
+
 type SpaceballMotion = CInt
 
 -- | Rotation of the Spaceball along one axis, normalized to be in the range
 -- of -1800 .. +1800 inclusive
+
 type SpaceballRotation = CInt
+
+-- | The state of the Spaceball has changed.
 
 data SpaceballInput
    = SpaceballMotion   SpaceballMotion SpaceballMotion SpaceballMotion
    | SpaceballRotation SpaceballRotation SpaceballRotation SpaceballRotation
    | SpaceballButton   NumButtons KeyState
+
+-- | A SpaceballButton callback
 
 type SpaceballCallback = SpaceballInput -> IO ()
 
@@ -605,10 +643,14 @@ foreign import CALLCONV unsafe "glutSpaceballButtonFunc"
 
 --------------------------------------------------------------------------------
 
+-- | The dial & button box state has changed.
+
 data DialAndButtonBoxInput
    = DialAndButtonBoxButton NumButtons KeyState
    | DialAndButtonBoxDial   NumDials CInt
    deriving ( Eq, Ord )
+
+-- | A dial & button box callback
 
 type DialAndButtonBoxCallback = DialAndButtonBoxInput -> IO ()
 
@@ -622,7 +664,6 @@ type DialAndButtonBoxCallback = DialAndButtonBoxInput -> IO ()
 -- Registering a dial & button box callback when a dial & button box device is
 -- not available is ineffectual and not an error. In this case, no dial & button
 -- box button will be generated.
-
 
 setDialAndButtonBoxCallback :: Maybe DialAndButtonBoxCallback -> IO ()
 setDialAndButtonBoxCallback Nothing = do
@@ -668,11 +709,16 @@ foreign import CALLCONV unsafe "glutDialsFunc" glutDialsFunc ::
 
 -- | Absolute tablet position, with coordinates normalized to be in the range of
 -- 0 to 2000 inclusive
+
 data TabletPosition = TabletPosition CInt CInt
+
+-- | The table state has changed.
 
 data TabletInput
    = TabletMotion
    | TabletButton NumButtons KeyState
+
+-- | A tablet callback
 
 type TabletCallback = TabletInput -> TabletPosition -> IO ()
 
@@ -732,18 +778,21 @@ foreign import CALLCONV unsafe "glutTabletButtonFunc" glutTabletButtonFunc ::
 
 --------------------------------------------------------------------------------
 
+-- | The state of the joystick buttons
+
 data JoystickButtons = JoystickButtons {
-   joystickButtonA, joystickButtonB, joystickButtonC, joystickButtonD :: Bool
+   joystickButtonA, joystickButtonB,
+   joystickButtonC, joystickButtonD :: KeyState
    } deriving ( Eq, Ord )
 
 -- Could use fromBitfield + Enum/Bounded instances + unmarshalJoystickButton
 -- instead...
 unmarshalJoystickButtons :: CUInt -> JoystickButtons
 unmarshalJoystickButtons m = JoystickButtons {
-   joystickButtonA = (m .&. glut_JOYSTICK_BUTTON_A) /= 0,
-   joystickButtonB = (m .&. glut_JOYSTICK_BUTTON_B) /= 0,
-   joystickButtonC = (m .&. glut_JOYSTICK_BUTTON_C) /= 0,
-   joystickButtonD = (m .&. glut_JOYSTICK_BUTTON_D) /= 0 }
+   joystickButtonA = if (m .&. glut_JOYSTICK_BUTTON_A) /= 0 then Down else Up,
+   joystickButtonB = if (m .&. glut_JOYSTICK_BUTTON_B) /= 0 then Down else Up,
+   joystickButtonC = if (m .&. glut_JOYSTICK_BUTTON_C) /= 0 then Down else Up,
+   joystickButtonD = if (m .&. glut_JOYSTICK_BUTTON_D) /= 0 then Down else Up }
 
 --------------------------------------------------------------------------------
 
@@ -759,6 +808,8 @@ unmarshalJoystickButtons m = JoystickButtons {
 data JoystickPosition = JoystickPosition CInt CInt CInt deriving ( Eq, Ord )
 
 --------------------------------------------------------------------------------
+
+-- | A joystick callback
 
 type JoystickCallback = JoystickButtons -> JoystickPosition -> IO ()
 
