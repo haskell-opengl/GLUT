@@ -7,28 +7,28 @@ maintainer:	MAINTAINER
 exposed:	True
 
 exposed-modules:
-	Graphics.UI.GLUT.Callbacks.Global,
-	Graphics.UI.GLUT.Callbacks.Registration,
-	Graphics.UI.GLUT.Callbacks.Window,
 	Graphics.UI.GLUT.Begin,
+	Graphics.UI.GLUT.Callbacks.Global,
 	Graphics.UI.GLUT.Callbacks,
+	Graphics.UI.GLUT.Callbacks.Window,
 	Graphics.UI.GLUT.Colormap,
-	Graphics.UI.GLUT.Constants,
 	Graphics.UI.GLUT.Debugging,
 	Graphics.UI.GLUT.DeviceControl,
 	Graphics.UI.GLUT.Fonts,
 	Graphics.UI.GLUT.GameMode,
+	Graphics.UI.GLUT,
 	Graphics.UI.GLUT.Initialization,
 	Graphics.UI.GLUT.Menu,
 	Graphics.UI.GLUT.Objects,
 	Graphics.UI.GLUT.Overlay,
-	Graphics.UI.GLUT.QueryUtils,
 	Graphics.UI.GLUT.State,
-	Graphics.UI.GLUT.Types,
-	Graphics.UI.GLUT.Window,
-	Graphics.UI.GLUT
+	Graphics.UI.GLUT.Window
 
 hidden-modules:
+	Graphics.UI.GLUT.Callbacks.Registration,
+	Graphics.UI.GLUT.Constants,
+	Graphics.UI.GLUT.QueryUtils,
+	Graphics.UI.GLUT.Types
 
 import-dirs:	IMPORT_DIR
 
