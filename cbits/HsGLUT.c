@@ -45,6 +45,6 @@ hs_GLUT_getProcAddress(char *procName)
 #if (FREEGLUT || GLUT_API_VERSION >= 5)
   return glutGetProcAddress(procName);
 #else
-  return NULL;
+  return (void*)0;
 #endif
 }
