@@ -20,7 +20,7 @@ module Graphics.UI.GLUT.State (
   DialIndex, AxisCount, PollRate,
 
   -- * Initial window parameters
-  getInitWindowPosition, getInitWindowSize, getInitDisplayMode,
+  getInitialWindowPosition, getInitialWindowSize, getInitialDisplayMode,
   isDisplayModePossible,
 
   -- * State of the /current window/
@@ -122,24 +122,24 @@ type PollRate = CInt
 --------------------------------------------------------------------------------
 
 -- | Return the /initial window position./
-getInitWindowPosition :: IO WindowPosition
-getInitWindowPosition = do
+getInitialWindowPosition :: IO WindowPosition
+getInitialWindowPosition = do
    x <- get id glut_INIT_WINDOW_X
    y <- get id glut_INIT_WINDOW_Y
    return $ WindowPosition x y
 
 -- | Return the /initial window size./
 
-getInitWindowSize :: IO WindowSize
-getInitWindowSize = do
+getInitialWindowSize :: IO WindowSize
+getInitialWindowSize = do
    w <- get id glut_INIT_WINDOW_WIDTH
    h <- get id glut_INIT_WINDOW_HEIGHT
    return $ WindowSize w h
 
 -- | Return the /initial display mode./
 
-getInitDisplayMode :: IO [DisplayMode]
-getInitDisplayMode =
+getInitialDisplayMode :: IO [DisplayMode]
+getInitialDisplayMode =
    get i2dms glut_INIT_DISPLAY_MODE
 
 -- | Test whether the /current display mode/ is supported or not.
@@ -265,7 +265,7 @@ getFormatID = get id glut_WINDOW_FORMAT_ID
 --------------------------------------------------------------------------------
 
 -- | Return the number of milliseconds since
--- 'Graphics.UI.GLUT.Initialization.init' was called (or first call to
+-- 'Graphics.UI.GLUT.Initialization.initialize' was called (or first call to
 -- 'getElapsedTime').
 
 getElapsedTime :: IO CInt

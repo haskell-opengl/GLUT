@@ -9,40 +9,39 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- Actions beginning with the @init@ prefix are used to initialize GLUT
--- state. The primary initialization routine is 'init' that should only be
--- called exactly once in a GLUT program.  No non-@init@-prefixed GLUT or
--- OpenGL actions should be called before 'init'.
+-- Actions in this module are used to initialize GLUT state. The primary
+-- initialization routine is 'initialize', which should only be called exactly
+-- once in a GLUT program. No other GLUT or OpenGL actions should be called
+-- before 'initialize', apart from the other actions in this module.
 --
--- The other @init@-actions may be called before 'init'. The reason is these
--- actions can be used to set default window initialization state that might
--- be modified by the command processing done in 'init'. For example,
--- @'setInitialWindowSize' ('WindowSize' 400 400)@ can be called before 'init'
--- to indicate 400 by 400 is the program\'s default window size. Setting the
--- initial window size or position before 'init' allows the GLUT program user
--- to specify the initial size or position using command line arguments.
+-- The reason is that these actions below can be used to set default window
+-- initialization state that might be modified by the command processing done in
+-- 'initialize'. For example, @'setInitialWindowSize' ('WindowSize' 400 400)@
+-- can be called before 'initialize' to indicate 400 by 400 is the program\'s
+-- default window size. Setting the initial window size or position before
+-- 'initialize' allows the GLUT program user to specify the initial size or
+-- position using command line arguments.
 --
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Initialization (
    -- * Primary initialization
-   init, initArgs,
+   initialize, getArgsAndInitialize,
 
    -- * Setting the initial window geometry
    WindowPosition(..), setInitialWindowPosition,
    WindowSize(..), setInitialWindowSize,
 
-   -- * Setting the initial window mode (I)
+   -- * Setting the initial display mode (I)
    DisplayMode(..), setInitialDisplayMode,
    marshalDisplayMode,   -- used only internally
 
-   -- * Setting the initial window mode (II)
+   -- * Setting the initial display mode (II)
    relationToString,   -- used only internally
    Capability(..), Relation(..), CapabilityDescription(..),
    setInitialDisplayCapabilities
 ) where
 
-import Prelude hiding ( init )
 import Data.Bits ( Bits((.|.)) )
 import Data.List ( genericLength, intersperse )
 import Foreign.C.String ( CString, withCString, peekCString )
@@ -58,18 +57,18 @@ import Graphics.UI.GLUT.Constants
 
 -- | Given the program name and command line arguments, initialize the GLUT
 -- library and negotiate a session with the window system. During this
--- process, 'init' may cause the termination of the GLUT program with an
+-- process, 'initialize' may cause the termination of the GLUT program with an
 -- error message to the user if GLUT cannot be properly initialized.
 -- Examples of this situation include the failure to connect to the window
 -- system, the lack of window system support for OpenGL, and invalid command
 -- line options.
 --
--- 'init' also processes command line options, but the specific options
+-- 'initialized.' also processes command line options, but the specific options
 -- parsed are window system dependent. Any command line arguments which are
 -- not GLUT-specific are returned.
 --
 -- /X Implementation Notes:/ The X Window System specific options parsed by
--- 'init' are as follows:
+-- 'initialize' are as follows:
 --
 -- * @-display /DISPLAY/@: Specify the X server to connect to. If not specified,
 --   the value of the @DISPLAY@ environment variable is used.
@@ -100,10 +99,10 @@ import Graphics.UI.GLUT.Constants
 -- * @-sync@: Enable synchronous X protocol transactions. This option makes
 --   it easier to track down potential X protocol errors.
 
-init :: String      -- ^ The program name.
-     -> [String]    -- ^ The command line arguments
-     -> IO [String] -- ^ Non-GLUT command line arguments
-init prog args =
+initialize :: String      -- ^ The program name.
+           -> [String]    -- ^ The command line arguments
+           -> IO [String] -- ^ Non-GLUT command line arguments
+initialize prog args =
    with (1 + genericLength args) $ \argcBuf ->
    withMany withCString (prog : args) $ \argvPtrs ->
    withArray0 nullPtr argvPtrs $ \argvBuf -> do
@@ -119,11 +118,11 @@ foreign import CALLCONV unsafe "glutInit" glutInit ::
 -- | Convenience action: Initialize GLUT, returning the program name and any
 -- non-GLUT command line arguments.
 
-initArgs :: IO (String, [String])
-initArgs = do
+getArgsAndInitialize :: IO (String, [String])
+getArgsAndInitialize = do
    prog <- getProgName
    args <- getArgs
-   nonGLUTArgs <- init prog args
+   nonGLUTArgs <- initialize prog args
    return (prog, nonGLUTArgs)
 
 --------------------------------------------------------------------------------
