@@ -20,6 +20,13 @@
 -- Callbacks for input events should be delivered to the window the event occurs
 -- in. Events should not propagate to parent windows.
 --
+-- A callback of type @Foo@ can registered by passing 'Just' the callback to
+-- @setFooCallback@. Almost all callbacks can be de-registered by passing
+-- 'Nothing' to the corresponding @setFooCallback@, the only exceptions being
+-- 'Graphics.UI.GLUT.Callbacks.Window.DisplayCallback' (can only be
+-- re-registered) and 'Graphics.UI.GLUT.Callbacks.Global.TimerCallback' (can\'t
+-- be unregistered).
+--
 -- /X Implementation Notes:/ The X GLUT implementation uses the X Input
 -- extension to support sophisticated input devices: Spaceball, dial & button
 -- box, and digitizing tablet. Because the X Input extension  does not mandate

@@ -63,14 +63,11 @@ type MenuStatusCallback' = CInt -> CInt -> CInt -> IO ()
 -- the initial pop-up menu in both the 'InUse' and 'NotInUse' cases. The
 -- /current window/ will be set to the window from which the initial menu was
 -- popped up from, also in both cases.
---
--- Passing 'Nothing' to 'setMenuStatusCallback' disables the generation of the
--- menu status callback.
 
 setMenuStatusCallback :: Maybe MenuStatusCallback -> IO ()
 setMenuStatusCallback = setCallback MenuStatusCB glutMenuStatusFunc
                                     (makeMenuStatusCallback . unmarshal)
-      where unmarshal cb s x y = cb (unmarshalMenuUsage s) (WindowPosition x y)
+   where unmarshal cb s x y = cb (unmarshalMenuUsage s) (WindowPosition x y)
 
 foreign import ccall "wrapper" makeMenuStatusCallback ::
    MenuStatusCallback' -> IO (FunPtr MenuStatusCallback')
@@ -93,9 +90,6 @@ type IdleCallback = IO ()
 -- The amount of computation and rendering done in an idle callback should be
 -- minimized to avoid affecting the program\'s interactive response. In general,
 -- not more than a single frame of rendering should be done in an idle callback.
---
--- Passing 'Nothing' to 'setIdleCallback' disables the generation of the idle
--- callback.
 
 setIdleCallback :: Maybe IdleCallback -> IO ()
 setIdleCallback = setCallback IdleCB glutIdleFunc makeIdleCallback
