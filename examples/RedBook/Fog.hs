@@ -73,7 +73,6 @@ keyboard (Char c) Down _ _ = case toLower c of
          Linear _ _    -> do fogMode $= Exp   0.35; putStrLn "Fog mode is Exp"
          Exp _         -> do fogMode $= Exp2  0.35; putStrLn "Fog mode is Exp2"
          Exp2 _        -> do fogMode $= Linear 1 5; putStrLn "Fog mode is Linear"
-         FogCoordinate -> error "Huh?"
       postRedisplay Nothing
    '\27' -> exitWith ExitSuccess
    _     -> return ()
