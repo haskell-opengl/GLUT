@@ -27,7 +27,7 @@ module Graphics.UI.GLUT.Window (
    setWindow, getWindow,
 
    -- * Re-displaying and double buffer management
-   postRedisplay, swapBuffers,
+   postRedisplay, postWindowRedisplay, swapBuffers,
 
    -- * Changing the window geometry
 
@@ -50,7 +50,7 @@ module Graphics.UI.GLUT.Window (
    setWindowTitle, setIconTitle,
 
    -- * Cursor management
-   Cursor(..), setCursor
+   Cursor(..), setCursor, warpPointer
 ) where
 
 import Foreign.C.String ( CString, withCString )
@@ -157,6 +157,18 @@ foreign import ccall unsafe "glutGetWindow" glutGetWindow :: IO Window
 -- Also, see 'Graphics.UI.GLUT.Overlay.postOverlayRedisplay'.
 
 foreign import ccall unsafe "glutPostRedisplay" postRedisplay :: IO ()
+
+-- | Mark the normal plane of the given window as needing to be redisplayed,
+-- otherwise the same as 'postRedisplay'.
+--
+-- The advantage of this routine is that it saves the cost of a 'setWindow' call
+-- (entailing an expensive OpenGL context switch), which is particularly useful
+-- when multiple windows need redisplays posted at the same time. 
+--
+-- Also, see 'Graphics.UI.GLUT.Overlay.postWindowOverlayRedisplay'.
+
+foreign import ccall unsafe "glutPostWindowRedisplay" postWindowRedisplay ::
+   Window -> IO ()
 
 -- | Perform a buffer swap on the /layer in use/ for the /current window/.
 -- Specifically, 'swapBuffers' promotes the contents of the back buffer of the
@@ -377,3 +389,22 @@ setCursor :: Cursor -> IO ()
 setCursor = glutSetCursor . marshalCursor
 
 foreign import ccall unsafe "glutSetCursor" glutSetCursor :: CInt -> IO ()
+
+-- | Warp the window system\'s pointer to a new location relative to the origin
+-- of the /current window/ by the specified pixel offset, which may be negative.
+-- The warp is done immediately.
+--
+-- If the pointer would be warped outside the screen\'s frame buffer region, the
+-- location will be clamped to the nearest screen edge. The window system is
+-- allowed to further constrain the pointer\'s location in window system
+-- dependent ways.
+--
+-- Good advice from Xlib\'s @XWarpPointer@ man page: \"There is seldom any
+-- reason for calling this function. The pointer should normally be left to the
+-- user.\"
+
+warpPointer :: WindowPosition -> IO ()
+warpPointer (WindowPosition x y) = glutWarpPointer x y
+
+foreign import ccall unsafe "glutWarpPointer" glutWarpPointer ::
+   CInt -> CInt -> IO ()
