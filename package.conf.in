@@ -39,15 +39,15 @@ library-dirs:	LIB_DIR
 #endif
 
 hs-libraries:   "HSGLUT"
-extra-libs:	GLUT_EXTRA_LIBS
+extra-libraries:	GLUT_EXTRA_LIBS
 include-dirs: 	INCLUDE_DIR
 includes:	"HsGLUT.h"
 depends:	base, OpenGL
-extra-hugs-opts:
-extra-cc-opts:	GLUT_CFLAGS
-extra-ld-opts:	GLUT_LIBS
+hugs-options:
+cc-options:	GLUT_CFLAGS
+ld-options:	GLUT_LIBS
 framework-dirs:
-extra-frameworks: GLUT_FRAMEWORKS
+frameworks: GLUT_FRAMEWORKS
 
 haddock-interfaces:	HADDOCK_IFACE
 haddock-html:		HTML_DIR
