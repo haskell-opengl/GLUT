@@ -1,3 +1,4 @@
+-- #prune
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Overlay
@@ -22,6 +23,7 @@ module Graphics.UI.GLUT.Overlay (
 
    -- * Changing the /layer in use/
    Layer(..), useLayer,
+   unmarshalLayer,   -- used only internally
 
    -- * Re-displaying
    postOverlayRedisplay, postWindowOverlayRedisplay,
@@ -89,6 +91,12 @@ marshalLayer :: Layer -> GLenum
 marshalLayer l = case l of
    Normal  -> glut_NORMAL
    Overlay -> glut_OVERLAY
+
+unmarshalLayer :: GLenum -> Layer
+unmarshalLayer l
+   | l == glut_NORMAL  = Normal
+   | l == glut_OVERLAY = Overlay
+   | otherwise = error "unmarshalLayer"
 
 -- | Change the per-window /layer in use/ for the /current window/, selecting
 -- either the normal plane or overlay. The overlay should only be specified if

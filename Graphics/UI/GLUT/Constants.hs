@@ -203,7 +203,7 @@ glut_JOYSTICK_POLL_RATE                = 616
 -----------------------------------------------------------------------------
 -- * @glutLayerGet@ parameters
 glut_OVERLAY_POSSIBLE, glut_LAYER_IN_USE, glut_HAS_OVERLAY,
-   glut_TRANSPARENT_INDEX, glut_NORMAL_DAMAGED, glut_OVERLAY_DAMAGED :: CInt
+   glut_TRANSPARENT_INDEX, glut_NORMAL_DAMAGED, glut_OVERLAY_DAMAGED :: GLenum
 
 glut_OVERLAY_POSSIBLE                  = 800
 glut_LAYER_IN_USE                      = 801
