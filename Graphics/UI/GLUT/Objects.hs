@@ -135,8 +135,8 @@ foreign import CALLCONV unsafe "glutSolidCube" solidCube
    :: Height -- ^ Length of the cube sides
    -> IO ()
 
--- | Render a wireframe cube centered at the modeling coordinates origin with sides
--- of the given length.
+-- | Render a wireframe cube centered at the modeling coordinates origin with
+-- sides of the given length.
 
 foreign import CALLCONV unsafe "glutWireCube" wireCube
    :: Height -- ^ Length of the cube sides
@@ -147,7 +147,8 @@ foreign import CALLCONV unsafe "glutWireCube" wireCube
 -- | Render a solid dodecahedron (12-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of @sqrt 3@.
 
-foreign import CALLCONV unsafe "glutSolidDodecahedron" solidDodecahedron :: IO ()
+foreign import CALLCONV unsafe "glutSolidDodecahedron" solidDodecahedron ::
+   IO ()
 
 -- | Render a wireframe dodecahedron (12-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of @sqrt 3@.
@@ -183,12 +184,12 @@ foreign import CALLCONV unsafe "glutWireOctahedron" wireOctahedron :: IO ()
 -- | Render a solid tetrahedron (4-sided regular solid) centered at the modeling
 -- coordinates origin with a radius of @sqrt 3@.
 
-foreign import CALLCONV unsafe "glutWireTetrahedron"   wireTetrahedron   :: IO ()
+foreign import CALLCONV unsafe "glutWireTetrahedron" wireTetrahedron :: IO ()
 
 -- | Render a wireframe tetrahedron (4-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of @sqrt 3@.
 
-foreign import CALLCONV unsafe "glutSolidTetrahedron"  solidTetrahedron  :: IO ()
+foreign import CALLCONV unsafe "glutSolidTetrahedron" solidTetrahedron  :: IO ()
 
 --------------------------------------------------------------------------------
 
@@ -198,18 +199,22 @@ foreign import CALLCONV unsafe "glutSolidTetrahedron"  solidTetrahedron  :: IO (
 
 foreign import CALLCONV unsafe "glutSolidSphere" solidSphere
    :: Radius   -- ^ Radius of the sphere.
-   -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar to lines of longitude.
-   -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis, similar to lines of latitude.
+   -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar
+               --   to lines of longitude.
+   -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis,
+               --   similar to lines of latitude.
    -> IO ()
 
--- | Render a wireframe sphere centered at the modeling coordinates origin of the
--- specified radius. The sphere is subdivided around the Z axis into slices
+-- | Render a wireframe sphere centered at the modeling coordinates origin of
+-- the specified radius. The sphere is subdivided around the Z axis into slices
 -- and along the Z axis into stacks.
 
 foreign import CALLCONV unsafe "glutWireSphere" wireSphere
    :: Radius   -- ^ Radius of the sphere.
-   -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar to lines of longitude.
-   -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis, similar to lines of latitude.
+   -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar
+               --   to lines of longitude.
+   -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis,
+               --   similar to lines of latitude.
    -> IO ()
 
 --------------------------------------------------------------------------------

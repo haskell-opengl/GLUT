@@ -142,10 +142,10 @@ import Graphics.UI.GLUT.GameMode
 -- windowing interface is reasonably popular largely because it is simple to
 -- use. IRIS GL programmers can worry about graphics programming without needing
 -- to be an expert in programming the native window system. Experience also
--- demonstrated that IRIS GL\'s windowing interface was high-level enough that it
--- could be retargeted to different window systems. Silicon Graphics migrated
--- from NeWS to the X Window System without any major changes to IRIS GL\'s basic
--- windowing interface.
+-- demonstrated that IRIS GL\'s windowing interface was high-level enough that
+-- it could be retargeted to different window systems. Silicon Graphics migrated
+-- from NeWS to the X Window System without any major changes to IRIS GL\'s
+-- basic windowing interface.
 --
 -- Removing window system operations from OpenGL is a sound decision because it
 -- allows the OpenGL graphics system to be retargeted to various systems
@@ -161,19 +161,19 @@ import Graphics.UI.GLUT.GameMode
 -- native window system interface, despite the portability of the program\'s
 -- OpenGL rendering code, the program itself will be window system dependent.
 --
--- Testing and documenting OpenGL\'s functionality lead to the development of the
--- @tk@ and @aux@ toolkits. The @aux@ toolkit is used in the examples found in the
--- /OpenGL Programming Guide/. Unfortunately, @aux@ has numerous limitations and
--- its utility is largely limited to toy programs. The @tk@ library has more
--- functionality than @aux@ but was developed in an /ad hoc/ fashion and still lacks
--- much important functionality that IRIS GL programmers expect, like pop-up
--- menus and overlays.
+-- Testing and documenting OpenGL\'s functionality lead to the development of
+-- the @tk@ and @aux@ toolkits. The @aux@ toolkit is used in the examples found
+-- in the /OpenGL Programming Guide/. Unfortunately, @aux@ has numerous
+-- limitations and its utility is largely limited to toy programs. The @tk@
+-- library has more functionality than @aux@ but was developed in an /ad hoc/
+-- fashion and still lacks much important functionality that IRIS GL programmers
+-- expect, like pop-up menus and overlays.
 --
 -- GLUT is designed to fill the need for a window system independent programming
 -- interface for OpenGL programs. The interface is designed to be simple yet
 -- still meet the needs of useful OpenGL programs. Features from the IRIS GL,
--- @aux@, and @tk@ interfaces are included to make it easy for programmers used to
--- these interfaces to develop programs for GLUT.
+-- @aux@, and @tk@ interfaces are included to make it easy for programmers used
+-- to these interfaces to develop programs for GLUT.
 
 -----------------------------------------------------------------------------
 -- $DesignPhilosophy
@@ -240,7 +240,8 @@ import Graphics.UI.GLUT.GameMode
 -- * /State Retrieval:/ These routines allows programs to retrieve state from
 --   GLUT.
 --
--- * /Font Rendering:/ These routines allow rendering of stroke and bitmap fonts.
+-- * /Font Rendering:/ These routines allow rendering of stroke and bitmap
+--   fonts.
 --
 -- * /Geometric Shape Rendering:/ These routines allow the rendering of 3D
 --   geometric objects including spheres, cones, icosahedrons, and teapots.
@@ -256,8 +257,8 @@ import Graphics.UI.GLUT.GameMode
 -- Note that the following item has been left out intentionally, its
 -- implementation is too SGI-specific:
 -- * /Video Resizing:/ These routines provide a means for doing swap or frame
---   synchronous resizing\/panning of the area that is to be magnified (or passed
---   through) to the output video resolution.
+--   synchronous resizing\/panning of the area that is to be magnified (or
+--   passed through) to the output video resolution.
 
 -----------------------------------------------------------------------------
 -- $APIVersions

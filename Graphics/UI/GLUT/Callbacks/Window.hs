@@ -137,8 +137,8 @@ setOverlayDisplayCallback :: Maybe DisplayCallback -> IO ()
 setOverlayDisplayCallback =
    setCallback OverlayDisplayCB glutOverlayDisplayFunc makeDisplayCallback
 
-foreign import CALLCONV unsafe "glutOverlayDisplayFunc" glutOverlayDisplayFunc ::
-   FunPtr DisplayCallback -> IO ()
+foreign import CALLCONV unsafe "glutOverlayDisplayFunc" glutOverlayDisplayFunc
+   :: FunPtr DisplayCallback -> IO ()
 
 --------------------------------------------------------------------------------
 
@@ -249,7 +249,8 @@ foreign import CALLCONV unsafe "glutKeyboardFunc" glutKeyboardFunc ::
 
 setKeyboardUpCallback :: Maybe KeyboardCallback -> IO ()
 setKeyboardUpCallback =
-   setCallback KeyboardUpCB glutKeyboardUpFunc (makeKeyboardCallback . unmarshal)
+   setCallback KeyboardUpCB glutKeyboardUpFunc
+               (makeKeyboardCallback . unmarshal)
    where unmarshal cb c x y = cb (chr (fromIntegral c)) (WindowPosition x y)
 
 foreign import CALLCONV unsafe "glutKeyboardUpFunc" glutKeyboardUpFunc ::
@@ -561,8 +562,8 @@ setSpaceballMotionCallback =
 foreign import ccall "wrapper" makeSpaceballMotionCallback ::
    SpaceballMotionCallback -> IO (FunPtr SpaceballMotionCallback)
 
-foreign import CALLCONV unsafe "glutSpaceballMotionFunc" glutSpaceballMotionFunc ::
-   FunPtr SpaceballMotionCallback -> IO ()
+foreign import CALLCONV unsafe "glutSpaceballMotionFunc" glutSpaceballMotionFunc
+   :: FunPtr SpaceballMotionCallback -> IO ()
 
 --------------------------------------------------------------------------------
 
@@ -578,8 +579,8 @@ setSpaceballRotationCallback =
 foreign import ccall "wrapper" makeSpaceballRotationCallback ::
    SpaceballRotationCallback -> IO (FunPtr SpaceballRotationCallback)
 
-foreign import CALLCONV unsafe "glutSpaceballRotateFunc" glutSpaceballRotateFunc ::
-   FunPtr SpaceballRotationCallback -> IO ()
+foreign import CALLCONV unsafe "glutSpaceballRotateFunc" glutSpaceballRotateFunc
+   :: FunPtr SpaceballRotationCallback -> IO ()
 
 --------------------------------------------------------------------------------
 

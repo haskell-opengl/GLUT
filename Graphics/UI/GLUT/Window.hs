@@ -104,7 +104,8 @@ foreign import CALLCONV unsafe "glutCreateWindow" glutCreateWindow ::
 
 createSubWindow
    :: Window         -- ^ Identifier of the subwindow\'s parent window.
-   -> WindowPosition -- ^ Window position in pixels relative to parent window\'s origin.
+   -> WindowPosition -- ^ Window position in pixels relative to parent window\'s
+                     --   origin.
    -> WindowSize     -- ^ Window size in pixels
    -> IO Window      -- ^ The identifier for the newly created subwindow
 createSubWindow win (WindowPosition x y) (WindowSize w h) =
@@ -120,7 +121,8 @@ foreign import CALLCONV unsafe "glutCreateSubWindow" glutCreateSubWindow ::
 -- /current window/, the /current window/ becomes invalid ('getWindow' will
 -- return 'Nothing').
 
-foreign import CALLCONV unsafe "glutDestroyWindow" destroyWindow :: Window -> IO ()
+foreign import CALLCONV unsafe "glutDestroyWindow" destroyWindow ::
+   Window -> IO ()
 
 --------------------------------------------------------------------------------
 
@@ -278,8 +280,8 @@ foreign import CALLCONV unsafe "glutPopWindow" popWindow :: IO ()
 -- system\'s policy for displaying windows.
 
 
--- | Show the /current window/ (though it may still not be visible if obscured by
--- other shown windows).
+-- | Show the /current window/ (though it may still not be visible if obscured
+-- by other shown windows).
 
 foreign import CALLCONV unsafe "glutShowWindow" showWindow :: IO ()
 
