@@ -324,63 +324,63 @@ foreign import ccall unsafe "glutSetIconTitle" glutSetIconTitle ::
 
 -- | The different cursor images GLUT supports.
 data Cursor
-   = CursorRightArrow        -- ^ Arrow pointing up and to the right.
-   | CursorLeftArrow         -- ^ Arrow pointing up and to the left.
-   | CursorInfo              -- ^ Pointing hand.
-   | CursorDestroy           -- ^ Skull & cross bones.
-   | CursorHelp              -- ^ Question mark.
-   | CursorCycle             -- ^ Arrows rotating in a circle.
-   | CursorSpray             -- ^ Spray can.
-   | CursorWait              -- ^ Wrist watch.
-   | CursorText              -- ^ Insertion point cursor for text.
-   | CursorCrosshair         -- ^ Simple cross-hair.
-   | CursorUpDown            -- ^ Bi-directional pointing up & down.
-   | CursorLeftRight         -- ^ Bi-directional pointing left & right.
-   | CursorTopSide           -- ^ Arrow pointing to top side.
-   | CursorBottomSide        -- ^ Arrow pointing to bottom side.
-   | CursorLeftSide          -- ^ Arrow pointing to left side.
-   | CursorRightSide         -- ^ Arrow pointing to right side.
-   | CursorTopLeftCorner     -- ^ Arrow pointing to top-left corner.
-   | CursorTopRightCorner    -- ^ Arrow pointing to top-right corner.
-   | CursorBottomRightCorner -- ^ Arrow pointing to bottom-left corner.
-   | CursorBottomLeftCorner  -- ^ Arrow pointing to bottom-right corner.
-   | CursorInherit           -- ^ Use parent\'s cursor.
-   | CursorNone              -- ^ Invisible cursor.
-   | CursorFullCrosshair     -- ^ Full-screen cross-hair cursor (if possible, otherwise 'CursorCrosshair').
+   = RightArrow        -- ^ Arrow pointing up and to the right.
+   | LeftArrow         -- ^ Arrow pointing up and to the left.
+   | Info              -- ^ Pointing hand.
+   | Destroy           -- ^ Skull & cross bones.
+   | Help              -- ^ Question mark.
+   | Cycle             -- ^ Arrows rotating in a circle.
+   | Spray             -- ^ Spray can.
+   | Wait              -- ^ Wrist watch.
+   | Text              -- ^ Insertion point cursor for text.
+   | Crosshair         -- ^ Simple cross-hair.
+   | UpDown            -- ^ Bi-directional pointing up & down.
+   | LeftRight         -- ^ Bi-directional pointing left & right.
+   | TopSide           -- ^ Arrow pointing to top side.
+   | BottomSide        -- ^ Arrow pointing to bottom side.
+   | LeftSide          -- ^ Arrow pointing to left side.
+   | RightSide         -- ^ Arrow pointing to right side.
+   | TopLeftCorner     -- ^ Arrow pointing to top-left corner.
+   | TopRightCorner    -- ^ Arrow pointing to top-right corner.
+   | BottomRightCorner -- ^ Arrow pointing to bottom-left corner.
+   | BottomLeftCorner  -- ^ Arrow pointing to bottom-right corner.
+   | Inherit           -- ^ Use parent\'s cursor.
+   | None              -- ^ Invisible cursor.
+   | FullCrosshair     -- ^ Full-screen cross-hair cursor (if possible, otherwise 'Crosshair').
    deriving ( Eq, Ord )
 
 marshalCursor :: Cursor -> CInt
 marshalCursor c = case c of
-   CursorRightArrow        -> glut_CURSOR_RIGHT_ARROW
-   CursorLeftArrow         -> glut_CURSOR_LEFT_ARROW
-   CursorInfo              -> glut_CURSOR_INFO
-   CursorDestroy           -> glut_CURSOR_DESTROY
-   CursorHelp              -> glut_CURSOR_HELP
-   CursorCycle             -> glut_CURSOR_CYCLE
-   CursorSpray             -> glut_CURSOR_SPRAY
-   CursorWait              -> glut_CURSOR_WAIT
-   CursorText              -> glut_CURSOR_TEXT
-   CursorCrosshair         -> glut_CURSOR_CROSSHAIR
-   CursorUpDown            -> glut_CURSOR_UP_DOWN
-   CursorLeftRight         -> glut_CURSOR_LEFT_RIGHT
-   CursorTopSide           -> glut_CURSOR_TOP_SIDE
-   CursorBottomSide        -> glut_CURSOR_BOTTOM_SIDE
-   CursorLeftSide          -> glut_CURSOR_LEFT_SIDE
-   CursorRightSide         -> glut_CURSOR_RIGHT_SIDE
-   CursorTopLeftCorner     -> glut_CURSOR_TOP_LEFT_CORNER
-   CursorTopRightCorner    -> glut_CURSOR_TOP_RIGHT_CORNER
-   CursorBottomRightCorner -> glut_CURSOR_BOTTOM_RIGHT_CORNER
-   CursorBottomLeftCorner  -> glut_CURSOR_BOTTOM_LEFT_CORNER
-   CursorInherit           -> glut_CURSOR_INHERIT
-   CursorNone              -> glut_CURSOR_NONE
-   CursorFullCrosshair     -> glut_CURSOR_FULL_CROSSHAIR
+   RightArrow        -> glut_CURSOR_RIGHT_ARROW
+   LeftArrow         -> glut_CURSOR_LEFT_ARROW
+   Info              -> glut_CURSOR_INFO
+   Destroy           -> glut_CURSOR_DESTROY
+   Help              -> glut_CURSOR_HELP
+   Cycle             -> glut_CURSOR_CYCLE
+   Spray             -> glut_CURSOR_SPRAY
+   Wait              -> glut_CURSOR_WAIT
+   Text              -> glut_CURSOR_TEXT
+   Crosshair         -> glut_CURSOR_CROSSHAIR
+   UpDown            -> glut_CURSOR_UP_DOWN
+   LeftRight         -> glut_CURSOR_LEFT_RIGHT
+   TopSide           -> glut_CURSOR_TOP_SIDE
+   BottomSide        -> glut_CURSOR_BOTTOM_SIDE
+   LeftSide          -> glut_CURSOR_LEFT_SIDE
+   RightSide         -> glut_CURSOR_RIGHT_SIDE
+   TopLeftCorner     -> glut_CURSOR_TOP_LEFT_CORNER
+   TopRightCorner    -> glut_CURSOR_TOP_RIGHT_CORNER
+   BottomRightCorner -> glut_CURSOR_BOTTOM_RIGHT_CORNER
+   BottomLeftCorner  -> glut_CURSOR_BOTTOM_LEFT_CORNER
+   Inherit           -> glut_CURSOR_INHERIT
+   None              -> glut_CURSOR_NONE
+   FullCrosshair     -> glut_CURSOR_FULL_CROSSHAIR
 
 -- | Change the cursor image of the /current window/. Each call requests the
 -- window system change the cursor appropriately. The cursor image when a window
--- is created is 'CursorInherit'. The exact cursor images used are
--- implementation dependent. The intent is for the image to convey the meaning
--- of the cursor name. For a top-level window, 'CursorInherit' uses the default
--- window system cursor.
+-- is created is 'Inherit'. The exact cursor images used are implementation
+-- dependent. The intent is for the image to convey the meaning of the cursor
+-- name. For a top-level window, 'Inherit' uses the default window system
+-- cursor.
 --
 -- /X Implementation Notes:/ GLUT for X uses SGI\'s @_SGI_CROSSHAIR_CURSOR@
 -- convention to access a full-screen cross-hair cursor if possible.
