@@ -1,5 +1,5 @@
 {-
-   FogCoordinat.hs (adapted from smooth.c which is (c) Silicon Graphics, Inc.)
+   FogCoordinate.hs (adapted from smooth.c which is (c) Silicon Graphics, Inc.)
    Copyright (c) Sven Panne 2003 <sven_panne@yahoo.com>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
