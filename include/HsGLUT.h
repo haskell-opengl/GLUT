@@ -18,7 +18,14 @@
 #ifdef USE_QUARTZ_OPENGL /* Mac OS X only */
 #include <GLUT/glut.h>
 #else
+#if HAVE_WINDOWS_H
+#include <windows.h>
+#endif
+#if HAVE_GL_GLUT_H
 #include <GL/glut.h>
+#else
+#include "glut_local.h"
+#endif
 #endif
 
 extern void* hOpenGL_marshalBitmapFont(int fontID);
