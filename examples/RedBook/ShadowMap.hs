@@ -44,7 +44,8 @@ makeState = do
    s <- newIORef False
    n <- newIORef True
    f <- newIORef Lequal
-   return $ State a t s n f
+   return $ State { angle = a, torusAngle = t, showShadow = s,
+                    animate = n, funcMode = f }
 
 myInit :: IO State
 myInit = do

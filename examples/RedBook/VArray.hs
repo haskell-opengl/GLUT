@@ -66,7 +66,8 @@ makeState = do
    n <- makeIndices
    s <- newIORef Pointer
    d <- newIORef DrawArray
-   return $ State v c i n s d
+   return $ State { vertices = v, colors = c, intertwined = i,
+                    indices = n, setupMethod = s, derefMethod = d }
 
 setup :: State -> IO ()
 setup state = do
