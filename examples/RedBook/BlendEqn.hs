@@ -23,8 +23,8 @@ import Graphics.UI.GLUT
 myInit :: IO ()
 myInit = do
    clearColor $= Color4 1 1 0 0
-   blendFunc $= Just (One, One)
-   blendEquation $= FuncAdd
+   blendFunc $= (One, One)
+   blend $= Enabled
 
 display :: DisplayCallback
 display = do

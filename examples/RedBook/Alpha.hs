@@ -24,8 +24,8 @@ makeState = do
 -- Initialize alpha blending function.
 myInit :: IO ()
 myInit = do
-   blendEquation $= FuncAdd
-   blendFunc $= Just (SrcAlpha, OneMinusSrcAlpha)
+   blend $= Enabled
+   blendFunc $= (SrcAlpha, OneMinusSrcAlpha)
    shadeModel $= Flat
    clearColor $= Color4 0 0 0 0
 
