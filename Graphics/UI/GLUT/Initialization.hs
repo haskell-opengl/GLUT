@@ -66,7 +66,7 @@ import Graphics.UI.GLUT.Constants
 -- parsed are window system dependent. Any command line arguments which are
 -- not GLUT-specific are returned.
 --
--- X Implementation Notes: The X Window System specific options parsed by
+-- /X Implementation Notes:/ The X Window System specific options parsed by
 -- 'init' are as follows:
 --
 -- * @-display /DISPLAY/@: Specify the X server to connect to. If not specified,
@@ -193,7 +193,7 @@ data DisplayMode
                  --   each pixel\'s red component is converted to an index between zero and  'Graphics.UI.GLUT.State.getNumColormapEntries'
                  --   and looked up in a per-window color map to determine the color of pixels within the window. The initial
                  --   colormap of 'Luminance' windows is initialized to be a linear gray ramp, but can be modified with GLUT\'s
-                 --   colormap actions. Implementation Notes: 'Luminance' is not supported on most OpenGL platforms.
+                 --   colormap actions. /Implementation Notes:/ 'Luminance' is not supported on most OpenGL platforms.
    deriving ( Eq, Ord, Enum, Bounded )
 
 marshalDisplayMode :: DisplayMode -> CUInt
