@@ -58,16 +58,22 @@ data Flavour
 
 --------------------------------------------------------------------------------
 
--- | GLUT offers three types of objects:
+-- | GLUT offers five types of objects:
 --
 -- *  The five Platonic solids, see
 --    <http://mathworld.wolfram.com/PlatonicSolid.html>.
+--
+-- * A rhombic dodecahedron, see
+--   <http://mathworld.wolfram.com/RhombicDodecahedron.html>.
 --
 -- * Approximations to rounded objects.
 --
 -- * The classic teapot modeled by Martin Newell in 1975. Both surface normals
 --   and texture coordinates for the teapot are generated. The teapot is
 --   generated with OpenGL evaluators.
+--
+-- * A Sierpinski sponge, see
+--   <http://mathworld.wolfram.com/Tetrix.html>.
 
 data Object
    = -- | A cube centered at the modeling coordinates origin with sides of the
@@ -85,6 +91,13 @@ data Object
    | -- | Render a solid tetrahedron (4-sided regular solid) centered at the
      --   modeling coordinates origin with a radius of @sqrt 3@.
      Tetrahedron
+   | -- | (/freeglut only/) A rhombic dodecahedron whose corners are at most a
+     -- distance of one from the origin. The rhombic dodecahedron has faces
+     -- which are identical rhombi, but which have some vertices at which three
+     -- faces meet and some vertices at which four faces meet. The length of
+     -- each side is @(sqrt 3)\/2@. Vertices at which four faces meet are found
+     -- at @(0, 0, +\/-1)@ and @(+\/-(sqrt 2)\/2, +\/-(sqrt 2)\/2, 0)@. 
+     RhombicDodecahedron
    | -- | A sphere centered at the modeling coordinates origin of the specified
      --   radius. The sphere is subdivided around the Z axis into slices
      --   (similar to lines of longitude) and along the Z axis into stacks
@@ -94,6 +107,11 @@ data Object
      --   = 0, and the top at Z = the given height. The cone is subdivided
      --   around the Z axis into slices, and along the Z axis into stacks.
      Cone Radius Height Slices Stacks
+   | -- |(/freeglut only/) A cylinder oriented along the Z axis. The base of the
+     --  cylinder is placed at Z = 0, and the top at Z = the given height. The
+     --  cylinder is subdivided around the Z axis into slices, and along the Z
+     -- axis into stacks.
+     Cylinder' Radius Height Slices Stacks
    | -- | A torus (doughnut) centered at the modeling coordinates origin
      -- whose axis is aligned with the Z axis. The torus is described by its
      -- inner and outer radius, the number of sides for each radial section,
@@ -101,17 +119,9 @@ data Object
      Torus Radius Radius Sides Rings
    | -- | A teapot with a given relative size.
      Teapot Height
-   | -- | (/freeglut only/) A rhombic dodecahedron whose corners are at most a
-     -- distance of one from the origin. The rhombic dodecahedron has faces
-     -- which are identical rhombi, but which have some vertices at which three
-     -- faces meet and some vertices at which four faces meet. The length of
-     -- each side is @(sqrt 3)\/2@. Vertices at which four faces meet are found
-     -- at @(0, 0, +\/-1)@ and @(+\/-(sqrt 2)\/2, +\/-(sqrt 2)\/2, 0)@. 
-     RhombicDodecahedron
-   | -- |(/freeglut only/) A cylinder
-     Cylinder' Radius Height Slices Stacks
-   | -- |(/freeglut only/) A Sierpinski sponge
-     SierpinskiSponge NumLevels Height
+   | -- |(/freeglut only/) A Sierpinski sponge of a given level, where a level
+     -- 0 sponge is the same as a 'Tetrahedron'. 
+     SierpinskiSponge NumLevels
    deriving ( Eq, Ord, Show )
 
 --------------------------------------------------------------------------------
@@ -125,30 +135,30 @@ type NumLevels = GLint
 -- | Render an object in the given flavour.
 
 renderObject :: Flavour -> Object -> IO ()
-renderObject Solid     (Cube h)               = solidCube h
-renderObject Wireframe (Cube h)               = wireCube  h
-renderObject Solid     Dodecahedron           = solidDodecahedron
-renderObject Wireframe Dodecahedron           = wireDodecahedron
-renderObject Solid     Icosahedron            = solidIcosahedron
-renderObject Wireframe Icosahedron            = wireIcosahedron
-renderObject Solid     Octahedron             = solidOctahedron
-renderObject Wireframe Octahedron             = wireOctahedron
-renderObject Solid     Tetrahedron            = solidTetrahedron
-renderObject Wireframe Tetrahedron            = wireTetrahedron
-renderObject Solid     (Sphere' r s t)        = solidSphere r s t
-renderObject Wireframe (Sphere' r s t)        = wireSphere  r s t 
-renderObject Solid     (Cone r h s t)         = solidCone r h s t
-renderObject Wireframe (Cone r h s t)         = wireCone  r h s t
-renderObject Solid     (Torus i o s r)        = solidTorus i o s r
-renderObject Wireframe (Torus i o s r)        = wireTorus  i o s r 
-renderObject Solid     (Teapot h)             = solidTeapot h
-renderObject Wireframe (Teapot h)             = wireTeapot  h
-renderObject Solid     RhombicDodecahedron    = glutSolidRhombicDodecahedron
-renderObject Wireframe RhombicDodecahedron    = glutWireRhombicDodecahedron
-renderObject Solid     (Cylinder' r h s t)    = glutSolidCylinder r h s t
-renderObject Wireframe (Cylinder' r h s t)    = glutWireCylinder r h s t
-renderObject Solid     (SierpinskiSponge n h) = solidSierpinskiSponge n h
-renderObject Wireframe (SierpinskiSponge n h) = wireSierpinskiSponge n h
+renderObject Solid     (Cube h)             = solidCube h
+renderObject Wireframe (Cube h)             = wireCube  h
+renderObject Solid     Dodecahedron         = solidDodecahedron
+renderObject Wireframe Dodecahedron         = wireDodecahedron
+renderObject Solid     Icosahedron          = solidIcosahedron
+renderObject Wireframe Icosahedron          = wireIcosahedron
+renderObject Solid     Octahedron           = solidOctahedron
+renderObject Wireframe Octahedron           = wireOctahedron
+renderObject Solid     Tetrahedron          = solidTetrahedron
+renderObject Wireframe Tetrahedron          = wireTetrahedron
+renderObject Solid     RhombicDodecahedron  = glutSolidRhombicDodecahedron
+renderObject Wireframe RhombicDodecahedron  = glutWireRhombicDodecahedron
+renderObject Solid     (Sphere' r s t)      = solidSphere r s t
+renderObject Wireframe (Sphere' r s t)      = wireSphere  r s t 
+renderObject Solid     (Cone r h s t)       = solidCone r h s t
+renderObject Wireframe (Cone r h s t)       = wireCone  r h s t
+renderObject Solid     (Cylinder' r h s t)  = glutSolidCylinder r h s t
+renderObject Wireframe (Cylinder' r h s t)  = glutWireCylinder r h s t
+renderObject Solid     (Torus i o s r)      = solidTorus i o s r
+renderObject Wireframe (Torus i o s r)      = wireTorus  i o s r 
+renderObject Solid     (Teapot h)           = solidTeapot h
+renderObject Wireframe (Teapot h)           = wireTeapot  h
+renderObject Solid     (SierpinskiSponge n) = solidSierpinskiSponge n
+renderObject Wireframe (SierpinskiSponge n) = wireSierpinskiSponge n
 
 --------------------------------------------------------------------------------
 
@@ -217,6 +227,12 @@ foreign import CALLCONV unsafe "glutSolidTetrahedron" solidTetrahedron  :: IO ()
 
 --------------------------------------------------------------------------------
 
+EXTENSION_ENTRY(unsafe,"freeglut",glutSolidRhombicDodecahedron,IO ())
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutWireRhombicDodecahedron,IO ())
+
+--------------------------------------------------------------------------------
+
 -- | Render a solid sphere centered at the modeling coordinates origin of the
 -- specified radius. The sphere is subdivided around the Z axis into slices
 -- and along the Z axis into stacks.
@@ -267,6 +283,12 @@ foreign import CALLCONV unsafe "glutWireCone" wireCone
 
 --------------------------------------------------------------------------------
 
+EXTENSION_ENTRY(unsafe,"freeglut",glutSolidCylinder,Radius -> Height -> Slices -> Stacks -> IO ())
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutWireCylinder,Radius -> Height -> Slices -> Stacks -> IO ())
+
+--------------------------------------------------------------------------------
+
 -- | Render a solid torus (doughnut) centered at the modeling coordinates origin
 -- whose axis is aligned with the Z axis.
 
@@ -303,29 +325,18 @@ foreign import CALLCONV unsafe "glutWireTeapot" wireTeapot
 
 --------------------------------------------------------------------------------
 
-EXTENSION_ENTRY(unsafe,"freeglut",glutSolidRhombicDodecahedron,IO ())
-
-EXTENSION_ENTRY(unsafe,"freeglut",glutWireRhombicDodecahedron,IO ())
-
---------------------------------------------------------------------------------
-
-EXTENSION_ENTRY(unsafe,"freeglut",glutSolidCylinder,Radius -> Height -> Slices -> Stacks -> IO ())
-
-EXTENSION_ENTRY(unsafe,"freeglut",glutWireCylinder,Radius -> Height -> Slices -> Stacks -> IO ())
-
---------------------------------------------------------------------------------
-
-solidSierpinskiSponge :: NumLevels -> Height -> IO ()
+solidSierpinskiSponge :: NumLevels -> IO ()
 solidSierpinskiSponge = sierpinskiSponge glutSolidSierpinskiSponge
 
 EXTENSION_ENTRY(unsafe,"freeglut",glutSolidSierpinskiSponge,CInt -> Ptr (Vertex3 GLdouble) -> Height -> IO ())
 
-wireSierpinskiSponge :: NumLevels -> Height -> IO ()
+wireSierpinskiSponge :: NumLevels -> IO ()
 wireSierpinskiSponge = sierpinskiSponge glutWireSierpinskiSponge
 
 EXTENSION_ENTRY(unsafe,"freeglut",glutWireSierpinskiSponge,CInt -> Ptr (Vertex3 GLdouble) -> Height -> IO ())
 
-sierpinskiSponge :: (CInt -> Ptr (Vertex3 GLdouble) -> Height -> IO ()) -> NumLevels -> Height -> IO ()
-sierpinskiSponge f n h =
+-- for consistency, we hide the offset and scale on the Haskell side
+sierpinskiSponge :: (CInt -> Ptr (Vertex3 GLdouble) -> Height -> IO ()) -> NumLevels -> IO ()
+sierpinskiSponge f n =
    with (Vertex3 0 0 0) $ \offsetBuf ->
-      f (fromIntegral n) offsetBuf h
+      f (fromIntegral n) offsetBuf 1
