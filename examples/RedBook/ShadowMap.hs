@@ -213,8 +213,7 @@ generateTextureMatrix = do
       perspective 60 1 1 1000
       lightPos' <- getLightPos Vertex3
       lookAt lightPos' lookat up
-      -- we know that the current matrix is the Modelview matrix here
-      get currentMatrix
+      get (matrix (Modelview 0))
 
    [ sx, sy, sz, sw,
      tx, ty, tz, tw,
