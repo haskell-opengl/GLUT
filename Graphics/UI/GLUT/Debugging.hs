@@ -19,7 +19,7 @@ module Graphics.UI.GLUT.Debugging (
 
 import System.Environment ( getProgName )
 import System.IO ( hPutStrLn, stderr )
-import Graphics.Rendering.OpenGL.GL.StateVar ( get )
+import Graphics.Rendering.OpenGL.GL.StateVar ( HasGetter(get) )
 import Graphics.Rendering.OpenGL.GLU.Errors ( Error(..), errors )
 
 --------------------------------------------------------------------------------
