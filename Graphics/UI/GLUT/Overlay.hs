@@ -24,7 +24,7 @@ module Graphics.UI.GLUT.Overlay (
    Layer(..), useLayer,
 
    -- * Re-displaying
-   postOverlayRedisplay,
+   postOverlayRedisplay, postWindowOverlayRedisplay,
 
    -- * Showing and hiding an overlay
 
@@ -34,6 +34,7 @@ module Graphics.UI.GLUT.Overlay (
 
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.Window ( Window )
 
 --------------------------------------------------------------------------------
 
@@ -123,6 +124,20 @@ foreign import ccall safe "glutUseLayer" glutUseLayer :: GLenum -> IO ()
 
 foreign import ccall safe "glutPostOverlayRedisplay" postOverlayRedisplay ::
    IO ()
+
+-- | Mark the overlay of the given window as needing to be redisplayed,
+-- otherwise the same as 'postOverlayRedisplay'.
+--
+-- If the window you want to post an overlay redisplay on is not already the
+-- /current window/ (and you do not require it to be immediately made current),
+-- using 'postWindowOverlayRedisplay' is more efficient than calling
+-- 'Graphics.UI.GLUT.Window.setWindow' to the desired window and then calling
+-- 'postOverlayRedisplay'.		
+--
+-- Also, see 'Graphics.UI.GLUT.Window.postWindowRedisplay'.
+
+foreign import ccall safe "glutPostWindowOverlayRedisplay"
+   postWindowOverlayRedisplay :: Window -> IO ()
 
 --------------------------------------------------------------------------------
 
