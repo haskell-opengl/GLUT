@@ -28,7 +28,7 @@ makeState = do
    f1' <- newIORef (FogCoord1  1)
    f2' <- newIORef (FogCoord1  5)
    f3' <- newIORef (FogCoord1 10)
-   return $ State f1' f2' f3'
+   return $ State { f1 = f1', f2 = f2', f3 = f3' }
 
 -- Initialize fog
 myInit :: IO ()
