@@ -1,0 +1,22 @@
+Package {
+	name		= "GLUT",
+#ifdef INSTALLING
+	import_dirs	= [ "$libdir/imports/GLUT" ],
+#else
+	import_dirs	= [ "$libdir/libraries/GLUT" ],
+#endif
+	source_dirs	= [],
+#ifdef INSTALLING
+	library_dirs	= [ "$libdir" ],
+#else
+	library_dirs	= [ "$libdir/libraries/GLUT" ],
+#endif
+	hs_libraries	= [ "HSGLUT" ],
+	extra_libraries	= [],
+	include_dirs	= [],
+	c_includes	= [ "GL/glut.h" ],
+	package_deps	= [ "OpenGL" ],
+	extra_ghc_opts	= [],
+	extra_cc_opts	= [ "" GL_CFLAGS ],
+	extra_ld_opts	= [ "" GL_LIBS ]
+}
