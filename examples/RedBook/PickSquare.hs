@@ -34,9 +34,9 @@ myInit = do
 drawSquares :: Board -> IO ()
 drawSquares board =
    mapM_ (\i -> do
-      loadName (SelectionName (fromIntegral i))
+      loadName (Name (fromIntegral i))
       mapM_ (\j ->
-         withName (SelectionName (fromIntegral j)) $ do
+         pushName (Name (fromIntegral j)) $ do
             val <- readIORef (board ! (i,j))
             -- resolve overloading, not needed in "real" programs
             let color3f = color :: Color3 GLfloat -> IO ()
@@ -57,9 +57,9 @@ processHits (Just hitRecords) board = do
       putStr   ("  z1 is " ++ show z1)
       putStrLn ("; z2 is " ++ show z2)
       putStr   "   names are"
-      sequence_ [ putStr (" " ++ show n) | SelectionName n <- names ]
+      sequence_ [ putStr (" " ++ show n) | Name n <- names ]
       putChar '\n'
-      let [i, j] = [ fromIntegral n | SelectionName n <- names ]
+      let [i, j] = [ fromIntegral n | Name n <- names ]
       modifyIORef (board ! (i,j)) (\x -> (x + 1) `mod` 3))
       hitRecords
 
@@ -72,8 +72,8 @@ bufSize = 512
 pickSquares :: Board -> KeyboardMouseCallback
 pickSquares board (MouseButton LeftButton) Down _ (Position x y) = do
    vp@(_, (Size _ height)) <- get viewport
-   (_, maybeHitRecords) <- withSelection bufSize $
-      withName (SelectionName 0) $ do
+   (_, maybeHitRecords) <- getHitRecords bufSize $
+      pushName (Name 0) $ do
          matrixMode $= Projection
          matrixExcursion $ do
             loadIdentity

@@ -39,21 +39,21 @@ drawRects = do
    -- resolve overloading, not needed in "real" programs
    let color3  = color :: Color3 GLfloat -> IO ()
        vertex3 = vertex :: Vertex3 GLint -> IO ()
-   loadName (SelectionName 1)
+   loadName (Name 1)
    renderPrimitive Quads $ do
       color3 (Color3 1.0 1.0 0.0)
       vertex3 (Vertex3 2 0 0)
       vertex3 (Vertex3 2 6 0)
       vertex3 (Vertex3 6 6 0)
       vertex3 (Vertex3 6 0 0)
-   loadName (SelectionName 2)
+   loadName (Name 2)
    renderPrimitive Quads $ do
       color3 (Color3 0.0 1.0 1.0)
       vertex3 (Vertex3 3 2 (-1))
       vertex3 (Vertex3 3 8 (-1))
       vertex3 (Vertex3 8 8 (-1))
       vertex3 (Vertex3 8 2 (-1))
-   loadName (SelectionName 3)
+   loadName (Name 3)
    renderPrimitive Quads $ do
       color3 (Color3 1.0 0.0 1.0)
       vertex3 (Vertex3 0 2 (-2))
@@ -71,7 +71,7 @@ processHits (Just hitRecords) = do
       putStr   ("  z1 is " ++ show z1)
       putStrLn ("; z2 is " ++ show z2)
       putStr   "   the name is"
-      sequence_ [ putStr (" " ++ show n) | SelectionName n <- names ]
+      sequence_ [ putStr (" " ++ show n) | Name n <- names ]
       putChar '\n')
       hitRecords
 
@@ -84,8 +84,8 @@ bufSize = 512
 pickRects :: KeyboardMouseCallback
 pickRects (MouseButton LeftButton) Down _ (Position x y) = do
    vp@(_, (Size _ height)) <- get viewport
-   (_, maybeHitRecords) <- withSelection bufSize $
-      withName (SelectionName 0) $ do
+   (_, maybeHitRecords) <- getHitRecords bufSize $
+      pushName (Name 0) $ do
          matrixMode $= Projection
          matrixExcursion $ do
             loadIdentity

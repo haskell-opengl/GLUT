@@ -89,7 +89,7 @@ processHits (Just hitRecords) = do
       putStr   ("  z1 is " ++ show z1)
       putStrLn ("; z2 is " ++ show z2)
       putStr   "   the name is"
-      sequence_ [ putStr (" " ++ show n) | SelectionName n <- names ]
+      sequence_ [ putStr (" " ++ show n) | Name n <- names ]
       putChar '\n')
       hitRecords
 
@@ -103,19 +103,19 @@ bufSize = 512
 
 selectObjects :: IO ()
 selectObjects = do
-   (_, maybeHitRecords) <- withSelection bufSize $ do
-      withName (SelectionName 0) $ do
+   (_, maybeHitRecords) <- getHitRecords bufSize $ do
+      pushName (Name 0) $ do
          matrixExcursion $ do
             matrixMode $= Projection
             loadIdentity
             ortho 0 5 0 5 0 10
             matrixMode $= Modelview 0
             loadIdentity
-            loadName (SelectionName 1)
+            loadName (Name 1)
             drawTriangle (Vertex2 2 2) (Vertex2 3 2) (Vertex2 2.5 3) (-5)
-            loadName (SelectionName 2)
+            loadName (Name 2)
             drawTriangle (Vertex2 2 7) (Vertex2 3 7) (Vertex2 2.5 8) (-5)
-            loadName (SelectionName 3)
+            loadName (Name 3)
             drawTriangle (Vertex2 2 2) (Vertex2 3 2) (Vertex2 2.5 3) (-1)
             drawTriangle (Vertex2 2 2) (Vertex2 3 2) (Vertex2 2.5 3) (-9)
       flush
