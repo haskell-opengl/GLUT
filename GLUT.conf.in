@@ -2,6 +2,7 @@
 
 Package {
 	name		= "GLUT",
+	auto		= True,
 #ifdef INSTALLING
 	import_dirs	= [ "$libdir/imports/GLUT" ],
 #else
@@ -22,7 +23,7 @@ Package {
 	include_dirs	= [ "$libdir/libraries/GLUT/include" ],
 #endif
 	c_includes	= [ "HsGLUT.h" ],
-	package_deps	= [ "OpenGL" ],
+	package_deps	= [ "base", "OpenGL" ],
 	extra_ghc_opts	= [],
 	extra_cc_opts	= [ "" GL_CFLAGS ],
 	extra_ld_opts	= [ "" GL_LIBS ]
