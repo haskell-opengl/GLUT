@@ -20,13 +20,16 @@ myInit = do
 
 triangle :: IO ()
 triangle =
-   renderPrimitive Triangles $ do
-      color (Color3 1 0 (0 :: GLfloat))
-      vertex (Vertex2 5 (5 :: GLfloat))
-      color (Color3 0 1 (0 :: GLfloat))
-      vertex (Vertex2 25 (5 :: GLfloat))
-      color (Color3 0 0 (1 :: GLfloat))
-      vertex (Vertex2 5 (25 :: GLfloat))
+   -- resolve overloading, not needed in "real" programs
+   let vertex2f = vertex :: Vertex2 GLfloat -> IO ()
+       color3f = color :: Color3 GLfloat -> IO ()
+   in renderPrimitive Triangles $ do
+      color3f (Color3 1 0 0)
+      vertex2f (Vertex2 5 5)
+      color3f (Color3 0 1 0)
+      vertex2f (Vertex2 25 5)
+      color3f (Color3 0 0 1)
+      vertex2f (Vertex2 5 25)
 
 display :: DisplayCallback
 display = do
@@ -41,7 +44,7 @@ reshape size@(Size w h) = do
    loadIdentity
    let wf = fromIntegral w
        hf = fromIntegral h
-   if (w <= h)
+   if w <= h
       then ortho2D 0 30 0 (30 * hf/wf)
       else ortho2D 0 (30 * wf/hf) 0 30
    matrixMode $= Modelview 0
@@ -53,12 +56,12 @@ keyboard _            _    _ _ = return ()
 main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
-   initialDisplayMode    $= [ Single, GLUT.RGB ]
-   initialWindowSize     $= Size 500 500
+   initialDisplayMode $= [ Single, GLUT.RGB ]
+   initialWindowSize $= Size 500 500
    initialWindowPosition $= Position 100 100
    createWindow progName
    myInit
-   displayCallback       $= display
-   reshapeCallback       $= Just reshape
+   displayCallback $= display
+   reshapeCallback $= Just reshape
    keyboardMouseCallback $= Just keyboard
    mainLoop

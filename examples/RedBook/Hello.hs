@@ -18,11 +18,13 @@ display = do
    -- draw white polygon (rectangle) with corners at
    -- (0.25, 0.25, 0.0) and (0.75, 0.75, 0.0)
    color (Color3 1.0 1.0 (1.0 :: GLfloat))
-   renderPrimitive Polygon $ mapM_ vertex [
+   -- resolve overloading, not needed in "real" programs
+   let vertex3f = vertex :: Vertex3 GLfloat -> IO ()
+   renderPrimitive Polygon $ mapM_ vertex3f [
       Vertex3 0.25 0.25 0.0,
       Vertex3 0.75 0.25 0.0,
       Vertex3 0.75 0.75 0.0,
-      Vertex3 0.25 0.75 (0.0 :: GLfloat)]
+      Vertex3 0.25 0.75 0.0]
 
    -- don't wait!
    -- start processing buffered OpenGL routines
@@ -48,8 +50,8 @@ myInit = do
 main :: IO ()
 main = do
    getArgsAndInitialize
-   initialDisplayMode    $= [ Single, GLUT.RGB ]
-   initialWindowSize     $= Size 250 250
+   initialDisplayMode $= [ Single, GLUT.RGB ]
+   initialWindowSize $= Size 250 250
    initialWindowPosition $= Position 100 100
    createWindow "hello"
    myInit
