@@ -45,13 +45,15 @@ module Graphics.UI.GLUT (
    module Graphics.UI.GLUT.Initialization,
    module Graphics.UI.GLUT.Begin,
    module Graphics.UI.GLUT.Window,
-   module Graphics.UI.GLUT.Colormap
+   module Graphics.UI.GLUT.Colormap,
+   module Graphics.UI.GLUT.Objects
 )  where
 
 import Graphics.UI.GLUT.Initialization
 import Graphics.UI.GLUT.Begin
-import Graphics.UI.GLUT.Window ( Window, createWindow )
+import Graphics.UI.GLUT.Window
 import Graphics.UI.GLUT.Colormap
+import Graphics.UI.GLUT.Objects
 
 -----------------------------------------------------------------------------
 -- $LegalStuff
