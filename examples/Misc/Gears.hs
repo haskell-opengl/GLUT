@@ -221,12 +221,12 @@ reshape s@(Size width height) = do
    loadIdentity
    translate (Vector3 0 0 (-40 :: GLfloat))
 
-data Flag = GLInfo | Exit deriving ( Eq, Ord, Show )
+data Flag = GLInfo | AutoExit deriving ( Eq, Ord, Show )
 
 argInfo :: [OptDescr Flag]
 argInfo  = [
-   Option ['i'] ["info"] (NoArg GLInfo) "print gl information",
-   Option ['e'] ["exit"] (NoArg Exit  ) "auto exit after 30 seconds" ]
+   Option ['i'] ["info"] (NoArg GLInfo)   "print gl information",
+   Option ['e'] ["exit"] (NoArg AutoExit) "auto exit after 30 seconds" ]
 
 opts :: [String] -> IO [Flag]
 opts args = 
@@ -272,7 +272,7 @@ myInit args = do
 
    flags <- opts args
    when (GLInfo `elem` flags) info
-   let autoexit = if Exit `elem` flags then 30 else 0
+   let autoexit = if AutoExit `elem` flags then 30 else 0
    when (autoexit /= 0) $
       putStrLn ("Auto Exit after " ++ show autoexit ++ " seconds.")
 
