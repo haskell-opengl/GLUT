@@ -769,6 +769,8 @@ type JoystickCallback' = CUInt -> CInt -> CInt -> CInt -> IO ()
 -- is called either due to polling of the joystick at the uniform timer interval
 -- specified (if > 0) or in response to an explicit call of
 -- 'forceJoystickCallback'.
+--
+-- /X Implementation Notes:/ Currently GLUT has no joystick support for X11.
 
 setJoystickCallback :: Maybe JoystickCallback -> PollRate -> IO ()
 setJoystickCallback c rate =
