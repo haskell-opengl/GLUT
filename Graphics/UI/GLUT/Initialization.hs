@@ -93,11 +93,10 @@ import Graphics.UI.GLUT.State ( simpleGet )
 --   particular behavior, GLUT will attempt to use direct rendering if
 --   possible and otherwise fallback to indirect rendering.
 --
--- * @-gldebug@: After processing callbacks and\/or events, check if there
---   are any OpenGL errors by calling 'Graphics.Rendering.OpenGL.getError'.
---   If an error is reported, print out a warning by looking up the error
---   code with 'Graphics.Rendering.OpenGL.errorString'. Using this option
---   is helpful in detecting OpenGL run-time errors.
+-- * @-gldebug@: After processing callbacks and\/or events, call
+--   'Graphics.UI.GLUT.Debugging.reportErrors' to check if there are any pending
+--   OpenGL errors. Using this option is helpful in detecting OpenGL run-time
+--   errors.
 --
 -- * @-sync@: Enable synchronous X protocol transactions. This option makes
 --   it easier to track down potential X protocol errors.
