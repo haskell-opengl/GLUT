@@ -16,7 +16,7 @@
 
 module Graphics.UI.GLUT.Extensions (
    FunPtr, unsafePerformIO,
-   Invoker, getProcAddress   -- used only internally
+   Invoker, getProcAddress, getProcAddressInternal   -- used only internally
 ) where
 
 import Foreign.C.String ( CString, withCString )
@@ -30,7 +30,7 @@ type Invoker a = FunPtr a -> a
 getProcAddress :: String -> String -> IO (FunPtr a)
 getProcAddress ext call =
    throwIfNull ("unknown GLUT call " ++ call ++ ", check for " ++ ext) $
-      withCString call hs_GLUT_getProcAddress
+      getProcAddressInternal call
 
 throwIfNull :: String -> IO (FunPtr a) -> IO (FunPtr a)
 throwIfNull msg act = do
@@ -38,6 +38,9 @@ throwIfNull msg act = do
    if res == nullFunPtr
       then ioError (userError msg)
       else return res
+
+getProcAddressInternal :: String -> IO (FunPtr a)
+getProcAddressInternal call = withCString call hs_GLUT_getProcAddress
 
 foreign import CALLCONV unsafe "hs_GLUT_getProcAddress" hs_GLUT_getProcAddress
    :: CString -> IO (FunPtr a)

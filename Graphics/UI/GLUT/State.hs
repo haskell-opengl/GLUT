@@ -14,6 +14,9 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.State (
+  -- * State of all windows
+  windowBorderWidth, windowHeaderHeight,
+
   -- * State of the /current window/
   rgba,
   BufferDepth, rgbaBufferDepths, colorBufferDepth,
@@ -21,11 +24,11 @@ module Graphics.UI.GLUT.State (
   accumBufferDepths, depthBufferDepth, stencilBufferDepth,
   SampleCount, sampleCount, formatID,
 
-  -- * Timing
-  elapsedTime,
-
   -- * GLUT state pertaining to the layers of the /current window/
   damaged,
+
+  -- * Timing
+  elapsedTime,
 
   -- * Device information
 
@@ -36,11 +39,15 @@ module Graphics.UI.GLUT.State (
   numSpaceballButtons,
   DialCount, numDialsAndButtons,
   numTabletButtons,
-  AxisCount, PollRate, joystickInfo
+  AxisCount, PollRate, joystickInfo,
+
+  -- * GLUT information
+ glutVersion
 ) where
 
 import Control.Monad ( liftM )
 import Foreign.C.Types ( CInt )
+import Foreign.Ptr ( nullFunPtr )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Size(..) )
 import Graphics.Rendering.OpenGL.GL.StateVar (
@@ -63,9 +70,12 @@ import Graphics.UI.GLUT.Constants (
    glut_HAS_DIAL_AND_BUTTON_BOX, glut_NUM_DIALS, glut_NUM_BUTTON_BOX_BUTTONS,
    glut_HAS_TABLET, glut_NUM_TABLET_BUTTONS,
    glut_HAS_JOYSTICK, glut_JOYSTICK_BUTTONS, glut_JOYSTICK_POLL_RATE,
-   glut_JOYSTICK_AXES )
+   glut_JOYSTICK_AXES,
+   glut_VERSION, glut_WINDOW_BORDER_WIDTH, glut_WINDOW_HEADER_HEIGHT )
+
 import Graphics.UI.GLUT.Overlay ( Layer(..) )
 import Graphics.UI.GLUT.QueryUtils ( simpleGet, layerGet, deviceGet )
+import Graphics.UI.GLUT.Extensions ( getProcAddressInternal )
 
 --------------------------------------------------------------------------------
 
@@ -296,3 +306,45 @@ getDeviceInfo dev act =
    makeGettableStateVar $ do
       hasDevice <- deviceGet i2b dev
       if hasDevice then liftM Just act else return Nothing
+
+-----------------------------------------------------------------------------
+
+-- | Contains version of GLUT in the form of
+-- @/flavour/ /major/./minor/./patchlevel/@, where @/flavour/@ is one of
+-- @GLUT@, @freeglut@ or @OpenGLUT@.
+
+glutVersion :: GettableStateVar String
+glutVersion = makeGettableStateVar $ do
+   let isGLUT = isUnknown "glutSetOption"
+       isFreeglut = isUnknown "glutSetWindowStayOnTop"
+       isUnknown = liftM (== nullFunPtr) . getProcAddressInternal
+       showVersionPart x = shows (x `mod` 100)
+       showVersion v = showVersionPart (v `div` 10000) . showChar '.' .
+                       showVersionPart (v `div`   100) . showChar '.' .
+                       showVersionPart  v
+   g <- isGLUT
+   if g
+      then return "GLUT 3.7"   -- ToDo: just guessing
+      else do f <- isFreeglut
+              v <- simpleGet id glut_VERSION
+              let prefix = if f then "freeglut" else "OpenGLUT"
+              return $ showString prefix . showChar ' ' . showVersion v $ ""
+
+-----------------------------------------------------------------------------
+
+-- | (/freeglut only/) Contains the thickness of the sizing border around the
+-- perimeter of a window that can be resized, in pixels.
+
+windowBorderWidth :: GettableStateVar Int
+windowBorderWidth =
+   makeGettableStateVar (simpleGet fromIntegral glut_WINDOW_BORDER_WIDTH)
+
+-----------------------------------------------------------------------------
+
+-- | (/freeglut only/) Contains the height of the header\/caption area of a
+-- window in pixels.
+
+windowHeaderHeight :: GettableStateVar Int
+windowHeaderHeight =
+   makeGettableStateVar (simpleGet fromIntegral glut_WINDOW_HEADER_HEIGHT)
+

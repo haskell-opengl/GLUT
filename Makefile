@@ -42,8 +42,8 @@ package.conf.installed : include/HsGLUTConfig.h
 Graphics/UI/GLUT/Begin.$(way_)o \
 Graphics/UI/GLUT/Callbacks/Window.$(way_)o \
 Graphics/UI/GLUT/Fonts.$(way_)o \
-Graphics/UI/GLUT/FreeGLUT.$(way_)o \
-Graphics/UI/GLUT/Objects.$(way_)o : include/HsGLUTExt.h
+Graphics/UI/GLUT/Objects.$(way_)o \
+Graphics/UI/GLUT/QueryUtils.$(way_)o : include/HsGLUTExt.h
 
 # -----------------------------------------------------------------------------
 

@@ -75,8 +75,6 @@ import Graphics.UI.GLUT.Debugging
 import Graphics.UI.GLUT.DeviceControl
 import Graphics.UI.GLUT.GameMode
 
-import Graphics.UI.GLUT.FreeGLUT
-
 -----------------------------------------------------------------------------
 -- $LegalStuff
 -- This documentation is heavily based on the man pages of Mark J. Kilgard\'s

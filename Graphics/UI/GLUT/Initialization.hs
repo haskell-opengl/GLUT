@@ -36,7 +36,10 @@ module Graphics.UI.GLUT.Initialization (
 
    -- * Setting the initial display mode (II)
    DisplayCapability(..), Relation(..), DisplayCapabilityDescription(..),
-   initialDisplayCapabilities
+   initialDisplayCapabilities,
+
+   -- * Controlling the rendering context
+   RenderingContext(..), renderingContext
 ) where
 
 import Data.Bits ( Bits((.|.),(.&.)) )
@@ -60,8 +63,9 @@ import Graphics.UI.GLUT.Constants (
    glut_ALPHA, glut_DEPTH, glut_STENCIL, glut_MULTISAMPLE, glut_STEREO,
    glut_LUMINANCE,
    glut_INIT_DISPLAY_MODE,
-   glut_DISPLAY_MODE_POSSIBLE )
-import Graphics.UI.GLUT.QueryUtils ( simpleGet )
+   glut_DISPLAY_MODE_POSSIBLE,
+   glut_RENDERING_CONTEXT, glut_CREATE_NEW_CONTEXT, glut_USE_CURRENT_CONTEXT )
+import Graphics.UI.GLUT.QueryUtils ( simpleGet, glutSetOption )
 import Graphics.UI.GLUT.Types ( Relation(..), relationToString )
 
 --------------------------------------------------------------------------------
@@ -489,3 +493,35 @@ initialDisplayCapabilities =
 
 foreign import CALLCONV unsafe "glutInitDisplayString" glutInitDisplayString ::
   CString -> IO ()
+
+-----------------------------------------------------------------------------
+
+-- | The rendering context for new windows.
+
+data RenderingContext
+   = -- | Create a new context via @glXCreateContext@ or @wglCreateContext@
+     --   (default).
+     CreateNewContext
+   | -- | Re-use the current rendering context.
+     UseCurrentContext
+   deriving ( Eq, Ord, Show )
+
+marshalRenderingContext :: RenderingContext -> CInt
+marshalRenderingContext CreateNewContext  = glut_CREATE_NEW_CONTEXT
+marshalRenderingContext UseCurrentContext = glut_USE_CURRENT_CONTEXT
+
+unmarshalRenderingContext :: CInt -> RenderingContext
+unmarshalRenderingContext r
+   | r == glut_CREATE_NEW_CONTEXT  = CreateNewContext
+   | r == glut_USE_CURRENT_CONTEXT = UseCurrentContext
+   | otherwise = error "unmarshalRenderingContext"
+
+-----------------------------------------------------------------------------
+
+-- | (/freeglut only/) Contains the rendering context for new windows.
+
+renderingContext :: StateVar RenderingContext
+renderingContext =
+   makeStateVar
+      (simpleGet unmarshalRenderingContext glut_RENDERING_CONTEXT)
+      (glutSetOption glut_RENDERING_CONTEXT . marshalRenderingContext)
