@@ -151,7 +151,7 @@ myInit :: IORef TessWinding -> IO DisplayLists
 myInit currentWindingRule = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Flat
-   [dl1, dl2, dl3, dl4] <- genLists 4
+   [dl1, dl2, dl3, dl4] <- genObjectNames 4
    let displayLists = (dl1, dl2, dl3, dl4)
    makeNewLists currentWindingRule displayLists
    return displayLists
