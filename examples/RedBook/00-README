@@ -57,7 +57,7 @@ Chapter 7: Display Lists
 
 Chapter 8: Drawing Pixels, Bitmaps, Fonts, and Images
 
-        Drawf.hs        (1.0)
+        DrawF.hs        (1.0)
         Font.hs         (1.0)
         Image.hs        (1.1)
         ColorTable.hs   (ARB_imaging_subset)
