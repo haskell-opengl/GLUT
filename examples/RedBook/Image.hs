@@ -22,6 +22,13 @@ import Foreign ( newArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
+data State = State { zoomFactor :: IORef GLfloat }
+
+makeState :: IO State
+makeState = do
+   z <- newIORef 1
+   return $ State { zoomFactor = z }
+
 -- Create checkerboard image
 checkImageSize :: Size
 checkImageSize = Size 64 64
@@ -62,37 +69,37 @@ reshape size@(Size w h) = do
    matrixMode $= Modelview 0
    loadIdentity
 
-motion :: IORef GLfloat -> MotionCallback
-motion zoomFactor (Position x y) = do
+motion :: State -> MotionCallback
+motion state (Position x y) = do
    Size _ height <- get windowSize
    let screenY = height - y
    -- resolve overloading, not needed in "real" programs
    let rasterPos2i = rasterPos :: Vertex2 GLint -> IO ()
    rasterPos2i (Vertex2 x screenY)
-   z <- get zoomFactor
+   z <- get (zoomFactor state)
    pixelZoom $= (z, z)
    copyPixels (Position 0 0) checkImageSize CopyColor
    pixelZoom $= (1, 1)
    flush
 
-resetZoomFactor :: IORef GLfloat -> IO ()
-resetZoomFactor zoomFactor = do
-   zoomFactor $= 1.0
+resetZoomFactor :: State -> IO ()
+resetZoomFactor state = do
+   zoomFactor state $= 1.0
    postRedisplay Nothing
    putStrLn "zoomFactor reset to 1.0"
 
-incZoomFactor :: IORef GLfloat -> GLfloat -> IO ()
-incZoomFactor zoomFactor inc = do
-   zoomFactor $~! (max 0.5 . min 3.0 . (+ inc))
-   get zoomFactor >>= putStrLn . ("zoomFactor is now " ++) . show
+incZoomFactor :: State -> GLfloat -> IO ()
+incZoomFactor state inc = do
+   zoomFactor state $~! (max 0.5 . min 3.0 . (+ inc))
+   get (zoomFactor state) >>= putStrLn . ("zoomFactor is now " ++) . show
 
-keyboard :: IORef GLfloat -> KeyboardMouseCallback
-keyboard zoomFactor (Char 'r')   Down _   _ = resetZoomFactor zoomFactor
-keyboard zoomFactor (Char 'R')   Down _   _ = resetZoomFactor zoomFactor
-keyboard zoomFactor (Char 'z')   Down _   _ = incZoomFactor   zoomFactor   0.5
-keyboard zoomFactor (Char 'Z')   Down _   _ = incZoomFactor   zoomFactor (-0.5)
-keyboard _          (Char '\27') Down _   _ = exitWith ExitSuccess
-keyboard _          _            _    _   _ = return ()
+keyboard :: State -> KeyboardMouseCallback
+keyboard state (Char 'r')   Down _   _ = resetZoomFactor state
+keyboard state (Char 'R')   Down _   _ = resetZoomFactor state
+keyboard state (Char 'z')   Down _   _ = incZoomFactor   state   0.5
+keyboard state (Char 'Z')   Down _   _ = incZoomFactor   state (-0.5)
+keyboard _     (Char '\27') Down _   _ = exitWith ExitSuccess
+keyboard _     _            _    _   _ = return ()
 
 main :: IO ()
 main = do
@@ -101,10 +108,10 @@ main = do
    initialWindowSize $= Size 250 250
    initialWindowPosition $= Position 100 100
    createWindow progName
+   state <- makeState
    checkImage <- myInit
    displayCallback $= display checkImage
    reshapeCallback $= Just reshape
-   zoomFactor <- newIORef 1.0
-   keyboardMouseCallback $= Just (keyboard zoomFactor)
-   motionCallback $= Just (motion zoomFactor)
+   keyboardMouseCallback $= Just (keyboard state)
+   motionCallback $= Just (motion state)
    mainLoop

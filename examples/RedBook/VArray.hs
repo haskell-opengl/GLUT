@@ -49,7 +49,6 @@ makeIntertwined = newArray [
 makeIndices :: IO (Ptr GLuint)
 makeIndices = newArray [ 0, 1, 3, 4 ]
 
--- we lump together our global state (and still call this Haskell :-)
 data State = State {
    vertices    :: Ptr (Vertex2 GLint),
    colors      :: Ptr (Color3 GLfloat),
@@ -81,13 +80,11 @@ setup state = do
       Interleaved ->
          interleavedArrays C3fV3f 0 (intertwined state)
 
-myInit :: IO State
-myInit = do
+myInit :: State -> IO ()
+myInit state = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Smooth
-   state <- makeState
    setup state
-   return state
 
 display :: State -> DisplayCallback
 display state = do
@@ -136,7 +133,8 @@ main = do
       putStrLn "If your implementation of OpenGL Version 1.0 has the right extensions,"
       putStrLn "you may be able to modify this program to make it run."
       exitFailure
-   state <- myInit
+   state <- makeState
+   myInit state
    displayCallback $= display state
    reshapeCallback $= Just reshape
    keyboardMouseCallback $= Just (keyboardMouse state)

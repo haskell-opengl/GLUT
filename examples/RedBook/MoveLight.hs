@@ -22,6 +22,13 @@ import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
+data State = State { spin :: IORef Int }
+
+makeState :: IO State
+makeState = do
+   s <- newIORef 0
+   return $ State { spin = s }
+
 myInit :: IO ()
 myInit = do
    clearColor $= Color4 0 0 0 0
@@ -30,13 +37,13 @@ myInit = do
    light (Light 0) $= Enabled
    depthFunc $= Just Less
 
-display :: IORef Int -> DisplayCallback
-display spin = do
+display :: State -> DisplayCallback
+display state = do
    clear [ ColorBuffer, DepthBuffer ]
    preservingMatrix $ do
       lookAt (Vertex3 0 0 5) (Vertex3 0 0 0) (Vector3 0 1 0)
       preservingMatrix $ do
-         s <- get spin
+         s <- get (spin state)
          rotate (fromIntegral s :: GLdouble) (Vector3 1 0 0)
          position (Light 0) $= Vertex4 0 0 1.5 1
          translate (Vector3 0 0 1.5 :: Vector3 GLdouble)
@@ -56,9 +63,9 @@ reshape size@(Size w h) = do
    matrixMode $= Modelview 0
    loadIdentity
 
-keyboardMouse :: IORef Int -> KeyboardMouseCallback
-keyboardMouse spin (MouseButton LeftButton) Down _ _ = do
-   spin $~ ((`mod` 360) . (+ 30))
+keyboardMouse :: State -> KeyboardMouseCallback
+keyboardMouse state (MouseButton LeftButton) Down _ _ = do
+   spin state $~ ((`mod` 360) . (+ 30))
    postRedisplay Nothing
 keyboardMouse _ (Char '\27') Down _ _ = exitWith ExitSuccess
 keyboardMouse _ _            _    _ _ = return ()
@@ -70,9 +77,9 @@ main = do
    initialWindowSize $= Size 500 500
    initialWindowPosition $= Position 100 100
    createWindow progName
+   state <- makeState
    myInit
-   spin <- newIORef 0
-   displayCallback $= display spin
+   displayCallback $= display state
    reshapeCallback $= Just reshape
-   keyboardMouseCallback $= Just (keyboardMouse spin)
+   keyboardMouseCallback $= Just (keyboardMouse state)
    mainLoop

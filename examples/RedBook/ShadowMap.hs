@@ -29,7 +29,6 @@ lookat   = Vertex3 0 0 0
 up :: Vector3 GLdouble
 up = Vector3 0 0 1
 
--- we lump together our global state (and still call this Haskell :-)
 data State = State {
    angle      :: IORef GLdouble,
    torusAngle :: IORef GLfloat,
@@ -47,7 +46,7 @@ makeState = do
    return $ State { angle = a, torusAngle = t, showShadow = s,
                     animate = n, funcMode = f }
 
-myInit :: IO State
+myInit :: IO ()
 myInit = do
    texImage2D Nothing NoProxy 0 DepthComponent' shadowMapSize 0
               (PixelData DepthComponent UnsignedByte nullPtr)
@@ -71,8 +70,6 @@ myInit = do
    light (Light 0) $= Enabled
    lighting $= Enabled
    texture Texture2D $= Enabled
-
-   makeState
 
 reshape :: ReshapeCallback
 reshape size@(Size w h) = do
@@ -248,9 +245,8 @@ main = do
    initialWindowSize $= Size 521 512
    initialWindowPosition $= Position 100 100
    createWindow progName
-
-   state <- myInit
-
+   state <- makeState
+   myInit
    displayCallback $= display state
    reshapeCallback $= Just reshape
    keyboardMouseCallback $= Just (keyboard state)

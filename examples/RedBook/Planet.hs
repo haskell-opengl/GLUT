@@ -13,7 +13,6 @@ import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
--- we lump together our global state (and still call this Haskell :-)
 data State = State { year, day :: IORef GLint }
 
 makeState :: IO State
@@ -76,8 +75,8 @@ main = do
    initialWindowSize $= Size 500 500
    initialWindowPosition $= Position 100 100
    createWindow progName
-   myInit
    state <- makeState
+   myInit
    displayCallback $= display state
    reshapeCallback $= Just reshape
    keyboardMouseCallback $= Just (keyboard state)

@@ -16,6 +16,13 @@ import Foreign ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
+data State = State { zTrans :: IORef GLfloat }
+
+makeState :: IO State
+makeState = do
+   z <- newIORef 0
+   return $ State { zTrans = z }
+
 imageSize :: TextureSize2D
 imageSize = TextureSize2D 4 4
 
@@ -66,11 +73,11 @@ myInit = do
    normalize $= Enabled
    materialDiffuse Front $= Color4 1 1 1 1
 
-display :: IORef GLfloat -> DisplayCallback
-display zTrans = do
+display :: State -> DisplayCallback
+display state = do
    clear [ ColorBuffer, DepthBuffer ]
    preservingMatrix $ do
-      z <- get zTrans
+      z <- get (zTrans state)
       translate (Vector3 0 0 z)
       renderObject Solid (Sphere' 5 20 10)
    swapBuffers
@@ -85,15 +92,15 @@ reshape size@(Size w h) = do
    loadIdentity
    translate (Vector3 0 0 (-20 :: GLfloat))
 
-keyboard :: IORef GLfloat -> KeyboardMouseCallback
-keyboard zTrans (Char 'f')   Down _ _ = move zTrans (-0.2)
-keyboard zTrans (Char 'b')   Down _ _ = move zTrans   0.2
-keyboard _ (Char '\27') Down _ _ = exitWith ExitSuccess
-keyboard _ _            _    _ _ = return ()
+keyboard :: State -> KeyboardMouseCallback
+keyboard state (Char 'f')   Down _ _ = move state (-0.2)
+keyboard state (Char 'b')   Down _ _ = move state   0.2
+keyboard _     (Char '\27') Down _ _ = exitWith ExitSuccess
+keyboard _     _            _    _ _ = return ()
 
-move :: IORef GLfloat -> GLfloat -> IO ()
-move zTrans inc = do
-   zTrans $~ (+ inc)
+move :: State -> GLfloat -> IO ()
+move state inc = do
+   zTrans state $~ (+ inc)
    postRedisplay Nothing
 
 main :: IO ()
@@ -103,9 +110,9 @@ main = do
    initialWindowSize $= Size 400 400
    initialWindowPosition $= Position 50 50
    createWindow progName
+   state <- makeState
    myInit
-   zTrans <- newIORef 0
-   displayCallback $= display zTrans
+   displayCallback $= display state
    reshapeCallback $= Just reshape
-   keyboardMouseCallback $= Just (keyboard zTrans)
+   keyboardMouseCallback $= Just (keyboard state)
    mainLoop

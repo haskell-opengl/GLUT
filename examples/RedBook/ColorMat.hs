@@ -13,7 +13,6 @@ import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
--- we lump together our global state (and still call this Haskell :-)
 data State = State { r, g, b :: IORef GLfloat }
 
 diffuseMaterial :: State -> IO (Color4 GLfloat)
@@ -32,12 +31,11 @@ makeState = do
 
 -- Initialize material property, light source, lighting model,
 -- and depth buffer.
-myInit :: IO State
-myInit = do
+myInit :: State -> IO ()
+myInit state = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Smooth
    depthFunc $= Just Less
-   state <- makeState
    dm <- diffuseMaterial state
    materialDiffuse Front $= dm
    materialSpecular Front $= Color4 1 1 1 1
@@ -46,7 +44,6 @@ myInit = do
    lighting $= Enabled
    light (Light 0) $= Enabled
    colorMaterial $= Just (Front, Diffuse)
-   return state
 
 display :: DisplayCallback
 display = do
@@ -89,7 +86,8 @@ main = do
    initialWindowSize $= Size 500 500
    initialWindowPosition $= Position 100 100
    createWindow progName
-   state <- myInit
+   state <- makeState
+   myInit state
    displayCallback $= display
    reshapeCallback $= Just reshape
    keyboardMouseCallback $= Just (keyboardMouse state)

@@ -16,12 +16,17 @@ import Graphics.UI.GLUT
 
 type Board = Array (GLint,GLint) (IORef Int)
 
+data State = State { board :: Board }
+
+makeState :: IO State
+makeState = do
+   refs <- sequence . replicate 9 . newIORef $ 0
+   return $ State { board = listArray ((0,0),(2,2)) refs }
+
 -- Clear color value for every square on the board
-myInit :: IO Board
+myInit :: IO ()
 myInit = do
    clearColor $= Color4 0 0 0 0
-   refs <- sequence . replicate 9 . newIORef $ 0
-   return $ listArray ((0,0),(2,2)) refs
 
 -- The nine squares are drawn. Each square is given two names: one for the row
 -- and the other for the column on the grid. The color of each square is
@@ -29,13 +34,13 @@ myInit = do
 -- Note: In contrast to the the original example, we always give names to
 -- squares, regardless of the render mode. This simplifies the code a bit and
 -- is even suggested by the Red Book.
-drawSquares :: Board -> IO ()
-drawSquares board =
+drawSquares :: State -> IO ()
+drawSquares state =
    flip mapM_ [ 0 .. 2 ] $ \i -> do
       loadName (Name (fromIntegral i))
       flip mapM_ [ 0 .. 2 ] $ \j ->
          withName (Name (fromIntegral j)) $ do
-            val <- get (board ! (i,j))
+            val <- get (board state ! (i,j))
             -- resolve overloading, not needed in "real" programs
             let color3f = color :: Color3 GLfloat -> IO ()
             color3f (Color3 (fromIntegral i   / 3.0)
@@ -44,9 +49,9 @@ drawSquares board =
             rect (Vertex2 i j) (Vertex2 (i + 1) (j + 1))
 
 -- processHits prints the hit records and updates the board array.
-processHits :: Maybe[HitRecord] -> Board -> IO ()
+processHits :: Maybe[HitRecord] -> State -> IO ()
 processHits Nothing _ = putStrLn "selection buffer overflow"
-processHits (Just hitRecords) board = do
+processHits (Just hitRecords) state = do
    putStrLn ("hits = " ++ show (length hitRecords))
    mapM_ (\(HitRecord z1 z2 names) -> do
       putStrLn (" number of names for this hit = " ++ show (length names))
@@ -56,7 +61,7 @@ processHits (Just hitRecords) board = do
       sequence_ [ putStr (" " ++ show n) | Name n <- names ]
       putChar '\n'
       let [i, j] = [ fromIntegral n | Name n <- names ]
-      (board ! (i,j)) $~ (\x -> (x + 1) `mod` 3))
+      (board state ! (i,j)) $~ (\x -> (x + 1) `mod` 3))
       hitRecords
 
 -- pickSquares sets up selection mode, name stack, and projection matrix for
@@ -65,8 +70,8 @@ processHits (Just hitRecords) board = do
 bufSize :: GLsizei
 bufSize = 512
 
-pickSquares :: Board -> KeyboardMouseCallback
-pickSquares board (MouseButton LeftButton) Down _ (Position x y) = do
+pickSquares :: State -> KeyboardMouseCallback
+pickSquares state (MouseButton LeftButton) Down _ (Position x y) = do
    vp@(_, (Size _ height)) <- get viewport
    (_, maybeHitRecords) <- getHitRecords bufSize $
       withName (Name 0) $ do
@@ -76,17 +81,17 @@ pickSquares board (MouseButton LeftButton) Down _ (Position x y) = do
             -- create 5x5 pixel picking region near cursor location
             pickMatrix (fromIntegral x, fromIntegral height - fromIntegral y) (5, 5) vp
             ortho2D 0 3 0 3
-            drawSquares board
+            drawSquares state
          flush
-   processHits maybeHitRecords board
+   processHits maybeHitRecords state
    postRedisplay Nothing
 pickSquares _ (Char '\27') Down _ _ = exitWith ExitSuccess
 pickSquares _ _            _    _ _ = return ()
 
-display :: Board -> DisplayCallback
-display board = do
+display :: State -> DisplayCallback
+display state = do
    clear [ ColorBuffer ]
-   drawSquares board
+   drawSquares state
    flush
 
 reshape :: ReshapeCallback
@@ -106,8 +111,9 @@ main = do
    initialWindowSize $= Size 100 100
    initialWindowPosition $= Position 100 100
    createWindow progName
-   board <- myInit
+   state <- makeState
+   myInit
    reshapeCallback $= Just reshape
-   displayCallback $= display board
-   keyboardMouseCallback $= Just (pickSquares board)
+   displayCallback $= display state
+   keyboardMouseCallback $= Just (pickSquares state)
    mainLoop

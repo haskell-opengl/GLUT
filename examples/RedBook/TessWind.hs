@@ -14,6 +14,13 @@ import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
+data State = State { currentWindingRule :: IORef TessWinding }
+
+makeState :: IO State
+makeState = do
+   c <- newIORef TessWindingOdd
+   return $ State { currentWindingRule = c }
+
 type DisplayLists = (DisplayList, DisplayList, DisplayList, DisplayList)
 
 -- 'Float' is a dummy, any marshalable type would do
@@ -93,9 +100,9 @@ quadsAndTri = ComplexPolygon [ quad1, quad2, tri ]
 reverseComplexContour :: ComplexContour DontCare -> ComplexContour DontCare
 reverseComplexContour (ComplexContour avs) = ComplexContour (reverse avs)
 
-makeNewLists :: IORef TessWinding -> DisplayLists -> IO ()
-makeNewLists currentWindingRule (dl1, dl2, dl3, dl4) = do
-   windingRule <- get currentWindingRule
+makeNewLists :: State -> DisplayLists -> IO ()
+makeNewLists state (dl1, dl2, dl3, dl4) = do
+   windingRule <- get (currentWindingRule state)
    print windingRule   -- not in original program, but useful
    compileList windingRule dl1 rects1
    compileList windingRule dl2 rects2
@@ -135,13 +142,13 @@ display (dl1, dl2, dl3, dl4) = do
       callList dl4
    flush
 
-myInit :: IORef TessWinding -> IO DisplayLists
-myInit currentWindingRule = do
+myInit :: State -> IO DisplayLists
+myInit state = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Flat
    [dl1, dl2, dl3, dl4] <- genObjectNames 4
    let displayLists = (dl1, dl2, dl3, dl4)
-   makeNewLists currentWindingRule displayLists
+   makeNewLists state displayLists
    return displayLists
 
 reshape :: ReshapeCallback
@@ -157,10 +164,10 @@ reshape size@(Size w h) = do
    matrixMode $= Modelview 0
    loadIdentity
 
-keyboard :: IORef TessWinding -> DisplayLists -> KeyboardMouseCallback
-keyboard currentWindingRule displayLists (Char c) Down _ _ = case toLower c of
-   'w'   -> do currentWindingRule $~ nextWindingRule
-               makeNewLists currentWindingRule displayLists
+keyboard :: State -> DisplayLists -> KeyboardMouseCallback
+keyboard state displayLists (Char c) Down _ _ = case toLower c of
+   'w'   -> do currentWindingRule state $~ nextWindingRule
+               makeNewLists state displayLists
                postRedisplay Nothing
    '\27' -> exitWith ExitSuccess
    _     -> return ()
@@ -180,9 +187,9 @@ main = do
    initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 500 500
    createWindow progName
-   currentWindingRule <- newIORef TessWindingOdd
-   displayLists <- myInit currentWindingRule
+   state <- makeState
+   displayLists <- myInit state
    displayCallback $= display displayLists
    reshapeCallback $= Just reshape
-   keyboardMouseCallback $= Just (keyboard currentWindingRule displayLists)
+   keyboardMouseCallback $= Just (keyboard state displayLists)
    mainLoop

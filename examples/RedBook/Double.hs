@@ -13,20 +13,27 @@ import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
-display :: IORef GLfloat -> DisplayCallback
-display spin = do
+data State = State { spin :: IORef GLfloat }
+
+makeState :: IO State
+makeState = do
+   s <- newIORef 0
+   return $ State { spin = s }
+
+display :: State -> DisplayCallback
+display state = do
    clear [ ColorBuffer ]
    preservingMatrix $ do
-      s <- get spin
+      s <- get (spin state)
       rotate s (Vector3 0 0 1)
       color (Color3 1 1 1 :: Color3 GLfloat)
       rect (Vertex2 (-25) (-25)) (Vertex2 25 25 :: Vertex2 GLfloat)
    swapBuffers
 
-spinDisplay :: IORef GLfloat -> IdleCallback
-spinDisplay spin = do
+spinDisplay :: State -> IdleCallback
+spinDisplay state = do
    let wrap n s = if s > n then s - n else s
-   spin $~ (wrap 360 . (+ 2))
+   spin state $~ (wrap 360 . (+ 2))
    postRedisplay Nothing
 
 myInit :: IO ()
@@ -43,10 +50,10 @@ reshape size = do
    matrixMode $= Modelview 0
    loadIdentity
 
-keyboardMouse :: IORef GLfloat -> KeyboardMouseCallback
-keyboardMouse spin (MouseButton b) Down _ _ =
+keyboardMouse :: State -> KeyboardMouseCallback
+keyboardMouse state (MouseButton b) Down _ _ =
    idleCallback $= case b of
-      LeftButton -> Just (spinDisplay spin)
+      LeftButton -> Just (spinDisplay state)
       _ -> Nothing
 -- ESC not handled in the original example, but useful nevertheless
 keyboardMouse _ (Char '\27') Down _ _ = exitWith ExitSuccess
@@ -61,9 +68,9 @@ main = do
    initialWindowSize $= Size 250 250
    initialWindowPosition $= Position 100 100
    createWindow progName
+   state <- makeState
    myInit
-   spin <- newIORef 0
-   displayCallback $= display spin
+   displayCallback $= display state
    reshapeCallback $= Just reshape
-   keyboardMouseCallback $= Just (keyboardMouse spin)
+   keyboardMouseCallback $= Just (keyboardMouse state)
    mainLoop
