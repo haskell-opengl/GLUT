@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# $Id: Makefile,v 1.2 2003/03/07 18:50:37 panne Exp $
+# $Id: Makefile,v 1.3 2003/05/11 20:36:55 panne Exp $
 
 TOP = ../../..
 include $(TOP)/mk/boilerplate.mk
@@ -11,7 +11,7 @@ BINS        := $(EXAMPLES:.hs=)
 CLEAN_FILES += $(addsuffix $(exeext), $(BINS))
 
 HC           = $(GHC_INPLACE)
-SRC_HC_OPTS += -package GLUT
+SRC_HC_OPTS += -Wall -O -package GLUT
 
 all:: $(BINS)
 
