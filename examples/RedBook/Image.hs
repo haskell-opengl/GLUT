@@ -15,6 +15,7 @@
    keys, you change the zoom factors.
 -}
 
+import Control.Monad ( liftM )
 import Data.Bits ( (.&.) )
 import Data.IORef ( IORef, newIORef, readIORef, writeIORef, modifyIORef )
 import Foreign ( newArray )
@@ -25,24 +26,25 @@ import Graphics.UI.GLUT
 checkImageSize :: Size
 checkImageSize = Size 64 64
 
-makeCheckImage :: IO (PixelData (Color3 GLubyte))
-makeCheckImage = do
-   let Size w h = checkImageSize
-   buf <- newArray [ Color3 c c c |
-                     i <- [ 0 .. w - 1 ],
-                     j <- [ 0 .. h - 1 ],
-                     let c | (i .&. 0x8) == (j .&. 0x8) = 0
-                           | otherwise                  = 255 ]
-   return $ PixelData RGB UnsignedByte buf
+type Image = PixelData (Color3 GLubyte)
 
-myInit :: IO (PixelData (Color3 GLubyte))
+makeCheckImage :: Size -> GLsizei -> (GLubyte -> (Color3 GLubyte)) -> IO Image
+makeCheckImage (Size w h) n f =
+   liftM (PixelData RGB UnsignedByte) $
+      newArray [ f c |
+                 i <- [ 0 .. w - 1 ],
+                 j <- [ 0 .. h - 1 ],
+                 let c | (i .&. n) == (j .&. n) = 0
+                       | otherwise              = 255 ]
+
+myInit :: IO Image
 myInit = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Flat
    rowAlignment Unpack $= 1
-   makeCheckImage
+   makeCheckImage checkImageSize 0x8 (\c -> Color3 c c c)
 
-display ::  PixelData a -> DisplayCallback
+display ::  Image -> DisplayCallback
 display pixelData = do
    clear [ ColorBuffer ]
    -- resolve overloading, not needed in "real" programs
