@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# $Id: Makefile,v 1.10 2002/07/08 17:44:26 panne Exp $
+# $Id: Makefile,v 1.11 2002/08/10 21:11:26 panne Exp $
 
 TOP = ..
 include $(TOP)/mk/boilerplate.mk
@@ -19,7 +19,7 @@ PACKAGE_DEPS = base OpenGL
 SRC_HC_OPTS += -Wall -fglasgow-exts -package OpenGL \
                -Iinclude '-\#include "HsGLUT.h"'
 
-SRC_HADDOCK_OPTS += -t "HOpenGL Libraries (GLUT package)"
+SRC_HADDOCK_OPTS += -t "HOpenGL Libraries (GLUT package)" -p prologue.txt
 
 # yeuch, have to get GL_CFLAGS & GL_LIBS in through CPP to GLUT.conf.in
 comma = ,
