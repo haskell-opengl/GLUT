@@ -30,7 +30,7 @@ import Graphics.UI.GLUT.Window ( Window, getWindow )
 data CallbackType
    = DisplayCB         | OverlayDisplayCB  | ReshapeCB
    | KeyboardCB        | KeyboardUpCB      | MouseCB
-   | MotionCB          | PassiveMotionCB   | EntryExitCB
+   | MotionCB          | PassiveMotionCB   | CrossingCB
    | VisibilityCB      | WindowStatusCB    | SpecialCB
    | SpecialUpCB       | SpaceballMotionCB | SpaceballRotateCB
    | SpaceballButtonCB | ButtonBoxCB       | DialsCB
