@@ -13,7 +13,7 @@
 #include "HsGLUT.h"
 
 /* needed only for GLUT_GET_PROC_ADDRESS_IS_BROKEN */
-#include "HsGLUT.h"
+#include "HsGLUTConfig.h"
 
 #if (FREEGLUT || GLUT_API_VERSION >= 5) && GLUT_GET_PROC_ADDRESS_IS_BROKEN
 #include <string.h>
