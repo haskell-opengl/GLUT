@@ -30,7 +30,7 @@ import Foreign.Ptr ( Ptr )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint )
 
 #ifdef __HUGS__
-{-# CBITS HsGLUT.c #-}
+{-# CFILES cbits/HsGLUT.c #-}
 #endif
 
 --------------------------------------------------------------------------------
