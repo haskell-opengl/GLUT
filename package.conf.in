@@ -1,29 +1,58 @@
-Package {
-	name		 = "GLUT",
-	auto		 = True,
+name:		GLUT
+version:	1.0
+license:	BSD3
+maintainer:	
+exposed:	True
+
+exposed-modules:
+	Graphics.UI.GLUT.Callbacks.Global,
+	Graphics.UI.GLUT.Callbacks.Registration,
+	Graphics.UI.GLUT.Callbacks.Window,
+	Graphics.UI.GLUT.Begin,
+	Graphics.UI.GLUT.Callbacks,
+	Graphics.UI.GLUT.Colormap,
+	Graphics.UI.GLUT.Constants,
+	Graphics.UI.GLUT.Debugging,
+	Graphics.UI.GLUT.DeviceControl,
+	Graphics.UI.GLUT.Fonts,
+	Graphics.UI.GLUT.GameMode,
+	Graphics.UI.GLUT.Initialization,
+	Graphics.UI.GLUT.Menu,
+	Graphics.UI.GLUT.Objects,
+	Graphics.UI.GLUT.Overlay,
+	Graphics.UI.GLUT.QueryUtils,
+	Graphics.UI.GLUT.State,
+	Graphics.UI.GLUT.Types,
+	Graphics.UI.GLUT.Window,
+	Graphics.UI.GLUT
+
+hidden-modules:
+
+import-dirs:	IMPORT_DIR
+
 #ifdef INSTALLING
-	import_dirs	 = [ "$libdir/imports" ],
+library-dirs:	"$libdir"
 #else
-	import_dirs	 = [ "$libdir/libraries/GLUT" ],
+library-dirs:	"$libdir/libraries/GLUT",
+		"$libdir/libraries/GLUT/cbits"
 #endif
-	source_dirs	 = [],
+
+hs-libraries:   "HSGLUT"
+extra-libs:	"HSGLUT_cbits" GLUT_EXTRA_LIBS
+
 #ifdef INSTALLING
-	library_dirs	 = [ "$libdir" ],
+include-dirs:
 #else
-	library_dirs	 = [ "$libdir/libraries/GLUT"
-	                   , "$libdir/libraries/GLUT/cbits" ],
+include-dirs: 	"$libdir/libraries/GLUT/include"
 #endif
-	hs_libraries	 = [ "HSGLUT" ],
-	extra_libraries	 = [ "HSGLUT_cbits" GLUT_EXTRA_LIBS ],
-#ifdef INSTALLING
-	include_dirs	 = [],
-#else
-	include_dirs	 = [ "$libdir/libraries/GLUT/include" ],
-#endif
-	c_includes	 = [ "HsGLUT.h" ],
-	package_deps	 = [ "base", "OpenGL" ],
-	extra_ghc_opts	 = [],
-	extra_cc_opts	 = [ "" GLUT_CFLAGS ],
-	extra_frameworks = [ GLUT_FRAMEWORKS ],
-	extra_ld_opts	 = [ "" GLUT_LIBS ]
-}
+
+includes:	"HsGLUT.h"
+depends:	base, OpenGL
+extra-hugs-opts:
+extra-cc-opts:	"" GLUT_CFLAGS
+extra-ld-opts:	"" GLUT_LIBS
+framework-dirs:
+extra_frameworks: GLUT_FRAMEWORKS
+
+haddock-interfaces:
+haddock-html:

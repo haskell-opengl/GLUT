@@ -20,6 +20,7 @@ ALL_DIRS = \
 	Graphics/UI/GLUT/Callbacks
 
 PACKAGE = GLUT
+VERSION = 1.0
 PACKAGE_DEPS = base OpenGL
 
 SRC_HC_OPTS += -Wall -fffi -Iinclude '-\#include "HsGLUT.h"' -cpp
