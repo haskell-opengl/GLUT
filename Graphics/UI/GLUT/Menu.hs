@@ -35,7 +35,8 @@ import Graphics.Rendering.OpenGL.GL.StateVar (
 import Graphics.UI.GLUT.Constants ( glut_MENU_NUM_ITEMS )
 import Graphics.UI.GLUT.QueryUtils ( simpleGet )
 import Graphics.UI.GLUT.Types ( marshalMouseButton )
-import Graphics.UI.GLUT.Window ( Window, currentWindow )
+import Graphics.UI.GLUT.Window ( Window )
+import Graphics.UI.GLUT.Callbacks.Registration ( getCurrentWindow )
 import Graphics.UI.GLUT.Callbacks.Window ( MouseButton )
 
 --------------------------------------------------------------------------------
@@ -70,7 +71,7 @@ type MenuCallback = IO ()
 
 attachMenu :: MouseButton -> Menu -> IO ()
 attachMenu mouseButton menu@(Menu items) = do
-   win <- get currentWindow
+   win <- getCurrentWindow "attachMenu"
    let hook = MenuHook win mouseButton
    detachMenu hook
    unless (null items) $ do

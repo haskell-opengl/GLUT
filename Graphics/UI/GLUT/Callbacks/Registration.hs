@@ -12,7 +12,7 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Callbacks.Registration (
-   CallbackType(..), registerForCleanup, setCallback
+   CallbackType(..), registerForCleanup, setCallback, getCurrentWindow
 ) where
 
 --------------------------------------------------------------------------------
@@ -56,8 +56,13 @@ getCallbackID :: CallbackType -> IO CallbackID
 getCallbackID callbackType = do
    maybeWindow <- if isGlobal callbackType
                      then return Nothing
-                     else liftM Just $ get currentWindow
+                     else liftM Just $ getCurrentWindow "getCallbackID"
    return $ CallbackID maybeWindow callbackType
+
+getCurrentWindow :: String -> IO Window
+getCurrentWindow func = do
+   win <- get currentWindow
+   maybe (error (func ++ ": no current window")) return win
 
 --------------------------------------------------------------------------------
 -- This seems to be a common Haskell hack nowadays: A plain old global variable

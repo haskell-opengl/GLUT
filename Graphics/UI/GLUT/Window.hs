@@ -25,7 +25,7 @@ module Graphics.UI.GLUT.Window (
    parentWindow, numSubWindows,
 
    -- * Manipulating the /current window/
-   currentWindow, isRealWindow,
+   currentWindow,
 
    -- * Re-displaying and double buffer management
    postRedisplay, swapBuffers,
@@ -131,12 +131,12 @@ foreign import CALLCONV unsafe "glutCreateSubWindow" glutCreateSubWindow ::
 --------------------------------------------------------------------------------
 
 -- | Contains the /current window\'s/ parent. If the /current window/ is a
--- top-level window, a pseudo window is returned, see 'isRealWindow'.
+-- top-level window, 'Nothing' is returned.
 
-parentWindow :: GettableStateVar Window
+parentWindow :: GettableStateVar (Maybe Window)
 parentWindow =
    makeGettableStateVar $
-      simpleGet makeWindow glut_WINDOW_PARENT
+      getWindow (simpleGet makeWindow glut_WINDOW_PARENT)
 
 --------------------------------------------------------------------------------
 
@@ -154,8 +154,8 @@ numSubWindows =
 -- logical colormap (if the window is color index), and overlay and related
 -- state (if an overlay has been established). Any subwindows of the destroyed
 -- window are also destroyed by 'destroyWindow'. If the specified window was the
--- /current window/, the /current window/ becomes invalid ('getWindow' will
--- return 'Nothing').
+-- /current window/, the /current window/ becomes invalid ('currentWindow' will
+-- contain 'Nothing').
 
 foreign import CALLCONV unsafe "glutDestroyWindow" destroyWindow ::
    Window -> IO ()
@@ -163,22 +163,22 @@ foreign import CALLCONV unsafe "glutDestroyWindow" destroyWindow ::
 --------------------------------------------------------------------------------
 
 -- | Controls the /current window/. It does /not/ affect the /layer in use/ for
--- the window; this is done using 'Graphics.UI.GLUT.Overlay.layerInUse'. If no
--- windows exist or the previously /current window/ was destroyed, a pseudo
--- window is returned, see 'isRealWindow'.
+-- the window; this is done using 'Graphics.UI.GLUT.Overlay.layerInUse'.
+-- Contains 'Nothing' if no windows exist or the previously /current window/ was
+-- destroyed. Setting the /current window/ to 'Nothing' is a no-op.
 
-currentWindow :: StateVar Window
-currentWindow = makeStateVar glutGetWindow glutSetWindow
+currentWindow :: StateVar (Maybe Window)
+currentWindow =
+   makeStateVar (getWindow glutGetWindow) (maybe (return ()) glutSetWindow)
+
+getWindow :: IO Window -> IO (Maybe Window)
+getWindow act = do
+   win <- act
+   return $ if win == makeWindow 0 then Nothing else Just win
 
 foreign import CALLCONV unsafe "glutSetWindow" glutSetWindow :: Window -> IO ()
 
 foreign import CALLCONV unsafe "glutGetWindow" glutGetWindow :: IO Window
-
--- | Returns 'True' if the given window identifier refers to a real window, not
--- a pseudo one.
-
-isRealWindow :: Window -> Bool
-isRealWindow = (/= makeWindow 0)
 
 --------------------------------------------------------------------------------
 
