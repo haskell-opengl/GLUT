@@ -11,7 +11,7 @@ CLEAN_FILES += $(BINS)
 
 HC           = $(GHC_INPLACE)
 MKDEPENDHS   = $(GHC_INPLACE)
-SRC_HC_OPTS += -Wall -package GLUT
+SRC_HC_OPTS += -Wall -O -package GLUT
 
 all:: $(BINS)
 
