@@ -18,8 +18,8 @@
 /* NOTE: The macro must immediately start with the foreign declaration,
    otherwise the magic mangler (hack_foreign) in the Hugs build system
    doesn't recognize it. */
-#define EXTENSION_ENTRY(_msg,_entry,_ty) \
-foreign import CALLCONV unsafe "dynamic" dyn_/**/_entry :: Graphics.UI.GLUT.Extensions.Invoker (_ty) ; \
+#define EXTENSION_ENTRY(_saftey,_msg,_entry,_ty)			\
+foreign import CALLCONV _saftey "dynamic" dyn_/**/_entry :: Graphics.UI.GLUT.Extensions.Invoker (_ty) ; \
 _entry :: (_ty) ; \
 _entry = dyn_/**/_entry ptr_/**/_entry ; \
 ptr_/**/_entry :: FunPtr a ; \

@@ -42,7 +42,7 @@ foreign import CALLCONV safe "glutMainLoop" mainLoop :: IO ()
 mainLoopEvent :: IO ()
 mainLoopEvent = glutMainLoopEvent
 
-EXTENSION_ENTRY("freeglut",glutMainLoopEvent,IO ())
+EXTENSION_ENTRY(safe,"freeglut",glutMainLoopEvent,IO ())
 
 --------------------------------------------------------------------------------
 
@@ -59,4 +59,4 @@ EXTENSION_ENTRY("freeglut",glutMainLoopEvent,IO ())
 leaveMainLoop :: IO ()
 leaveMainLoop = glutLeaveMainLoop
 
-EXTENSION_ENTRY("freeglut",glutLeaveMainLoop,IO ())
+EXTENSION_ENTRY(safe,"freeglut",glutLeaveMainLoop,IO ())
