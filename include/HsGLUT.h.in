@@ -13,7 +13,14 @@
 #ifndef HSGLUT_H
 #define HSGLUT_H
 
-#include "ghcconfig.h"
+/* Define to 1 if you have the <GL/glut.h> header file. */
+#undef HAVE_GL_GLUT_H
+
+/* Define to 1 if you have the <windows.h> header file. */
+#undef HAVE_WINDOWS_H
+
+/* Define to 1 if native OpenGL should be used on Mac OS X */
+#undef USE_QUARTZ_OPENGL
 
 #ifdef USE_QUARTZ_OPENGL /* Mac OS X only */
 #include <GLUT/glut.h>
