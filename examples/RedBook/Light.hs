@@ -40,7 +40,7 @@ reshape size@(Size w h) = do
        hf = fromIntegral h
    if w <= h
       then ortho (-1.5) 1.5 (-1.5 * hf/wf) (1.5 * hf/wf) (-10) 10
-      else ortho (-1.5 * wf/hf) (1.5 * wf/hf)(-1.5) 1.5 (-10) 10
+      else ortho (-1.5 * wf/hf) (1.5 * wf/hf) (-1.5) 1.5 (-10) 10
    matrixMode $= Modelview 0
    loadIdentity
 
