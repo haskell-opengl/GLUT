@@ -16,7 +16,7 @@
 -- The GLUT color index routines are used to write and read entries in a
 -- window\'s color index colormap. Every GLUT color index window has its
 -- own logical color index colormap. The size of a window\'s colormap can
--- be determined by calling 'Graphics.UI.GLUT.State.getNumColormapEntries'.
+-- be determined by calling 'Graphics.UI.GLUT.State.getColormapEntryCount'.
 --
 -- GLUT color index windows within a program can attempt to share
 -- colormap resources by copying a single color index colormap to

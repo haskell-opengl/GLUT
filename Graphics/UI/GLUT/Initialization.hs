@@ -212,7 +212,7 @@ data DisplayMode
    | Stereo      -- ^ Select A Stereo Window.
    | Luminance   -- ^ Select a window with a \"luminance\" color model. This model provides the functionality of OpenGL\'s
                  --   RGBA color model, but the green and blue components are not maintained in the frame buffer. Instead
-                 --   each pixel\'s red component is converted to an index between zero and  'Graphics.UI.GLUT.State.getNumColormapEntries'
+                 --   each pixel\'s red component is converted to an index between zero and  'Graphics.UI.GLUT.State.getColormapEntryCount'
                  --   and looked up in a per-window color map to determine the color of pixels within the window. The initial
                  --   colormap of 'Luminance' windows is initialized to be a linear gray ramp, but can be modified with GLUT\'s
                  --   colormap actions. /Implementation Notes:/ 'Luminance' is not supported on most OpenGL platforms.
