@@ -28,11 +28,16 @@ module Graphics.UI.GLUT.Callbacks.Window (
    MotionCallback, setMotionCallback, setPassiveMotionCallback,
    Crossing(..), CrossingCallback, setCrossingCallback,
 
-   -- * Callbacks for special input devices
+   -- * Spaceball callback
+   SpaceballMotion, SpaceballRotation, SpaceballInput(..),
    SpaceballCallback, setSpaceballCallback,
-   ButtonBoxCallback, setButtonBoxCallback,
-   DialsCallback, setDialsCallback,
-   TabletCallback, setTabletCallback
+
+   -- * Dial & button box callback
+   DialAndButtonBoxInput(..),
+   DialAndButtonBoxCallback, setDialAndButtonBoxCallback,
+
+   -- * Tablet callback
+   TabletPosition(..), TabletInput(..), TabletCallback, setTabletCallback
 ) where
 
 import Control.Monad ( liftM )
@@ -42,6 +47,7 @@ import Foreign.C.Types ( CInt, CUChar )
 import Foreign.Ptr ( FunPtr )
 import Graphics.UI.GLUT.Callbacks.Registration ( CallbackType(..), setCallback )
 import Graphics.UI.GLUT.Initialization ( WindowSize(..), WindowPosition(..) )
+import Graphics.UI.GLUT.State ( NumButtons, NumDials )
 import Graphics.UI.GLUT.Constants
 
 --------------------------------------------------------------------------------
@@ -498,28 +504,216 @@ foreign import ccall unsafe "glutEntryFunc" glutEntryFunc ::
 
 --------------------------------------------------------------------------------
 
-type SpaceballCallback = IO ()
+-- | Translation of the Spaceball along one axis, normalized to be in the range
+-- of -1000 to +1000 inclusive
+type SpaceballMotion = CInt
+
+-- | Rotation of the Spaceball along one axis, normalized to be in the range
+-- of -1800 .. +1800 inclusive
+type SpaceballRotation = CInt
+
+data SpaceballInput
+   = SpaceballMotion   SpaceballMotion SpaceballMotion SpaceballMotion
+   | SpaceballRotation SpaceballRotation SpaceballRotation SpaceballRotation
+   | SpaceballButton   NumButtons KeyState
+
+type SpaceballCallback = SpaceballInput -> IO ()
+
+-- | Set the Spaceball callback for the /current window./ The Spaceball callback
+-- for a window is called when the window has Spaceball input focus (normally,
+-- when the mouse is in the window) and the user generates Spaceball
+-- translations, rotations, or button presses. The number of available Spaceball
+-- buttons can be determined with 'Graphics.UI.GLUT.State.getSpaceballInfo'.
+--
+-- Registering a Spaceball callback when a Spaceball device is not available has
+-- no effect and is not an error. In this case, no Spaceball callbacks will be
+-- generated.
 
 setSpaceballCallback :: Maybe SpaceballCallback -> IO ()
-setSpaceballCallback _ = return ()
+setSpaceballCallback Nothing = do
+   setSpaceballMotionCallback   Nothing
+   setSpaceballRotationCallback Nothing
+   setSpaceballButtonCallback   Nothing
+setSpaceballCallback (Just cb) = do
+   setSpaceballMotionCallback   (Just (\x y z -> cb (SpaceballMotion   x y z)))
+   setSpaceballRotationCallback (Just (\x y z -> cb (SpaceballRotation x y z)))
+   setSpaceballButtonCallback   (Just (\b s   -> cb (SpaceballButton   b s)))
 
 --------------------------------------------------------------------------------
 
-type ButtonBoxCallback = IO ()
+type SpaceballMotionCallback =
+   SpaceballMotion -> SpaceballMotion -> SpaceballMotion -> IO ()
+
+setSpaceballMotionCallback :: Maybe SpaceballMotionCallback -> IO ()
+setSpaceballMotionCallback =
+   setCallback SpaceballMotionCB glutSpaceballMotionFunc
+               (makeSpaceballMotionCallback . unmarshal)
+   where unmarshal cb x y z = cb x y z
+
+foreign import ccall "wrapper" makeSpaceballMotionCallback ::
+   SpaceballMotionCallback -> IO (FunPtr SpaceballMotionCallback)
+
+foreign import ccall unsafe "glutSpaceballMotionFunc" glutSpaceballMotionFunc ::
+   FunPtr SpaceballMotionCallback -> IO ()
+
+--------------------------------------------------------------------------------
+
+type SpaceballRotationCallback =
+   SpaceballRotation -> SpaceballRotation -> SpaceballRotation -> IO ()
+
+setSpaceballRotationCallback :: Maybe SpaceballRotationCallback -> IO ()
+setSpaceballRotationCallback =
+   setCallback SpaceballRotateCB glutSpaceballRotateFunc
+               (makeSpaceballRotationCallback . unmarshal)
+   where unmarshal cb x y z = cb x y z
+
+foreign import ccall "wrapper" makeSpaceballRotationCallback ::
+   SpaceballRotationCallback -> IO (FunPtr SpaceballRotationCallback)
+
+foreign import ccall unsafe "glutSpaceballRotateFunc" glutSpaceballRotateFunc ::
+   FunPtr SpaceballRotationCallback -> IO ()
+
+--------------------------------------------------------------------------------
+
+type SpaceballButtonCallback = NumButtons -> KeyState -> IO ()
+
+type SpaceballButtonCallback' = CInt -> CInt -> IO ()
+
+setSpaceballButtonCallback :: Maybe SpaceballButtonCallback -> IO ()
+setSpaceballButtonCallback =
+   setCallback SpaceballButtonCB glutSpaceballButtonFunc
+               (makeSpaceballButtonCallback . unmarshal)
+   where unmarshal cb b s = cb b (unmarshalKeyState s)
+
+foreign import ccall "wrapper" makeSpaceballButtonCallback ::
+   SpaceballButtonCallback' -> IO (FunPtr SpaceballButtonCallback')
+
+foreign import ccall unsafe "glutSpaceballButtonFunc"
+   glutSpaceballButtonFunc :: FunPtr SpaceballButtonCallback' -> IO ()
+
+--------------------------------------------------------------------------------
+
+data DialAndButtonBoxInput
+   = DialAndButtonBoxButton NumButtons KeyState
+   | DialAndButtonBoxDial   NumDials CInt
+   deriving ( Eq, Ord )
+
+type DialAndButtonBoxCallback = DialAndButtonBoxInput -> IO ()
+
+-- | Set the dial & button box callback for the /current window./ The dial &
+-- button box button callback for a window is called when the window has dial &
+-- button box input focus (normally, when the mouse is in the window) and the
+-- user generates dial & button box button presses or dial changes. The number
+-- of available dial & button box buttons and dials can be determined with
+-- 'Graphics.UI.GLUT.State.getDialAndButtonBoxInfo'.
+--
+-- Registering a dial & button box callback when a dial & button box device is
+-- not available is ineffectual and not an error. In this case, no dial & button
+-- box button will be generated.
+
+
+setDialAndButtonBoxCallback :: Maybe DialAndButtonBoxCallback -> IO ()
+setDialAndButtonBoxCallback Nothing = do
+   setButtonBoxCallback Nothing
+   setDialsCallback     Nothing
+setDialAndButtonBoxCallback (Just cb) = do
+   setButtonBoxCallback (Just (\b s -> cb (DialAndButtonBoxButton b s)))
+   setDialsCallback     (Just (\d x -> cb (DialAndButtonBoxDial   d x)))
+
+--------------------------------------------------------------------------------
+
+type ButtonBoxCallback = NumButtons -> KeyState -> IO ()
+
+type ButtonBoxCallback' = CInt -> CInt -> IO ()
 
 setButtonBoxCallback :: Maybe ButtonBoxCallback -> IO ()
-setButtonBoxCallback _ = return ()
+setButtonBoxCallback =
+   setCallback ButtonBoxCB glutButtonBoxFunc (makeButtonBoxFunc . unmarshal)
+   where unmarshal cb b s = cb b (unmarshalKeyState s)
+
+foreign import ccall "wrapper" makeButtonBoxFunc ::
+   ButtonBoxCallback' -> IO (FunPtr ButtonBoxCallback')
+
+foreign import ccall unsafe "glutButtonBoxFunc" glutButtonBoxFunc ::
+   FunPtr ButtonBoxCallback' -> IO ()
 
 --------------------------------------------------------------------------------
 
-type DialsCallback = IO ()
+type DialsCallback = NumDials -> CInt -> IO ()
 
 setDialsCallback :: Maybe DialsCallback -> IO ()
-setDialsCallback _ = return ()
+setDialsCallback =
+    setCallback DialsCB glutDialsFunc (makeDialsFunc . unmarshal)
+    where unmarshal cb d x = cb d x
+
+foreign import ccall "wrapper" makeDialsFunc ::
+   DialsCallback -> IO (FunPtr DialsCallback)
+
+foreign import ccall unsafe "glutDialsFunc" glutDialsFunc ::
+   FunPtr DialsCallback -> IO ()
 
 --------------------------------------------------------------------------------
 
-type TabletCallback = IO ()
+-- | Absolute tablet position, with coordinates normalized to be in the range of
+-- 0 to 2000 inclusive
+data TabletPosition = TabletPosition CInt CInt
+
+data TabletInput
+   = TabletMotion
+   | TabletButton NumButtons KeyState
+
+type TabletCallback = TabletInput -> TabletPosition -> IO ()
+
+-- | Set the tablet callback for the /current window./ The tablet callback for a
+-- window is called when the window has tablet input focus (normally, when the
+-- mouse is in the window) and the user generates tablet motion or button
+-- presses. The number of available tablet buttons can be determined with
+-- 'Graphics.UI.GLUT.State.getTabletInfo'.
+--
+-- Registering a tablet callback when a tablet device is not available is
+-- ineffectual and not an error. In this case, no tablet callbacks will be
+-- generated.
 
 setTabletCallback :: Maybe TabletCallback -> IO ()
-setTabletCallback _ = return ()
+setTabletCallback Nothing = do
+   setTabletMotionCallback Nothing
+   setTabletButtonCallback Nothing
+setTabletCallback (Just cb) = do 
+   setTabletMotionCallback (Just (\p     -> cb TabletMotion       p))
+   setTabletButtonCallback (Just (\b s p -> cb (TabletButton b s) p))
+
+--------------------------------------------------------------------------------
+
+type TabletMotionCallback = TabletPosition -> IO ()
+
+type TabletMotionCallback' = CInt -> CInt -> IO ()
+
+setTabletMotionCallback :: Maybe TabletMotionCallback -> IO ()
+setTabletMotionCallback =
+    setCallback TabletMotionCB glutTabletMotionFunc
+                (makeTabletMotionFunc . unmarshal)
+    where unmarshal cb x y = cb (TabletPosition x y)
+
+foreign import ccall "wrapper" makeTabletMotionFunc ::
+   TabletMotionCallback' -> IO (FunPtr TabletMotionCallback')
+
+foreign import ccall unsafe "glutTabletMotionFunc" glutTabletMotionFunc ::
+   FunPtr TabletMotionCallback' -> IO ()
+
+--------------------------------------------------------------------------------
+
+type TabletButtonCallback = NumButtons -> KeyState -> TabletPosition -> IO ()
+
+type TabletButtonCallback' = CInt -> CInt -> CInt -> CInt -> IO ()
+
+setTabletButtonCallback :: Maybe TabletButtonCallback -> IO ()
+setTabletButtonCallback =
+    setCallback TabletButtonCB glutTabletButtonFunc
+                (makeTabletButtonFunc . unmarshal)
+    where unmarshal cb b s x y = cb b (unmarshalKeyState s) (TabletPosition x y)
+
+foreign import ccall "wrapper" makeTabletButtonFunc ::
+   TabletButtonCallback' -> IO (FunPtr TabletButtonCallback')
+
+foreign import ccall unsafe "glutTabletButtonFunc" glutTabletButtonFunc ::
+   FunPtr TabletButtonCallback' -> IO ()
