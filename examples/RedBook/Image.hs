@@ -17,7 +17,7 @@
 
 import Control.Monad ( liftM )
 import Data.Bits ( (.&.) )
-import Data.IORef ( IORef, newIORef, readIORef, writeIORef, modifyIORef )
+import Data.IORef ( IORef, newIORef )
 import Foreign ( newArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
@@ -69,7 +69,7 @@ motion zoomFactor (Position x y) = do
    -- resolve overloading, not needed in "real" programs
    let rasterPos2i = rasterPos :: Vertex2 GLint -> IO ()
    rasterPos2i (Vertex2 x screenY)
-   z <- readIORef zoomFactor
+   z <- get zoomFactor
    pixelZoom $= (z, z)
    copyPixels (Position 0 0) checkImageSize CopyColor
    pixelZoom $= (1, 1)
@@ -77,14 +77,14 @@ motion zoomFactor (Position x y) = do
 
 resetZoomFactor :: IORef GLfloat -> IO ()
 resetZoomFactor zoomFactor = do
-   writeIORef zoomFactor 1.0
+   zoomFactor $= 1.0
    postRedisplay Nothing
    putStrLn "zoomFactor reset to 1.0"
 
 incZoomFactor :: IORef GLfloat -> GLfloat -> IO ()
 incZoomFactor zoomFactor inc = do
-   modifyIORef zoomFactor (max 0.5 . min 3.0 . (+ inc))
-   readIORef zoomFactor >>= putStrLn . ("zoomFactor is now " ++) . show
+   zoomFactor $~! (max 0.5 . min 3.0 . (+ inc))
+   get zoomFactor >>= putStrLn . ("zoomFactor is now " ++) . show
 
 keyboard :: IORef GLfloat -> KeyboardMouseCallback
 keyboard zoomFactor (Char 'r')   Down _   _ = resetZoomFactor zoomFactor

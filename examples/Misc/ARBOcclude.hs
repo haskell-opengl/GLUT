@@ -6,7 +6,7 @@
 -}
 
 import Control.Monad ( unless, when )
-import Data.IORef ( IORef, newIORef, readIORef, writeIORef, modifyIORef )
+import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
 import Graphics.UI.GLUT
 
@@ -24,23 +24,23 @@ printString pos s = do
 idle :: IORef GLfloat -> IORef GLfloat -> IORef Int -> IdleCallback
 idle xPos sign lastTime = do
    time <- get elapsedTime
-   l <- readIORef lastTime
+   l <- get lastTime
    let timeDiff = fromIntegral (time - l)
 
    when (timeDiff >= 20) $ do -- 50Hz update
-      writeIORef lastTime time   
+      lastTime $= time   
 
-      s <- readIORef sign
+      s <- get sign
       step xPos (timeDiff / 1000 * s)
-      x <- readIORef xPos
+      x <- get xPos
 
       when (x > 2.5) $ do
-         writeIORef xPos 2.5
-         writeIORef sign (-1)
+         xPos $= 2.5
+         sign $= (-1)
 
       when (x < -2.5) $ do
-         writeIORef xPos (-2.5)
-         writeIORef sign 1
+         xPos $= (-2.5)
+         sign $= 1
 
 display :: QueryObject -> IORef GLfloat -> DisplayCallback
 display occQuery xPos = do
@@ -57,7 +57,7 @@ display occQuery xPos = do
 
    -- draw the test polygon with occlusion testing
    passed <- preservingMatrix $ do
-      x <- readIORef xPos
+      x <- get xPos
       translate (Vector3 x 0 (-0.5))
       scale 0.3 0.3 (1.0 :: GLfloat)
       rotate (-90 * x) (Vector3 0 0 1)
@@ -132,7 +132,7 @@ flushRight width x = replicate (width - length s) ' ' ++ s
 
 keyboard :: IORef Bool -> IORef GLfloat -> IORef GLfloat -> IORef Int -> KeyboardMouseCallback
 keyboard _    _    _    _        (Char '\27')          Down _ _ = exitWith ExitSuccess
-keyboard anim xPos sign lastTime (Char ' ')            Down _ _ = do modifyIORef anim not
+keyboard anim xPos sign lastTime (Char ' ')            Down _ _ = do anim $~ not
                                                                      setIdleCallback anim xPos sign lastTime
 keyboard _    xPos _    _        (SpecialKey KeyLeft)  Down _ _ = step xPos (-0.1)
 keyboard _    xPos _    _        (SpecialKey KeyRight) Down _ _ = step xPos   0.1
@@ -140,12 +140,12 @@ keyboard _    _    _    _        _                     _    _ _ = return ()
 
 setIdleCallback :: IORef Bool -> IORef GLfloat -> IORef GLfloat -> IORef Int -> IO ()
 setIdleCallback anim xPos sign lastTime = do
-   a <- readIORef anim
+   a <- get anim
    idleCallback $= if a then Just (idle xPos sign lastTime) else Nothing
 
 step :: IORef GLfloat -> GLfloat -> IO ()
 step xPos s = do
-   modifyIORef xPos (+ s)
+   xPos $~ (+ s)
    postRedisplay Nothing
 
 myInit :: IO ()

@@ -11,7 +11,7 @@
 -}
 
 import Data.Bits ( (.&.) )
-import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
+import Data.IORef ( IORef, newIORef )
 import Foreign ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
@@ -70,7 +70,7 @@ display :: IORef GLfloat -> DisplayCallback
 display zTrans = do
    clear [ ColorBuffer, DepthBuffer ]
    preservingMatrix $ do
-      z <- readIORef zTrans
+      z <- get zTrans
       translate (Vector3 0 0 z)
       renderObject Solid (Sphere' 5 20 10)
    swapBuffers
@@ -93,7 +93,7 @@ keyboard _ _            _    _ _ = return ()
 
 move :: IORef GLfloat -> GLfloat -> IO ()
 move zTrans inc = do
-   modifyIORef zTrans (+ inc)
+   zTrans $~ (+ inc)
    postRedisplay Nothing
 
 main :: IO ()

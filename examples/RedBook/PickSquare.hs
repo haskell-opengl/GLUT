@@ -10,7 +10,7 @@
 -}
 
 import Data.Array ( Array, listArray, (!) )
-import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
+import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -35,7 +35,7 @@ drawSquares board =
       loadName (Name (fromIntegral i))
       flip mapM_ [ 0 .. 2 ] $ \j ->
          withName (Name (fromIntegral j)) $ do
-            val <- readIORef (board ! (i,j))
+            val <- get (board ! (i,j))
             -- resolve overloading, not needed in "real" programs
             let color3f = color :: Color3 GLfloat -> IO ()
             color3f (Color3 (fromIntegral i   / 3.0)
@@ -56,7 +56,7 @@ processHits (Just hitRecords) board = do
       sequence_ [ putStr (" " ++ show n) | Name n <- names ]
       putChar '\n'
       let [i, j] = [ fromIntegral n | Name n <- names ]
-      modifyIORef (board ! (i,j)) (\x -> (x + 1) `mod` 3))
+      (board ! (i,j)) $~ (\x -> (x + 1) `mod` 3))
       hitRecords
 
 -- pickSquares sets up selection mode, name stack, and projection matrix for

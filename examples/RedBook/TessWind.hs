@@ -10,7 +10,7 @@
 -}
 
 import Data.Char ( toLower )
-import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
+import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -95,7 +95,7 @@ reverseComplexContour (ComplexContour avs) = ComplexContour (reverse avs)
 
 makeNewLists :: IORef TessWinding -> DisplayLists -> IO ()
 makeNewLists currentWindingRule (dl1, dl2, dl3, dl4) = do
-   windingRule <- readIORef currentWindingRule
+   windingRule <- get currentWindingRule
    print windingRule   -- not in original program, but useful
    compileList windingRule dl1 rects1
    compileList windingRule dl2 rects2
@@ -159,7 +159,7 @@ reshape size@(Size w h) = do
 
 keyboard :: IORef TessWinding -> DisplayLists -> KeyboardMouseCallback
 keyboard currentWindingRule displayLists (Char c) Down _ _ = case toLower c of
-   'w'   -> do modifyIORef currentWindingRule nextWindingRule
+   'w'   -> do currentWindingRule $~ nextWindingRule
                makeNewLists currentWindingRule displayLists
                postRedisplay Nothing
    '\27' -> exitWith ExitSuccess

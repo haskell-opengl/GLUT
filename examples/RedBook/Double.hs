@@ -9,7 +9,7 @@
    Pressing the middle mouse button stops the rotation.
 -}
 
-import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
+import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -17,7 +17,7 @@ display :: IORef GLfloat -> DisplayCallback
 display spin = do
    clear [ ColorBuffer ]
    preservingMatrix $ do
-      s <- readIORef spin
+      s <- get spin
       rotate s (Vector3 0 0 1)
       color (Color3 1 1 1 :: Color3 GLfloat)
       rect (Vertex2 (-25) (-25)) (Vertex2 25 25 :: Vertex2 GLfloat)
@@ -26,7 +26,7 @@ display spin = do
 spinDisplay :: IORef GLfloat -> IdleCallback
 spinDisplay spin = do
    let wrap n s = if s > n then s - n else s
-   modifyIORef spin (wrap 360 . (+ 2))
+   spin $~ (wrap 360 . (+ 2))
    postRedisplay Nothing
 
 myInit :: IO ()

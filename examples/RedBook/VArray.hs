@@ -8,7 +8,7 @@
 -}
 
 import Control.Monad ( when )
-import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
+import Data.IORef ( IORef, newIORef )
 import Foreign ( Ptr, newArray )
 import System.Exit ( exitFailure, exitWith, ExitCode(..) )
 import Graphics.UI.GLUT
@@ -70,7 +70,7 @@ makeState = do
 
 setup :: State -> IO ()
 setup state = do
-   s <- readIORef (setupMethod state)
+   s <- get (setupMethod state)
    case s of
       Pointer -> do
          clientState VertexArray $= Enabled
@@ -91,7 +91,7 @@ myInit = do
 display :: State -> DisplayCallback
 display state = do
    clear [ ColorBuffer ]
-   d <- readIORef (derefMethod state)
+   d <- get (derefMethod state)
    case d of
       DrawArray    -> drawArrays Triangles 0 6
       ArrayElement -> renderPrimitive Triangles $ mapM_ arrayElement [ 2, 3, 5 ]
@@ -109,11 +109,11 @@ reshape size@(Size w h) = do
 
 keyboardMouse :: State -> KeyboardMouseCallback
 keyboardMouse state (MouseButton LeftButton) Down _ _ = do
-   modifyIORef (setupMethod state) nextValue
+   setupMethod state $~ nextValue
    setup state
    postRedisplay Nothing
 keyboardMouse state (MouseButton _) Down _ _ = do
-   modifyIORef (derefMethod state) nextValue
+   derefMethod state $~ nextValue
    postRedisplay Nothing
 keyboardMouse _ (Char '\27') Down _ _ = exitWith ExitSuccess
 keyboardMouse _ _ _ _ _ = return ()
