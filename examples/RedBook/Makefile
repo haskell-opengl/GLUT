@@ -5,7 +5,7 @@ include $(TOP)/mk/boilerplate.mk
 
 # -----------------------------------------------------------------------------
 
-EXAMPLES    := $(wildcard *.hs)
+EXAMPLES    := $(filter-out ReadImage.hs,$(wildcard *.hs))
 BINS        := $(addsuffix $(exeext),$(EXAMPLES:.hs=))
 CLEAN_FILES += $(BINS)
 
@@ -14,8 +14,14 @@ SRC_HC_OPTS += -Wall -O -package GLUT
 
 all:: $(BINS)
 
+USES_READIMAGE = ColorTable
+
+.PRECIOUS: ReadImage.o
+$(addsuffix .o,$(USES_READIMAGE)): ReadImage.hi
+$(addsuffix $(exeext),$(USES_READIMAGE)): ReadImage.o
+
 $(BINS): %$(exeext): %.o
-	$(HC) -o $@ $(HC_OPTS) $(LD_OPTS) $<
+	$(HC) -o $@ $(HC_OPTS) $(LD_OPTS) $< $(patsubst %,ReadImage.o,$(filter $(<:.o=),$(USES_READIMAGE)))
 
 # -----------------------------------------------------------------------------
 
