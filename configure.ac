@@ -39,6 +39,22 @@ GLUT_BUILD_PACKAGE=yes
 
 AC_CHECK_HEADERS([windows.h])
 
+AC_DEFINE_UNQUOTED([GLUT_EXTRA_LIBS],
+  [`echo HSGLUT_cbits $GLUT_EXTRA_LIBS | sed -e 's/[[^ ]]*/,"&"/g' -e 's/^ *,//'`],
+  [Extra libraries for GLUT, as a list of string literals.])
+
+AC_DEFINE_UNQUOTED([GLUT_CFLAGS],
+  [`echo '' $GLUT_CFLAGS | sed -e 's/-[[^ ]]*/,"&"/g' -e 's/^ *,//'`],
+  [C flags for GLUT, as a list of string literals.])
+
+AC_DEFINE_UNQUOTED([GLUT_LIBS],
+  [`echo '' $GLUT_LIBS | sed -e 's/-[[^ ]]*/,"&"/g' -e 's/^ *,//'`],
+  [Library flags for GLUT, as a list of string literals.])
+
+AC_DEFINE_UNQUOTED([GLUT_FRAMEWORKS],
+  [`echo '' $GLUT_FRAMEWORKS | sed -e 's/-[[^ ]]*/,"&"/g' -e 's/^ *,//'`],
+  [Framework flags for GLUT, as a list of string literals.])
+
 fi
 fi
 fi
