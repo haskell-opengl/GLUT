@@ -50,11 +50,7 @@ import Graphics.UI.GLUT.Constants (
    glut_RED, glut_GREEN, glut_BLUE,
    glut_WINDOW_COLORMAP_SIZE, glut_TRANSPARENT_INDEX )
 import Graphics.UI.GLUT.QueryUtils ( simpleGet, layerGet )
-#ifdef __NHC__
-import Graphics.UI.GLUT.Types ( Window(..) )
-#else
 import Graphics.UI.GLUT.Window ( Window )
-#endif
 
 --------------------------------------------------------------------------------
 
