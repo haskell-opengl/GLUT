@@ -124,16 +124,16 @@ type PollRate = CInt
 -- | Return the /initial window position./
 getInitialWindowPosition :: IO WindowPosition
 getInitialWindowPosition = do
-   x <- get id glut_INIT_WINDOW_X
-   y <- get id glut_INIT_WINDOW_Y
+   x <- get fromIntegral glut_INIT_WINDOW_X
+   y <- get fromIntegral glut_INIT_WINDOW_Y
    return $ WindowPosition x y
 
 -- | Return the /initial window size./
 
 getInitialWindowSize :: IO WindowSize
 getInitialWindowSize = do
-   w <- get id glut_INIT_WINDOW_WIDTH
-   h <- get id glut_INIT_WINDOW_HEIGHT
+   w <- get fromIntegral glut_INIT_WINDOW_WIDTH
+   h <- get fromIntegral glut_INIT_WINDOW_HEIGHT
    return $ WindowSize w h
 
 -- | Return the /initial display mode./
@@ -154,16 +154,16 @@ isDisplayModePossible = get i2b glut_DISPLAY_MODE_POSSIBLE
 
 getWindowPosition :: IO WindowPosition
 getWindowPosition = do
-   x <- get id glut_WINDOW_X
-   y <- get id glut_WINDOW_Y
+   x <- get fromIntegral glut_WINDOW_X
+   y <- get fromIntegral glut_WINDOW_Y
    return $ WindowPosition x y
 
 -- | Return the size of the /current window,/ measured in pixels.
 
 getWindowSize :: IO WindowSize
 getWindowSize = do
-   w <- get id glut_WINDOW_WIDTH
-   h <- get id glut_WINDOW_HEIGHT
+   w <- get fromIntegral glut_WINDOW_WIDTH
+   h <- get fromIntegral glut_WINDOW_HEIGHT
    return $ WindowSize w h
 
 -- | Return 'Just' the /current window\'s/ parent or 'Nothing' if the /current
@@ -337,10 +337,10 @@ data ScreenInfo = ScreenInfo WindowSize WindowSize
 
 getScreenInfo :: IO ScreenInfo
 getScreenInfo = do
-  wpx <- get id glut_SCREEN_WIDTH
-  hpx <- get id glut_SCREEN_HEIGHT
-  wmm <- get id glut_SCREEN_WIDTH_MM
-  hmm <- get id glut_SCREEN_HEIGHT_MM
+  wpx <- get fromIntegral glut_SCREEN_WIDTH
+  hpx <- get fromIntegral glut_SCREEN_HEIGHT
+  wmm <- get fromIntegral glut_SCREEN_WIDTH_MM
+  hmm <- get fromIntegral glut_SCREEN_HEIGHT_MM
   return $ ScreenInfo (WindowSize wpx hpx) (WindowSize wmm hmm)
 
 --------------------------------------------------------------------------------

@@ -67,7 +67,9 @@ type MenuStatusCallback' = CInt -> CInt -> CInt -> IO ()
 setMenuStatusCallback :: Maybe MenuStatusCallback -> IO ()
 setMenuStatusCallback = setCallback MenuStatusCB glutMenuStatusFunc
                                     (makeMenuStatusCallback . unmarshal)
-   where unmarshal cb s x y = cb (unmarshalMenuUsage s) (WindowPosition x y)
+   where unmarshal cb s x y =
+            cb (unmarshalMenuUsage s)
+               (WindowPosition (fromIntegral x) (fromIntegral y))
 
 foreign import ccall "wrapper" makeMenuStatusCallback ::
    MenuStatusCallback' -> IO (FunPtr MenuStatusCallback')

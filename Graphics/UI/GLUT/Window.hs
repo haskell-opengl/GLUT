@@ -114,7 +114,9 @@ createSubWindow
    -> WindowSize     -- ^ Window size in pixels
    -> IO Window      -- ^ The identifier for the newly created subwindow
 createSubWindow win (WindowPosition x y) (WindowSize w h) =
-   glutCreateSubWindow win x y w h
+   glutCreateSubWindow win
+                       (fromIntegral x) (fromIntegral y)
+                       (fromIntegral w) (fromIntegral h)
 
 foreign import CALLCONV unsafe "glutCreateSubWindow" glutCreateSubWindow ::
       Window -> CInt -> CInt -> CInt -> CInt -> IO Window
@@ -215,7 +217,8 @@ foreign import CALLCONV unsafe "glutSwapBuffers" swapBuffers :: IO ()
 -- windows should be repositioned according 'positionWindow'\'s parameter.
 
 positionWindow :: WindowPosition -> IO ()
-positionWindow (WindowPosition x y) = glutPositionWindow x y
+positionWindow (WindowPosition x y) =
+   glutPositionWindow (fromIntegral x) (fromIntegral y)
 
 foreign import CALLCONV unsafe "glutPositionWindow" glutPositionWindow ::
    CInt -> CInt -> IO ()
@@ -232,7 +235,8 @@ foreign import CALLCONV unsafe "glutPositionWindow" glutPositionWindow ::
 -- reported to the program by a reshape callback.
 
 reshapeWindow :: WindowSize -> IO ()
-reshapeWindow (WindowSize w h) = glutReshapeWindow w h
+reshapeWindow (WindowSize w h) =
+   glutReshapeWindow (fromIntegral w) (fromIntegral h)
 
 foreign import CALLCONV unsafe "glutReshapeWindow" glutReshapeWindow ::
    CInt -> CInt -> IO ()
@@ -412,7 +416,8 @@ foreign import CALLCONV unsafe "glutSetCursor" glutSetCursor :: CInt -> IO ()
 -- user.\"
 
 warpPointer :: WindowPosition -> IO ()
-warpPointer (WindowPosition x y) = glutWarpPointer x y
+warpPointer (WindowPosition x y) =
+   glutWarpPointer (fromIntegral x) (fromIntegral y)
 
 foreign import CALLCONV unsafe "glutWarpPointer" glutWarpPointer ::
    CInt -> CInt -> IO ()

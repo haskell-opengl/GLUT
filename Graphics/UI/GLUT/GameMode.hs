@@ -157,9 +157,10 @@ getGameModeInfo = do
    if possible
       then do w <- glutGameModeGet glut_GAME_MODE_WIDTH
               h <- glutGameModeGet glut_GAME_MODE_HEIGHT
+              let size = WindowSize (fromIntegral w) (fromIntegral h)
               b <- glutGameModeGet glut_GAME_MODE_PIXEL_DEPTH
               r <- glutGameModeGet glut_GAME_MODE_REFRESH_RATE
-              return $ Just $ GameModeInfo (WindowSize w h) b r
+              return $ Just $ GameModeInfo size b r
       else return Nothing
 
 getBool :: GLenum -> IO Bool

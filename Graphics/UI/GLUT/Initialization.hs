@@ -51,6 +51,7 @@ import Foreign.Marshal.Utils ( with, withMany )
 import Foreign.Ptr ( Ptr, nullPtr )
 import Foreign.Storable ( Storable(..) )
 import System.Environment ( getProgName, getArgs )
+import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint, GLsizei )
 import Graphics.UI.GLUT.Constants
 
 --------------------------------------------------------------------------------
@@ -128,7 +129,7 @@ getArgsAndInitialize = do
 --------------------------------------------------------------------------------
 
 -- | Window position, measured in pixels.
-data WindowPosition = WindowPosition CInt CInt
+data WindowPosition = WindowPosition GLint GLint
 
 -- | Set the /initial window position/.  Windows created by
 -- 'Graphics.UI.GLUT.Window.createWindow' will be requested to be created with
@@ -143,13 +144,14 @@ data WindowPosition = WindowPosition CInt CInt
 -- assume the window was created at the specified position.
 
 setInitialWindowPosition :: WindowPosition -> IO ()
-setInitialWindowPosition (WindowPosition x y) = glutInitWindowPosition x y
+setInitialWindowPosition (WindowPosition x y) =
+    glutInitWindowPosition (fromIntegral x) (fromIntegral y)
 
 foreign import CALLCONV unsafe "glutInitWindowPosition" glutInitWindowPosition
    :: CInt -> CInt -> IO ()
 
 -- | Window size, measured in pixels.
-data WindowSize = WindowSize CInt CInt
+data WindowSize = WindowSize GLsizei GLsizei
 
 -- | Set the /initial window size/.  Windows created by
 -- 'Graphics.UI.GLUT.Window.createWindow' will be requested to be created with
@@ -165,7 +167,8 @@ data WindowSize = WindowSize CInt CInt
 -- window.
 
 setInitialWindowSize :: WindowSize -> IO ()
-setInitialWindowSize (WindowSize w h) = glutInitWindowSize w h
+setInitialWindowSize (WindowSize w h) =
+   glutInitWindowSize (fromIntegral w) (fromIntegral h)
 
 foreign import CALLCONV unsafe "glutInitWindowSize" glutInitWindowSize ::
    CInt -> CInt -> IO ()
