@@ -35,8 +35,8 @@ display = do
    flush
 
 reshape :: ReshapeCallback
-reshape (WindowSize w h) = do
-   viewport $= ((0, 0), (w, h))
+reshape size@(Size w h) = do
+   viewport $= (Position 0 0, size)
    matrixMode $= Projection
    loadIdentity
    let wf = fromIntegral w
@@ -53,9 +53,9 @@ keyboard _            _    _ _ = return ()
 main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
-   setInitialDisplayMode  [ Single, GLUT.RGB ]
-   setInitialWindowSize (WindowSize 500 500)
-   setInitialWindowPosition (WindowPosition 100 100)
+   initialDisplayMode    $= [ Single, GLUT.RGB ]
+   initialWindowSize     $= Size 500 500
+   initialWindowPosition $= Position 100 100
    createWindow progName
    myInit
    setDisplayCallback display

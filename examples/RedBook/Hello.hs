@@ -48,9 +48,9 @@ myInit = do
 main :: IO ()
 main = do
    getArgsAndInitialize
-   setInitialDisplayMode [ Single, GLUT.RGB ]
-   setInitialWindowSize (WindowSize 250 250)
-   setInitialWindowPosition (WindowPosition 100 100)
+   initialDisplayMode    $= [ Single, GLUT.RGB ]
+   initialWindowSize     $= Size 250 250
+   initialWindowPosition $= Position 100 100
    createWindow "hello"
    myInit
    setDisplayCallback display
