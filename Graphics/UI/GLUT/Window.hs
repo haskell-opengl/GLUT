@@ -125,7 +125,7 @@ foreign import ccall unsafe "glutDestroyWindow" destroyWindow :: Window -> IO ()
 --------------------------------------------------------------------------------
 
 -- | Set the /current window/. It does /not/ change the /layer in use/ for the
--- window; this is done using 'useLayer'.
+-- window; this is done using 'Graphics.UI.GLUT.Overlay.useLayer'.
 
 foreign import ccall unsafe "glutSetWindow" setWindow :: Window -> IO ()
 
