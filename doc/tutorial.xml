@@ -219,7 +219,7 @@ displayPoints = do
   renderPrimitive ]]><redv>Polygon</redv><![CDATA[ $
     mapM_ vertex myPoints]]></code>
 
-The resulting window can be found in figure<white></white><ref name="APolygon"></ref>.
+The resulting window can be found in figure<white/><ref name="APolygon"></ref>.
 
 <bild name="APolygon" pdfscale="0.6" psscale="0.5"
  caption="A simple polygon."/> 
@@ -229,55 +229,52 @@ The resulting window can be found in figure<white></white><ref name="APolygon"><
 </section>
 
 <section titel="A Little Bit of Theory">
-<subsection titel="Haskell">
-Haskell <cite label="revisedHaskellReport"/> is a lazily 
-evaluated functional programming language.  This
-means that there are no mutable variables. A Haskell program consists
-of expressions, which do not have any side effects. Expressions are
-only evalutated to some value when this is absolutely necessary for
-program execution. This means it is hard to predict in which order
-subexpressions get evaluated.<p/>
 
-Expressions
-evaluate to some value without changing any state. This is a nice
-property of Haskell, because it makes reasoning about programs easier
-and programs are very robust.
+<subsection titel="Haskell">
+Haskell <cite label="revisedHaskellReport"/> is a lazily evaluated functional
+programming language, which means, amongst other things, that there are no
+mutable variables. A Haskell program consists of expressions, which are only
+evalutated to some value when it is absolutely necessary for program execution.
+This makes predicting the order in which the subexpressions get evaluated
+extremely hard.<p/>
+
+Expressions evaluate to some value without changing any state. This is a nice
+property of Haskell, because it makes reasoning about programs easier and
+programs are very robust.
 
 </subsection>
+
 <subsection titel="OpenGL">
-OpenGL on the other hand is a graphics library which is defined in 
-terms of a state machine. A mutable state modells the current
-state of the world. Functions are executed one after another 
-on this state in
-order to modify certain variables. E.g. one variable keeps the current
-color to which all drawing statements refer. There is a statement
-which allows to set the color variable to some other value.<p/>
+OpenGL on the other hand is a graphics library which is defined in terms of a
+state machine, where a mutable state models the current state of the
+world. Functions are executed one after another on this state in order to modify
+certain variables, e.g. one state variable keeps the current color which most
+rendering commands use implicitly. There is a command which allows to set the
+current color variable to a given value.<p/>
 
-A comprehensive introduction to OpenGL can be found in the so called<em
->redbook</em> <cite label="redbook"/>. OpenGL comes along with
-a utility library called GLU <cite label="glu"/> and a system
-independent GUI library called GLUT <cite label="glut"/>.
-
+A comprehensive introduction to OpenGL can be found in the so called <em>Red
+Book</em><white/><cite label="redbook"/>. OpenGL comes along with a utility
+library called GLU <cite label="glu"/> and a simple system independent GUI
+library called GLUT <cite label="glut"/>.
 
 </subsection>
 
 <subsection titel="Haskell and OpenGL">
-Having said this, Haskell and OpenGL seem to cooperate badly. There
-seems to be a great mismatch between the fundamental concepts of the two.
-However,
-the designers of Haskell discovered a very powerful structure, which is
-a perfect concept for modelling state changing functions in a purely
-functional language: <em>Monads</em> <cite label="wadler:90"/>. Most 
-Haskell programmers do not
-worry about the theory of monads but simply use them, whenever they 
-do I/O, state changing functions or in parser construction. With
-monads functional programs can almost look like ordinary imperative
-progams <cite label="spjw:93"/>.<p/>
+Having said this, Haskell and OpenGL seem to cooperate badly and there seems to
+be a great mismatch between the fundamental concepts of the two. However, the
+designers of Haskell discovered a very powerful structure, which is a perfect
+concept for modeling state changing functions in a purely functional
+language: <em>Monads</em><white/><cite label="wadler:90"/>. Most Haskell
+programmers do not worry about the theory of monads, but simply use them
+whenever they need I/O, state changing functions or parsers. With monads
+functional programs can almost look like ordinary imperative progams <cite
+label="spjw:93"/>, without losing all the nice properties of a functional
+language.<p/>
 
-Monads are so essential to functional programming, that they have a
-special syntactic construct in Haskell, the <em>do notation</em>.
+Monads are so essential to functional programming, that they have a special
+syntactic construct in Haskell, the <em>do notation</em>. Consider the following
+simple Haskell program, which uses monads:
 
-Consider the following simple Haskell program, which uses monads:
 <code class="Print" lang="hs" main="main"
 ><![CDATA[main :: IO ()
 main = do
@@ -287,34 +284,26 @@ main = do
   print x
   xs  <- getLine
   print (length xs)]]></code>
-The monadic statements start with the keyword <tt>do</tt>. The
-  statements have side effects. Variables can be defined and
-  redefined in <tt>let</tt>-expressions<footnote>Variables bound 
-in <ttt>let</ttt>-expressions are not variables as known from
-  imperative languages. Line 4 in the example above does not assign a
-  new value to a variable <ttt>x</ttt> but defines a new variable <ttt
->x</ttt>.</footnote>. Monadic statements can have a
-  result. This can be retrieved from the statement by the <tt
->&lt;-</tt> notation.<p/>
 
-On another aspect OpenGL and Haskell perfectly match. In OpenGL
-functions are assigned to different data objects, 
-e.g.<white></white>a display function is passed to windows. Since
-functions are first class citizens, they can easily and type safe be
-passed around<footnote>Unlike the object orientated languages  Java,
-which  misses an
-easy way to pass functions around.</footnote>.
-</subsection> 
+The monadic statements start with the keyword <tt>do</tt>. These statements can
+have side effects and a result. This result can be retrieved from the statement
+by the <tt >&lt;-</tt> notation. Variables can be bound by <tt>let</tt>-expressions.
+Note that these are not variables as known from imperative languages. Line 5 in
+the example above does not assign a new value to the variable <ttt>x</ttt> but
+defines a new one with the same name, which shadows the first one.<p/>
 
- 
-
+Regarding another aspect GLUT and Haskell match perfectly: In GLUT, functions
+are assigned to different data objects, e.g. a display function is associated
+with a window. Since functions are first class citizens in Haskell, they can
+easily be passed around in a type safe way. In this respect, Haskell differs
+from e.g. the object orientated language Java, which misses an easy way to pass
+functions around.
+</subsection>
 
 </section>
 
-
-
 <section titel="A Little Bit of Technics">
-If you want to start programming OpenGL in Haskell you need to be one
+If you want to start programming OpenGL in Haskell, you need to be one
 of the brave, who compile sources from the functional programming CVS
 repository in Glasgow. There is not yet a precompiled version of the
 current HOpenGL library. Go to 
@@ -643,7 +632,7 @@ display = do
 Whenever in a display function a sequence of monadic statements is
 defined, a final call to the function <tt>flush</tt> should be
 made. Only such a call will ensure that the statements are completely
-committed to the device, on which is drawn.  
+committed to the device, on which is drawn.
 </subsubsection>
 </subsection>
 
@@ -758,7 +747,7 @@ display = do
 
 If you want to think of points mainly as triples then you can convert
 a list of points into a sequence of monadic statements by first maping
-every triple into a vertex, e.g.<white></white>by:<br/> <tt
+every triple into a vertex, e.g.<white/>by:<br/> <tt
 >map (\(x,y,z)->vertex$Vertex3 x y z)</tt><br/> and then combining the
 sequence of monadic statements into one monadic statement. Therefore
 you can use the standard function for monads: <tt>sequence_</tt>. The
@@ -766,7 +755,7 @@ standard function <tt>mapM_</tt> is simply the composition of <tt
 >map</tt> and <tt>sequence_</tt>, such that a list of triples can be
 converted to a monadic vertex statement by:<br/>
 <tt>mapM_ (\(x,y,z) -> vertex$Vertex3 x y z)</tt><br/>
-which is the technique used in the introductory example.  
+which is the technique used in the introductory example.
 
 
 <example>
@@ -909,7 +898,7 @@ import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>Lines</redv></code>
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="RenderLines"></ref>.
 
 <bild name="RenderLines" pdfscale="0.6" psscale="0.5"
@@ -931,7 +920,7 @@ import Graphics.Rendering.OpenGL
 main :: IO ()
 main = mainFor <redv>LineLoop</redv></code>
 
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="RenderLineLoop"></ref>.
 
 <bild name="RenderLineLoop" pdfscale="0.6" psscale="0.5"
@@ -955,7 +944,7 @@ import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>LineStrip</redv></code>
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="RenderLineStrip"></ref>.
 
 <bild name="RenderLineStrip" pdfscale="0.6" psscale="0.5"
@@ -985,7 +974,7 @@ import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>Triangles</redv></code>
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="RenderTriangles"></ref>.
 
 <bild name="RenderTriangles" pdfscale="0.6" psscale="0.5"
@@ -1006,7 +995,7 @@ import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>TriangleStrip</redv></code>
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="RenderTriangleStrip"></ref>.
 
 <bild name="RenderTriangleStrip" pdfscale="0.6" psscale="0.5"
@@ -1025,7 +1014,7 @@ import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>TriangleFan</redv></code>
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="RenderTriangleFan"></ref>.
 
 <bild name="RenderTriangleFan" pdfscale="0.6" psscale="0.5"
@@ -1052,7 +1041,7 @@ import Graphics.Rendering.OpenGL
 
 main :: IO ()
 main = mainFor <redv>Quads</redv></code>
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="RenderQuads"></ref>.
 
 <bild name="RenderQuads" pdfscale="0.6" psscale="0.5"
@@ -1078,7 +1067,7 @@ import Graphics.Rendering.OpenGL
 main :: IO ()
 main = mainFor <redv>QuadStrip</redv></code>
 
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="RenderQuadStrip"></ref>.<footnote>Which somehow does not
 look like the expected?</footnote>
 
@@ -1093,7 +1082,7 @@ caption="QuadStrips."/>
 <subsubsection titel="Polygons">
 We connected two, three and for points. Eventually there is a shape
 that connects an arbitrary number of points. This is generally called
-a polygon.  There are some restrictions for polygons:
+a polygon. There are some restrictions for polygons:
 <itemize>
 <item>no convex corners are allowed.</item>
 <item>lines may not cross each other.</item>
@@ -1198,7 +1187,7 @@ main = renderInWindow $ do
         clear [ColorBuffer]
         renderCircleApprox 0.8 10</code>
 
-The resulting graphic can be seen in figure<white></white>
+The resulting graphic can be seen in figure<white/>
 <ref name="ApproxCircle"></ref>.
 
 <bild name="ApproxCircle" pdfscale="0.6" psscale="0.5"
@@ -1219,7 +1208,7 @@ main = renderInWindow $ do
           clear [ColorBuffer]
           renderCircle 0.8]]></code>
 
-The resulting graphic can be seen in figure<white></white>
+The resulting graphic can be seen in figure<white/>
 <ref name="TestCircle"></ref>.
 
 <bild name="TestCircle" pdfscale="0.6" psscale="0.5"
@@ -1240,7 +1229,7 @@ main
  = renderInWindow $ do
      clear [ColorBuffer]
      fillCircle 0.8 ]]></code>
-The resulting graphic can be seen in figure<white></white>
+The resulting graphic can be seen in figure<white/>
 <ref name="FillCircle"></ref>.
 
 <bild name="FillCircle" pdfscale="0.6" psscale="0.5"
@@ -1297,7 +1286,7 @@ main = renderInWindow $  do
         clear [ColorBuffer]
         ring 0.7 0.9]]></code>
 
-The resulting graphic can be seen in figure<white></white>
+The resulting graphic can be seen in figure<white/>
 <ref name="TestRing"></ref>.
 
 <bild name="TestRing" pdfscale="0.6" psscale="0.5"
@@ -1335,7 +1324,7 @@ display = do
   displayMyPoints Points</code>
 
 
-The resulting graphic can be seen in figure<white></white>
+The resulting graphic can be seen in figure<white/>
 <ref name="PointSize"></ref>.
 
 <bild name="PointSize" pdfscale="0.6" psscale="0.5"
@@ -1386,7 +1375,7 @@ squarePoints
  = [(-0.7,-0.7,0),(0.7,-0.7,0),(0.7,0.7,0),(-0.7,0.7,0)]</code>
 
 
-The resulting graphic can be seen in figure<white></white>
+The resulting graphic can be seen in figure<white/>
 <ref name="LineAttributes"></ref>.
 
 <bild name="LineAttributes" pdfscale="0.6" psscale="0.5"
@@ -1436,7 +1425,7 @@ display = do
   renderPrimitive Triangles colorTriangle
   flush</code>
 
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="PolyColor"></ref>.
 
 <bild name="PolyColor" pdfscale="0.6" psscale="0.5"
@@ -1472,52 +1461,59 @@ a list of points. For rendering the star, we take first the points
 with odd index followed by the points with even index. 
 
 <code lang="hs" class="Star" sequel="true"
-><![CDATA[starPoints radius rays
- = map (\(_,(x,y,z)) -> Vertex3 x y z)(os++es)
-  where
-   (os,es) = partition (\(i,_)-> odd i)
-               $zip [1,2..]
-               $circlePoints radius rays]]></code>
+><![CDATA[starPoints :: GLdouble -> Int -> [Vertex3 GLdouble]
+starPoints radius rays =
+  map (\(_,(x,y,z)) -> Vertex3 x y z) (os ++ es)
+  where (os,es) = partition (odd . fst) $
+                  zip [1 :: Int, 2 ..] $
+                  circlePoints radius rays]]></code>
 
-For tesselation we need to create a <tt>ComplexPolygon</tt>, which has
-a list of <tt>ComplexContour</tt>. A <tt>ComplexContour</tt> contains
-a list of <tt>AnnotatedVertexes</tt>. The annotation can be used for
-color or similar information. We do not make use of this annotation
-and simple annotate every vertex with 0.
-
-<code lang="hs" class="Star" sequel="true"
-><![CDATA[complexPolygon points
- = ComplexPolygon 
-     [ComplexContour $ map (\v->AnnotatedVertex v 0) points]]]></code>
-
-The function <tt>tesselate</tt> creates a list of simple polygons. 
-It needs some control information, which we do not explain here.
+For tesselation we need to create a <tt>ComplexPolygon</tt>, which has a list of
+<tt>ComplexContour</tt>s. A <tt>ComplexContour</tt> contains a list of
+<tt>AnnotatedVertex</tt>es. The annotation can be used for color or similar
+information, but we do not make use of this annotation and simple annotate every
+vertex with 0.
 
 <code lang="hs" class="Star" sequel="true"
-><![CDATA[star radius rays= do
-  startess
-    <- tessellate 
-         TessWindingPositive 0 (Normal3 0 0 0) noOpCombiner 
-            $ complexPolygon (starPoints radius rays)
-  drawSimplePolygon  startess]]></code>
+><![CDATA[type DontCare = Int
 
-The resulting simple polygons can be rendered with the 
-function <tt>renderPrimitive</tt>.
+complexPolygon :: [Vertex3 GLdouble] -> ComplexPolygon DontCare
+complexPolygon points =
+   ComplexPolygon
+     [ComplexContour $ map (\v -> AnnotatedVertex v 0) points]]]></code>
+
+The function <tt>tesselate</tt> creates a list of simple polygons. It needs some
+control information, which we do not explain here.
 
 <code lang="hs" class="Star" sequel="true"
-><![CDATA[drawSimplePolygon  (SimplePolygon primitiveParts) =
+><![CDATA[star :: GLdouble -> Int -> IO ()
+star radius rays = do
+  starTess <-
+    tessellate 
+       TessWindingPositive 0 (Normal3 0 0 0) noOpCombiner $
+         complexPolygon (starPoints radius rays)
+  drawSimplePolygon starTess]]></code>
+
+The resulting simple polygons can be rendered with the function
+<tt>renderPrimitive</tt>.
+
+<code lang="hs" class="Star" sequel="true"
+><![CDATA[drawSimplePolygon :: SimplePolygon DontCare -> IO ()
+drawSimplePolygon  (SimplePolygon primitiveParts) =
   mapM_ renderPrimitiveParts primitiveParts
             
+renderPrimitiveParts :: Primitive DontCare -> IO ()
 renderPrimitiveParts (Primitive primitiveMode vertices) =
-  renderPrimitive primitiveMode
-    $mapM_ (vertex . stripAnnotation) vertices 
+  renderPrimitive primitiveMode $
+    mapM_ (vertex . stripAnnotation) vertices 
 
+stripAnnotation :: AnnotatedVertex DontCare -> Vertex3 GLdouble
 stripAnnotation (AnnotatedVertex plainVertex _) = plainVertex
 
-noOpCombiner _newVertex _weightedProperties = 0.0 ::GLfloat]]></code>
+noOpCombiner :: Vertex3 GLdouble -> WeightedProperties DontCare -> DontCare
+noOpCombiner _newVertex _weightedProperties = 0]]></code>
 
-Now we can test our stars. We render two stars, one with 7 and one
-with 5 rays.
+Now we can test our stars. We render two stars, one with 7 and one with 5 rays.
 
 <code class="RenderStar" lang="hs" main="main">import PointsForRendering
 import Graphics.UI.GLUT
@@ -1534,7 +1530,7 @@ main = renderInWindow $ do
  currentColor $= Color4 1 1 0 1
  <redv>star 0.4 5</redv></code>
 
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="RenderStar"></ref>.
 
 <bild name="RenderStar" pdfscale="0.6" psscale="0.5"
@@ -1567,7 +1563,7 @@ display = do
   clear [ColorBuffer]
   renderObject Solid $ Teapot 0.6
   flush</code>
-The resulting graphic can be seen in figure<white></white>
+The resulting graphic can be seen in figure<white/>
 <ref name="Tea"></ref>.
 
 <bild name="Tea" pdfscale="0.6" psscale="0.5"
@@ -1591,7 +1587,7 @@ state. So in order to transform a shape in some way, first the
 transformation matrix has to be set and then the shapes are to be
 rendered. 
 If not specified otherwise the transformation matrix is the identity
-operation, i.e.<white></white> no transformation is performed. You can
+operation, i.e.<white/> no transformation is performed. You can
 always reset the transformation matrix to the identity by the call of
 the monadic statement <tt>loadIdentity</tt>. Then the current matrix
 is discarded and no transformation is applied to the next rendering
@@ -1652,7 +1648,7 @@ someRings = do
   ringAt 0.7 0.7 0.2 0.3</code>
 
 
-The resulting graphic can be seen in figure<white></white>
+The resulting graphic can be seen in figure<white/>
 <ref name="SomeRings"></ref>.
 
 Note that if we did not reset the transformation back to the identity,
@@ -1735,7 +1731,7 @@ someSquares = do
   currentColor $= Color4 0 1 1 1
   displayAt 0.7 0.7$rotatedSquare 40 0.3</code>
 
-The resulting graphic can be seen in figure<white></white>
+The resulting graphic can be seen in figure<white/>
 <ref name="SomeSquares"></ref>.
 
 
@@ -1774,7 +1770,7 @@ display = do
   renderObject Solid$ Teapot 0.6
   loadIdentity
   flush</code>
-The resulting graphic can be seen in figure<white></white>
+The resulting graphic can be seen in figure<white/>
 <ref name="Coffee"></ref>. As you see it looks now like a coffee pot. 
 
 <bild name="Coffee" pdfscale="0.6" psscale="0.5"
@@ -1802,7 +1798,7 @@ The code:
   rotate alpha $Vector3 0 0 (1::GLfloat)
   square width</code>
 defines a composition of a translate und a rotate transformation,
-  which is applied to a square figure.  A sequence of transformation
+  which is applied to a square figure. A sequence of transformation
   statements is composed to a single transformation in the same way as
   the standard function composition operator <tt>(.)</tt> composes
   functions: <tt>(f . g) x = f(g(x))</tt>. The compositional
@@ -1868,7 +1864,7 @@ A yellow square that is first translated and then rotated:
   square 0.5
   loadIdentity</code>
 
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="Compose"></ref>.
 
 <bild name="Compose" pdfscale="0.6" psscale="0.5"
@@ -1929,7 +1925,7 @@ OpenGL provides a function for creation of a transformation
 matrix out of a list: <tt>matrix</tt>. It takes as first argument a
 parameter, which specifies in which order the matrix elements appear
 in the list: <tt>RowMajor</tt> for row wise and <tt
->ColumMajor</tt> for column wise appearance.  The function <tt
+>ColumMajor</tt> for column wise appearance. The function <tt
 >multMatrix</tt> allows to multiply your newly created transformation
 matrix to the current transformation context.
 
@@ -2016,7 +2012,7 @@ main = renderInWindow $ do
  square 0.5
 </code>
 
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="TestShear"></ref>.
 
 <bild name="TestShear" pdfscale="0.6" psscale="0.5"
@@ -2062,7 +2058,7 @@ transformations, but every state changing statement. If you set the
 color as last statement in your display function to some value then
 this will be the current color in the next call of the display
 function. Thus it is better to ensure that the display function leaves
-a clean state, i.e.<white></white>the state it espects to find, when
+a clean state, i.e.<white/>the state it espects to find, when
 it is called, or even better let the display functions 
 not rely on any previously set states.
 </section>
@@ -2096,7 +2092,7 @@ Cube. Such a side consists of 9 squares which are of some color and
 which have a black frame. We can render such a shape, by rendering the
 single framed squares at the origin and then move them to their
 position. This movement is done within 
-a <tt>preservingMatrix</tt> application.  
+a <tt>preservingMatrix</tt> application.
 
 <code lang="hs" class="RubikFace"><![CDATA[module RubikFace where
 import Graphics.Rendering.OpenGL
@@ -2190,7 +2186,7 @@ faces = do
 r1=[[red,blue,yellow],[white,green,red],[green,yellow,blue]]</code>
 </example>
 
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="RenderRubikFace"></ref>.
 
 <bild name="RenderRubikFace" pdfscale="0.6" psscale="0.5"
@@ -2253,7 +2249,7 @@ screen. Now resize the window. You will notice that the size of the
 square will not change. If you make the window smaller parts of the
 picture are not displayed, if you enlarge the window parts of the
 window contain no image (which means it might be some arbitrary
-image). Figure <white></white>
+image). Figure <white/>
 <ref name="Reshape1"></ref> shows how the window looks after enlarging
 it a bit.
 
@@ -2340,7 +2336,7 @@ reshape s@(Size w h) = do
   <redv>viewport $= (Position 50 50, Size (w-80) (h-60))</redv>
 </code>
 
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="Viewport"></ref>.
 
 <bild name="Viewport" pdfscale="0.6" psscale="0.5"
@@ -2402,7 +2398,7 @@ display = do
  currentColor $= Color4 1 1 0 1
  star 0.4 5</code>
 
-The resulting windows can be found in figure<white></white>
+The resulting windows can be found in figure<white/>
 <ref name="Ortho"></ref>.
 
 <bild name="Ortho" pdfscale="0.6" psscale="0.5"
@@ -2698,7 +2694,7 @@ section we will implement one of the first animated computer games
 ever: <tt>Pong</tt>. It consists of a small white circle which moves
 over a black screen and two paddles which can move on a vertical line.
 
-Pong in action can be found in figure<white></white>
+Pong in action can be found in figure<white/>
 <ref name="Pong"></ref>.
 
 <bild name="Pong" pdfscale="0.6" psscale="0.5"
@@ -2922,7 +2918,7 @@ Have a break and play <em>Pong</em>.
 Up to now everything was pretty boring. We never considered the three
 dimensional space provided by OpenGL. Strictly we just considered two
 dimensions. Thus the library was not any more powerfull than any
-simple graphics libaray e.g.<white></white>like Java's <tt
+simple graphics libaray e.g.<white/>like Java's <tt
 >java.awt.Graphics</tt> class. In this chapter we will explore the
 true power of OpenGL by actually rendering three dimensional objects.
 
@@ -3336,7 +3332,7 @@ in <tt>OrbitPointOfView</tt>.
 ><redv>keyboard pPos c _  _ _ = keyForPos pPos c</redv></code>
 
 An example how the colored cube can now be seen
- is given in figure<white></white>
+ is given in figure<white/>
 <ref name="OrbitAroundCube"></ref>.
 
 <bild name="OrbitAroundCube" pdfscale="0.6" psscale="0.5"
@@ -3351,7 +3347,7 @@ caption="A view of the colored cube,"
 In this section we implement a primitive version of Rubik's cube. 
 
 
-Rubik's cube in action can be found in figure<white></white>
+Rubik's cube in action can be found in figure<white/>
 <ref name="RubiksCube"></ref>.
 
 <bild name="RubiksCube" pdfscale="0.6" psscale="0.5"
@@ -3798,7 +3794,7 @@ display = do
   flush]]></code>
 
 
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="RenderCube"></ref>. It is not very exiting, we see a white
 shape, which has the outline of a cube, but do not get the three
 dimensional visual effect of a cube.
@@ -3819,7 +3815,7 @@ A light source can be specified fairly easy. First you need to set the
 state variable <tt>lighting</tt> to the value <tt>Enabled</tt>. Then 
 you need to specify the position of your light source. This can
 be done by setting a special position state variable,
-e.g.<white></white> by<br/>  
+e.g.<white/> by<br/>  
 <tt>position (Light 0) $= Vertex4 0.8 0 3.0 5.0</tt>.<br/>
 And finally you need to turn the light source on by setting its state
 variable to enabled: <tt>light (Light 0) $= Enabled</tt>.
@@ -3854,7 +3850,7 @@ display = do
   flush]]></code>
 
 
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="LightCube"></ref>. Now we can identify a bit more the cube.
 
 <bild name="LightCube" pdfscale="0.6" psscale="0.5"
@@ -3993,7 +3989,7 @@ class="Tux" sequel="true"
     transl 0 0 0.17
     sphere 1 0.8 0.9 0.7]]></code>
 
-The resulting image can be found in figure<white></white>
+The resulting image can be found in figure<white/>
 <ref name="Body"></ref>.
 
 <bild name="Body" pdfscale="0.6" psscale="0.5"
@@ -4017,7 +4013,7 @@ createShoulders = preservingMatrix$do
   makeBody]]></code>
 
 The resulting image for torso and shoulders 
-can be found in figure<white></white>
+can be found in figure<white/>
 <ref name="Torso"></ref>.
 
 <bild name="Torso" pdfscale="0.6" psscale="0.5"
@@ -4224,7 +4220,7 @@ rightFoot = preservingMatrix$do
   rotateY 180
   foot]]></code>
 
-The resulting image can be found in figure<white></white>
+The resulting image can be found in figure<white/>
 <ref name="Foot"></ref>.
 
 <bild name="Foot" pdfscale="0.6" psscale="0.5"
@@ -4261,7 +4257,7 @@ class="Tux" sequel="true"
 
 
 
-The resulting window can be found in figure<white></white>
+The resulting window can be found in figure<white/>
 <ref name="Tux"></ref>.
 
 <bild name="Tux" pdfscale="0.6" psscale="0.5"
