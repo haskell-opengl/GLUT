@@ -64,7 +64,7 @@ Chapter 8: Drawing Pixels, Bitmaps, Fonts, and Images
         Convolution.hs  (ARB_imaging_subset)
         ColorMatrix.hs  (ARB_imaging_subset)
         Histogram.hs    (ARB_imaging_subset)
-        MinMax.hs       (ARB_imaging_subset)
+        Minmax.hs       (ARB_imaging_subset)
 
 Chapter 9: Texture Mapping
 
