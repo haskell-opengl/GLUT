@@ -73,12 +73,8 @@ import Graphics.UI.GLUT.GameMode
 
 -----------------------------------------------------------------------------
 -- $LegalStuff
--- The original documentation, on which this one is very heavily based, is
--- Copyright (c) 1994, 1995, 1996 by Mark J. Kilgard, Silicon Graphics,
--- Inc., and is available at
--- <http://www.opengl.org/developers/documentation/glut/>.
--- No part of this documentation may be reproduced, in any form or by any
--- means, without permission in writing from the original author.
+-- This documentation is heavily based on the man pages of Mark J. Kilgard\'s
+-- GLUT library.
 --
 -- OpenGL is a trademark of Silicon Graphics, Inc.
 -- X Window System is a trademark of X Consortium, Inc.
