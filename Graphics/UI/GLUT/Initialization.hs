@@ -53,8 +53,15 @@ import System.Environment ( getProgName, getArgs )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
 import Graphics.Rendering.OpenGL.GL.StateVar (
    SettableStateVar, makeSettableStateVar, StateVar, makeStateVar )
-import Graphics.UI.GLUT.Constants
-import Graphics.UI.GLUT.State ( simpleGet )
+import Graphics.UI.GLUT.Constants (
+   glut_INIT_WINDOW_X, glut_INIT_WINDOW_Y,
+   glut_INIT_WINDOW_WIDTH, glut_INIT_WINDOW_HEIGHT,
+   glut_RGBA, glut_RGB, glut_INDEX, glut_SINGLE, glut_DOUBLE, glut_ACCUM,
+   glut_ALPHA, glut_DEPTH, glut_STENCIL, glut_MULTISAMPLE, glut_STEREO,
+   glut_LUMINANCE,
+   glut_INIT_DISPLAY_MODE,
+   glut_DISPLAY_MODE_POSSIBLE )
+import Graphics.UI.GLUT.QueryUtils ( simpleGet )
 
 --------------------------------------------------------------------------------
 

@@ -36,7 +36,11 @@ import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Size(..) )
-import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.Constants (
+   glut_GAME_MODE_DISPLAY_CHANGED, glut_GAME_MODE_POSSIBLE,
+   glut_GAME_MODE_WIDTH, glut_GAME_MODE_HEIGHT,
+   glut_GAME_MODE_PIXEL_DEPTH, glut_GAME_MODE_REFRESH_RATE,
+   glut_GAME_MODE_ACTIVE )
 import Graphics.UI.GLUT.Initialization ( Relation, relationToString )
 import Graphics.UI.GLUT.Window ( Window, makeWindow )
 

@@ -54,7 +54,20 @@ import Foreign.Ptr ( FunPtr )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
 import Graphics.UI.GLUT.Callbacks.Registration ( CallbackType(..), setCallback )
 import Graphics.UI.GLUT.State ( ButtonIndex, DialIndex, PollRate )
-import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.Constants (
+   glut_NOT_VISIBLE, glut_VISIBLE,
+   glut_KEY_F1, glut_KEY_F2, glut_KEY_F3, glut_KEY_F4, glut_KEY_F5, glut_KEY_F6,
+   glut_KEY_F7, glut_KEY_F8, glut_KEY_F9, glut_KEY_F10, glut_KEY_F11,
+   glut_KEY_F12, glut_KEY_LEFT, glut_KEY_UP, glut_KEY_RIGHT, glut_KEY_DOWN,
+   glut_KEY_PAGE_UP, glut_KEY_PAGE_DOWN, glut_KEY_HOME, glut_KEY_END,
+   glut_KEY_INSERT,
+   glut_LEFT_BUTTON, glut_MIDDLE_BUTTON, glut_RIGHT_BUTTON,
+   glut_WHEEL_UP, glut_WHEEL_DOWN,
+   glut_DOWN, glut_UP,
+   glut_ACTIVE_SHIFT, glut_ACTIVE_CTRL, glut_ACTIVE_ALT,
+   glut_LEFT, glut_ENTERED,
+   glut_JOYSTICK_BUTTON_A, glut_JOYSTICK_BUTTON_B,
+   glut_JOYSTICK_BUTTON_C, glut_JOYSTICK_BUTTON_D )
 
 --------------------------------------------------------------------------------
 

@@ -64,8 +64,7 @@ import Graphics.UI.GLUT.Overlay
 import Graphics.UI.GLUT.Menu
 import Graphics.UI.GLUT.Callbacks
 import Graphics.UI.GLUT.Colormap
-import Graphics.UI.GLUT.State hiding (
-   marshalGlobalKeyRepeat, marshalPerWindowKeyRepeat, simpleGet )
+import Graphics.UI.GLUT.State
 import Graphics.UI.GLUT.Fonts
 import Graphics.UI.GLUT.Objects
 import Graphics.UI.GLUT.Debugging

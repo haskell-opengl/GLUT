@@ -59,7 +59,15 @@ import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
 import Graphics.Rendering.OpenGL.GL.StateVar ( StateVar, makeStateVar )
-import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.Constants (
+   glut_CURSOR_RIGHT_ARROW, glut_CURSOR_LEFT_ARROW, glut_CURSOR_INFO,
+   glut_CURSOR_DESTROY, glut_CURSOR_HELP, glut_CURSOR_CYCLE, glut_CURSOR_SPRAY,
+   glut_CURSOR_WAIT, glut_CURSOR_TEXT, glut_CURSOR_CROSSHAIR,
+   glut_CURSOR_UP_DOWN, glut_CURSOR_LEFT_RIGHT, glut_CURSOR_TOP_SIDE,
+   glut_CURSOR_BOTTOM_SIDE, glut_CURSOR_LEFT_SIDE, glut_CURSOR_RIGHT_SIDE,
+   glut_CURSOR_TOP_LEFT_CORNER, glut_CURSOR_TOP_RIGHT_CORNER,
+   glut_CURSOR_BOTTOM_RIGHT_CORNER, glut_CURSOR_BOTTOM_LEFT_CORNER,
+   glut_CURSOR_INHERIT, glut_CURSOR_NONE, glut_CURSOR_FULL_CROSSHAIR )
 
 --------------------------------------------------------------------------------
 
@@ -190,7 +198,7 @@ foreign import CALLCONV unsafe "glutPostWindowRedisplay" postWindowRedisplay ::
 -- typically takes place during the vertical retrace of the monitor, rather than
 -- immediately after 'swapBuffers' is called.
 --
--- An implicit 'Graphics.Rendering.OpenGL.FlushFinish.flush' is done by
+-- An implicit 'Graphics.Rendering.OpenGL.GL.FlushFinish.flush' is done by
 -- 'swapBuffers' before it returns. Subsequent OpenGL commands can be issued
 -- immediately after calling 'swapBuffers', but are not executed until the
 -- buffer exchange is completed.

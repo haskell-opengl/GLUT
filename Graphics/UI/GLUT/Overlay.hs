@@ -34,7 +34,7 @@ module Graphics.UI.GLUT.Overlay (
 ) where
 
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
-import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.Constants ( glut_NORMAL, glut_OVERLAY )
 import Graphics.UI.GLUT.Window ( Window )
 
 --------------------------------------------------------------------------------

@@ -43,13 +43,6 @@ module Graphics.UI.GLUT.State (
   -- ** Screen information
   ScreenInfo(..), getScreenInfo,
 
-  -- ** Keyboard information
-  GlobalKeyRepeat(..),
-  marshalGlobalKeyRepeat,   -- used only internally
-  PerWindowKeyRepeat(..),
-  marshalPerWindowKeyRepeat,   -- used only internally
-  KeyboardInfo(..), getKeyboardInfo,
-
   -- ** Mouse information
   MouseInfo(..), getMouseInfo,
 
@@ -63,9 +56,7 @@ module Graphics.UI.GLUT.State (
   TabletInfo(..), getTabletInfo,
 
   -- ** Joystick information
-  JoystickInfo(..), getJoystickInfo,
-
-  simpleGet -- used only internally
+  JoystickInfo(..), getJoystickInfo
 ) where
 
 import Control.Monad ( liftM )
@@ -73,8 +64,40 @@ import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
 import Graphics.Rendering.OpenGL.GL.VertexSpec ( Index1(..) )
-import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.Constants (
+   glut_WINDOW_X, glut_WINDOW_Y, glut_WINDOW_WIDTH, glut_WINDOW_HEIGHT,
+   glut_WINDOW_PARENT, glut_WINDOW_NUM_CHILDREN,
+   glut_WINDOW_CURSOR, glut_WINDOW_RGBA,
+   glut_WINDOW_RED_SIZE, glut_WINDOW_GREEN_SIZE, glut_WINDOW_BLUE_SIZE,
+   glut_WINDOW_ALPHA_SIZE,
+   glut_WINDOW_BUFFER_SIZE, glut_WINDOW_COLORMAP_SIZE,
+   glut_WINDOW_DOUBLEBUFFER, glut_WINDOW_STEREO,
+   glut_WINDOW_ACCUM_RED_SIZE, glut_WINDOW_ACCUM_GREEN_SIZE,
+   glut_WINDOW_ACCUM_BLUE_SIZE, glut_WINDOW_ACCUM_ALPHA_SIZE,
+   glut_WINDOW_DEPTH_SIZE, glut_WINDOW_STENCIL_SIZE, glut_WINDOW_NUM_SAMPLES,
+   glut_WINDOW_FORMAT_ID, glut_ELAPSED_TIME, glut_MENU_NUM_ITEMS,
+   glut_OVERLAY_POSSIBLE, glut_LAYER_IN_USE, glut_HAS_OVERLAY,
+   glut_TRANSPARENT_INDEX,
+   glut_NORMAL_DAMAGED, glut_OVERLAY_DAMAGED,
+   glut_SCREEN_WIDTH, glut_SCREEN_HEIGHT,
+   glut_SCREEN_WIDTH_MM, glut_SCREEN_HEIGHT_MM,
+   glut_HAS_MOUSE, glut_NUM_MOUSE_BUTTONS,
+   glut_HAS_SPACEBALL, glut_NUM_SPACEBALL_BUTTONS,
+   glut_HAS_DIAL_AND_BUTTON_BOX, glut_NUM_DIALS, glut_NUM_BUTTON_BOX_BUTTONS,
+   glut_HAS_TABLET, glut_NUM_TABLET_BUTTONS,
+   glut_HAS_JOYSTICK, glut_JOYSTICK_BUTTONS, glut_JOYSTICK_POLL_RATE,
+   glut_JOYSTICK_AXES,
+   glut_CURSOR_RIGHT_ARROW, glut_CURSOR_LEFT_ARROW, glut_CURSOR_INFO,
+   glut_CURSOR_DESTROY, glut_CURSOR_HELP, glut_CURSOR_CYCLE, glut_CURSOR_SPRAY,
+   glut_CURSOR_WAIT, glut_CURSOR_TEXT, glut_CURSOR_CROSSHAIR,
+   glut_CURSOR_UP_DOWN, glut_CURSOR_LEFT_RIGHT, glut_CURSOR_TOP_SIDE,
+   glut_CURSOR_BOTTOM_SIDE, glut_CURSOR_LEFT_SIDE, glut_CURSOR_RIGHT_SIDE,
+   glut_CURSOR_TOP_LEFT_CORNER, glut_CURSOR_TOP_RIGHT_CORNER,
+   glut_CURSOR_BOTTOM_RIGHT_CORNER, glut_CURSOR_BOTTOM_LEFT_CORNER,
+   glut_CURSOR_INHERIT, glut_CURSOR_NONE, glut_CURSOR_FULL_CROSSHAIR,
+   glut_NORMAL, glut_OVERLAY )
 import Graphics.UI.GLUT.Overlay ( Layer(..) )
+import Graphics.UI.GLUT.QueryUtils ( simpleGet, layerGet, deviceGet )
 import Graphics.UI.GLUT.Window ( Window, makeWindow, Cursor(..) )
 
 --------------------------------------------------------------------------------
@@ -313,58 +336,6 @@ getScreenInfo = do
 
 --------------------------------------------------------------------------------
 
--- | The state of the global key repeat
-
-data GlobalKeyRepeat
-   = GlobalKeyRepeatOff
-   | GlobalKeyRepeatOn
-   | GlobalKeyRepeatDefault
-   deriving ( Eq, Ord )
-
-marshalGlobalKeyRepeat :: GlobalKeyRepeat -> CInt
-marshalGlobalKeyRepeat GlobalKeyRepeatOff     = glut_KEY_REPEAT_OFF
-marshalGlobalKeyRepeat GlobalKeyRepeatOn      = glut_KEY_REPEAT_ON
-marshalGlobalKeyRepeat GlobalKeyRepeatDefault = glut_KEY_REPEAT_DEFAULT
-
-unmarshalGlobalKeyRepeat :: CInt -> GlobalKeyRepeat
-unmarshalGlobalKeyRepeat r
-   | r == glut_KEY_REPEAT_OFF     = GlobalKeyRepeatOff
-   | r == glut_KEY_REPEAT_ON      = GlobalKeyRepeatOn
-   | r == glut_KEY_REPEAT_DEFAULT = GlobalKeyRepeatDefault
-   | otherwise = error "unmarshalGlobalKeyRepeat"
-
---------------------------------------------------------------------------------
-
--- | The state of the per-window key repeat
-
-data PerWindowKeyRepeat
-   = PerWindowKeyRepeatOff
-   | PerWindowKeyRepeatOn
-   deriving ( Eq, Ord )
-
-marshalPerWindowKeyRepeat :: PerWindowKeyRepeat -> CInt
-marshalPerWindowKeyRepeat PerWindowKeyRepeatOff = 0
-marshalPerWindowKeyRepeat PerWindowKeyRepeatOn  = 1
-
-unmarshalPerWindowKeyRepeat :: CInt -> PerWindowKeyRepeat
-unmarshalPerWindowKeyRepeat 0 = PerWindowKeyRepeatOff
-unmarshalPerWindowKeyRepeat _ = PerWindowKeyRepeatOn
-
---------------------------------------------------------------------------------
-
--- | The key repeat state
-
-data KeyboardInfo = KeyboardInfo GlobalKeyRepeat PerWindowKeyRepeat
-   deriving ( Eq, Ord )
-
--- | Return the current key repeat state.
-
-getKeyboardInfo :: IO (Maybe KeyboardInfo)
-getKeyboardInfo = getDeviceInfo glut_HAS_KEYBOARD $ do
-   r <- deviceGet unmarshalGlobalKeyRepeat glut_DEVICE_KEY_REPEAT
-   i <- deviceGet unmarshalPerWindowKeyRepeat glut_DEVICE_IGNORE_KEY_REPEAT
-   return $ KeyboardInfo r i
-
 getDeviceInfo :: GLenum -> IO a -> IO (Maybe a)
 getDeviceInfo dev act = do
    hasDevice <- deviceGet i2b dev
@@ -498,22 +469,3 @@ unmarshalLayer l
    | l == glut_NORMAL  = Normal
    | l == glut_OVERLAY = Overlay
    | otherwise = error "unmarshalLayer"
-
---------------------------------------------------------------------------------
-
--- Convenience wrappers for primitive getters
-
-type PrimGetter =                GLenum -> IO CInt
-type Getter a   = (CInt -> a) -> GLenum -> IO a
-
-makeGetter :: PrimGetter -> Getter a
-makeGetter g f = liftM f . g
-
-simpleGet, layerGet, deviceGet :: Getter a
-simpleGet = makeGetter glutGet
-layerGet  = makeGetter glutLayerGet
-deviceGet = makeGetter glutDeviceGet
-
-foreign import CALLCONV unsafe "glutGet"       glutGet       :: PrimGetter
-foreign import CALLCONV unsafe "glutLayerGet"  glutLayerGet  :: PrimGetter
-foreign import CALLCONV unsafe "glutDeviceGet" glutDeviceGet :: PrimGetter

@@ -45,8 +45,10 @@ module Graphics.UI.GLUT.Colormap (
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLfloat )
 import Graphics.Rendering.OpenGL.GL.VertexSpec ( Color3(..), Index1 )
-import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.Constants ( glut_RED, glut_BLUE, glut_GREEN )
 import Graphics.UI.GLUT.Window ( Window )
+
+-----------------------------------------------------------------------------
 
 -- | Set the cell color index colormap entry of the /current window/\'s
 -- logical colormap for the /layer in use/ with the specified color. The
