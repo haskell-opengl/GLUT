@@ -87,9 +87,10 @@ import Graphics.UI.GLUT.Constants
 --   possible and otherwise fallback to indirect rendering.
 --
 -- * @-gldebug@: After processing callbacks and\/or events, check if there
---   are any OpenGL errors by calling 'getError'. If an error is reported,
---   print out a warning by looking up the error code with 'errorString'.
---   Using this option is helpful in detecting OpenGL run-time errors.
+--   are any OpenGL errors by calling 'Graphics.Rendering.OpenGL.getError'.
+--   If an error is reported, print out a warning by looking up the error
+--   code with 'Graphics.Rendering.OpenGL.errorString'. Using this option
+--   is helpful in detecting OpenGL run-time errors.
 --
 -- * @-sync@: Enable synchronous X protocol transactions. This option makes
 --   it easier to track down potential X protocol errors.
