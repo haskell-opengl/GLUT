@@ -4,16 +4,12 @@
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 
-   This program demonstrates vertex arrays. NOTE: This program uses withArray
-   in an inefficient way, because some Haskell lists are marshaled more than
-   once. This could easily be fixed by doing this at initialization time and
-   passing the pointers around, but this would probably make the program a bit
-   less clear.
+   This program demonstrates vertex arrays.
 -}
 
 import Control.Monad ( when )
 import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
-import Foreign ( withArray )
+import Foreign ( Ptr, newArray )
 import System.Exit ( exitFailure, exitWith, ExitCode(..) )
 import Graphics.UI.GLUT
 
@@ -23,53 +19,83 @@ data SetupMethod = Pointer | Interleaved
 data DerefMethod = DrawArray | ArrayElement | DrawElements
    deriving ( Eq, Bounded, Enum )
 
-setup :: IORef SetupMethod -> IO ()
-setup setupMethod = do
-   s <- readIORef setupMethod
+makeVertices :: IO (Ptr (Vertex2 GLint))
+makeVertices = newArray [
+   Vertex2  25  25,
+   Vertex2 100 325,
+   Vertex2 175  25,
+   Vertex2 175 325,
+   Vertex2 250  25,
+   Vertex2 325 325 ]
+
+makeColors :: IO (Ptr (Color3 GLfloat))
+makeColors = newArray [
+   Color3 1.0  0.2  0.2,
+   Color3 0.2  0.2  1.0,
+   Color3 0.8  1.0  0.2,
+   Color3 0.75 0.75 0.75,
+   Color3 0.35 0.35 0.35,
+   Color3 0.5  0.5  0.5 ]
+
+makeIntertwined :: IO (Ptr GLfloat)
+makeIntertwined = newArray [
+   1.0, 0.2, 1.0, 100.0, 100.0, 0.0,
+   1.0, 0.2, 0.2,   0.0, 200.0, 0.0,
+   1.0, 1.0, 0.2, 100.0, 300.0, 0.0,
+   0.2, 1.0, 0.2, 200.0, 300.0, 0.0,
+   0.2, 1.0, 1.0, 300.0, 200.0, 0.0,
+   0.2, 0.2, 1.0, 200.0, 100.0, 0.0 ]
+
+makeIndices :: IO (Ptr GLuint)
+makeIndices = newArray [ 0, 1, 3, 4 ]
+
+-- we lump together our global state (and still call this Haskell :-)
+data State = State {
+   vertices    :: Ptr (Vertex2 GLint),
+   colors      :: Ptr (Color3 GLfloat),
+   intertwined :: Ptr GLfloat,
+   indices     :: Ptr GLuint,
+   setupMethod :: IORef SetupMethod,
+   derefMethod :: IORef DerefMethod }
+
+makeState :: IO State
+makeState = do
+   v <- makeVertices
+   c <- makeColors
+   i <- makeIntertwined
+   n <- makeIndices
+   s <- newIORef Pointer
+   d <- newIORef DrawArray
+   return $ State v c i n s d
+
+setup :: State -> IO ()
+setup state = do
+   s <- readIORef (setupMethod state)
    case s of
       Pointer -> do
-         let vertices = [  25,  25,
-                          100, 325,
-                          175,  25,
-                          175, 325,
-                          250,  25,
-                          325, 325 ] :: [GLint]
-             colors = [ 1.0,  0.2,  0.2,
-                        0.2,  0.2,  1.0,
-                        0.8,  1.0,  0.2,
-                        0.75, 0.75, 0.75,
-                        0.35, 0.35, 0.35,
-                        0.5,  0.5,  0.5 ] :: [GLfloat]
          clientState VertexArray $= Enabled
          clientState ColorArray $= Enabled
-         withArray vertices $ \verticesBuf ->
-            arrayPointer VertexArray $= VertexArrayDescriptor 2 Int 0 verticesBuf
-         withArray colors $ \ colorsBuf ->
-            arrayPointer ColorArray $= VertexArrayDescriptor 3 Float 0 colorsBuf
+         arrayPointer VertexArray $= VertexArrayDescriptor 2 Int 0 (vertices state)
+         arrayPointer ColorArray $= VertexArrayDescriptor 3 Float 0 (colors state)
       Interleaved ->
-         let intertwined = [ 1.0, 0.2, 1.0, 100.0, 100.0, 0.0,
-                             1.0, 0.2, 0.2,   0.0, 200.0, 0.0,
-                             1.0, 1.0, 0.2, 100.0, 300.0, 0.0,
-                             0.2, 1.0, 0.2, 200.0, 300.0, 0.0,
-                             0.2, 1.0, 1.0, 300.0, 200.0, 0.0,
-                             0.2, 0.2, 1.0, 200.0, 100.0, 0.0 ] :: [GLfloat]
-         in withArray intertwined $ interleavedArrays C3fV3f 0
+         interleavedArrays C3fV3f 0 (intertwined state)
 
-myInit :: IORef SetupMethod -> IO () 
-myInit setupMethod = do
+myInit :: IO State
+myInit = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Smooth
-   setup setupMethod
+   state <- makeState
+   setup state
+   return state
 
-display :: IORef DerefMethod -> DisplayCallback
-display derefMethod = do
+display :: State -> DisplayCallback
+display state = do
    clear [ ColorBuffer ]
-   d <- readIORef derefMethod
+   d <- readIORef (derefMethod state)
    case d of
       DrawArray    -> drawArrays Triangles 0 6
       ArrayElement -> renderPrimitive Triangles $ mapM_ arrayElement [ 2, 3, 5 ]
-      DrawElements -> let indices = [ 0, 1, 3, 4 ] :: [GLuint]
-                      in withArray indices $ drawElements Polygon 4 UnsignedInt
+      DrawElements -> drawElements Polygon 4 UnsignedInt (indices state)
    flush
 
 reshape :: ReshapeCallback
@@ -81,16 +107,16 @@ reshape size@(Size w h) = do
    -- the following line is not in the original example, but it's good style...
    matrixMode $= Modelview 0
 
-keyboardMouse :: IORef SetupMethod -> IORef DerefMethod -> KeyboardMouseCallback
-keyboardMouse setupMethod _ (MouseButton LeftButton) Down _ _ = do
-   modifyIORef setupMethod nextValue
-   setup setupMethod
+keyboardMouse :: State -> KeyboardMouseCallback
+keyboardMouse state (MouseButton LeftButton) Down _ _ = do
+   modifyIORef (setupMethod state) nextValue
+   setup state
    postRedisplay Nothing
-keyboardMouse _ derefMethod (MouseButton _) Down _ _ = do
-   modifyIORef derefMethod nextValue
+keyboardMouse state (MouseButton _) Down _ _ = do
+   modifyIORef (derefMethod state) nextValue
    postRedisplay Nothing
-keyboardMouse _ _ (Char '\27') Down _ _ = exitWith ExitSuccess
-keyboardMouse _ _ _ _ _ _ = return ()
+keyboardMouse _ (Char '\27') Down _ _ = exitWith ExitSuccess
+keyboardMouse _ _ _ _ _ = return ()
 
 nextValue :: (Eq a, Bounded a, Enum a) => a -> a
 nextValue x = if x == maxBound then minBound else succ x
@@ -109,10 +135,8 @@ main = do
       putStrLn "If your implementation of OpenGL Version 1.0 has the right extensions,"
       putStrLn "you may be able to modify this program to make it run."
       exitFailure
-   setupMethod <- newIORef Pointer
-   derefMethod <- newIORef DrawArray
-   myInit setupMethod
-   displayCallback $= display derefMethod
+   state <- myInit
+   displayCallback $= display state
    reshapeCallback $= Just reshape
-   keyboardMouseCallback $= Just (keyboardMouse setupMethod derefMethod)
+   keyboardMouseCallback $= Just (keyboardMouse state)
    mainLoop

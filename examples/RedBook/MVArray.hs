@@ -5,58 +5,54 @@
    See the file libraries/GLUT/LICENSE
 
    This program demonstrates multiple vertex arrays, specifically the OpenGL
-   routine multiDrawElements. NOTE: This program uses withArray in an
-   inefficient way, because some Haskell lists are marshaled more than once.
-   This could easily be fixed by doing this at initialization time and passing
-   the pointers around, but this would probably make the program a bit less
-   clear.
+   routine multiDrawElements.
 -}
 
 import Control.Monad ( unless )
 import Data.List ( genericLength )
-import Foreign ( withMany, withArray )
+import Foreign ( Storable, Ptr, newArray )
 import System.Exit ( exitFailure, exitWith, ExitCode(..) )
 import Graphics.UI.GLUT
 
+data MultiDrawInfo a = MultiDrawInfo (Ptr GLsizei) (Ptr (Ptr a)) GLsizei
+
+makeMultiDrawInfo :: Storable a => [[a]] -> IO (MultiDrawInfo a)
+makeMultiDrawInfo indicesLists = do
+   count <- newArray $ map genericLength indicesLists
+   indices <- newArray =<< mapM newArray indicesLists
+   return $ MultiDrawInfo count indices (genericLength indicesLists)
+
 setupPointer :: IO ()
 setupPointer = do
-   let vertices = [  25, 25,
-                     75, 75,
-                    100, 125,
-                    150,  75,
-                    200, 175,
-                    250, 150,
-                    300, 125,
-                    100, 200,
-                    150, 250,
-                    200, 225,
-                    250, 300,
-                    300, 250 ] :: [GLint]
    clientState VertexArray $= Enabled
-   withArray vertices $ \verticesBuf ->
-      arrayPointer VertexArray $= VertexArrayDescriptor 2 Int 0 verticesBuf
+   vertices <- newArray ([
+      Vertex2  25 25,
+      Vertex2  75 75,
+      Vertex2 100 125,
+      Vertex2 150  75,
+      Vertex2 200 175,
+      Vertex2 250 150,
+      Vertex2 300 125,
+      Vertex2 100 200,
+      Vertex2 150 250,
+      Vertex2 200 225,
+      Vertex2 250 300,
+      Vertex2 300 250 ] :: [Vertex2 GLint])
+   arrayPointer VertexArray $= VertexArrayDescriptor 2 Int 0 vertices
 
-myInit :: IO () 
+myInit :: IO (MultiDrawInfo GLubyte)
 myInit = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Smooth
    setupPointer
+   makeMultiDrawInfo [ [ 0, 1, 2, 3, 4, 5, 6 ], 
+                       [ 1, 7, 8, 9, 10, 11 ] ]
 
-display :: DisplayCallback
-display = do
+display :: MultiDrawInfo GLubyte -> DisplayCallback
+display (MultiDrawInfo count indices primCount) = do
    clear [ ColorBuffer ]
-   -- resolve overloading, not needed in "real" programs
-   let color3f = color :: Color3 GLfloat -> IO ()
-   color3f (Color3 1 1 1)
-   let oneIndices = [ 0, 1, 2, 3, 4, 5, 6 ] :: [GLubyte]
-       twoIndices = [ 1, 7, 8, 9, 10, 11 ] :: [GLubyte]
-       indices = [ oneIndices, twoIndices ]
-       numIndices = genericLength indices
-       count = map genericLength indices :: [GLsizei]
-   withArray count $ \countBuf ->
-      withMany withArray indices $ \indicesPtrs ->
-         withArray indicesPtrs $ \indicesBuf ->
-            multiDrawElements LineStrip countBuf UnsignedByte indicesBuf numIndices
+   color (Color3 1 1 1 :: Color3 GLfloat)
+   multiDrawElements LineStrip count UnsignedByte indices primCount
    flush
 
 reshape :: ReshapeCallback
@@ -84,8 +80,8 @@ main = do
    unless ("GL_EXT_multi_draw_arrays" `elem` exts) $ do
       putStrLn "Sorry, this demo requires the GL_EXT_multi_draw_arrays extension."
       exitFailure
-   myInit
-   displayCallback $= display
+   multiDrawInfo <- myInit
+   displayCallback $= display multiDrawInfo
    reshapeCallback $= Just reshape
    keyboardMouseCallback $= Just keyboard
    mainLoop
