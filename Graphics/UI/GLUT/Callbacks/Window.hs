@@ -185,7 +185,7 @@ type ReshapeCallback' = CInt -> CInt -> IO ()
 -- default reshape callback is used. This default callback will simply call
 --
 -- @
--- 'viewport' ('Graphics.Rendering.OpenGL.GL.CoordTrans.Position' 0 0) ('Graphics.Rendering.OpenGL.GL.CoordTrans.Size' /width/ /height/)
+-- 'Graphics.Rendering.OpenGL.GL.CoordTrans.viewport' ('Graphics.Rendering.OpenGL.GL.CoordTrans.Position' 0 0) ('Graphics.Rendering.OpenGL.GL.CoordTrans.Size' /width/ /height/)
 -- @
 --
 -- on the normal plane (and on the overlay if one exists).

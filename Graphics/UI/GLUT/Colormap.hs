@@ -91,7 +91,7 @@ foreign import CALLCONV unsafe "glutGetColor" glutGetColor ::
 -- specified window to the /current window/\'s /layer in use/. The copy will be
 -- from the normal plane to the normal plane; or from the overlay to the overlay
 -- (never across different layers). Once a colormap has been copied, avoid
--- setting cells in the colormap via 'coloMapEntry' since that will force an
+-- setting cells in the colormap via 'colorMapEntry' since that will force an
 -- actual copy of the colormap if it was previously copied by reference.
 -- 'copyColormap' should only be called when both the /current window/ and the
 -- specified window are color index windows.

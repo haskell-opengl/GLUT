@@ -88,7 +88,7 @@ import Graphics.UI.GLUT.Types ( Window, makeWindow )
 -- ineffective because the window can not yet be displayed.
 --
 -- The value returned by 'createWindow' and 'createSubWindow' is a unique
--- identifier for the window, which can be used when calling 'setWindow'.
+-- identifier for the window, which can be used with 'currentWindow'.
 
 -- | Create a top-level window. The given name will be provided to the window
 -- system as the window\'s name. The intent is that the window system will label
@@ -205,9 +205,10 @@ foreign import CALLCONV unsafe "glutPostRedisplay" glutPostRedisplay :: IO ()
 -- | Mark the normal plane of the given window as needing to be redisplayed,
 -- otherwise the same as 'postRedisplay'.
 --
--- The advantage of this routine is that it saves the cost of a 'setWindow' call
--- (entailing an expensive OpenGL context switch), which is particularly useful
--- when multiple windows need redisplays posted at the same time. 
+-- The advantage of this routine is that it saves the cost of using
+-- 'currentWindow' (entailing an expensive OpenGL context switch), which is
+-- particularly useful when multiple windows need redisplays posted at the same
+-- time. 
 
 foreign import CALLCONV unsafe "glutPostWindowRedisplay"
    glutPostWindowRedisplay :: Window -> IO ()
@@ -251,7 +252,7 @@ foreign import CALLCONV unsafe "glutSwapBuffers" swapBuffers :: IO ()
 -- In the case of top-level windows, setting 'windowPosition' is considered only
 -- a request for positioning the window. The window system is free to apply its
 -- own policies to top-level window placement. The intent is that top-level
--- windows should be repositioned according 'windowPosition'\'s value.
+-- windows should be repositioned according to the value of 'windowPosition'.
 
 windowPosition :: StateVar Position
 windowPosition = makeStateVar getWindowPosition setWindowPosition
@@ -277,7 +278,7 @@ getWindowPosition = do
 -- In the case of top-level windows, setting 'windowSize' is considered only a
 -- request for sizing the window. The window system is free to apply its own
 -- policies to top-level window sizing. The intent is that top-level windows
--- should be reshaped according 'windowSize'\'s value. Whether a reshape
+-- should be reshaped according to the value of 'windowSize'. Whether a reshape
 -- actually takes effect and, if so, the reshaped dimensions are reported to the
 -- program by a reshape callback.
 

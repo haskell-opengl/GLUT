@@ -178,8 +178,8 @@ type Item   = CInt
 type MenuCB = CInt -> IO ()
 
 -- | Create a new pop-up menu and return a unique identifier for it, which can
--- be used when calling 'setMenu'. Implicitly, the /current menu/ is set to the
--- newly created menu.
+-- be used when setting 'currentMenu'. Implicitly, the /current menu/ is set to
+-- the newly created menu.
 --
 -- When the menu callback is called because a menu entry is selected for the
 -- menu, the /current menu/ will be implicitly set to the menu with the selected
@@ -197,7 +197,7 @@ foreign import CALLCONV unsafe "glutCreateMenu" glutCreateMenu ::
 foreign import ccall "wrapper" makeMenuFunc :: MenuCB -> IO (FunPtr MenuCB)
 
 -- | Destroy the specified menu. If it was the /current menu/, the /current
--- menu/ becomes invalid and 'getMenu' will return 'Nothing'.
+-- menu/ becomes invalid and 'currentMenu' will contain 'Nothing'.
 
 foreign import CALLCONV unsafe "glutDestroyMenu" glutDestroyMenu ::
    MenuID -> IO ()

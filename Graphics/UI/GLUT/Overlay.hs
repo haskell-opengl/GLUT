@@ -97,7 +97,7 @@ getHasOverlay = layerGet (/= 0) glut_HAS_OVERLAY
 
 -- | Contains 'True' if an overlay could be established for the /current window/
 -- given the current /initial display mode/. If it contains 'False',
--- 'establishOverlay' will fail with a fatal error if called.
+-- 'setHasOverlay' will fail with a fatal error if called.
 
 overlayPossible :: GettableStateVar Bool
 overlayPossible = makeGettableStateVar $ layerGet (/= 0) glut_OVERLAY_POSSIBLE
@@ -107,12 +107,11 @@ overlayPossible = makeGettableStateVar $ layerGet (/= 0) glut_OVERLAY_POSSIBLE
 -- | Controls the visibility of the overlay of the /current window/.
 --
 -- The effect of showing or hiding an overlay takes place immediately. Note that
--- 'showOverlay' will not actually display the overlay unless the window is also
--- shown (and even a shown window may be obscured by other windows, thereby
--- obscuring the overlay). It is typically faster and less resource intensive to
--- use the routines below to control the display status of an overlay as opposed
--- to removing and re-establishing the overlay.
-
+-- setting 'overlayVisible' to 'True' will not actually display the overlay
+-- unless the window is also shown (and even a shown window may be obscured by
+-- other windows, thereby obscuring the overlay). It is typically faster and
+-- less resource intensive to use the routines below to control the display
+-- status of an overlay as opposed to removing and re-establishing the overlay.
 
 overlayVisible :: SettableStateVar Bool
 overlayVisible =

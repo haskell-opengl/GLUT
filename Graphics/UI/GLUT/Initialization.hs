@@ -16,7 +16,7 @@
 --
 -- The reason is that these state variables can be used to set default window
 -- initialization state that might be modified by the command processing done in
--- 'initialize'. For example, 'initialWindowSize' can be set to @('WindowSize'
+-- 'initialize'. For example, 'initialWindowSize' can be set to @('Size'
 -- 400 400)@ before 'initialize' is called to indicate 400 by 400 is the
 -- program\'s default window size. Setting the initial window size or position
 -- before 'initialize' allows the GLUT program user to specify the initial size
@@ -84,7 +84,7 @@ import Graphics.UI.GLUT.Types ( Relation(..), relationToString )
 -- system, the lack of window system support for OpenGL, and invalid command
 -- line options.
 --
--- 'initialized.' also processes command line options, but the specific options
+-- 'initialize' also processes command line options, but the specific options
 -- parsed are window system dependent. Any command line arguments which are
 -- not GLUT-specific are returned.
 --
@@ -293,7 +293,7 @@ displayModePossible =
 --------------------------------------------------------------------------------
 
 -- | Capabilities for 'initialDisplayCapabilities', most of them are extensions
--- of 'DisplayMode'\'s constructors.
+-- of the constructors of 'DisplayMode'.
 
 data DisplayCapability
    = DisplayRGBA  -- ^ Number of bits of red, green, blue, and alpha in the RGBA
@@ -338,7 +338,7 @@ data DisplayCapability
                   --   GLX\'s @SGIS_multisample@ extension (for antialiasing).
                   --   Default is \"'IsNotGreaterThan' @4@\". This default means
                   --   that a GLUT application can request multisampling if
-                  --   available by simply specifying \"'With' 'Samples'\".
+                  --   available by simply specifying \"'With' 'DisplaySamples'\".
    | DisplayStereo -- ^ Boolean indicating the color buffer is supports
                   --   OpenGL-style stereo. Default is \"'IsEqualTo' @1@\".
    | DisplayLuminance -- ^ Number of bits of red in the RGBA and zero bits of green,
@@ -347,7 +347,7 @@ data DisplayCapability
                   --   and \"'IsEqualTo' @0@\" for the green and blue
                   --   capabilities, and \"'IsEqualTo' @1@\" for the RGBA color
                   --   model capability, and, for X11, \"'IsEqualTo' @1@\" for
-                  --   the 'XStaticGray' capability. SGI InfiniteReality (and
+                  --   the 'DisplayXStaticGray' capability. SGI InfiniteReality (and
                   --   other future machines) support a 16-bit luminance (single
                   --   channel) display mode (an additional 16-bit alpha channel
                   --   can also be requested). The red channel maps to gray
@@ -359,7 +359,7 @@ data DisplayCapability
    | DisplayNum   -- ^ A special capability name indicating where the value
                   --   represents the Nth frame buffer configuration matching
                   --   the description string. When not specified,
-                  --   'initialDisplayCapabilitiesString' also returns the first
+                  --   'initialDisplayCapabilities' also uses the first
                   --   (best matching) configuration. 'Num' requires a relation
                   --   and numeric value.
    | DisplayConformant -- ^ Boolean indicating if the frame buffer configuration is
@@ -381,10 +381,10 @@ data DisplayCapability
                   --   will still be allowed.
    | DisplayWin32PFD -- ^ Only recognized on GLUT implementations for Win32, this
                   --   capability name matches the Win32 Pixel Format Descriptor
-                  --   by number. 'Win32PFD' can only be used with 'Where'.
+                  --   by number. 'DisplayWin32PFD' can only be used with 'Where'.
    | DisplayXVisual -- ^ Only recongized on GLUT implementations for the X Window
                   --   System, this capability name matches the X visual ID by
-                  --   number. 'XVisual' requires a relation and numeric value.
+                  --   number. 'DisplayXVisual' requires a relation and numeric value.
    | DisplayXStaticGray -- ^ Only recongized on GLUT implementations for the X Window
                   --   System, boolean indicating if the frame buffer
                   --   configuration\'s X visual is of type @StaticGray@.
