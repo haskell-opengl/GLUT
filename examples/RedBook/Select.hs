@@ -1,6 +1,6 @@
 {-
    Select.hs (adapted from select.c which is (c) Silicon Graphics, Inc.)
-   Copyright (c) Sven Panne 2003 <sven.panne@aedion.de>
+   Copyright (c) Sven Panne 2002-2004 <sven.panne@aedion.de>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 

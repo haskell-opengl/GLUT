@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.GameMode
--- Copyright   :  (c) Sven Panne 2003
+-- Copyright   :  (c) Sven Panne 2002-2004
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
 -- 
 -- Maintainer  :  sven.panne@aedion.de
