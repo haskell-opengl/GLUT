@@ -101,7 +101,7 @@ type NumDials = CInt
 
 type NumAxes  = CInt
 
--- | The a rate at which a joystick is polled
+-- | The a rate at which a joystick is polled (in milliseconds)
 
 type PollRate = CInt
 
