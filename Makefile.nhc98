@@ -1,0 +1,161 @@
+# Hey Emacs, this is a -*- makefile -*- !
+
+THISPKG       = GLUT
+SEARCH        = -package base -package OpenGL
+EXTRA_H_FLAGS = -DCALLCONV=ccall
+SRCS          = \
+	Graphics/UI/GLUT.hs \
+	Graphics/UI/GLUT/Begin.hs \
+	Graphics/UI/GLUT/Callbacks.hs \
+	Graphics/UI/GLUT/Callbacks/Global.hs \
+	Graphics/UI/GLUT/Callbacks/Registration.hs \
+	Graphics/UI/GLUT/Callbacks/Window.hs \
+	Graphics/UI/GLUT/Colormap.hs \
+	Graphics/UI/GLUT/Constants.hs \
+	Graphics/UI/GLUT/Debugging.hs \
+	Graphics/UI/GLUT/DeviceControl.hs \
+	Graphics/UI/GLUT/Fonts.hs \
+	Graphics/UI/GLUT/GameMode.hs \
+	Graphics/UI/GLUT/Initialization.hs \
+	Graphics/UI/GLUT/Menu.hs \
+	Graphics/UI/GLUT/Objects.hs \
+	Graphics/UI/GLUT/Overlay.hs \
+	Graphics/UI/GLUT/QueryUtils.hs \
+	Graphics/UI/GLUT/State.hs \
+	Graphics/UI/GLUT/Types.hs \
+	Graphics/UI/GLUT/Window.hs
+
+# Here are the main rules.
+include ../Makefile.common
+
+# Here are the dependencies.
+$(OBJDIR)/Graphics/UI/GLUT.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Begin.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Callbacks.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Colormap.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Debugging.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/DeviceControl.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Fonts.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/GameMode.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Initialization.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Menu.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Objects.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Overlay.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/State.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Window.$O
+$(OBJDIR)/Graphics/UI/GLUT/Callbacks.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Callbacks/Global.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Callbacks/Window.$O
+$(OBJDIR)/Graphics/UI/GLUT/Callbacks/Global.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Callbacks/Registration.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Constants.$O
+$(OBJDIR)/Graphics/UI/GLUT/Callbacks/Registration.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Window.$O
+$(OBJDIR)/Graphics/UI/GLUT/Callbacks/Window.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Callbacks/Registration.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Constants.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/State.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Types.$O
+$(OBJDIR)/Graphics/UI/GLUT/Colormap.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Constants.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/QueryUtils.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Window.$O
+$(OBJDIR)/Graphics/UI/GLUT/DeviceControl.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Constants.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/QueryUtils.$O
+$(OBJDIR)/Graphics/UI/GLUT/GameMode.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Constants.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Initialization.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Types.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Window.$O
+$(OBJDIR)/Graphics/UI/GLUT/Initialization.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Constants.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/QueryUtils.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Types.$O
+$(OBJDIR)/Graphics/UI/GLUT/Menu.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Callbacks/Registration.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Callbacks/Window.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Constants.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/QueryUtils.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Types.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Window.$O
+$(OBJDIR)/Graphics/UI/GLUT/Overlay.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Constants.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/QueryUtils.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Window.$O
+$(OBJDIR)/Graphics/UI/GLUT/State.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Constants.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Overlay.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/QueryUtils.$O
+$(OBJDIR)/Graphics/UI/GLUT/Types.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Constants.$O
+$(OBJDIR)/Graphics/UI/GLUT/Window.$O: \
+	 $(OBJDIR)/Graphics/UI/GLUT/Constants.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/QueryUtils.$O \
+	 $(OBJDIR)/Graphics/UI/GLUT/Types.$O
+
+# C-files dependencies.
+Graphics/UI/GLUT.$C: \
+	 Graphics/UI/GLUT/Begin.$C \
+	 Graphics/UI/GLUT/Callbacks.$C \
+	 Graphics/UI/GLUT/Colormap.$C \
+	 Graphics/UI/GLUT/Debugging.$C \
+	 Graphics/UI/GLUT/DeviceControl.$C \
+	 Graphics/UI/GLUT/Fonts.$C \
+	 Graphics/UI/GLUT/GameMode.$C \
+	 Graphics/UI/GLUT/Initialization.$C \
+	 Graphics/UI/GLUT/Menu.$C \
+	 Graphics/UI/GLUT/Objects.$C \
+	 Graphics/UI/GLUT/Overlay.$C \
+	 Graphics/UI/GLUT/State.$C \
+	 Graphics/UI/GLUT/Window.$C
+Graphics/UI/GLUT/Callbacks.$C: \
+	 Graphics/UI/GLUT/Callbacks/Global.$C \
+	 Graphics/UI/GLUT/Callbacks/Window.$C
+Graphics/UI/GLUT/Callbacks/Global.$C: \
+	 Graphics/UI/GLUT/Callbacks/Registration.$C \
+	 Graphics/UI/GLUT/Constants.$C
+Graphics/UI/GLUT/Callbacks/Registration.$C: \
+	 Graphics/UI/GLUT/Window.$C
+Graphics/UI/GLUT/Callbacks/Window.$C: \
+	 Graphics/UI/GLUT/Callbacks/Registration.$C \
+	 Graphics/UI/GLUT/Constants.$C \
+	 Graphics/UI/GLUT/State.$C \
+	 Graphics/UI/GLUT/Types.$C
+Graphics/UI/GLUT/Colormap.$C: \
+	 Graphics/UI/GLUT/Constants.$C \
+	 Graphics/UI/GLUT/QueryUtils.$C \
+	 Graphics/UI/GLUT/Window.$C
+Graphics/UI/GLUT/DeviceControl.$C: \
+	 Graphics/UI/GLUT/Constants.$C \
+	 Graphics/UI/GLUT/QueryUtils.$C
+Graphics/UI/GLUT/GameMode.$C: \
+	 Graphics/UI/GLUT/Constants.$C \
+	 Graphics/UI/GLUT/Initialization.$C \
+	 Graphics/UI/GLUT/Types.$C \
+	 Graphics/UI/GLUT/Window.$C
+Graphics/UI/GLUT/Initialization.$C: \
+	 Graphics/UI/GLUT/Constants.$C \
+	 Graphics/UI/GLUT/QueryUtils.$C \
+	 Graphics/UI/GLUT/Types.$C
+Graphics/UI/GLUT/Menu.$C: \
+	 Graphics/UI/GLUT/Callbacks/Registration.$C \
+	 Graphics/UI/GLUT/Callbacks/Window.$C \
+	 Graphics/UI/GLUT/Constants.$C \
+	 Graphics/UI/GLUT/QueryUtils.$C \
+	 Graphics/UI/GLUT/Types.$C \
+	 Graphics/UI/GLUT/Window.$C
+Graphics/UI/GLUT/Overlay.$C: \
+	 Graphics/UI/GLUT/Constants.$C \
+	 Graphics/UI/GLUT/QueryUtils.$C \
+	 Graphics/UI/GLUT/Window.$C
+Graphics/UI/GLUT/State.$C: \
+	 Graphics/UI/GLUT/Constants.$C \
+	 Graphics/UI/GLUT/Overlay.$C \
+	 Graphics/UI/GLUT/QueryUtils.$C
+Graphics/UI/GLUT/Types.$C: \
+	 Graphics/UI/GLUT/Constants.$C
+Graphics/UI/GLUT/Window.$C: \
+	 Graphics/UI/GLUT/Constants.$C \
+	 Graphics/UI/GLUT/QueryUtils.$C \
+	 Graphics/UI/GLUT/Types.$C
