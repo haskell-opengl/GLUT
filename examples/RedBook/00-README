@@ -35,7 +35,7 @@ Chapter 5: Lighting
         ColorMat.hs     (1.1)
         Scene.hs        (1.0)
 
-qChapter 6: Blending, Antialiasing, Fog, and Polygon Offset
+Chapter 6: Blending, Antialiasing, Fog, and Polygon Offset
 
         BlendEqn.hs     (1.3 or ARB_imaging_subset)
         Alpha.hs        (1.0)
