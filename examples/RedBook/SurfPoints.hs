@@ -1,8 +1,13 @@
 {-
-   Surface.hs (adapted from surface.c which is (c) Silicon Graphics, Inc.)
+   SurfPoints.hs (adapted from surfpoints.c which is (c) Silicon Graphics, Inc.)
    Copyright (c) Sven Panne 2002-2004 <sven.panne@aedion.de>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
+
+   This program is a modification of the earlier Surface.hs program. The
+   vertex data are not directly rendered, but are instead passed to the
+   callback function. The values of the tessellated vertices are printed
+   out there.
 
    This program draws a NURBS surface in the shape of a symmetrical hill.
    The 'c' keyboard key allows you to toggle the visibility of the control
@@ -13,12 +18,12 @@
    just a test for the internals...
 -}
 
-import Control.Monad ( when )
+import Control.Monad ( when, unless )
 import Data.Char ( toLower )
 import Data.IORef ( IORef, newIORef )
 import Foreign.Ptr ( castPtr )
 import Foreign.Marshal ( withArray )
-import System.Exit ( exitWith, ExitCode(ExitSuccess) )
+import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
 import Graphics.UI.GLUT
 
 data State = State { showPoints :: IORef Bool }
@@ -62,13 +67,18 @@ display state = do
       scale 0.5 0.5 (0.5 :: GLfloat)
 
       withNURBSObj () $ \nurbsObj -> do
+         setNURBSMode nurbsObj NURBSTessellator
          setSamplingMethod nurbsObj (PathLength 25)
          setDisplayMode nurbsObj Fill'
          checkForError nurbsObj $
-            nurbsBeginEndSurface nurbsObj $
-               withArray (concat ctlPoints) $ \cBuf ->
-                  withArray knots $ \kBuf ->
-                     gluNurbsSurface nurbsObj 8 kBuf 8 kBuf (4 * 3) 3 (castPtr cBuf) 4 4 0xdb7 -- GL_MAP2_VERTEX_3
+            withBeginCallback nurbsObj print $
+               withVertexCallback nurbsObj print $
+                  withNormalCallback nurbsObj print $
+                     withEndCallback nurbsObj (putStrLn "end") $
+                        nurbsBeginEndSurface nurbsObj $
+                           withArray (concat ctlPoints) $ \cBuf ->
+                              withArray knots $ \kBuf ->
+                                 gluNurbsSurface nurbsObj 8 kBuf 8 kBuf (4 * 3) 3 (castPtr cBuf) 4 4 0xdb7 -- GL_MAP2_VERTEX_3
 
       s <- get (showPoints state)
       when s $ do
@@ -105,6 +115,13 @@ main = do
    initialWindowSize $= Size 500 500
    initialWindowPosition $= Position 100 100
    createWindow progName
+   version <- get gluVersion
+   unless (take 3 version == "1.3") $ do
+      putStrLn "This program demonstrates a feature which is introduced in the"
+      putStrLn "OpenGL Utility Library (GLU) Version 1.3."
+      putStrLn "If your implementation of GLU has the right extensions,"
+      putStrLn "you may be able to modify this program to make it run."
+      exitFailure
    state <- makeState
    myInit
    reshapeCallback $= Just reshape

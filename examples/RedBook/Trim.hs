@@ -7,6 +7,9 @@
    This program draws a NURBS surface in the shape of a symmetrical hill,
    using both a NURBS curve and pwl (piecewise linear) curve to trim part
    of the surface.
+
+   NOTE: This example does NOT demonstrate the final NURBS API, it's currently
+   just a test for the internals...
 -}
 
 import Foreign.Ptr ( castPtr )
