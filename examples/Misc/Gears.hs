@@ -24,6 +24,20 @@ import Graphics.UI.GLUT
 
 type View = (GLfloat, GLfloat, GLfloat)
 
+data State = State {
+   frames  :: IORef Int,
+   t0      :: IORef Int,
+   viewRot :: IORef View,
+   angle'  :: IORef GLfloat }
+
+makeState :: IO State
+makeState = do
+   f <- newIORef 0
+   t <- newIORef 0
+   v <- newIORef (20, 30, 0) 
+   a <- newIORef 0
+   return $ State { frames = f, t0 = t, viewRot = v, angle' = a }
+
 --  Draw a gear wheel.  You'll probably want to call this function when
 --  building a display list since we do a lot of trig here.
 -- 
@@ -133,11 +147,11 @@ gearInside r0 _ _ w _ _ _ angle = do
    vertex (Vertex3 (r0 * cos angle) (r0 * sin angle) (-w))
    vertex (Vertex3 (r0 * cos angle) (r0 * sin angle)   w )
      
-draw :: (DisplayList,DisplayList,DisplayList,Int) -> IORef Int -> IORef Int -> IORef View -> IORef GLfloat -> IO ()
-draw (gear1, gear2, gear3, autoexit) frames t0 viewRot angle = do
+draw :: (DisplayList,DisplayList,DisplayList,Int) -> State -> IO ()
+draw (gear1, gear2, gear3, autoexit) state = do
    clear [ ColorBuffer, DepthBuffer ]
-   (x, y, z) <- get viewRot
-   a <- get angle
+   (x, y, z) <- get (viewRot state)
+   a <- get (angle' state)
 
    let translatef = translate :: Vector3 GLfloat -> IO ()
    preservingMatrix $ do
@@ -161,38 +175,38 @@ draw (gear1, gear2, gear3, autoexit) frames t0 viewRot angle = do
          callList gear3
 
    swapBuffers  
-   frames $~! (+1)
-   t0' <- get t0
+   frames state $~! (+1)
+   t0' <- get (t0 state)
    t <- get elapsedTime
    when (t - t0' >= 5000) $ do
-      f <- get frames
+      f <- get (frames state)
       let seconds = fromIntegral (t - t0') / 1000 :: GLfloat
           fps = fromIntegral f / seconds
       putStrLn (show f ++ " frames in " ++ show seconds ++ " seconds = "++ show fps ++ " FPS")
-      t0 $= t
-      frames $= 0
+      t0 state $= t
+      frames state $= 0
       when ((t >= 999 * autoexit) && (autoexit /= 0)) $
          exitWith ExitSuccess
 
-idle :: IORef GLfloat -> IdleCallback
-idle angle = do
-   angle $~! (+2)
+idle :: State -> IdleCallback
+idle state = do
+   angle' state $~! (+2)
    postRedisplay Nothing
 
-keyboard :: IORef View -> KeyboardMouseCallback
-keyboard viewRot (Char 'z')           _ _ _ = modRot viewRot ( 0,  0,  5)
-keyboard viewRot (Char 'Z')           _ _ _ = modRot viewRot ( 0,  0, -5)
-keyboard viewRot (SpecialKey KeyUp)   _ _ _ = modRot viewRot ( 5,  0,  0)
-keyboard viewRot (SpecialKey KeyDown) _ _ _ = modRot viewRot (-5,  0,  0)
-keyboard viewRot (SpecialKey KeyLeft) _ _ _ = modRot viewRot ( 0,  5,  0)
-keyboard viewRot (SpecialKey KeyRight)_ _ _ = modRot viewRot ( 0, -5,  0)
-keyboard _       (Char '\27')         _ _ _ = exitWith ExitSuccess
-keyboard _       _                    _ _ _ = return ()
+keyboard :: State -> KeyboardMouseCallback
+keyboard state (Char 'z')           _ _ _ = modRot state ( 0,  0,  5)
+keyboard state (Char 'Z')           _ _ _ = modRot state ( 0,  0, -5)
+keyboard state (SpecialKey KeyUp)   _ _ _ = modRot state ( 5,  0,  0)
+keyboard state (SpecialKey KeyDown) _ _ _ = modRot state (-5,  0,  0)
+keyboard state (SpecialKey KeyLeft) _ _ _ = modRot state ( 0,  5,  0)
+keyboard state (SpecialKey KeyRight)_ _ _ = modRot state ( 0, -5,  0)
+keyboard _     (Char '\27')         _ _ _ = exitWith ExitSuccess
+keyboard _     _                    _ _ _ = return ()
 
-modRot :: IORef View -> View -> IO ()
-modRot viewRot (dx,dy,dz) = do
-   (x, y, z) <- get viewRot
-   viewRot $= (x + dx, y + dy, z + dz)
+modRot :: State -> View -> IO ()
+modRot state (dx,dy,dz) = do
+   (x, y, z) <- get (viewRot state)
+   viewRot state $= (x + dx, y + dy, z + dz)
    postRedisplay Nothing
 
 -- new window size or exposure
@@ -265,8 +279,8 @@ myInit args = do
 
    return (g1, g2, g3, autoexit)
 
-visible :: IORef GLfloat -> Visibility -> IO ()
-visible angle Visible    = idleCallback $= Just (idle angle)
+visible :: State -> Visibility -> IO ()
+visible state Visible    = idleCallback $= Just (idle state)
 visible _     NotVisible = idleCallback $= Nothing
 
 main :: IO ()
@@ -277,15 +291,12 @@ main  = do
    initialWindowPosition $= Position 0 0
    initialWindowSize $= Size 300 300
    createWindow "Gears"
+   state <- makeState
    gearsAndAuto <- myInit args
-   frames <- newIORef 0
-   t0 <- newIORef 0
-   viewRot <- newIORef (20, 30, 0) 
-   angle <- newIORef 0
 
-   displayCallback $= draw gearsAndAuto frames t0 viewRot angle
+   displayCallback $= draw gearsAndAuto state
    reshapeCallback $= Just reshape
-   keyboardMouseCallback $= Just (keyboard viewRot)
-   visibilityCallback $= Just (visible angle)
+   keyboardMouseCallback $= Just (keyboard state)
+   visibilityCallback $= Just (visible state)
 
    mainLoop

@@ -10,6 +10,20 @@ import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
 import Graphics.UI.GLUT
 
+data State = State {
+   anim     :: IORef Bool,
+   xPos     :: IORef GLfloat,
+   sign     :: IORef GLfloat,
+   lastTime :: IORef Int }
+
+makeState :: IO State
+makeState = do
+   a <- newIORef True
+   x <- newIORef 0
+   s <- newIORef 1
+   l <- newIORef =<< get elapsedTime
+   return $ State { anim = a, xPos = x, sign = s, lastTime = l }
+
 petrol, orange, white :: Color3 GLfloat
 petrol = Color3 0.0 0.6 0.8
 orange = Color3 0.8 0.5 0.0
@@ -21,29 +35,29 @@ printString pos s = do
    rasterPos pos
    renderString Fixed8By13 s
 
-idle :: IORef GLfloat -> IORef GLfloat -> IORef Int -> IdleCallback
-idle xPos sign lastTime = do
+idle :: State -> IdleCallback
+idle state = do
    time <- get elapsedTime
-   l <- get lastTime
+   l <- get (lastTime state)
    let timeDiff = fromIntegral (time - l)
 
    when (timeDiff >= 20) $ do -- 50Hz update
-      lastTime $= time   
+      lastTime state $= time   
 
-      s <- get sign
-      step xPos (timeDiff / 1000 * s)
-      x <- get xPos
+      s <- get (sign state)
+      step state (timeDiff / 1000 * s)
+      x <- get (xPos state)
 
       when (x > 2.5) $ do
-         xPos $= 2.5
-         sign $= (-1)
+         xPos state $= 2.5
+         sign state $= (-1)
 
       when (x < -2.5) $ do
-         xPos $= (-2.5)
-         sign $= 1
+         xPos state $= (-2.5)
+         sign state $= 1
 
-display :: QueryObject -> IORef GLfloat -> DisplayCallback
-display occQuery xPos = do
+display :: QueryObject -> State -> DisplayCallback
+display occQuery state = do
    clear [ ColorBuffer, DepthBuffer ]
 
    matrixMode $= Projection
@@ -57,7 +71,7 @@ display occQuery xPos = do
 
    -- draw the test polygon with occlusion testing
    passed <- preservingMatrix $ do
-      x <- get xPos
+      x <- get (xPos state)
       translate (Vector3 x 0 (-0.5))
       scale 0.3 0.3 (1.0 :: GLfloat)
       rotate (-90 * x) (Vector3 0 0 1)
@@ -130,22 +144,22 @@ flushRight :: Show a => Int -> a -> String
 flushRight width x = replicate (width - length s) ' ' ++ s
    where s = show x
 
-keyboard :: IORef Bool -> IORef GLfloat -> IORef GLfloat -> IORef Int -> KeyboardMouseCallback
-keyboard _    _    _    _        (Char '\27')          Down _ _ = exitWith ExitSuccess
-keyboard anim xPos sign lastTime (Char ' ')            Down _ _ = do anim $~ not
-                                                                     setIdleCallback anim xPos sign lastTime
-keyboard _    xPos _    _        (SpecialKey KeyLeft)  Down _ _ = step xPos (-0.1)
-keyboard _    xPos _    _        (SpecialKey KeyRight) Down _ _ = step xPos   0.1
-keyboard _    _    _    _        _                     _    _ _ = return ()
+keyboard :: State -> KeyboardMouseCallback
+keyboard _     (Char '\27')          Down _ _ = exitWith ExitSuccess
+keyboard state (Char ' ')            Down _ _ = do anim state $~ not
+                                                   setIdleCallback state
+keyboard state (SpecialKey KeyLeft)  Down _ _ = step state (-0.1)
+keyboard state (SpecialKey KeyRight) Down _ _ = step state   0.1
+keyboard _     _                     _    _ _ = return ()
 
-setIdleCallback :: IORef Bool -> IORef GLfloat -> IORef GLfloat -> IORef Int -> IO ()
-setIdleCallback anim xPos sign lastTime = do
-   a <- get anim
-   idleCallback $= if a then Just (idle xPos sign lastTime) else Nothing
+setIdleCallback :: State -> IO ()
+setIdleCallback state = do
+   a <- get (anim state)
+   idleCallback $= if a then Just (idle state) else Nothing
 
-step :: IORef GLfloat -> GLfloat -> IO ()
-step xPos s = do
-   xPos $~ (+ s)
+step :: State -> GLfloat -> IO ()
+step state s = do
+   xPos state $~ (+ s)
    postRedisplay Nothing
 
 myInit :: IO ()
@@ -169,14 +183,11 @@ main = do
    initialWindowSize $= Size 400 400
    initialDisplayMode $= [ RGBMode, DoubleBuffered, WithDepthBuffer ]
    createWindow progName
+   state <- makeState
    reshapeCallback $= Just (\size -> viewport $= (Position 0 0, size))
-   anim <- newIORef True
-   xPos <- newIORef 0
-   sign <- newIORef 1
-   lastTime <- get elapsedTime >>= newIORef
-   keyboardMouseCallback $= Just (keyboard anim xPos sign lastTime)
-   setIdleCallback anim xPos sign lastTime
+   keyboardMouseCallback $= Just (keyboard state)
+   setIdleCallback state
    [ occQuery ] <- genObjectNames 1
-   displayCallback $= display occQuery xPos
+   displayCallback $= display occQuery state
    myInit
    mainLoop
