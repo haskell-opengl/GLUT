@@ -94,7 +94,7 @@ processHits (Just hitRecords) = do
       hitRecords
 
 -- selectObjects "draws" the triangles in selection mode, assigning names for
--- the triangles.  Note that the third and fourth triangles share one name, so
+-- the triangles. Note that the third and fourth triangles share one name, so
 -- that if either or both triangles intersects the viewing/clipping volume,
 -- only one hit will be registered.
 
