@@ -49,8 +49,8 @@ data Capability'
    | Height        -- ^ Height of the screen resolution in pixels
    | BitsPerPlane  -- ^ Color depth of the screen in bits
    | RefreshRate   -- ^ Refresh rate in Hertz
-   | Num'          -- ^ Match the Nth fram buffer configuration compatible with
-                   --   with the give capabilities (numbering starts at 1)
+   | Num'          -- ^ Match the Nth frame buffer configuration compatible with
+                   --   the given capabilities (numbering starts at 1)
    deriving ( Eq, Ord )
 
 capabilityToString :: Capability' -> String
