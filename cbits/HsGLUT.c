@@ -12,6 +12,9 @@
 
 #include "HsGLUT.h"
 
+/* needed only for GLUT_GET_PROC_ADDRESS_IS_BROKEN */
+#include "HsGLUT.h"
+
 void*
 hs_GLUT_marshalBitmapFont(int fontID)
 {
@@ -43,6 +46,13 @@ void*
 hs_GLUT_getProcAddress(char *procName)
 {
 #if (FREEGLUT || GLUT_API_VERSION >= 5)
+#if GLUT_GET_PROC_ADDRESS_IS_BROKEN
+  /* There are a few typos/omissions in freeglut 2.20 */
+  if (strcmp(procName, "glutWireCylinder"         ) == 0) return (void*)glutWireCylinder;
+  if (strcmp(procName, "glutSolidCylinder"        ) == 0) return (void*)glutSolidCylinder;
+  if (strcmp(procName, "glutWireSierpinskiSponge" ) == 0) return (void*)glutWireSierpinskiSponge;
+  if (strcmp(procName, "glutSolidSierpinskiSponge") == 0) return (void*)glutSolidSierpinskiSponge;
+#endif
   return glutGetProcAddress(procName);
 #else
   return (void*)0;

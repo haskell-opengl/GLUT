@@ -15,9 +15,8 @@
 
 module Graphics.UI.GLUT.FreeGLUT where
 
-import Foreign.Ptr ( Ptr )
 import Foreign.C.Types ( CInt )
-import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint, GLenum, GLdouble )
+import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 
 -----------------------------------------------------------------------------
 -- New glutGet parameters
@@ -66,24 +65,3 @@ glut_USE_CURRENT_CONTEXT               = 1
 
 foreign import CALLCONV unsafe "glutSetOption"
    glutSetOption :: GLenum -> CInt -> IO ()
-
------------------------------------------------------------------------------
--- Geometry functions
-
-foreign import CALLCONV unsafe "glutWireRhombicDodecahedron"
-   glutWireRhombicDodecahedron :: IO ()
-
-foreign import CALLCONV unsafe "glutSolidRhombicDodecahedron"
-   glutSolidRhombicDodecahedron :: IO ()
-
-foreign import CALLCONV unsafe "glutWireSierpinskiSponge"
-   glutWireSierpinskiSponge :: CInt -> Ptr GLdouble -> GLdouble -> IO ()
-
-foreign import CALLCONV unsafe "glutSolidSierpinskiSponge"
-   glutSolidSierpinskiSponge ::  CInt -> Ptr GLdouble -> GLdouble -> IO ()
-
-foreign import CALLCONV unsafe "glutWireCylinder"
-   glutWireCylinder :: GLdouble -> GLdouble -> GLint -> GLint -> IO ()
-
-foreign import CALLCONV unsafe "glutSolidCylinder"
-   glutSolidCylinder :: GLdouble -> GLdouble -> GLint -> GLint -> IO ()

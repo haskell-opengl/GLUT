@@ -33,8 +33,17 @@ module Graphics.UI.GLUT.Objects (
    renderObject
 ) where
 
-import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint )
+import Foreign.C.Types ( CInt )
+import Foreign.Marshal.Utils ( with )
+import Foreign.Ptr ( Ptr )
+import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint, GLdouble )
+import Graphics.Rendering.OpenGL.GL.VertexSpec ( Vertex3(..) )
 import Graphics.Rendering.OpenGL.GLU.Quadrics ( Radius, Height, Slices, Stacks )
+import Graphics.UI.GLUT.Extensions
+
+--------------------------------------------------------------------------------
+
+#include "HsGLUTExt.h"
 
 --------------------------------------------------------------------------------
 
@@ -92,36 +101,54 @@ data Object
      Torus Radius Radius Sides Rings
    | -- | A teapot with a given relative size.
      Teapot Height
+   | -- | (/freeglut only/) A rhombic dodecahedron whose corners are at most a
+     -- distance of one from the origin. The rhombic dodecahedron has faces
+     -- which are identical rhombi, but which have some vertices at which three
+     -- faces meet and some vertices at which four faces meet. The length of
+     -- each side is @(sqrt 3)\/2@. Vertices at which four faces meet are found
+     -- at @(0, 0, +\/-1)@ and @(+\/-(sqrt 2)\/2, +\/-(sqrt 2)\/2, 0)@. 
+     RhombicDodecahedron
+   | -- |(/freeglut only/) A cylinder
+     Cylinder' Radius Height Slices Stacks
+   | -- |(/freeglut only/) A Sierpinski sponge
+     SierpinskiSponge NumLevels Height
    deriving ( Eq, Ord, Show )
 
 --------------------------------------------------------------------------------
 
-type Sides  = GLint
-type Rings  = GLint
+type Sides     = GLint
+type Rings     = GLint
+type NumLevels = GLint
 
 --------------------------------------------------------------------------------
 
 -- | Render an object in the given flavour.
 
 renderObject :: Flavour -> Object -> IO ()
-renderObject Solid     (Cube h)        = solidCube h
-renderObject Wireframe (Cube h)        = wireCube  h
-renderObject Solid     Dodecahedron    = solidDodecahedron
-renderObject Wireframe Dodecahedron    = wireDodecahedron
-renderObject Solid     Icosahedron     = solidIcosahedron
-renderObject Wireframe Icosahedron     = wireIcosahedron
-renderObject Solid     Octahedron      = solidOctahedron
-renderObject Wireframe Octahedron      = wireOctahedron
-renderObject Solid     Tetrahedron     = solidTetrahedron
-renderObject Wireframe Tetrahedron     = wireTetrahedron
-renderObject Solid     (Sphere' r s t) = solidSphere r s t
-renderObject Wireframe (Sphere' r s t) = wireSphere  r s t 
-renderObject Solid     (Cone r h s t)  = solidCone r h s t
-renderObject Wireframe (Cone r h s t)  = wireCone  r h s t
-renderObject Solid     (Torus i o s r) = solidTorus i o s r
-renderObject Wireframe (Torus i o s r) = wireTorus  i o s r 
-renderObject Solid     (Teapot h)      = solidTeapot h
-renderObject Wireframe (Teapot h)      = wireTeapot  h
+renderObject Solid     (Cube h)               = solidCube h
+renderObject Wireframe (Cube h)               = wireCube  h
+renderObject Solid     Dodecahedron           = solidDodecahedron
+renderObject Wireframe Dodecahedron           = wireDodecahedron
+renderObject Solid     Icosahedron            = solidIcosahedron
+renderObject Wireframe Icosahedron            = wireIcosahedron
+renderObject Solid     Octahedron             = solidOctahedron
+renderObject Wireframe Octahedron             = wireOctahedron
+renderObject Solid     Tetrahedron            = solidTetrahedron
+renderObject Wireframe Tetrahedron            = wireTetrahedron
+renderObject Solid     (Sphere' r s t)        = solidSphere r s t
+renderObject Wireframe (Sphere' r s t)        = wireSphere  r s t 
+renderObject Solid     (Cone r h s t)         = solidCone r h s t
+renderObject Wireframe (Cone r h s t)         = wireCone  r h s t
+renderObject Solid     (Torus i o s r)        = solidTorus i o s r
+renderObject Wireframe (Torus i o s r)        = wireTorus  i o s r 
+renderObject Solid     (Teapot h)             = solidTeapot h
+renderObject Wireframe (Teapot h)             = wireTeapot  h
+renderObject Solid     RhombicDodecahedron    = glutSolidRhombicDodecahedron
+renderObject Wireframe RhombicDodecahedron    = glutWireRhombicDodecahedron
+renderObject Solid     (Cylinder' r h s t)    = glutSolidCylinder r h s t
+renderObject Wireframe (Cylinder' r h s t)    = glutWireCylinder r h s t
+renderObject Solid     (SierpinskiSponge n h) = solidSierpinskiSponge n h
+renderObject Wireframe (SierpinskiSponge n h) = wireSierpinskiSponge n h
 
 --------------------------------------------------------------------------------
 
@@ -273,3 +300,32 @@ foreign import CALLCONV unsafe "glutSolidTeapot" solidTeapot
 foreign import CALLCONV unsafe "glutWireTeapot" wireTeapot
    :: Height -- ^ Relative size of the teapot
    -> IO ()
+
+--------------------------------------------------------------------------------
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutSolidRhombicDodecahedron,IO ())
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutWireRhombicDodecahedron,IO ())
+
+--------------------------------------------------------------------------------
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutSolidCylinder,Radius -> Height -> Slices -> Stacks -> IO ())
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutWireCylinder,Radius -> Height -> Slices -> Stacks -> IO ())
+
+--------------------------------------------------------------------------------
+
+solidSierpinskiSponge :: NumLevels -> Height -> IO ()
+solidSierpinskiSponge = sierpinskiSponge glutSolidSierpinskiSponge
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutSolidSierpinskiSponge,CInt -> Ptr (Vertex3 GLdouble) -> Height -> IO ())
+
+wireSierpinskiSponge :: NumLevels -> Height -> IO ()
+wireSierpinskiSponge = sierpinskiSponge glutWireSierpinskiSponge
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutWireSierpinskiSponge,CInt -> Ptr (Vertex3 GLdouble) -> Height -> IO ())
+
+sierpinskiSponge :: (CInt -> Ptr (Vertex3 GLdouble) -> Height -> IO ()) -> NumLevels -> Height -> IO ()
+sierpinskiSponge f n h =
+   with (Vertex3 0 0 0) $ \offsetBuf ->
+      f (fromIntegral n) offsetBuf h
