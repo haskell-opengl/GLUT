@@ -58,7 +58,7 @@ tutorial.dvi: tutorial.tex bib.bib $(EPSFS)
 tutorial.ps: tutorial.dvi $(EPSFS)
 	dvips -o tutorial.ps tutorial.dvi
 
-tutorial_examples.tar.gz: tutorial.xml $(SCRIPT_DIR)/deleteTags.xquery
+tutorial_examples.tar.gz: tutorial.xml extractExamples $(SCRIPT_DIR)/deleteTags.xquery
 	./extractExamples
 
 clean::
