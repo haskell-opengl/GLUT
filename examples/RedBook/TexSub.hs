@@ -49,7 +49,7 @@ myInit = do
    textureWrapMode Texture2D S $= (Repeated, Repeat)
    textureWrapMode Texture2D T $= (Repeated, Repeat)
    textureFilter Texture2D $= ((Nearest, Nothing), Nearest)
-   texImage2D NoProxy 0  RGBA' checkImageSize 0 checkImage
+   texImage2D Nothing NoProxy 0  RGBA' checkImageSize 0 checkImage
    return (texName, checkImage, subImage)
 
 display :: TextureObject -> DisplayCallback
@@ -89,11 +89,11 @@ keyboard :: TextureObject -> Image -> Image -> KeyboardMouseCallback
 keyboard texName checkImage subImage (Char c) Down _ _ = case toLower c of
    's' -> do
       textureBinding Texture2D $= texName
-      texSubImage2D 0 (TexturePosition2D 12 44) subImageSize subImage
+      texSubImage2D Nothing 0 (TexturePosition2D 12 44) subImageSize subImage
       postRedisplay Nothing
    'r' -> do
       textureBinding Texture2D $= texName
-      texImage2D NoProxy 0 RGBA' checkImageSize 0 checkImage
+      texImage2D Nothing NoProxy 0 RGBA' checkImageSize 0 checkImage
       postRedisplay Nothing
    '\27' -> exitWith ExitSuccess
    _ -> return ()

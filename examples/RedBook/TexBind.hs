@@ -41,7 +41,7 @@ myInit = do
    textureWrapMode Texture2D T $= (Repeated, Clamp)
    textureFilter Texture2D $= ((Nearest, Nothing), Nearest)
    withCheckImage checkImageSize 0x08 (\c -> Color4 c c c 255) $
-      texImage2D NoProxy 0  RGBA' checkImageSize 0
+      texImage2D Nothing NoProxy 0  RGBA' checkImageSize 0
 
    textureBinding Texture2D $= texName1
    textureWrapMode Texture2D S $= (Repeated, Clamp)
@@ -49,7 +49,7 @@ myInit = do
    textureFilter Texture2D $= ((Nearest, Nothing), Nearest)
    textureEnvMode $= Decal
    withCheckImage checkImageSize 0x10 (\c -> Color4 c 0 0 255) $
-      texImage2D NoProxy 0  RGBA' checkImageSize 0
+      texImage2D Nothing NoProxy 0  RGBA' checkImageSize 0
    texture Texture2D $= Enabled
    return (texName0, texName1)
 
