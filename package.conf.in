@@ -33,22 +33,14 @@ hidden-modules:
 
 import-dirs:	IMPORT_DIR
 
-#ifdef INSTALLING
-library-dirs:	"$libdir"
-#else
-library-dirs:	"$libdir/libraries/GLUT",
-		"$libdir/libraries/GLUT/cbits"
+library-dirs:	LIB_DIR
+#ifndef INSTALLING
+		, LIB_DIR"/cbits"
 #endif
 
 hs-libraries:   "HSGLUT"
 extra-libs:	GLUT_EXTRA_LIBS
-
-#ifdef INSTALLING
-include-dirs:
-#else
-include-dirs: 	"$libdir/libraries/GLUT/include"
-#endif
-
+include-dirs: 	INCLUDE_DIR
 includes:	"HsGLUT.h"
 depends:	base, OpenGL
 extra-hugs-opts:
@@ -57,5 +49,5 @@ extra-ld-opts:	GLUT_LIBS
 framework-dirs:
 extra-frameworks: GLUT_FRAMEWORKS
 
-haddock-interfaces:
-haddock-html:
+haddock-interfaces:	HADDOCK_IFACE
+haddock-html:		HTML_DIR
