@@ -24,8 +24,8 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.GameMode (
-   Capability'(..), CapabilityDescription'(..), gameModeCapabilities,
-   enterGameMode, leaveGameMode,
+   GameModeCapability(..), GameModeCapabilityDescription(..),
+   gameModeCapabilities, enterGameMode, leaveGameMode,
    BitsPerPlane, RefreshRate, GameModeInfo(..), gameModeInfo,
    gameModeActive
 ) where
@@ -52,7 +52,7 @@ import Graphics.UI.GLUT.Initialization ( Relation(..) )
 
 -- | Capabilities for 'gameModeCapabilities'
 
-data Capability'
+data GameModeCapability
    = Width         -- ^ Width of the screen resolution in pixels
    | Height        -- ^ Height of the screen resolution in pixels
    | BitsPerPlane  -- ^ Color depth of the screen in bits
@@ -61,21 +61,22 @@ data Capability'
                    --   the given capabilities (numbering starts at 1)
    deriving ( Eq, Ord, Show )
 
-capabilityToString :: Capability' -> String
-capabilityToString Width        = "width"
-capabilityToString Height       = "height"
-capabilityToString BitsPerPlane = "bpp"
-capabilityToString RefreshRate  = "hertz"
-capabilityToString Num'         = "num"
+gameModeCapabilityToString :: GameModeCapability -> String
+gameModeCapabilityToString x = case x of
+   Width        -> "width"
+   Height       -> "height"
+   BitsPerPlane -> "bpp"
+   RefreshRate  -> "hertz"
+   Num'         -> "num"
 
 -- | A single capability description for 'gameModeCapabilities'.
 
-data CapabilityDescription' = Where' Capability' Relation Int
+data GameModeCapabilityDescription = Where' GameModeCapability Relation Int
    deriving ( Eq, Ord, Show )
 
-capabilityDescriptionToString :: CapabilityDescription' -> String
-capabilityDescriptionToString (Where' c r i) =
-      capabilityToString c ++ relationToString r ++ show i
+gameModeCapabilityDescriptionToString :: GameModeCapabilityDescription -> String
+gameModeCapabilityDescriptionToString (Where' c r i) =
+      gameModeCapabilityToString c ++ relationToString r ++ show i
 
 --------------------------------------------------------------------------------
 
@@ -100,10 +101,11 @@ capabilityDescriptionToString (Where' c r i) =
 -- determine which buffers are available, if double buffering is used or not,
 -- etc.
 
-gameModeCapabilities :: SettableStateVar [CapabilityDescription']
+gameModeCapabilities :: SettableStateVar [GameModeCapabilityDescription]
 gameModeCapabilities = makeSettableStateVar $ \settings ->
    withCString
-      (concat . intersperse " " . map capabilityDescriptionToString $ settings)
+      (concat . intersperse " " . map gameModeCapabilityDescriptionToString $
+       settings)
       glutGameModeString
 
 foreign import CALLCONV unsafe "glutGameModeString" glutGameModeString ::

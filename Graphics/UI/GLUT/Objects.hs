@@ -27,13 +27,14 @@ module Graphics.UI.GLUT.Objects (
    Object(..),
 
    -- * Type synonyms
-   Radius, Height, Slices, Stacks, Sides, Rings,
+   Sides, Rings,
 
    -- * Rendering
    renderObject
 ) where
 
-import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLdouble, GLint )
+import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint )
+import Graphics.Rendering.OpenGL.GLU.Quadrics ( Radius, Height, Slices, Stacks )
 
 --------------------------------------------------------------------------------
 
@@ -79,7 +80,7 @@ data Object
      --   radius. The sphere is subdivided around the Z axis into slices
      --   (similar to lines of longitude) and along the Z axis into stacks
      --   (similar to lines of latitude).
-     Sphere Radius Slices Stacks
+     Sphere' Radius Slices Stacks
    | -- | A cone oriented along the Z axis. The base of the cone is placed at Z
      --   = 0, and the top at Z = the given height. The cone is subdivided
      --   around the Z axis into slices, and along the Z axis into stacks.
@@ -95,10 +96,6 @@ data Object
 
 --------------------------------------------------------------------------------
 
-type Radius = GLdouble
-type Height = GLdouble
-type Slices = GLint
-type Stacks = GLint
 type Sides  = GLint
 type Rings  = GLint
 
@@ -117,8 +114,8 @@ renderObject Solid     Octahedron      = solidOctahedron
 renderObject Wireframe Octahedron      = wireOctahedron
 renderObject Solid     Tetrahedron     = solidTetrahedron
 renderObject Wireframe Tetrahedron     = wireTetrahedron
-renderObject Solid     (Sphere r s t)  = solidSphere r s t
-renderObject Wireframe (Sphere r s t)  = wireSphere  r s t 
+renderObject Solid     (Sphere' r s t) = solidSphere r s t
+renderObject Wireframe (Sphere' r s t) = wireSphere  r s t 
 renderObject Solid     (Cone r h s t)  = solidCone r h s t
 renderObject Wireframe (Cone r h s t)  = wireCone  r h s t
 renderObject Solid     (Torus i o s r) = solidTorus i o s r

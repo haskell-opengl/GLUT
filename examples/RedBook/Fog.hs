@@ -42,7 +42,7 @@ renderSpehere :: Vector3 GLfloat -> IO ()
 renderSpehere xyz =
    matrixExcursion $ do
       translate xyz
-      renderObject Solid (GLUT.Sphere 0.4 16 16)
+      renderObject Solid (Sphere' 0.4 16 16)
 
 -- display draws 5 spheres at different z positions.
 display :: DisplayCallback

@@ -35,7 +35,7 @@ module Graphics.UI.GLUT.Initialization (
    DisplayMode(..), initialDisplayMode, displayModePossible,
 
    -- * Setting the initial display mode (II)
-   Capability(..), Relation(..), CapabilityDescription(..),
+   DisplayCapability(..), Relation(..), DisplayCapabilityDescription(..),
    initialDisplayCapabilities
 ) where
 
@@ -284,7 +284,7 @@ displayModePossible =
 -- | Capabilities for 'initialDisplayCapabilities', most of them are extensions
 -- of 'DisplayMode'\'s constructors.
 
-data Capability
+data DisplayCapability
    = RGBA'        -- ^ Number of bits of red, green, blue, and alpha in the RGBA
                   --   color buffer. Default is \"'IsAtLeast' @1@\" for red,
                   --   green, blue, and alpha capabilities, and \"'IsEqualTo'
@@ -400,51 +400,53 @@ data Capability
                   --   Default is \"'IsEqualTo' @1@\".
    deriving ( Eq, Ord, Show )
 
-capabilityToString :: Capability -> String
-capabilityToString RGBA'        = "rgba"
-capabilityToString RGB'         = "rgb"
-capabilityToString Red          = "red"
-capabilityToString Green        = "green"
-capabilityToString Blue         = "blue"
-capabilityToString Index'       = "index"
-capabilityToString Buffer       = "buffer"
-capabilityToString Single'      = "single"
-capabilityToString Double'      = "double"
-capabilityToString AccA         = "acca"
-capabilityToString Acc          = "acc"
-capabilityToString Alpha'       = "alpha"
-capabilityToString Depth'       = "depth"
-capabilityToString Stencil'     = "stencil"
-capabilityToString Samples      = "samples"
-capabilityToString Stereo'      = "stereo"
-capabilityToString Luminance'   = "luminance"
-capabilityToString Num          = "num"
-capabilityToString Conformant   = "conformant"
-capabilityToString Slow         = "slow"
-capabilityToString Win32PFD     = "win32pfd"
-capabilityToString XVisual      = "xvisual"
-capabilityToString XStaticGray  = "xstaticgray"
-capabilityToString XGrayScale   = "xgrayscale"
-capabilityToString XStaticColor = "xstaticcolor"
-capabilityToString XPseudoColor = "xpseudocolor"
-capabilityToString XTrueColor   = "xtruecolor"
-capabilityToString XDirectColor = "xdirectcolor"
+displayCapabilityToString :: DisplayCapability -> String
+displayCapabilityToString x = case x of
+   RGBA'        -> "rgba"
+   RGB'         -> "rgb"
+   Red          -> "red"
+   Green        -> "green"
+   Blue         -> "blue"
+   Index'       -> "index"
+   Buffer       -> "buffer"
+   Single'      -> "single"
+   Double'      -> "double"
+   AccA         -> "acca"
+   Acc          -> "acc"
+   Alpha'       -> "alpha"
+   Depth'       -> "depth"
+   Stencil'     -> "stencil"
+   Samples      -> "samples"
+   Stereo'      -> "stereo"
+   Luminance'   -> "luminance"
+   Num          -> "num"
+   Conformant   -> "conformant"
+   Slow         -> "slow"
+   Win32PFD     -> "win32pfd"
+   XVisual      -> "xvisual"
+   XStaticGray  -> "xstaticgray"
+   XGrayScale   -> "xgrayscale"
+   XStaticColor -> "xstaticcolor"
+   XPseudoColor -> "xpseudocolor"
+   XTrueColor   -> "xtruecolor"
+   XDirectColor -> "xdirectcolor"
 
 -- | A single capability description for 'initialDisplayCapabilities'.
 
-data CapabilityDescription
-   = Where Capability Relation Int -- ^ A description of a capability with a
-                                   --   specific relation to a numeric value.
-   | With  Capability              -- ^ When the relation and numeric value are
-                                   --   not specified, each capability has a
-                                   --   different default, see the different
-                                   --   constructors of 'Capability'.
+data DisplayCapabilityDescription
+   = Where DisplayCapability Relation Int
+     -- ^ A description of a capability with a specific relation to a numeric
+     --   value.
+   | With  DisplayCapability
+     -- ^ When the relation and numeric value are not specified, each capability
+     --   has a different default, see the different constructors of
+     --   'DisplayCapability'.
    deriving ( Eq, Ord, Show )
 
-capabilityDescriptionToString ::  CapabilityDescription -> String
-capabilityDescriptionToString (Where c r i) =
-   capabilityToString c ++ relationToString r ++ show i
-capabilityDescriptionToString (With c) = capabilityToString c
+displayCapabilityDescriptionToString ::  DisplayCapabilityDescription -> String
+displayCapabilityDescriptionToString (Where c r i) =
+   displayCapabilityToString c ++ relationToString r ++ show i
+displayCapabilityDescriptionToString (With c) = displayCapabilityToString c
 
 -- | Controls the /initial display mode/ used when creating top-level windows,
 -- subwindows, and overlays to determine the OpenGL display mode for the
@@ -476,11 +478,12 @@ capabilityDescriptionToString (With c) = capabilityToString c
 -- (favoring less stencil to more as long as 2 bits are available), and double
 -- buffering.
 
-initialDisplayCapabilities :: SettableStateVar [CapabilityDescription]
+initialDisplayCapabilities :: SettableStateVar [DisplayCapabilityDescription]
 initialDisplayCapabilities =
    makeSettableStateVar $ \caps ->
       withCString
-         (concat . intersperse " " . map capabilityDescriptionToString $ caps)
+         (concat . intersperse " " . map displayCapabilityDescriptionToString $
+          caps)
          glutInitDisplayString
 
 foreign import CALLCONV unsafe "glutInitDisplayString" glutInitDisplayString ::
