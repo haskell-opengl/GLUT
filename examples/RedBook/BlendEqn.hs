@@ -23,8 +23,8 @@ import Graphics.UI.GLUT
 myInit :: IO ()
 myInit = do
    clearColor $= Color4 1 1 0 0
-   blendFunc $= (One, One)
-   blendEquation $= Just FuncAdd
+   blendFunc $= Just (One, One)
+   blendEquation $= FuncAdd
 
 display :: DisplayCallback
 display = do
@@ -77,7 +77,7 @@ keyboard (Char c) Down _ _ = case toLower c of
    '\27' -> exitWith ExitSuccess
    _     -> return ()
    where setBlendEquation e = do
-            blendEquation $= Just e
+            blendEquation $= e
             postRedisplay Nothing
 keyboard _ _ _ _ = return ()
 
