@@ -36,6 +36,17 @@ SRC_HADDOCK_OPTS += -t "HOpenGL Libraries (GLUT package)"
 
 # -----------------------------------------------------------------------------
 
+package.conf.inplace \
+package.conf.installed : include/HsGLUTConfig.h
+
+Graphics/UI/GLUT/Begin.$(way_)o \
+Graphics/UI/GLUT/Callbacks/Window.$(way_)o \
+Graphics/UI/GLUT/Fonts.$(way_)o \
+Graphics/UI/GLUT/FreeGLUT.$(way_)o \
+Graphics/UI/GLUT/Objects.$(way_)o : include/HsGLUTExt.h
+
+# -----------------------------------------------------------------------------
+
 STUBOBJS += \
    Graphics/UI/GLUT/Menu_stub.$(way_)o \
    Graphics/UI/GLUT/Callbacks/Global_stub.$(way_)o \
