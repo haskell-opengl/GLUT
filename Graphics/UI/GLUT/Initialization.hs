@@ -41,7 +41,7 @@ import Data.List ( genericLength, intersperse )
 import Foreign.C.String ( CString, withCString, peekCString )
 import Foreign.C.Types ( CInt, CUInt )
 import Foreign.Marshal.Array ( withArray0, peekArray )
-import Foreign.Marshal.Utils ( withObject, withMany )
+import Foreign.Marshal.Utils ( with, withMany )
 import Foreign.Ptr ( Ptr, nullPtr )
 import Foreign.Storable ( Storable(..) )
 import System.Environment ( getProgName, getArgs )
@@ -95,7 +95,7 @@ init :: String      -- @ The program name.
      -> [String]    -- @ The command line arguments
      -> IO [String] -- @ Non-GLUT command line arguments
 init prog args =
-   withObject (1 + genericLength args) $ \argcBuf ->
+   with (1 + genericLength args) $ \argcBuf ->
    withMany withCString (prog : args) $ \argvPtrs ->
    withArray0 nullPtr argvPtrs $ \argvBuf -> do
    glutInit argcBuf argvBuf
