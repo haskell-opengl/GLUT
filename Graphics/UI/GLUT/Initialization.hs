@@ -38,8 +38,11 @@ module Graphics.UI.GLUT.Initialization (
    DisplayCapability(..), Relation(..), DisplayCapabilityDescription(..),
    initialDisplayCapabilities,
 
-   -- * Controlling the rendering context
-   RenderingContext(..), renderingContext
+   -- * Controlling the creation of rendering contexts
+   RenderingContext(..), renderingContext,
+
+   -- * Direct\/indirect rendering
+   DirectRendering(..), directRendering
 ) where
 
 import Data.Bits ( Bits((.|.),(.&.)) )
@@ -64,7 +67,10 @@ import Graphics.UI.GLUT.Constants (
    glut_LUMINANCE,
    glut_INIT_DISPLAY_MODE,
    glut_DISPLAY_MODE_POSSIBLE,
-   glut_RENDERING_CONTEXT, glut_CREATE_NEW_CONTEXT, glut_USE_CURRENT_CONTEXT )
+   glut_RENDERING_CONTEXT, glut_CREATE_NEW_CONTEXT, glut_USE_CURRENT_CONTEXT,
+   glut_DIRECT_RENDERING,
+   glut_FORCE_INDIRECT_CONTEXT, glut_ALLOW_DIRECT_CONTEXT,
+   glut_TRY_DIRECT_CONTEXT, glut_FORCE_DIRECT_CONTEXT )
 import Graphics.UI.GLUT.QueryUtils ( simpleGet, glutSetOption )
 import Graphics.UI.GLUT.Types ( Relation(..), relationToString )
 
@@ -496,7 +502,7 @@ foreign import CALLCONV unsafe "glutInitDisplayString" glutInitDisplayString ::
 
 -----------------------------------------------------------------------------
 
--- | The rendering context for new windows.
+-- | How rendering context for new windows are created.
 
 data RenderingContext
    = -- | Create a new context via @glXCreateContext@ or @wglCreateContext@
@@ -518,10 +524,60 @@ unmarshalRenderingContext r
 
 -----------------------------------------------------------------------------
 
--- | (/freeglut only/) Contains the rendering context for new windows.
+-- | (/freeglut only/) Controls the creation of rendering contexts for new
+-- windows.
 
 renderingContext :: StateVar RenderingContext
 renderingContext =
    makeStateVar
       (simpleGet unmarshalRenderingContext glut_RENDERING_CONTEXT)
       (glutSetOption glut_RENDERING_CONTEXT . marshalRenderingContext)
+
+-----------------------------------------------------------------------------
+
+-- | The kind of GLX rendering context used. Direct rendering provides a
+-- performance advantage in some implementations. However, direct rendering
+-- contexts cannot be shared outside a single process, and they may be unable
+-- to render to GLX pixmaps.
+
+data DirectRendering
+   = -- | Rendering is always done through the X server. This corresponds to
+     -- the command line argument @-indirect@, see 'initialize'.
+     ForceIndirectContext
+   | -- | Try to use direct rendering, silently using indirect rendering if this
+     -- is not possible.
+     AllowDirectContext
+   | -- | Try to use direct rendering, issue a warning and use indirect
+     -- rendering if this is not possible.
+     TryDirectContext
+   | -- | Try to use direct rendering, issue an error and terminate the program
+     -- if this is not possible.This corresponds to the command line argument
+     -- @-direct@, see 'initialize'.
+     ForceDirectContext
+   deriving ( Eq, Ord, Show )
+
+marshalDirectRendering :: DirectRendering -> CInt
+marshalDirectRendering x = case x of
+   ForceIndirectContext -> glut_FORCE_INDIRECT_CONTEXT
+   AllowDirectContext -> glut_ALLOW_DIRECT_CONTEXT
+   TryDirectContext -> glut_TRY_DIRECT_CONTEXT
+   ForceDirectContext -> glut_FORCE_DIRECT_CONTEXT
+
+unmarshalDirectRendering :: CInt -> DirectRendering
+unmarshalDirectRendering x
+   | x == glut_FORCE_INDIRECT_CONTEXT = ForceIndirectContext
+   | x == glut_ALLOW_DIRECT_CONTEXT = AllowDirectContext
+   | x == glut_TRY_DIRECT_CONTEXT = TryDirectContext
+   | x == glut_FORCE_DIRECT_CONTEXT = ForceDirectContext
+   | otherwise = error ("unmarshalDirectRendering: illegal value " ++ show x)
+
+-----------------------------------------------------------------------------
+
+-- | (/freeglut on X11 only/) Controls which kind of rendering context is
+-- created when a new one is required.
+
+directRendering :: StateVar DirectRendering
+directRendering =
+   makeStateVar
+      (simpleGet unmarshalDirectRendering glut_DIRECT_RENDERING)
+      (glutSetOption glut_DIRECT_RENDERING . marshalDirectRendering)
