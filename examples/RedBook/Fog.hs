@@ -24,7 +24,7 @@ myInit = do
 
    position (Light 0) $= Vertex4 0.5 0.5 3.0 0.0
    lighting $= True
-   lightEnabled (Light 0) $= True
+   light (Light 0) $= True
 
    -- NOTE: The alpha values are missing from fog.c!
    materialAmbient   Front $= Color4 0.1745   0.01175  0.01175  1.0
