@@ -155,12 +155,12 @@ isRealWindow (Window w) = w /= 0
 --------------------------------------------------------------------------------
 
 -- | Mark the normal plane of /current window/ as needing to be redisplayed.
--- The next iteration through 'Graphics.UI.GLUT.mainLoop', the window\'s display
--- callback will be called to redisplay the window\'s normal plane. Multiple
--- calls to 'postRedisplay' before the next display callback opportunity
--- generates only a single redisplay callback. 'postRedisplay' may be called
--- within a window\'s display or overlay display callback to re-mark that window
--- for redisplay.
+-- The next iteration through 'Graphics.UI.GLUT.Begin.mainLoop', the window\'s
+-- display callback will be called to redisplay the window\'s normal plane.
+-- Multiple calls to 'postRedisplay' before the next display callback
+-- opportunity generates only a single redisplay callback. 'postRedisplay' may
+-- be called within a window\'s display or overlay display callback to re-mark
+-- that window for redisplay.
 --
 -- Logically, normal plane damage notification for a window is treated as a
 -- 'postRedisplay' on the damaged window. Unlike damage reported by the window
