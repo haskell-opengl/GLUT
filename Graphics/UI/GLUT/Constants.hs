@@ -16,6 +16,7 @@
 module Graphics.UI.GLUT.Constants where
 
 import Foreign.C.Types ( CInt, CUInt)
+import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 
 -----------------------------------------------------------------------------
 -- * Display mode bit masks
@@ -116,7 +117,7 @@ glut_BLUE                              = 2
 
 -----------------------------------------------------------------------------
 -- * Layers in use
-glut_NORMAL, glut_OVERLAY :: CInt
+glut_NORMAL, glut_OVERLAY :: GLenum
 glut_NORMAL                            = 0
 glut_OVERLAY                           = 1
 
