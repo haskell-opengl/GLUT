@@ -1,3 +1,4 @@
+-- #prune
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Window
@@ -16,7 +17,8 @@
 
 module Graphics.UI.GLUT.Window (
    -- * Window identifiers
-   Window(..),   -- contructor used only internally
+   Window,
+   makeWindow, -- used only internally
 
    -- * Creating and destroying (sub-)windows
 
@@ -63,6 +65,9 @@ import Graphics.UI.GLUT.Constants
 -- | An opaque identifier for a top-level window or a subwindow.
 
 newtype Window = Window CInt deriving ( Eq, Ord )
+
+makeWindow :: CInt -> Window
+makeWindow = Window
 
 --------------------------------------------------------------------------------
 

@@ -38,7 +38,7 @@ import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Initialization ( WindowSize(..), Relation,
                                          relationToString )
-import Graphics.UI.GLUT.Window ( Window(..) )
+import Graphics.UI.GLUT.Window ( Window, makeWindow )
 
 --------------------------------------------------------------------------------
 
@@ -118,7 +118,7 @@ enterGameMode :: IO (Window, Bool)
 enterGameMode = do
    w <- glutEnterGameMode
    c <- getBool glut_GAME_MODE_DISPLAY_CHANGED
-   return (Window w, c)
+   return (makeWindow w, c)
 
 foreign import CALLCONV unsafe "glutEnterGameMode" glutEnterGameMode :: IO CInt
 

@@ -78,7 +78,7 @@ import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Overlay ( Layer(..) )
 import Graphics.UI.GLUT.Initialization ( WindowPosition(..), WindowSize(..),
                                          DisplayMode(..), marshalDisplayMode )
-import Graphics.UI.GLUT.Window ( Window(..), Cursor(..) )
+import Graphics.UI.GLUT.Window ( Window, makeWindow, Cursor(..) )
 
 --------------------------------------------------------------------------------
 
@@ -162,8 +162,8 @@ getWindowSize = do
 
 getParent :: IO (Maybe Window)
 getParent = do
-   w <- get Window glut_WINDOW_PARENT
-   return $ if w == Window 0 then Nothing else Just w
+   w <- get makeWindow glut_WINDOW_PARENT
+   return $ if w == makeWindow 0 then Nothing else Just w
 
 -- | Return the number of subwindows the /current window/ has, not counting
 -- children of children.

@@ -60,8 +60,7 @@ module Graphics.UI.GLUT (
 import Graphics.UI.GLUT.Initialization hiding ( marshalDisplayMode,
                                                 relationToString )
 import Graphics.UI.GLUT.Begin
-import Graphics.UI.GLUT.Window hiding ( Window )
-import Graphics.UI.GLUT.Window ( Window )
+import Graphics.UI.GLUT.Window hiding ( makeWindow )
 import Graphics.UI.GLUT.Overlay
 import Graphics.UI.GLUT.Menu
 import Graphics.UI.GLUT.Callbacks
