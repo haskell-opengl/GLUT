@@ -60,7 +60,7 @@ reshape size@(Size w h) = do
    loadIdentity
    let wf = fromIntegral w
        hf = fromIntegral h
-   if (w <= h)
+   if w <= h
       then ortho2D 0.0 2.0 (-0.5*hf/wf) (1.5*hf/wf)
       else ortho2D 0.0 (2.0*wf/hf) (-0.5) 1.5
    matrixMode $= Modelview 0
