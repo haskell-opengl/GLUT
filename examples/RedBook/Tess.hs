@@ -14,8 +14,6 @@
    star will make the interior unshaded (TessWindingOdd).
 -}
 
-import Control.Monad ( liftM )
-import Data.Maybe ( fromJust )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -75,11 +73,11 @@ myInit :: IO [DisplayList]
 myInit = do
    clearColor $= Color4 0 0 0 0
 
-   rectAndTriList <- liftM fromJust $ defineNewList Compile $
+   rectAndTriList <- defineNewList Compile $
       drawSimplePolygon (\_ -> return ()) =<<
          tessellate TessWindingOdd 0 (Normal3 0 0 0) noOpCombiner rectAndTri
 
-   starList <- liftM fromJust $ defineNewList Compile $
+   starList <- defineNewList Compile $
       drawSimplePolygon color =<<
          tessellate TessWindingPositive 0 (Normal3 0 0 0) combineColors star
 

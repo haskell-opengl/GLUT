@@ -9,8 +9,6 @@
    Note that the cylinder has no top or bottom and the circle has a hole in it.
 -}
 
-import Control.Monad ( liftM )
-import Data.Maybe ( fromJust )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -43,10 +41,9 @@ myInit = do
 
 newQuadricDL :: QuadricNormal -> QuadricDrawStyle -> QuadricPrimitive -> IO DisplayList
 newQuadricDL n s p =
-   liftM fromJust $
-      defineNewList Compile $ do
-         renderQuadric (QuadricStyle n NoTextureCoordinates Outside s) p
-         reportErrors
+   defineNewList Compile $ do
+      renderQuadric (QuadricStyle n NoTextureCoordinates Outside s) p
+      reportErrors
 
 display :: (DisplayList, DisplayList, DisplayList, DisplayList) -> DisplayCallback
 display (dl1, dl2, dl3, dl4) = do

@@ -14,8 +14,6 @@
    star will make the interior unshaded (TessWindingOdd).
 -}
 
-import Control.Monad ( liftM )
-import Data.Maybe ( fromJust )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import System.Random ( randomIO )
 import Graphics.UI.GLUT
@@ -66,7 +64,7 @@ myInit = do
 
 compileNewList :: TessWinding -> ComplexPolygon DontCare -> IO DisplayList
 compileNewList windingRule complexPolygon =
-   liftM fromJust $ defineNewList Compile $
+   defineNewList Compile $
       drawTriangulation =<<
          triangulate windingRule 0 (Normal3 0 0 0) noOpCombiner complexPolygon
 

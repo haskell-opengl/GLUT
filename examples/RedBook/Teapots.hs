@@ -8,8 +8,6 @@
    source illuminates the objects.
 -}
 
-import Control.Monad ( liftM )
-import Data.Maybe ( fromJust )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -30,7 +28,7 @@ myInit = do
    normalize $= Enabled
    depthFunc $= Just Less
    -- be efficient--make teapot display list
-   liftM fromJust $ defineNewList Compile $
+   defineNewList Compile $
       renderObject Solid (Teapot 1)
 
 -- Move object into position, specify the material properties, draw a teapot.

@@ -23,9 +23,7 @@
    reversing the order of subtraction for a combination function.
 -}
 
-import Control.Monad ( liftM )
 import Data.Bits ( (.&.) )
-import Data.Maybe ( fromJust )
 import Foreign ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
@@ -76,7 +74,7 @@ myInit = do
           color c
           vertex v
 
-   dl <- liftM fromJust $ defineNewList Compile $
+   dl <- defineNewList Compile $
       renderPrimitive Quads $ do
          vert (TexCoord2 0 0) (Color3 0.5 1   0.25) (Vertex3 0 0 0)
          vert (TexCoord2 0 2) (Color3 1   1   1   ) (Vertex3 0 1 0)
