@@ -23,20 +23,11 @@ module Graphics.UI.GLUT.Callbacks.Global (
 
 import Control.Monad.Fix ( MonadFix(..) )
 import Foreign.C.Types ( CInt, CUInt )
-import Foreign.Ptr ( FunPtr, nullFunPtr, freeHaskellFunPtr )
+import Foreign.Ptr ( FunPtr )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Initialization ( WindowPosition(..) )
-
---------------------------------------------------------------------------------
-
--- TODO
-trackGlobalCallback ::
-   (a -> IO (FunPtr b)) -> (FunPtr b -> IO ()) -> Maybe a -> IO ()
-trackGlobalCallback makeCB registerCB mbAct = do
-   funPtr <- case mbAct of
-                Nothing  -> return nullFunPtr
-                Just act -> makeCB act
-   registerCB funPtr
+import Graphics.UI.GLUT.Callbacks.Registration ( CallbackType(..), setCallback,
+                                                 registerForCleanup )
 
 --------------------------------------------------------------------------------
 
@@ -77,8 +68,8 @@ type MenuStatusCallback' = CInt -> CInt -> CInt -> IO ()
 -- menu status callback.
 
 setMenuStatusCallback :: Maybe MenuStatusCallback -> IO ()
-setMenuStatusCallback =
-   trackGlobalCallback (makeMenuStatusCallback . unmarshal) glutMenuStatusFunc
+setMenuStatusCallback = setCallback MenuStatusCB glutMenuStatusFunc
+                                    (makeMenuStatusCallback . unmarshal)
       where unmarshal cb s x y = cb (unmarshalMenuUsage s) (WindowPosition x y)
 
 foreign import ccall "wrapper" makeMenuStatusCallback ::
@@ -107,7 +98,7 @@ type IdleCallback = IO ()
 -- callback.
 
 setIdleCallback :: Maybe IdleCallback -> IO ()
-setIdleCallback = trackGlobalCallback makeIdleCallback glutIdleFunc
+setIdleCallback = setCallback IdleCB glutIdleFunc makeIdleCallback
 
 foreign import ccall "wrapper" makeIdleCallback ::
    IdleCallback -> IO (FunPtr IdleCallback)
@@ -135,9 +126,9 @@ type TimerCallback' = CInt -> IO ()
 
 setTimerCallback :: Timeout -> TimerCallback -> IO ()
 setTimerCallback msecs timerCallback = do
-   ptr <- mfix (\self -> makeTimerCallback (\_ -> do freeHaskellFunPtr self
-                                                     timerCallback))
-   glutTimerFunc msecs ptr 0
+   funPtr <- mfix (\self -> makeTimerCallback (\_ -> do registerForCleanup self
+                                                        timerCallback))
+   glutTimerFunc msecs funPtr 0
 
 foreign import ccall "wrapper" makeTimerCallback ::
    TimerCallback' -> IO (FunPtr TimerCallback')

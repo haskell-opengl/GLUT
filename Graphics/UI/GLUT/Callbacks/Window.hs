@@ -14,18 +14,8 @@ module Graphics.UI.GLUT.Callbacks.Window (
    DisplayCallback, setDisplayCallback
 ) where
 
-import Foreign.Ptr ( FunPtr, nullFunPtr )
-
---------------------------------------------------------------------------------
-
--- TODO
-trackWindowCallback ::
-   (a -> IO (FunPtr b)) -> (FunPtr b -> IO ()) -> Maybe a -> IO ()
-trackWindowCallback makeCB registerCB mbAct = do
-   funPtr <- case mbAct of
-                Nothing  -> return nullFunPtr
-                Just act -> makeCB act
-   registerCB funPtr
+import Foreign.Ptr ( FunPtr )
+import Graphics.UI.GLUT.Callbacks.Registration ( CallbackType(..), setCallback )
 
 --------------------------------------------------------------------------------
 
@@ -72,7 +62,7 @@ type DisplayCallback = IO ()
 
 setDisplayCallback :: DisplayCallback -> IO ()
 setDisplayCallback =
-   trackWindowCallback makeDisplayCallback glutDisplayFunc . Just
+   setCallback DisplayCB glutDisplayFunc makeDisplayCallback . Just
 
 foreign import ccall "wrapper" makeDisplayCallback ::
    DisplayCallback -> IO (FunPtr DisplayCallback)

@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# $Id: Makefile,v 1.8 2002/06/16 20:07:08 panne Exp $
+# $Id: Makefile,v 1.9 2002/06/30 20:59:59 panne Exp $
 
 TOP = ..
 include $(TOP)/mk/boilerplate.mk
@@ -26,12 +26,14 @@ PACKAGE_CPP_OPTS += -DGL_LIBS='$(patsubst %,$(comma)"%",$(GL_LIBS))'
 # -----------------------------------------------------------------------------
 
 STUBOBJS += \
-   Graphics/UI/GLUT/Callbacks/Window_stub.$(way_)o \
-   Graphics/UI/GLUT/Callbacks/Global_stub.$(way_)o
+   Graphics/UI/GLUT/Callbacks/Global_stub.$(way_)o \
+   Graphics/UI/GLUT/Callbacks/Registration_stub.$(way_)o \
+   Graphics/UI/GLUT/Callbacks/Window_stub.$(way_)o
 
 CLEAN_FILES += $(STUBOBJS) \
-   Graphics/UI/GLUT/Callbacks/Window_stub.[ch] \
-   Graphics/UI/GLUT/Callbacks/Global_stub.[ch]
+   Graphics/UI/GLUT/Callbacks/Global_stub.[ch] \
+   Graphics/UI/GLUT/Callbacks/Registration_stub.[ch] \
+   Graphics/UI/GLUT/Callbacks/Window_stub.[ch]
 
 # -----------------------------------------------------------------------------
 
