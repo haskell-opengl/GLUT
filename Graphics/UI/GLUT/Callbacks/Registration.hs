@@ -68,7 +68,7 @@ getCurrentWindow func = do
 -- This seems to be a common Haskell hack nowadays: A plain old global variable
 -- with an associated mutator. Perhaps some language/library support is needed?
 
-{-# notInline theCallbackTable #-}
+{-# NOINLINE theCallbackTable #-}
 theCallbackTable :: IORef (CallbackTable a)
 theCallbackTable = unsafePerformIO (newIORef emptyCallbackTable)
 
@@ -101,7 +101,7 @@ addToCallbackTable callbackID funPtr =
 -- Another global mutable variable: The list of function pointers ready to be
 -- freed by freeHaskellFunPtr
 
-{-# notInline theCleanupList #-}
+{-# NOINLINE theCleanupList #-}
 theCleanupList :: IORef [FunPtr a]
 theCleanupList = unsafePerformIO (newIORef [])
 
@@ -115,7 +115,7 @@ setCleanupList = writeIORef theCleanupList
 -- And yet another mutable (write-once) variable: A function pointer to a
 -- callback which frees all function pointers on the cleanup list.
 
-{-# notInline theScavenger #-}
+{-# NOINLINE theScavenger #-}
 theScavenger :: IORef (FunPtr TimerCallback)
 theScavenger = unsafePerformIO (newIORef =<< makeTimerCallback (\_ -> do
    cleanupList <- getCleanupList

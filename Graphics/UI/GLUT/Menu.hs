@@ -126,7 +126,7 @@ saveExcursion act = do
 -- This seems to be a common Haskell hack nowadays: A plain old global variable
 -- with an associated mutator. Perhaps some language/library support is needed?
 
-{-# notInline theMenuTable #-}
+{-# NOINLINE theMenuTable #-}
 theMenuTable :: IORef MenuTable
 theMenuTable = unsafePerformIO (newIORef emptyMenuTable)
 
