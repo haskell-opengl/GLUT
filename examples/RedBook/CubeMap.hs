@@ -57,7 +57,7 @@ myInit = do
    textureGenMode T $= Just NormalMap
    textureGenMode R $= Just NormalMap
 
-   textureEnvMode $= Modulate
+   textureFunction $= Modulate
 
    texture TextureCubeMap $= Enabled
    lighting $= Enabled

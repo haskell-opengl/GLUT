@@ -54,7 +54,7 @@ display ::  Maybe TextureObject -> DisplayCallback
 display mbTexName = do
    clear [ ColorBuffer, DepthBuffer ]
    texture Texture2D $= Enabled
-   textureEnvMode $= Decal
+   textureFunction $= Decal
    when (isJust mbTexName) $ textureBinding Texture2D $= mbTexName
    
    -- resolve overloading, not needed in "real" programs

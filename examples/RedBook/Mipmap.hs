@@ -52,7 +52,7 @@ myInit = do
                 Color4   0   0 255 255,
                 Color4 255 255 255 255 ]
 
-   textureEnvMode $= Decal
+   textureFunction $= Decal
    texture Texture2D $= Enabled
    return mbTexName
 

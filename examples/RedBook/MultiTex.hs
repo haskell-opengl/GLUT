@@ -42,7 +42,7 @@ myInit = do
    activeTexture $= TextureUnit 0
    texture Texture2D $= Enabled
    textureBinding Texture2D $= Just texName0
-   textureEnvMode $= Replace
+   textureFunction $= Replace
    matrixMode $= Texture
    loadIdentity
    translate (Vector3 0.5 0.5 (0 :: GLfloat))
@@ -52,7 +52,7 @@ myInit = do
    activeTexture $= TextureUnit 1
    texture Texture2D $= Enabled
    textureBinding Texture2D $= Just texName1
-   textureEnvMode $= Modulate
+   textureFunction $= Modulate
 
 display ::  DisplayCallback
 display = do

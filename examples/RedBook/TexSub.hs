@@ -56,7 +56,7 @@ display :: TextureObject -> DisplayCallback
 display texName = do
    clear [ ColorBuffer, DepthBuffer ]
    texture Texture2D $= Enabled
-   textureEnvMode $= Decal
+   textureFunction $= Decal
    textureBinding Texture2D $= Just texName
    
    -- resolve overloading, not needed in "real" programs

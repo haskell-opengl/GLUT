@@ -55,7 +55,7 @@ myInit = do
    textureFilter Texture1D $= ((Linear', Nothing), Linear')
    withStripeImage $ texImage1D NoProxy 0  RGBA' stripeImageWidth 0
 
-   textureEnvMode $= Modulate
+   textureFunction $= Modulate
    textureGenMode S $= Just (ObjectLinear xEqualZero)
 
    texture Texture1D $= Enabled
