@@ -16,7 +16,8 @@
 
 module Graphics.UI.GLUT.State (
   -- * Type synonyms
-  NumChildren, NumSamples, NumBits, NumButtons, NumDials, NumAxes, PollRate,
+  SubWindowCount, SampleCount, BufferDepth, ButtonCount, ButtonIndex, DialCount,
+  DialIndex, AxisCount, PollRate,
 
   -- * Initial window parameters
   getInitWindowPosition, getInitWindowSize, getInitDisplayMode,
@@ -24,18 +25,18 @@ module Graphics.UI.GLUT.State (
 
   -- * State of the /current window/
   getWindowPosition, getWindowSize,
-  getParent, getNumChildren,
+  getParent, getSubWindowCount,
   getCursor,
-  isRGBA, getNumColorBits,
-  getNumBufferBits, getNumColormapEntries,
+  isRGBA, getRGBABufferDepths,
+  getColorBufferDepth, getColormapEntryCount,
   isDoubleBuffered, isStereo,
-  getNumAccumBits, getNumDepthBits, getNumStencilBits,
-  getNumSamples, getFormatID,
+  getAccumBufferDepths, getDepthBufferDepth, getStencilBufferDepth,
+  getSampleCount, getFormatID,
 
   -- * Miscellaneous
-  getElapsedTime, getNumMenuItems,
+  getElapsedTime, getMenuItemCount,
 
-  -- * GLUT state pertaining to the layers of the  /current window/
+  -- * GLUT state pertaining to the layers of the /current window/
   isOverlayPossible, getLayerInUse, isOverlayEstablished, getTransparentIndex,
   isNormalDamaged, isOverlayDamaged,
 
@@ -84,27 +85,35 @@ import Graphics.UI.GLUT.Window ( Window, makeWindow, Cursor(..) )
 
 -- | Number of children of a window
 
-type NumChildren = CInt
+type SubWindowCount = CInt
 
 -- | Number of samples for multisampling
 
-type NumSamples = CInt
+type SampleCount = CInt
 
 -- | Bit depth of a buffer
 
-type NumBits = CInt
+type BufferDepth = CInt
 
 -- | Number of buttons of an input device
 
-type NumButtons = CInt
+type ButtonCount = CInt
+
+-- | The index of a specific buttons of an input device
+
+type ButtonIndex = CInt
 
 -- | Number of dials of a dial and button box
 
-type NumDials = CInt
+type DialCount = CInt
+
+-- | The index of a specific dial of a dial and button box
+
+type DialIndex = CInt
 
 -- | Number of axes of a joystick
 
-type NumAxes  = CInt
+type AxisCount  = CInt
 
 -- | The a rate at which a joystick is polled (in milliseconds)
 
@@ -168,8 +177,8 @@ getParent = do
 -- | Return the number of subwindows the /current window/ has, not counting
 -- children of children.
 
-getNumChildren :: IO NumChildren
-getNumChildren = get id glut_WINDOW_NUM_CHILDREN
+getSubWindowCount :: IO SubWindowCount
+getSubWindowCount = get id glut_WINDOW_NUM_CHILDREN
 
 -- | Return the current cursor for the /current window./
 
@@ -185,8 +194,8 @@ isRGBA = get i2b glut_WINDOW_RGBA
 -- | Return the number of red, green, blue, and alpha bits in the color buffer
 -- of the /current window\'s/ current layer (0 in color index mode).
 
-getNumColorBits :: IO (NumBits, NumBits, NumBits, NumBits)
-getNumColorBits = do
+getRGBABufferDepths :: IO (BufferDepth, BufferDepth, BufferDepth, BufferDepth)
+getRGBABufferDepths = do
    r <- get id glut_WINDOW_RED_SIZE
    g <- get id glut_WINDOW_GREEN_SIZE
    b <- get id glut_WINDOW_BLUE_SIZE
@@ -198,14 +207,14 @@ getNumColorBits = do
 -- green, blue, and alpha bits. For an color index layer, this is the number
 -- of bits of the color indexes.
 
-getNumBufferBits :: IO NumBits
-getNumBufferBits = get id glut_WINDOW_BUFFER_SIZE
+getColorBufferDepth :: IO BufferDepth
+getColorBufferDepth = get id glut_WINDOW_BUFFER_SIZE
 
 -- | Return the number of entries in the colormap of the /current window\'s/
 -- current layer (0 in RGBA mode).
 
-getNumColormapEntries :: IO (ColorIndex CInt)
-getNumColormapEntries = get ColorIndex glut_WINDOW_COLORMAP_SIZE
+getColormapEntryCount :: IO CInt
+getColormapEntryCount = get id glut_WINDOW_COLORMAP_SIZE
 
 -- | Test whether the current layer of the /current window/ is double buffered.
 
@@ -220,8 +229,8 @@ isStereo = get i2b glut_WINDOW_STEREO
 -- | Return the number of red, green, blue, and alpha bits in the accumulation
 -- buffer of the /current window\'s/ current layer (0 in color index mode).
 
-getNumAccumBits :: IO (NumBits, NumBits, NumBits, NumBits)
-getNumAccumBits = do
+getAccumBufferDepths :: IO (BufferDepth, BufferDepth, BufferDepth, BufferDepth)
+getAccumBufferDepths = do
    r <- get id glut_WINDOW_ACCUM_RED_SIZE
    g <- get id glut_WINDOW_ACCUM_GREEN_SIZE
    b <- get id glut_WINDOW_ACCUM_BLUE_SIZE
@@ -231,19 +240,19 @@ getNumAccumBits = do
 -- | Return the number of bits in the depth buffer of the /current window\'s/
 -- current layer.
 
-getNumDepthBits :: IO NumBits
-getNumDepthBits = get id glut_WINDOW_DEPTH_SIZE
+getDepthBufferDepth :: IO BufferDepth
+getDepthBufferDepth = get id glut_WINDOW_DEPTH_SIZE
 
 -- | Return the number of bits in the stencil buffer of the /current window\'s/
 -- current layer.
 
-getNumStencilBits :: IO NumBits
-getNumStencilBits = get id glut_WINDOW_STENCIL_SIZE
+getStencilBufferDepth :: IO BufferDepth
+getStencilBufferDepth = get id glut_WINDOW_STENCIL_SIZE
 
 -- | Return the number of samples for multisampling for the /current window./
 
-getNumSamples :: IO NumSamples
-getNumSamples = get id glut_WINDOW_NUM_SAMPLES
+getSampleCount :: IO SampleCount
+getSampleCount = get id glut_WINDOW_NUM_SAMPLES
 
 -- | Return the window system dependent format ID for the current layer of the
 -- /current window/. On X11 GLUT implementations, this is the X visual ID. On
@@ -264,8 +273,8 @@ getElapsedTime = get id glut_ELAPSED_TIME
 
 -- | Return the number of menu items in the /current menu./
 
-getNumMenuItems :: IO CInt
-getNumMenuItems = get id glut_MENU_NUM_ITEMS
+getMenuItemCount :: IO CInt
+getMenuItemCount = get id glut_MENU_NUM_ITEMS
 
 --------------------------------------------------------------------------------
 
@@ -397,7 +406,7 @@ getDeviceInfo dev act = do
 
 -- | The number of buttons of a mouse
 
-newtype MouseInfo = MouseInfo NumButtons
+newtype MouseInfo = MouseInfo ButtonCount
    deriving ( Eq, Ord )
 
 -- | Return 'Just' the number of buttons of an attached mouse or 'Nothing' if
@@ -411,7 +420,7 @@ getMouseInfo = getDeviceInfo glut_HAS_MOUSE $
 
 -- | The number of buttons of a Spaceball
 
-newtype SpaceballInfo = SpaceballInfo NumButtons
+newtype SpaceballInfo = SpaceballInfo ButtonCount
    deriving ( Eq, Ord )
 
 -- | Return 'Just' the number of buttons of the attached Spaceball or 'Nothing'
@@ -425,7 +434,7 @@ getSpaceballInfo = getDeviceInfo glut_HAS_SPACEBALL $
 
 -- | The number of dials and buttons of a dial & button box
 
-data DialAndButtonBoxInfo = DialAndButtonBoxInfo NumDials NumButtons
+data DialAndButtonBoxInfo = DialAndButtonBoxInfo DialCount ButtonCount
    deriving ( Eq, Ord )
 
 -- | Return 'Just' the number of dials and buttons of an attached dial & button
@@ -441,7 +450,7 @@ getDialAndButtonBoxInfo = getDeviceInfo glut_HAS_DIAL_AND_BUTTON_BOX $ do
 
 -- | The number of buttons of a tablet
 
-newtype TabletInfo = TabletInfo NumButtons
+newtype TabletInfo = TabletInfo ButtonCount
    deriving ( Eq, Ord )
 
 -- | Return 'Just' the number of buttons of an attached tablet or 'Nothing' if
@@ -455,7 +464,7 @@ getTabletInfo = getDeviceInfo glut_HAS_TABLET $
 
 -- | Information about a joystick
 
-data JoystickInfo = JoystickInfo NumButtons PollRate NumAxes
+data JoystickInfo = JoystickInfo ButtonCount PollRate AxisCount
    deriving ( Eq, Ord )
 
 -- | Return 'Just' some information about an attached joystick or 'Nothing' if

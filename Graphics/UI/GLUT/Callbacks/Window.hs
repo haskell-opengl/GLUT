@@ -52,7 +52,7 @@ import Foreign.C.Types ( CInt, CUInt, CUChar )
 import Foreign.Ptr ( FunPtr )
 import Graphics.UI.GLUT.Callbacks.Registration ( CallbackType(..), setCallback )
 import Graphics.UI.GLUT.Initialization ( WindowSize(..), WindowPosition(..) )
-import Graphics.UI.GLUT.State ( NumButtons, NumDials, PollRate )
+import Graphics.UI.GLUT.State ( ButtonIndex, DialIndex, PollRate )
 import Graphics.UI.GLUT.Constants
 
 --------------------------------------------------------------------------------
@@ -563,7 +563,7 @@ type SpaceballRotation = CInt
 data SpaceballInput
    = SpaceballMotion   SpaceballMotion SpaceballMotion SpaceballMotion
    | SpaceballRotation SpaceballRotation SpaceballRotation SpaceballRotation
-   | SpaceballButton   NumButtons KeyState
+   | SpaceballButton   ButtonIndex KeyState
 
 -- | A SpaceballButton callback
 
@@ -625,7 +625,7 @@ foreign import CALLCONV unsafe "glutSpaceballRotateFunc" glutSpaceballRotateFunc
 
 --------------------------------------------------------------------------------
 
-type SpaceballButtonCallback = NumButtons -> KeyState -> IO ()
+type SpaceballButtonCallback = ButtonIndex -> KeyState -> IO ()
 
 type SpaceballButtonCallback' = CInt -> CInt -> IO ()
 
@@ -646,8 +646,8 @@ foreign import CALLCONV unsafe "glutSpaceballButtonFunc"
 -- | The dial & button box state has changed.
 
 data DialAndButtonBoxInput
-   = DialAndButtonBoxButton NumButtons KeyState
-   | DialAndButtonBoxDial   NumDials CInt
+   = DialAndButtonBoxButton ButtonIndex KeyState
+   | DialAndButtonBoxDial   DialIndex CInt
    deriving ( Eq, Ord )
 
 -- | A dial & button box callback
@@ -675,7 +675,7 @@ setDialAndButtonBoxCallback (Just cb) = do
 
 --------------------------------------------------------------------------------
 
-type ButtonBoxCallback = NumButtons -> KeyState -> IO ()
+type ButtonBoxCallback = ButtonIndex -> KeyState -> IO ()
 
 type ButtonBoxCallback' = CInt -> CInt -> IO ()
 
@@ -692,7 +692,7 @@ foreign import CALLCONV unsafe "glutButtonBoxFunc" glutButtonBoxFunc ::
 
 --------------------------------------------------------------------------------
 
-type DialsCallback = NumDials -> CInt -> IO ()
+type DialsCallback = DialIndex -> CInt -> IO ()
 
 setDialsCallback :: Maybe DialsCallback -> IO ()
 setDialsCallback =
@@ -716,7 +716,7 @@ data TabletPosition = TabletPosition CInt CInt
 
 data TabletInput
    = TabletMotion
-   | TabletButton NumButtons KeyState
+   | TabletButton ButtonIndex KeyState
 
 -- | A tablet callback
 
@@ -760,7 +760,7 @@ foreign import CALLCONV unsafe "glutTabletMotionFunc" glutTabletMotionFunc ::
 
 --------------------------------------------------------------------------------
 
-type TabletButtonCallback = NumButtons -> KeyState -> TabletPosition -> IO ()
+type TabletButtonCallback = ButtonIndex -> KeyState -> TabletPosition -> IO ()
 
 type TabletButtonCallback' = CInt -> CInt -> CInt -> CInt -> IO ()
 

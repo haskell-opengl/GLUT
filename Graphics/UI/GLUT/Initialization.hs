@@ -17,8 +17,8 @@
 -- The other @init@-actions may be called before 'init'. The reason is these
 -- actions can be used to set default window initialization state that might
 -- be modified by the command processing done in 'init'. For example,
--- @'initWindowSize' ('WindowSize' 400 400)@ can be called before 'init' to
--- indicate 400 by 400 is the program\'s default window size. Setting the
+-- @'setInitialWindowSize' ('WindowSize' 400 400)@ can be called before 'init'
+-- to indicate 400 by 400 is the program\'s default window size. Setting the
 -- initial window size or position before 'init' allows the GLUT program user
 -- to specify the initial size or position using command line arguments.
 --
@@ -29,16 +29,17 @@ module Graphics.UI.GLUT.Initialization (
    init, initArgs,
 
    -- * Setting the initial window geometry
-   WindowPosition(..), initWindowPosition,
-   WindowSize(..), initWindowSize,
+   WindowPosition(..), setInitialWindowPosition,
+   WindowSize(..), setInitialWindowSize,
 
    -- * Setting the initial window mode (I)
-   DisplayMode(..), initDisplayMode,
+   DisplayMode(..), setInitialDisplayMode,
    marshalDisplayMode,   -- used only internally
 
    -- * Setting the initial window mode (II)
    relationToString,   -- used only internally
-   Capability(..), Relation(..), CapabilityDescription(..), initDisplay
+   Capability(..), Relation(..), CapabilityDescription(..),
+   setInitialDisplayCapabilities
 ) where
 
 import Prelude hiding ( init )
@@ -77,7 +78,7 @@ import Graphics.UI.GLUT.Constants
 --   screen. The parameter following @-geometry@ should be formatted as a
 --   standard X geometry specification. The effect of using this option is to
 --   change the GLUT initial size and initial position the same as if
---   'initWindowSize' or 'initWindowPosition' were called directly.
+--   'setInitialWindowSize' or 'setInitialWindowPosition' were called directly.
 --
 -- * @-iconic@: Requests all top-level windows be created in an iconic state.
 --
@@ -142,8 +143,8 @@ data WindowPosition = WindowPosition CInt CInt
 -- not obligated to use this information. Therefore, GLUT programs should not
 -- assume the window was created at the specified position.
 
-initWindowPosition :: WindowPosition -> IO ()
-initWindowPosition (WindowPosition x y) = glutInitWindowPosition x y
+setInitialWindowPosition :: WindowPosition -> IO ()
+setInitialWindowPosition (WindowPosition x y) = glutInitWindowPosition x y
 
 foreign import CALLCONV unsafe "glutInitWindowPosition" glutInitWindowPosition
    :: CInt -> CInt -> IO ()
@@ -164,8 +165,8 @@ data WindowSize = WindowSize CInt CInt
 -- use the window\'s reshape callback to determine the true size of the
 -- window.
 
-initWindowSize :: WindowSize -> IO ()
-initWindowSize (WindowSize w h) = glutInitWindowSize w h
+setInitialWindowSize :: WindowSize -> IO ()
+setInitialWindowSize (WindowSize w h) = glutInitWindowSize w h
 
 foreign import CALLCONV unsafe "glutInitWindowSize" glutInitWindowSize ::
    CInt -> CInt -> IO ()
@@ -173,7 +174,7 @@ foreign import CALLCONV unsafe "glutInitWindowSize" glutInitWindowSize ::
 --------------------------------------------------------------------------------
 
 -- | A single aspect of a window which is to be created, used in conjunction
--- with 'initDisplayMode'.
+-- with 'setInitialDisplayMode'.
 
 data DisplayMode
    = RGBA        -- ^ Select an RGBA mode window. This is the default if neither 'RGBA' nor 'Index' are specified.
@@ -221,8 +222,8 @@ marshalDisplayMode m = case m of
 -- be allocated. To request alpha, specify 'Alpha'. The same applies to
 -- 'Luminance'.
 
-initDisplayMode :: [DisplayMode] -> IO ()
-initDisplayMode = glutInitDisplayMode . toBitfield marshalDisplayMode
+setInitialDisplayMode :: [DisplayMode] -> IO ()
+setInitialDisplayMode = glutInitDisplayMode . toBitfield marshalDisplayMode
 
 toBitfield :: (Bits b) => (a -> b) -> [a] -> b
 toBitfield marshal = foldl (.|.) 0 . map marshal
@@ -232,7 +233,7 @@ foreign import CALLCONV unsafe "glutInitDisplayMode" glutInitDisplayMode ::
 
 --------------------------------------------------------------------------------
 
--- | Capabilities for 'initDisplay', most of them are extensions of
+-- | Capabilities for 'setInitialDisplayCapabilities', most of them are extensions of
 -- 'DisplayMode'\'s constructors.
 
 data Capability
@@ -299,7 +300,7 @@ data Capability
    | Num          -- ^ A special capability name indicating where the value
                   --   represents the Nth frame buffer configuration matching
                   --   the description string. When not specified,
-                  --   'initDisplayString' also returns the first (best
+                  --   'setInitialDisplayCapabilitiesString' also returns the first (best
                   --   matching) configuration. 'Num' requires a relation and
                   --   numeric value.
    | Conformant   -- ^ Boolean indicating if the frame buffer configuration is
@@ -412,7 +413,7 @@ relationToString IsGreaterThan    = ">"
 relationToString IsAtLeast        = ">="
 relationToString IsNotLessThan    = "~"
 
--- | A single capability description for 'initDisplay'.
+-- | A single capability description for 'setInitialDisplayCapabilities'.
 
 data CapabilityDescription
    = Where Capability Relation CInt -- ^ A description of a capability with a
@@ -439,17 +440,17 @@ capabilityDescriptionToString (With c) = capabilityToString c
 -- 'IsNotEqualTo') must match exactly so precedence is not relevant.
 --
 -- Unspecified capability descriptions will result in unspecified criteria being
--- generated. These unspecified criteria help 'initDisplay' behave sensibly with
--- terse display mode descriptions.
+-- generated. These unspecified criteria help 'setInitialDisplayCapabilities'
+-- behave sensibly with terse display mode descriptions.
 --
--- Here is an example using 'initDisplay':
+-- Here is an example using 'setInitialDisplayCapabilities':
 --
 -- @
---    initDisplay [ With  RGB\',
---                  Where Depth\' IsAtLeast 16,
---                  With  Samples,
---                  Where Stencil\' IsNotLessThan 2,
---                  With  Double\' ]
+--    setInitialDisplayCapabilities [ With  RGB\',
+--                                    Where Depth\' IsAtLeast 16,
+--                                    With  Samples,
+--                                    Where Stencil\' IsNotLessThan 2,
+--                                    With  Double\' ]
 -- @
 --
 -- The above call requests a window with an RGBA color model (but requesting
@@ -458,8 +459,8 @@ capabilityDescriptionToString (With c) = capabilityToString c
 -- (favoring less stencil to more as long as 2 bits are available), and double
 -- buffering.
 
-initDisplay :: [CapabilityDescription] -> IO ()
-initDisplay settings =
+setInitialDisplayCapabilities :: [CapabilityDescription] -> IO ()
+setInitialDisplayCapabilities settings =
    withCString
       (concat . intersperse " " . map capabilityDescriptionToString $ settings)
       glutInitDisplayString
