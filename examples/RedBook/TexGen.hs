@@ -85,8 +85,9 @@ reshape size@(Size w h) = do
        hf = fromIntegral h
    if w <= h
       then ortho (-3.5) 3.5 (-3.5*hf/wf) (3.5*hf/wf) (-3.5) 3.5
-      else ortho (-3.5*hf/wf) (3.5*hf/wf) (-3.5) 3.5 (-3.5) 3.5
+      else ortho (-3.5*wf/hf) (3.5*wf/hf) (-3.5) 3.5 (-3.5) 3.5
    matrixMode $= Modelview 0
+   loadIdentity
 
 keyboard :: KeyboardMouseCallback
 keyboard (Char c) Down _ _ = case toLower c of
