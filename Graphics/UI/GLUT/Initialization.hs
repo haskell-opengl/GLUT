@@ -9,18 +9,19 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- Actions in this module are used to initialize GLUT state. The primary
--- initialization routine is 'initialize', which should only be called exactly
--- once in a GLUT program. No other GLUT or OpenGL actions should be called
--- before 'initialize', apart from the other actions in this module.
+-- Actions and state variables in this module are used to initialize GLUT state.
+-- The primary initialization routine is 'initialize', which should only be
+-- called exactly once in a GLUT program. No other GLUT or OpenGL actions should
+-- be called before 'initialize', apart from getting or setting the state
+-- variables in this module.
 --
--- The reason is that these actions below can be used to set default window
+-- The reason is that these state variables can be used to set default window
 -- initialization state that might be modified by the command processing done in
--- 'initialize'. For example, @'setInitialWindowSize' ('WindowSize' 400 400)@
--- can be called before 'initialize' to indicate 400 by 400 is the program\'s
--- default window size. Setting the initial window size or position before
--- 'initialize' allows the GLUT program user to specify the initial size or
--- position using command line arguments.
+-- 'initialize'. For example, 'initialWindowSize' can be set to @('WindowSize'
+-- 400 400)@ before 'initialize' is called to indicate 400 by 400 is the
+-- program\'s default window size. Setting the initial window size or position
+-- before 'initialize' allows the GLUT program user to specify the initial size
+-- or position using command line arguments.
 --
 --------------------------------------------------------------------------------
 
@@ -193,7 +194,7 @@ foreign import CALLCONV unsafe "glutInitWindowSize" glutInitWindowSize ::
 --------------------------------------------------------------------------------
 
 -- | A single aspect of a window which is to be created, used in conjunction
--- with 'setInitialDisplayMode'.
+-- with 'initialDisplayMode'.
 
 data DisplayMode
    = RGBA        -- ^ Select an RGBA mode window. This is the default if neither 'RGBA' nor 'Index' are specified.
@@ -272,8 +273,8 @@ isDisplayModePossible = simpleGet (/= 0) glut_DISPLAY_MODE_POSSIBLE
 
 --------------------------------------------------------------------------------
 
--- | Capabilities for 'setInitialDisplayCapabilities', most of them are extensions of
--- 'DisplayMode'\'s constructors.
+-- | Capabilities for 'initialDisplayCapabilities', most of them are extensions
+-- of 'DisplayMode'\'s constructors.
 
 data Capability
    = RGBA'        -- ^ Number of bits of red, green, blue, and alpha in the RGBA
@@ -339,9 +340,9 @@ data Capability
    | Num          -- ^ A special capability name indicating where the value
                   --   represents the Nth frame buffer configuration matching
                   --   the description string. When not specified,
-                  --   'setInitialDisplayCapabilitiesString' also returns the first (best
-                  --   matching) configuration. 'Num' requires a relation and
-                  --   numeric value.
+                  --   'initialDisplayCapabilitiesString' also returns the first
+                  --   (best matching) configuration. 'Num' requires a relation
+                  --   and numeric value.
    | Conformant   -- ^ Boolean indicating if the frame buffer configuration is
                   --   conformant or not. Conformance information is based on
                   --   GLX\'s @EXT_visual_rating@ extension if supported. If the
@@ -452,7 +453,7 @@ relationToString IsGreaterThan    = ">"
 relationToString IsAtLeast        = ">="
 relationToString IsNotLessThan    = "~"
 
--- | A single capability description for 'setInitialDisplayCapabilities'.
+-- | A single capability description for 'initialDisplayCapabilities'.
 
 data CapabilityDescription
    = Where Capability Relation CInt -- ^ A description of a capability with a
@@ -479,13 +480,13 @@ capabilityDescriptionToString (With c) = capabilityToString c
 -- 'IsNotEqualTo') must match exactly so precedence is not relevant.
 --
 -- Unspecified capability descriptions will result in unspecified criteria being
--- generated. These unspecified criteria help 'setInitialDisplayCapabilities'
+-- generated. These unspecified criteria help 'initialDisplayCapabilities'
 -- behave sensibly with terse display mode descriptions.
 --
--- Here is an example using 'setInitialDisplayCapabilities':
+-- Here is an example using 'initialDisplayCapabilities':
 --
 -- @
---    setInitialDisplayCapabilities [ With  RGB\',
+--    initialDisplayCapabilities $= [ With  RGB\',
 --                                    Where Depth\' IsAtLeast 16,
 --                                    With  Samples,
 --                                    Where Stencil\' IsNotLessThan 2,
