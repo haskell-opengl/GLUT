@@ -99,7 +99,7 @@ Chapter 12: Evaluators and NURBS
         BezCurve.hs     (1.1)
         BezSurf.hs      (1.1)
         BezMesh.hs      (1.1)
-        Texturesurf.hs  (1.1)
+        TextureSurf.hs  (1.1)
         Surface.hs      (1.1)
         SurfPoints.hs   (1.2)
         Trim.hs         (1.1)
