@@ -14,8 +14,7 @@
    star will make the interior unshaded (TessWindingOdd).
 -}
 
-import Foreign.Storable ( Storable )
-import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
+import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
 display :: [DisplayList] -> DisplayCallback
@@ -76,30 +75,13 @@ myInit = do
 
    rectAndTriList <- defineNewList Compile $
       drawPolygonContours (\_ -> return ()) =<<
-         simpleContourExtractor TessWindingOdd noOpCombiner rectAndTri
+         extractContours TessWindingOdd 0 (Normal3 0 0 0) noOpCombiner rectAndTri
 
    starList <- defineNewList Compile $
       drawPolygonContours color =<<
-         simpleContourExtractor TessWindingPositive combineColors star
+         extractContours TessWindingPositive 0 (Normal3 0 0 0) combineColors star
 
    return [ rectAndTriList, starList ]
-
-simpleContourExtractor ::
-   Storable v =>
-   TessWinding -> Combiner v -> ComplexPolygon v -> IO (PolygonContours v)
-simpleContourExtractor windingRule combiner complexPolygon =
-   checkForError $
-      extractContours windingRule 0 (Normal3 0 0 0) combiner complexPolygon
-
-checkForError :: IO (Either Error (PolygonContours v)) -> IO (PolygonContours v)
-checkForError action = do
-   errorOrContours <- action
-   case errorOrContours of
-      Left (Error _category description) -> do
-         putStrLn description
-         exitFailure
-      Right contours ->
-         return contours
 
 drawPolygonContours :: (v -> IO ()) -> PolygonContours v -> IO ()
 drawPolygonContours colorHandler (PolygonContours simpleContours) =

@@ -14,7 +14,7 @@
    star will make the interior unshaded (TessWindingOdd).
 -}
 
-import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
+import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import System.Random ( randomIO )
 import Graphics.UI.GLUT
 
@@ -64,22 +64,9 @@ myInit = do
 
 compileNewList :: TessWinding -> ComplexPolygon DontCare -> IO DisplayList
 compileNewList windingRule complexPolygon =
-   defineNewList Compile $ do
-      triangulation <- 
-         checkForError $
-            triangulate windingRule 0 (Normal3 0 0 0) noOpCombiner complexPolygon
-      drawTriangulation triangulation
-
-checkForError ::
-   IO (Either Error (Triangulation DontCare)) -> IO (Triangulation DontCare)
-checkForError action = do
-   errorOrContours <- action
-   case errorOrContours of
-      Left (Error _category description) -> do
-         putStrLn description
-         exitFailure
-      Right contours ->
-         return contours
+   defineNewList Compile $
+      drawTriangulation =<<
+         triangulate windingRule 0 (Normal3 0 0 0) noOpCombiner complexPolygon
 
 noOpCombiner :: Combiner DontCare
 noOpCombiner _newVertex _weightedProperties = 0

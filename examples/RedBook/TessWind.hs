@@ -11,7 +11,7 @@
 
 import Data.Char ( toLower )
 import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
-import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
+import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
 type DisplayLists = (DisplayList, DisplayList, DisplayList, DisplayList)
@@ -104,21 +104,9 @@ makeNewLists currentWindingRule (dl1, dl2, dl3, dl4) = do
 
 compileList :: TessWinding -> DisplayList -> ComplexPolygon DontCare -> IO ()
 compileList windingRule displayList complexPolygon =
-   defineList displayList Compile $ do
-      simplePolygon <- checkForError $
+   defineList displayList Compile $
+      drawSimplePolygon =<<
          tessellate windingRule 0 (Normal3 0 0 0) noOpCombiner complexPolygon
-      drawSimplePolygon simplePolygon
-
-checkForError ::
-   IO (Either Error (SimplePolygon DontCare)) -> IO (SimplePolygon DontCare)
-checkForError action = do
-   errorOrContours <- action
-   case errorOrContours of
-      Left (Error _category description) -> do
-         putStrLn description
-         exitFailure
-      Right contours ->
-         return contours
 
 noOpCombiner :: Combiner DontCare
 noOpCombiner _newVertex _weightedProperties = 0
