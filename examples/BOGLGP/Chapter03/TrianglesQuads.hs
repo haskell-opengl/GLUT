@@ -1,6 +1,6 @@
 {-
    TrianglesQuads.hs (adapted from TrianglesQuads.hs which is (c) 2004 Astle/Hawkins)
-   Copyright (c) Sven Panne 2004 <sven.panne@aedion.de>
+   Copyright (c) Sven Panne 2004-2005 <sven.panne@aedion.de>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 -}
