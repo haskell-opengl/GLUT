@@ -4,7 +4,7 @@ QUIP=quip
 SKRIPTE=scripts
 JAVAC="javac -source 1.5 -encoding iso-8859-1 -Xlint:unchecked"
 # TODO: This should be ghc-inplace...
-GHC="ghc -O -Wall"
+GHC="ghc -O -Wall -v0"
 
 rm -rf src obj bin
 mkdir src obj bin
@@ -32,7 +32,7 @@ while test $X -le $Y; do
 
    MAIN=`${QUIP} -unwrapped_result -input header.xml -query 'let $klassen := input()//code[string(@class)="'$NAME'"]  return if (count($klassen/@main)=0) then "no" else string(($klassen/@main)[1])';`
 
-   echo "*** header no. $X, name $NAME, option $OPTION, language $LANG, package $PACK, main $MAIN"
+   # echo "*** header no. $X, name $NAME, option $OPTION, language $LANG, package $PACK, main $MAIN"
 
    mkdir src/$PACK
    mkdir obj/$PACK
@@ -89,11 +89,16 @@ while test $X -le $Y; do
       let $l := string(input()/*/*/main)
       return if ($l="") then "no" else $l';`
 
-   echo "*** file no. $X, name $NAME, option $OPTION, language $LANG, package $PACK, main $MAIN"
+   # echo "*** file no. $X, name $NAME, option $OPTION, language $LANG, package $PACK, main $MAIN"
 
-   mkdir -p src/$PACK
+   if test x$PACK = x.; then
+      SEPPACK=
+   else
+      SEPPACK=/$PACK
+   fi
+   mkdir -p src$SEPPACK
 
-   ${QUIP} -value_output -unwrapped_result  -input code.xml  -o src/$PACK/$NAME.$LANG -query '
+   ${QUIP} -value_output -unwrapped_result -input code.xml -o src$SEPPACK/$NAME.$LANG -query '
 define function further($x) {
   if (node-kind($x) = "text") then $x  
   else if (name($x)=QName("w")) then " " 
@@ -116,8 +121,10 @@ string((
        case $MAIN in
           main) ${GHC} $OPTION --make -o ../bin/$PACK/$NAME $PACK/$NAME.$LANG
                 strip ../bin/$PACK/$NAME ;;
-          no) echo "no main" ;;
-          *) echo $MAIN; $MAIN ;;
+          no) # echo "no main"
+              ;;
+          *) # echo $MAIN; $MAIN
+             ;;
        esac
        cd ..
    esac;
