@@ -10,8 +10,8 @@
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
-fly :: PolygonStipple
-fly = makePolygonStipple $ [
+fly :: IO GLpolygonstipple
+fly = newPolygonStipple [
    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
    0x03, 0x80, 0x01, 0xC0, 0x06, 0xC0, 0x03, 0x60,
    0x04, 0x60, 0x06, 0x20, 0x04, 0x30, 0x0C, 0x20,
@@ -29,12 +29,12 @@ fly = makePolygonStipple $ [
    0x10, 0x63, 0xC6, 0x08, 0x10, 0x30, 0x0c, 0x08,
    0x10, 0x18, 0x18, 0x08, 0x10, 0x00, 0x00, 0x08]
 
-halftone :: PolygonStipple
-halftone = makePolygonStipple . take 128 . cycle $ [
+halftone :: IO GLpolygonstipple
+halftone = newPolygonStipple . take 128 . cycle $ [
    0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55]
 
-display :: DisplayCallback
-display = do
+display :: (GLpolygonstipple, GLpolygonstipple) -> DisplayCallback
+display (flyStipple, halftoneStipple) = do
    clear [ ColorBuffer ]
    -- resolve overloading, not needed in "real" programs
    let color3f = color :: Color3 GLfloat -> IO ()
@@ -44,18 +44,21 @@ display = do
    -- draw one solid, unstippled rectangle,
    -- then two stippled rectangles
    rectf (Vertex2  25 25) (Vertex2 125 125)
-   polygonStipple $= Just fly
+   polygonStipple $= Just flyStipple
    rectf (Vertex2 125 25) (Vertex2 225 125)
-   polygonStipple $= Just halftone
+   polygonStipple $= Just halftoneStipple
    rectf (Vertex2 225 25) (Vertex2 325 125)
-   polygonStipple $= Nothing
+   polygonStipple $= (Nothing :: Maybe GLpolygonstipple)
 
    flush
 
-myInit :: IO ()
+myInit :: IO (GLpolygonstipple, GLpolygonstipple)
 myInit = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Flat
+   flyStipple <- fly
+   halftoneStipple <- halftone
+   return (flyStipple, halftoneStipple)
 
 reshape :: ReshapeCallback
 reshape size@(Size w h) = do
@@ -74,8 +77,8 @@ main = do
    initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 350 150
    createWindow progName
-   myInit
-   displayCallback $= display
+   stipples <- myInit
+   displayCallback $= display stipples
    reshapeCallback $= Just reshape
    keyboardMouseCallback $= Just keyboard
    mainLoop
