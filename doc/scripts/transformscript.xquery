@@ -180,7 +180,7 @@ define function transform($x,$lang){
   return
   if (node-kind($x) = "text") then $x
   else if ($tag=QName("skript")) then
-    (startLatex(string($x/@lang),"report","\usepackage{chappg }")
+    (startLatex(string($x/@lang),"report","%\usepackage{chappg }")
     ,further($x,string($x/@lang))
     ,endLatex())
   else if ($tag=QName("articleSkript")) then
