@@ -24,7 +24,7 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.GameMode (
-   Capability'(..), CapabilityDescription'(..), initGameMode,
+   Capability'(..), CapabilityDescription'(..), setGameModeCapabilities,
    enterGameMode, leaveGameMode,
    BitsPerPlane, RefreshRate, GameModeInfo(..), getGameModeInfo,
    isGameModeActive
@@ -42,7 +42,7 @@ import Graphics.UI.GLUT.Window ( Window, makeWindow )
 
 --------------------------------------------------------------------------------
 
--- | Capabilities for 'initGameMode'
+-- | Capabilities for 'setGameModeCapabilities'
 
 data Capability'
    = Width         -- ^ Width of the screen resolution in pixels
@@ -60,7 +60,7 @@ capabilityToString BitsPerPlane = "bpp"
 capabilityToString RefreshRate  = "hertz"
 capabilityToString Num'         = "num"
 
--- | A single capability description for 'initGameMode'.
+-- | A single capability description for 'setGameModeCapabilities'.
 
 data CapabilityDescription' = Where' Capability' Relation CInt
    deriving ( Eq, Ord )
@@ -87,12 +87,13 @@ capabilityDescriptionToString (Where' c r i) =
 -- (if any), use 'getGameModeInfo'.
 --
 -- Note that even for game mode previous calls to
--- 'Graphics.UI.GLUT.Initialization.initDisplayMode'or
--- 'Graphics.UI.GLUT.Initialization.initDisplay' will determine which buffers
--- are available, if double buffering is used or not, etc.
+-- 'Graphics.UI.GLUT.Initialization.setInitialDisplayMode'or
+-- 'Graphics.UI.GLUT.Initialization.setInitialDisplayCapabilities' will
+-- determine which buffers are available, if double buffering is used or not,
+-- etc.
 
-initGameMode :: [CapabilityDescription'] -> IO ()
-initGameMode settings =
+setGameModeCapabilities :: [CapabilityDescription'] -> IO ()
+setGameModeCapabilities settings =
    withCString
       (concat . intersperse " " . map capabilityDescriptionToString $ settings)
       glutGameModeString
@@ -103,9 +104,9 @@ foreign import CALLCONV unsafe "glutGameModeString" glutGameModeString ::
 --------------------------------------------------------------------------------
 
 -- | Enter /game mode/, trying to change resolution, refresh rate, etc., as
--- specified by the last call to 'initGameMode'. An identifier for the game
--- mode window and a flag, indicating if the display mode actually changed, are
--- returned. The game mode window is made the /current window/.
+-- specified by the last call to 'setGameModeCapabilities'. An identifier for
+-- the game mode window and a flag, indicating if the display mode actually
+-- changed, are returned. The game mode window is made the /current window/.
 --
 -- Re-entering /game mode/ is allowed, the previous game mode window gets
 -- destroyed by this, and a new one is created.
@@ -145,8 +146,8 @@ data GameModeInfo = GameModeInfo WindowSize BitsPerPlane RefreshRate
 
 -- | Return 'Just' the mode which would be tried by the next call to
 -- 'enterGameMode'. Returns 'Nothing' if the mode requested by the last call to
--- 'initGameMode' is not possible, in which case 'enterGameMode' would simply
--- create a full screen window using the current mode.
+-- 'setGameModeCapabilities' is not possible, in which case 'enterGameMode'
+-- would simply create a full screen window using the current mode.
 --
 -- /X Implementation Notes:/ GLUT for X will always return 'Nothing'.
 
