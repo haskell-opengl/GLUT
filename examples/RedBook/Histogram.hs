@@ -8,9 +8,10 @@
    the histogram function.
 -}
 
-import Control.Monad
-import Foreign
-import Foreign.Marshal.Array
+import Control.Monad ( zipWithM_ )
+import Foreign.Ptr ( Ptr )
+import Foreign.Storable ( Storable(..) )
+import Foreign.Marshal.Array ( allocaArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 import ReadImage
