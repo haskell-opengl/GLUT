@@ -18,8 +18,9 @@ module Graphics.UI.GLUT.Callbacks.Registration (
 --------------------------------------------------------------------------------
 
 import Control.Monad ( liftM, when )
-import Data.FiniteMap ( FiniteMap, emptyFM, lookupFM, addToFM, delFromFM )
 import Data.IORef ( IORef, newIORef, readIORef, writeIORef, modifyIORef )
+import qualified Data.Map as Map ( empty, lookup, insert, delete )
+import Data.Map ( Map )
 import Foreign.C.Types ( CInt, CUInt )
 import Foreign.Ptr ( FunPtr, nullFunPtr, freeHaskellFunPtr )
 import System.IO.Unsafe ( unsafePerformIO )
@@ -81,22 +82,22 @@ modifyCallbackTable = modifyIORef theCallbackTable
 
 --------------------------------------------------------------------------------
 
-type CallbackTable a = FiniteMap CallbackID (FunPtr a)
+type CallbackTable a = Map CallbackID (FunPtr a)
 
 emptyCallbackTable :: CallbackTable a
-emptyCallbackTable = emptyFM
+emptyCallbackTable = Map.empty
 
 lookupInCallbackTable :: CallbackID -> IO (Maybe (FunPtr a))
 lookupInCallbackTable callbackID =
-   liftM (flip lookupFM callbackID) getCallbackTable
+   liftM (Map.lookup callbackID) getCallbackTable
 
 deleteFromCallbackTable :: CallbackID -> IO ()
 deleteFromCallbackTable callbackID =
-   modifyCallbackTable (flip delFromFM callbackID)
+   modifyCallbackTable (Map.delete callbackID)
 
 addToCallbackTable :: CallbackID -> FunPtr a -> IO ()
 addToCallbackTable callbackID funPtr =
-   modifyCallbackTable (\table -> addToFM table callbackID funPtr)
+   modifyCallbackTable (Map.insert callbackID funPtr)
 
 --------------------------------------------------------------------------------
 -- Another global mutable variable: The list of function pointers ready to be
@@ -165,4 +166,3 @@ setCallback callbackType registerAtGLUT makeCallback maybeCallback = do
       Just callback -> do newFunPtr <- makeCallback callback
                           addToCallbackTable callbackID newFunPtr
                           registerAtGLUT newFunPtr
- 

@@ -21,8 +21,9 @@ module Graphics.UI.GLUT.Menu (
 ) where
 
 import Data.Array ( listArray, (!) )
-import Data.FiniteMap ( FiniteMap, emptyFM, lookupFM, addToFM, delFromFM )
 import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
+import qualified Data.Map as Map ( empty, lookup, insert, delete )
+import Data.Map ( Map )
 import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
 import Foreign.Ptr ( FunPtr, freeHaskellFunPtr )
@@ -145,22 +146,22 @@ data MenuHook = MenuHook Window MouseButton
 
 type Destructor = IO ()
 
-type MenuTable = FiniteMap MenuHook Destructor
+type MenuTable = Map MenuHook Destructor
 
 emptyMenuTable :: MenuTable
-emptyMenuTable = emptyFM
+emptyMenuTable = Map.empty
 
 lookupInMenuTable :: MenuHook -> IO (Maybe Destructor)
 lookupInMenuTable callbackID =
-   liftM (flip lookupFM callbackID) getMenuTable
+   liftM (Map.lookup callbackID) getMenuTable
 
 deleteFromMenuTable :: MenuHook -> IO ()
 deleteFromMenuTable callbackID =
-   modifyMenuTable (flip delFromFM callbackID)
+   modifyMenuTable (Map.delete callbackID)
 
 addToMenuTable :: MenuHook -> Destructor -> IO ()
 addToMenuTable callbackID funPtr =
-   modifyMenuTable (\table -> addToFM table callbackID funPtr)
+   modifyMenuTable (Map.insert callbackID funPtr)
 
 --------------------------------------------------------------------------------
 
