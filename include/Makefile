@@ -1,19 +1,12 @@
 # -----------------------------------------------------------------------------
-# $Id: Makefile,v 1.1 2002/05/26 19:46:14 panne Exp $
+# $Id: Makefile,v 1.2 2002/06/20 16:13:33 simonmar Exp $
 
 TOP = ../..
 include $(TOP)/mk/boilerplate.mk
 
-# -----------------------------------------------------------------------------
-
 H_FILES = $(wildcard *.h)
 
-override datadir:=$(libdir)/include
-INSTALL_DATAS = $(H_FILES)
-
-# -----------------------------------------------------------------------------
-# Per-module flags
-
-# -----------------------------------------------------------------------------
+includedir = $(libdir)/include
+INSTALL_INCLUDES = $(H_FILES)
 
 include $(TOP)/mk/target.mk
