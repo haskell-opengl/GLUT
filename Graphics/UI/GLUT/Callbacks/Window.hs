@@ -42,7 +42,8 @@ module Graphics.UI.GLUT.Callbacks.Window (
    TabletPosition(..), TabletInput(..), TabletCallback, setTabletCallback,
 
    -- * Joystick callback
-   JoystickButtons(..), JoystickPosition(..), setJoystickCallback
+   JoystickButtons(..), JoystickPosition(..),
+   JoystickCallback, setJoystickCallback
 ) where
 
 import Control.Monad ( liftM )
