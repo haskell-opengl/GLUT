@@ -93,13 +93,13 @@ data PerWindowKeyRepeat
 
 marshalPerWindowKeyRepeat :: PerWindowKeyRepeat -> CInt
 marshalPerWindowKeyRepeat x = case x of
-   PerWindowKeyRepeatOff -> 0
-   PerWindowKeyRepeatOn -> 1
+   PerWindowKeyRepeatOn -> 0
+   PerWindowKeyRepeatOff -> 1
 
 unmarshalPerWindowKeyRepeat :: CInt -> PerWindowKeyRepeat
 unmarshalPerWindowKeyRepeat x
-   | x == 0 = PerWindowKeyRepeatOff
-   | otherwise = PerWindowKeyRepeatOn
+   | x == 0 = PerWindowKeyRepeatOn
+   | otherwise = PerWindowKeyRepeatOff
 
 --------------------------------------------------------------------------------
 
