@@ -14,7 +14,7 @@ SRC_HC_OPTS += -Wall -O -package GLUT
 
 all:: $(BINS)
 
-USES_READIMAGE = ColorTable Convolution ColorMatrix Histogram
+USES_READIMAGE = ColorTable Convolution ColorMatrix Histogram Minmax
 
 .PRECIOUS: ReadImage.o
 $(addsuffix .o,$(USES_READIMAGE)): ReadImage.hi
