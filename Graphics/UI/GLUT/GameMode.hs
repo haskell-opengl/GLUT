@@ -8,12 +8,26 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
+-- In addition to the functionality offered by
+-- 'Graphics.UI.GLUT.Window.fullScreen', GLUT offers an sub-API to change the
+-- screen resolution, color depth, and refresh rate of the display for a single
+-- full screen window. This mode of operation is called /game mode/, and is
+-- restricted in various ways: No pop-up menus are allowed for this full screen
+-- window, no other (sub-)windows can be created, and all other applications are
+-- hidden.
+--
+-- /X Implementation Notes:/ Note that game mode is not fully supported in
+-- GLUT for X, it is essentially the same as using
+-- 'Graphics.UI.GLUT.Window.fullScreen', with the additional restrictions
+-- mentioned above.
+--
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.GameMode (
-   GameModeInfo(..), BitsPerPlane, RefreshRate,
-   Capability'(..), CapabilityDescription'(..),
-   initGameMode, enterGameMode, leaveGameMode, isGameModeActive
+   Capability'(..), CapabilityDescription'(..), initGameMode,
+   enterGameMode, leaveGameMode,
+   BitsPerPlane, RefreshRate, GameModeInfo(..), getGameModeInfo,
+   isGameModeActive
 ) where
 
 import Control.Monad ( liftM )
@@ -28,20 +42,15 @@ import Graphics.UI.GLUT.Window ( Window(..) )
 
 --------------------------------------------------------------------------------
 
-type BitsPerPlane = CInt
-
-type RefreshRate = CInt
-
-data GameModeInfo = GameModeInfo WindowSize BitsPerPlane RefreshRate
-
---------------------------------------------------------------------------------
+-- | Capabilities for 'initGameMode'
 
 data Capability'
-   = Width
-   | Height
-   | BitsPerPlane
-   | RefreshRate
-   | Num'              -- BETTER NAME!
+   = Width         -- ^ Width of the screen resolution in pixels
+   | Height        -- ^ Height of the screen resolution in pixels
+   | BitsPerPlane  -- ^ Color depth of the screen in bits
+   | RefreshRate   -- ^ Refresh rate in Hertz
+   | Num'          -- ^ Match the Nth fram buffer configuration compatible with
+                   --   with the give capabilities (numbering starts at 1)
    deriving ( Eq, Ord )
 
 instance ToString Capability' where
@@ -51,29 +60,57 @@ instance ToString Capability' where
    toString RefreshRate  = "hertz"
    toString Num'         = "num"
 
+-- | A single capability description for 'initGameMode'.
+
 data CapabilityDescription' = Where' Capability' Relation CInt
    deriving ( Eq, Ord )
 
 instance ToString CapabilityDescription' where
    toString (Where' c r i) = toString c ++ toString r ++ show i
 
-initGameMode :: [CapabilityDescription'] -> IO (Maybe GameModeInfo)
-initGameMode settings = do
+--------------------------------------------------------------------------------
+
+-- | Set the /game mode/ to be used when 'enterGameMode' is called. It is
+-- described by a list of zero or more capability descriptions, which are
+-- translated into a set of criteria used to select the appropriate screen
+-- configuration. The criteria are matched in strict left to right order of
+-- precdence. That is, the first specified criterion (leftmost) takes precedence
+-- over the later criteria for non-exact criteria
+-- ('Graphics.UI.GLUT.Initialization.IsGreaterThan',
+-- 'Graphics.UI.GLUT.Initialization.IsLessThan', etc.). Exact criteria
+-- ('Graphics.UI.GLUT.Initialization.IsEqualTo',
+-- 'Graphics.UI.GLUT.Initialization.IsNotEqualTo') must match exactly so
+-- precedence is not relevant.
+--
+-- To determine which configuration will actually be tried by 'enterGameMode'
+-- (if any), use 'getGameModeInfo'.
+--
+-- Note that even for game mode previous calls to
+-- 'Graphics.UI.GLUT.Initialization.initDisplayMode'or
+-- 'Graphics.UI.GLUT.Initialization.initDisplay' will determine which buffers
+-- are available, if double buffering is used or not, etc.
+
+initGameMode :: [CapabilityDescription'] -> IO ()
+initGameMode settings =
    withCString (concat . intersperse " " . map toString $ settings)
                glutGameModeString
-   p <- getBool glut_GAME_MODE_POSSIBLE
-   if p
-      then do w <- glutGameModeGet glut_GAME_MODE_WIDTH
-              h <- glutGameModeGet glut_GAME_MODE_HEIGHT
-              b <- glutGameModeGet glut_GAME_MODE_PIXEL_DEPTH
-              r <- glutGameModeGet glut_GAME_MODE_REFRESH_RATE
-              return $ Just $ GameModeInfo (WindowSize w h) b r
-      else return Nothing
 
 foreign import ccall unsafe "glutGameModeString" glutGameModeString ::
    CString -> IO ()
 
 --------------------------------------------------------------------------------
+
+-- | Enter /game mode/, trying to change resolution, refresh rate, etc., as
+-- specified by the last call to 'initGameMode'. An identifier for the game
+-- mode window and a flag, indicating if the display mode actually changed, are
+-- returned. The game mode window is made the /current window/.
+--
+-- Re-entering /game mode/ is allowed, the previous game mode window gets
+-- destroyed by this, and a new one is created.
+--
+-- /X Implementation Notes:/ GLUT for X never changes the display mode, but
+-- simply creates a full screen window, requesting absolutely no decorations
+-- from the window manager.
 
 enterGameMode :: IO (Window, Bool)
 enterGameMode = do
@@ -85,15 +122,52 @@ foreign import ccall unsafe "glutEnterGameMode" glutEnterGameMode :: IO CInt
 
 --------------------------------------------------------------------------------
 
+-- | Leave /game mode/, restoring the old display mode and destroying the game
+-- mode window.
+
 foreign import ccall unsafe "glutLeaveGameMode" leaveGameMode :: IO ()
 
 --------------------------------------------------------------------------------
 
-isGameModeActive :: IO Bool
-isGameModeActive = getBool glut_GAME_MODE_ACTIVE
+-- | The color depth of the screen, measured in bits (e.g. 8, 16, 24, 32, ...)
+
+type BitsPerPlane = CInt
+
+-- | The refresh rate of the screen, measured in Hertz (e.g. 60, 75, 100, ...)
+
+type RefreshRate = CInt
+
+data GameModeInfo = GameModeInfo WindowSize BitsPerPlane RefreshRate
+
+--------------------------------------------------------------------------------
+
+-- | Return 'Just' the mode which would be tried by the next call to
+-- 'enterGameMode'. Returns 'Nothing' if the mode requested by the last call to
+-- 'initGameMode' is not possible, in which case 'enterGameMode' would simply
+-- create a full screen window using the current mode.
+--
+-- /X Implementation Notes:/ GLUT for X will always return 'Nothing'.
+
+getGameModeInfo :: IO (Maybe GameModeInfo)
+getGameModeInfo = do
+   possible <- getBool glut_GAME_MODE_POSSIBLE
+   if possible
+      then do w <- glutGameModeGet glut_GAME_MODE_WIDTH
+              h <- glutGameModeGet glut_GAME_MODE_HEIGHT
+              b <- glutGameModeGet glut_GAME_MODE_PIXEL_DEPTH
+              r <- glutGameModeGet glut_GAME_MODE_REFRESH_RATE
+              return $ Just $ GameModeInfo (WindowSize w h) b r
+      else return Nothing
 
 getBool :: GLenum -> IO Bool
 getBool = liftM (/= 0) . glutGameModeGet
 
 foreign import ccall unsafe "glutGameModeGet" glutGameModeGet ::
    GLenum -> IO CInt
+
+--------------------------------------------------------------------------------
+
+-- | Test whether /game mode/ is active or not.
+
+isGameModeActive :: IO Bool
+isGameModeActive = getBool glut_GAME_MODE_ACTIVE
