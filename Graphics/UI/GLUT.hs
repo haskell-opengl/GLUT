@@ -46,6 +46,7 @@ module Graphics.UI.GLUT (
    module Graphics.UI.GLUT.Begin,
    module Graphics.UI.GLUT.Window,
    module Graphics.UI.GLUT.Overlay,
+   module Graphics.UI.GLUT.Menu,
    module Graphics.UI.GLUT.Colormap,
    module Graphics.UI.GLUT.State,
    module Graphics.UI.GLUT.Fonts,
@@ -57,6 +58,7 @@ import Graphics.UI.GLUT.Begin
 import Graphics.UI.GLUT.Window hiding ( Window )
 import Graphics.UI.GLUT.Window ( Window )
 import Graphics.UI.GLUT.Overlay
+import Graphics.UI.GLUT.Menu
 import Graphics.UI.GLUT.Colormap
 import Graphics.UI.GLUT.State
 import Graphics.UI.GLUT.Fonts
