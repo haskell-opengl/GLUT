@@ -38,17 +38,21 @@ module Graphics.UI.GLUT.Callbacks.Window (
    DialAndButtonBoxCallback, setDialAndButtonBoxCallback,
 
    -- * Tablet callback
-   TabletPosition(..), TabletInput(..), TabletCallback, setTabletCallback
+   TabletPosition(..), TabletInput(..), TabletCallback, setTabletCallback,
+
+   -- * Joystick callback
+   JoystickButtons(..), JoystickPosition(..), setJoystickCallback,
+   forceJoystickCallback
 ) where
 
 import Control.Monad ( liftM )
 import Data.Bits ( Bits((.&.)) )
 import Data.Char ( chr )
-import Foreign.C.Types ( CInt, CUChar )
+import Foreign.C.Types ( CInt, CUInt, CUChar )
 import Foreign.Ptr ( FunPtr )
 import Graphics.UI.GLUT.Callbacks.Registration ( CallbackType(..), setCallback )
 import Graphics.UI.GLUT.Initialization ( WindowSize(..), WindowPosition(..) )
-import Graphics.UI.GLUT.State ( NumButtons, NumDials )
+import Graphics.UI.GLUT.State ( NumButtons, NumDials, PollRate )
 import Graphics.UI.GLUT.Constants
 
 --------------------------------------------------------------------------------
@@ -726,3 +730,62 @@ foreign import ccall "wrapper" makeTabletButtonFunc ::
 
 foreign import CALLCONV unsafe "glutTabletButtonFunc" glutTabletButtonFunc ::
    FunPtr TabletButtonCallback' -> IO ()
+
+--------------------------------------------------------------------------------
+
+data JoystickButtons = JoystickButtons {
+   joystickButtonA, joystickButtonB, joystickButtonC, joystickButtonD :: Bool
+   } deriving ( Eq, Ord )
+
+-- Could use fromBitfield + Enum/Bounded instances + unmarshalJoystickButton
+-- instead...
+unmarshalJoystickButtons :: CUInt -> JoystickButtons
+unmarshalJoystickButtons m = JoystickButtons {
+   joystickButtonA = (m .&. glut_JOYSTICK_BUTTON_A) /= 0,
+   joystickButtonB = (m .&. glut_JOYSTICK_BUTTON_B) /= 0,
+   joystickButtonC = (m .&. glut_JOYSTICK_BUTTON_C) /= 0,
+   joystickButtonD = (m .&. glut_JOYSTICK_BUTTON_D) /= 0 }
+
+--------------------------------------------------------------------------------
+
+-- | Absolute joystick position, with coordinates normalized to be in the range
+-- of -1000 to 1000 inclusive. The signs of the three axes mean the following:
+--
+-- * negative = left, positive = right
+--
+-- * negative = towards player, positive = away
+--
+-- * if available (e.g. rudder): negative = down, positive = up
+
+data JoystickPosition = JoystickPosition CInt CInt CInt deriving ( Eq, Ord )
+
+--------------------------------------------------------------------------------
+
+type JoystickCallback = JoystickButtons -> JoystickPosition -> IO ()
+
+type JoystickCallback' = CUInt -> CInt -> CInt -> CInt -> IO ()
+
+-- | Set the joystick callback for the /current window./ The joystick callback
+-- is called either due to polling of the joystick at the uniform timer interval
+-- specified (if > 0) or in response to an explicit call of
+-- 'forceJoystickCallback'.
+
+setJoystickCallback :: Maybe JoystickCallback -> PollRate -> IO ()
+setJoystickCallback c rate =
+    setCallback JoystickCB (\f -> glutJoystickFunc f rate)
+                (makeJoystickFunc . unmarshal) c
+    where unmarshal cb b x y z = cb (unmarshalJoystickButtons b)
+                                    (JoystickPosition x y z)
+
+foreign import ccall "wrapper" makeJoystickFunc ::
+   JoystickCallback' -> IO (FunPtr JoystickCallback')
+
+foreign import CALLCONV unsafe "glutJoystickFunc" glutJoystickFunc ::
+   FunPtr JoystickCallback' -> CInt -> IO ()
+
+-- | Execute the joystick callback once (if one exists). This is done in a
+-- synchronous fashion within the current context, i.e. when
+-- 'forceJoystickCallback' returns, the callback will have already happened.
+		
+foreign import CALLCONV unsafe "glutForceJoystickFunc" forceJoystickCallback ::
+   IO ()
