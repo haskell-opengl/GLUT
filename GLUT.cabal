@@ -1,9 +1,11 @@
 name:		GLUT
 version:	2.0
 license:	BSD3
+license-file:	LICENSE
 maintainer:	Sven Panne <sven.panne@aedion.de>
 homepage:	http://www.haskell.org/HOpenGL/
 category:	Graphics
+synopsis:	A binding for the OpenGL Utility Toolkit
 description:
 	A Haskell binding for the OpenGL Utility Toolkit, a window
 	system independent toolkit for writing OpenGL programs. For more
@@ -26,7 +28,7 @@ exposed-modules:
 	Graphics.UI.GLUT.Overlay,
 	Graphics.UI.GLUT.State,
 	Graphics.UI.GLUT.Window
-hidden-modules:
+other-modules:
 	Graphics.UI.GLUT.Callbacks.Registration,
 	Graphics.UI.GLUT.Constants,
 	Graphics.UI.GLUT.Extensions,
