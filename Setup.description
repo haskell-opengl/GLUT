@@ -1,0 +1,55 @@
+name:		GLUT
+version:	2.0
+license:	BSD3
+maintainer:	Sven Panne <sven.panne@aedion.de>
+package-url:	http://www.haskell.org/HOpenGL/
+category:	Graphics
+description:
+	A Haskell binding for the OpenGL Utility Toolkit, a window
+	system independent toolkit for writing OpenGL programs. For more
+	information about the C library on which this binding is based,
+	please see: <http://www.opengl.org/resources/libraries/glut.html>.
+exposed-modules:
+	Graphics.UI.GLUT,
+	Graphics.UI.GLUT.Begin,
+	Graphics.UI.GLUT.Callbacks,
+	Graphics.UI.GLUT.Callbacks.Global,
+	Graphics.UI.GLUT.Callbacks.Window,
+	Graphics.UI.GLUT.Colormap,
+	Graphics.UI.GLUT.Debugging,
+	Graphics.UI.GLUT.DeviceControl,
+	Graphics.UI.GLUT.Fonts,
+	Graphics.UI.GLUT.GameMode,
+	Graphics.UI.GLUT.Initialization,
+	Graphics.UI.GLUT.Menu,
+	Graphics.UI.GLUT.Objects,
+	Graphics.UI.GLUT.Overlay,
+	Graphics.UI.GLUT.State,
+	Graphics.UI.GLUT.Window
+modules:
+	Graphics.UI.GLUT,
+	Graphics.UI.GLUT.Begin,
+	Graphics.UI.GLUT.Callbacks,
+	Graphics.UI.GLUT.Callbacks.Global,
+	Graphics.UI.GLUT.Callbacks.Window,
+	Graphics.UI.GLUT.Colormap,
+	Graphics.UI.GLUT.Debugging,
+	Graphics.UI.GLUT.DeviceControl,
+	Graphics.UI.GLUT.Fonts,
+	Graphics.UI.GLUT.GameMode,
+	Graphics.UI.GLUT.Initialization,
+	Graphics.UI.GLUT.Menu,
+	Graphics.UI.GLUT.Objects,
+	Graphics.UI.GLUT.Overlay,
+	Graphics.UI.GLUT.State,
+	Graphics.UI.GLUT.Window,
+	-- hidden-modules:
+	Graphics.UI.GLUT.Callbacks.Registration,
+	Graphics.UI.GLUT.Constants,
+	Graphics.UI.GLUT.Extensions,
+	Graphics.UI.GLUT.QueryUtils,
+	Graphics.UI.GLUT.Types
+includes:	"HsGLUT.h"
+c-sources:	cbits/HsGLUT.c
+build-depends:	base, OpenGL
+extensions:	CPP
