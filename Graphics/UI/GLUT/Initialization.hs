@@ -1,3 +1,4 @@
+-- #prune
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Initialization
@@ -33,6 +34,7 @@ module Graphics.UI.GLUT.Initialization (
 
    -- * Setting the initial window mode (I)
    DisplayMode(..), initDisplayMode,
+   marshalDisplayMode,   -- used only internally
 
    -- * Setting the initial window mode (II)
    Capability(..), Relation(..), CapabilityDescription(..), initDisplay
@@ -51,6 +53,7 @@ import System.Environment ( getProgName, getArgs )
 import Graphics.UI.GLUT.Constants
 
 --------------------------------------------------------------------------------
+
 -- | Given the program name and command line arguments, initialize the GLUT
 -- library and negotiate a session with the window system. During this
 -- process, 'init' may cause the termination of the GLUT program with an
@@ -170,6 +173,7 @@ foreign import ccall unsafe "glutInitWindowSize" glutInitWindowSize ::
 
 -- | A single aspect of a window which is to be created, used in conjunction
 -- with 'initDisplayMode'.
+
 data DisplayMode
    = RGBA        -- ^ Select an RGBA mode window. This is the default if neither 'RGBA' nor 'Index' are specified.
    | RGB         -- ^ An alias for 'RGBA'.
@@ -186,11 +190,11 @@ data DisplayMode
    | Stereo      -- ^ Select A Stereo Window.
    | Luminance   -- ^ Select a window with a \"luminance\" color model. This model provides the functionality of OpenGL\'s
                  --   RGBA color model, but the green and blue components are not maintained in the frame buffer. Instead
-                 --   each pixel\'s red component is converted to an index between zero and  @'get' 'WindowColormapSize' -1@
+                 --   each pixel\'s red component is converted to an index between zero and  'Graphics.UI.GLUT.State.getNumColormapEntries'
                  --   and looked up in a per-window color map to determine the color of pixels within the window. The initial
                  --   colormap of 'Luminance' windows is initialized to be a linear gray ramp, but can be modified with GLUT\'s
                  --   colormap actions. Implementation Notes: 'Luminance' is not supported on most OpenGL platforms.
-   deriving ( Eq, Ord )
+   deriving ( Eq, Ord, Enum, Bounded )
 
 marshalDisplayMode :: DisplayMode -> CUInt
 marshalDisplayMode m = case m of
@@ -228,11 +232,13 @@ foreign import ccall unsafe "glutInitDisplayMode" glutInitDisplayMode ::
 --------------------------------------------------------------------------------
 
 -- Internal class for leaving Show instances untouched
+
 class ToString a where
    toString :: a -> String
 
 -- | Capabilities for 'initDisplay', most of them are extensions of
 -- 'DisplayMode'\'s constructors.
+
 data Capability
    = RGBA'        -- ^ Number of bits of red, green, blue, and alpha in the RGBA
                   --   color buffer. Default is \"'IsAtLeast' @1@\" for red,
@@ -380,6 +386,7 @@ instance ToString Capability where
    toString XDirectColor = "xdirectcolor"
 
 -- | Relation between a 'Capability' and a numeric value.
+
 data Relation
    = IsEqualTo        -- ^ Equal.
    | IsNotEqualTo     -- ^ Not equal.
@@ -410,13 +417,14 @@ instance ToString Relation where
    toString IsNotLessThan    = "~"
 
 -- | A single capability description for 'initDisplay'.
+
 data CapabilityDescription
-   = Where Capability Relation Int -- ^ A description of a capability with a
-                                   --   specific relation to a numeric value.
-   | With  Capability              -- ^ When the relation and numeric value are
-                                   --   not specified, each capability has a
-                                   --   different default, see the different
-                                   --   constructors of 'Capability'.
+   = Where Capability Relation CInt -- ^ A description of a capability with a
+                                    --   specific relation to a numeric value.
+   | With  Capability               -- ^ When the relation and numeric value are
+                                    --   not specified, each capability has a
+                                    --   different default, see the different
+                                    --   constructors of 'Capability'.
    deriving ( Eq, Ord )
 
 instance ToString CapabilityDescription where

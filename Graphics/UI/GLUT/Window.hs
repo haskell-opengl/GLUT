@@ -16,7 +16,7 @@
 
 module Graphics.UI.GLUT.Window (
    -- * Window identifiers
-   Window,
+   Window(..),   -- contructor used only internally
 
    -- * Creating and destroying (sub-)windows
 
@@ -152,7 +152,7 @@ foreign import ccall unsafe "glutGetWindow" glutGetWindow :: IO Window
 -- Logically, normal plane damage notification for a window is treated as a
 -- 'postRedisplay' on the damaged window. Unlike damage reported by the window
 -- system, 'postRedisplay' will /not/ set to true the normal plane\'s damaged
--- status (returned by @'layerGet' 'NormalDamaged'@).
+-- status (returned by 'Graphics.UI.GLUT.State.isNormalDamaged').
 --
 -- Also, see 'Graphics.UI.GLUT.Overlay.postOverlayRedisplay'.
 
@@ -323,6 +323,7 @@ foreign import ccall unsafe "glutSetIconTitle" glutSetIconTitle ::
 --------------------------------------------------------------------------------
 
 -- | The different cursor images GLUT supports.
+
 data Cursor
    = RightArrow        -- ^ Arrow pointing up and to the right.
    | LeftArrow         -- ^ Arrow pointing up and to the left.

@@ -136,7 +136,7 @@ glut_WINDOW_X, glut_WINDOW_Y, glut_WINDOW_WIDTH, glut_WINDOW_HEIGHT,
    glut_SCREEN_HEIGHT_MM, glut_MENU_NUM_ITEMS, glut_DISPLAY_MODE_POSSIBLE,
    glut_INIT_WINDOW_X, glut_INIT_WINDOW_Y, glut_INIT_WINDOW_WIDTH,
    glut_INIT_WINDOW_HEIGHT, glut_INIT_DISPLAY_MODE, glut_ELAPSED_TIME,
-   glut_WINDOW_FORMAT_ID :: CInt
+   glut_WINDOW_FORMAT_ID :: GLenum
 glut_WINDOW_X                          = 100
 glut_WINDOW_Y                          = 101
 glut_WINDOW_WIDTH                      = 102
@@ -181,7 +181,7 @@ glut_HAS_KEYBOARD, glut_HAS_MOUSE, glut_HAS_SPACEBALL,
    glut_NUM_SPACEBALL_BUTTONS, glut_NUM_BUTTON_BOX_BUTTONS, glut_NUM_DIALS,
    glut_NUM_TABLET_BUTTONS, glut_DEVICE_IGNORE_KEY_REPEAT,
    glut_DEVICE_KEY_REPEAT, glut_HAS_JOYSTICK, glut_OWNS_JOYSTICK,
-   glut_JOYSTICK_BUTTONS, glut_JOYSTICK_AXES, glut_JOYSTICK_POLL_RATE :: CInt
+   glut_JOYSTICK_BUTTONS, glut_JOYSTICK_AXES, glut_JOYSTICK_POLL_RATE :: GLenum
 glut_HAS_KEYBOARD                      = 600
 glut_HAS_MOUSE                         = 601
 glut_HAS_SPACEBALL                     = 602

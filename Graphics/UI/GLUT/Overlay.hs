@@ -23,7 +23,6 @@ module Graphics.UI.GLUT.Overlay (
 
    -- * Changing the /layer in use/
    Layer(..), useLayer,
-   unmarshalLayer,   -- used only internally
 
    -- * Re-displaying
    postOverlayRedisplay, postWindowOverlayRedisplay,
@@ -42,10 +41,10 @@ import Graphics.UI.GLUT.Window ( Window )
 
 -- | Establish an overlay (if possible) for the /current window/. The requested
 -- display mode for the overlay is determined by the /initial display mode/.
--- @'layerGet' 'OverlayPossible'@ can be called to determine if an overlay is
--- possible for the /current window/ with the current /initial display mode/. Do
--- not attempt to establish an overlay when one is not possible; GLUT will
--- terminate the program.
+-- 'Graphics.UI.GLUT.State.isOverlayPossible' can be called to determine if an
+-- overlay is possible for the /current window/ with the current /initial
+-- display mode/. Do not attempt to establish an overlay when one is not
+-- possible; GLUT will terminate the program.
 --
 -- If 'establishOverlay' is called when an overlay already exists, the existing
 -- overlay is first removed, and then a new overlay is established. The state of
@@ -91,12 +90,6 @@ marshalLayer :: Layer -> GLenum
 marshalLayer l = case l of
    Normal  -> glut_NORMAL
    Overlay -> glut_OVERLAY
-
-unmarshalLayer :: GLenum -> Layer
-unmarshalLayer l
-   | l == glut_NORMAL  = Normal
-   | l == glut_OVERLAY = Overlay
-   | otherwise = error "unmarshalLayer"
 
 -- | Change the per-window /layer in use/ for the /current window/, selecting
 -- either the normal plane or overlay. The overlay should only be specified if
