@@ -36,9 +36,9 @@ import Graphics.UI.GLUT.Extensions
 
 --------------------------------------------------------------------------------
 
--- | Enter the GLUT event processing loop. This routine should be called at most
--- once in a GLUT program. Once called, this routine will never return. It will
--- call as necessary any callbacks that have been registered.
+-- | Enter the GLUT event processing loop; it will call as necessary any
+-- callbacks that have been registered. This routine should be called at most
+-- once in a GLUT program.
 
 foreign import CALLCONV safe "glutMainLoop" mainLoop :: IO ()
 
@@ -56,8 +56,8 @@ EXTENSION_ENTRY(safe,"freeglut",glutMainLoopEvent,IO ())
 --------------------------------------------------------------------------------
 
 -- | (/freeglut only/) Stop the event loop. If 'actionOnWindowClose' contains
--- 'ContinueExectuion', control will return to the function which called
--- 'mainLoop'; otherwise the application will exit.
+-- 'Exit', the application will exit; otherwise control will return to the
+-- function which called 'mainLoop'.
 --
 -- If the application has two nested calls to 'mainLoop' and calls
 -- 'leaveMainLoop', the behaviour is undefined. It may leave only the inner
@@ -72,28 +72,34 @@ EXTENSION_ENTRY(safe,"freeglut",glutLeaveMainLoop,IO ())
 
 --------------------------------------------------------------------------------
 
+-- | The behaviour when the user closes a window.
+
 data ActionOnWindowClose
-   = Exit
-   | GLUTMainLoopReturns
-   | ContinueExectuion
+   = -- | Exit the whole program when any window is closed or 'leaveMainLoop'
+     -- is called (default).
+     Exit
+   | -- | Return from mainLoop when any window is closed.
+     MainLoopReturns
+   | -- | Return from mainLoop after the last window is closed.
+     ContinueExectuion
    deriving ( Eq, Ord, Show )
 
 marshalActionOnWindowClose :: ActionOnWindowClose -> CInt
 marshalActionOnWindowClose x = case x of
    Exit ->  glut_ACTION_EXIT
-   GLUTMainLoopReturns -> glut_ACTION_GLUTMAINLOOP_RETURNS
+   MainLoopReturns -> glut_ACTION_GLUTMAINLOOP_RETURNS
    ContinueExectuion -> glut_ACTION_CONTINUE_EXECUTION
 
 unmarshalActionOnWindowClose :: CInt -> ActionOnWindowClose
 unmarshalActionOnWindowClose x
    | x == glut_ACTION_EXIT = Exit
-   | x == glut_ACTION_GLUTMAINLOOP_RETURNS = GLUTMainLoopReturns
+   | x == glut_ACTION_GLUTMAINLOOP_RETURNS = MainLoopReturns
    | x == glut_ACTION_CONTINUE_EXECUTION = ContinueExectuion
    | otherwise = error ("unmarshalActionOnWindowClose: illegal value " ++ show x)
 
 -----------------------------------------------------------------------------
 
--- | (/freeglut only/) Behaviour when the user closes a window.
+-- | (/freeglut only/) Controls the behaviour when the user closes a window.
 
 actionOnWindowClose :: StateVar ActionOnWindowClose
 actionOnWindowClose =
