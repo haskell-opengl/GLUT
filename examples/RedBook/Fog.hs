@@ -36,7 +36,7 @@ myInit = do
    let c = Color4 0.5 0.5 0.5 1.0
    fogMode $= Exp 0.35
    fogColor $= c
-   fogHint $= DontCare
+   hint Fog $= DontCare
    clearColor $= c
 
 renderSpehere :: Vector3 GLfloat -> IO ()
