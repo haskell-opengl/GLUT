@@ -67,7 +67,7 @@ attachMenu mouseButton menu@(Menu items) = do
    let hook = MenuHook (fromJust maybeWindow) mouseButton
    detachMenu hook
    unless (null items) $ do
-      (menuID, destructor) <- traverseMenu menu
+      (_, destructor) <- traverseMenu menu
       addToMenuTable hook destructor
       attachMenu_ mouseButton
 
