@@ -13,13 +13,22 @@ import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
+-- we lump together our global state (and still call this Haskell :-)
+data State = State { year, day :: IORef GLint }
+
+makeState :: IO State
+makeState = do
+   y <- newIORef 0
+   d <- newIORef 0
+   return $ State { year = y, day = d }
+
 myInit :: IO ()
 myInit = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Flat
 
-display :: IORef Int -> IORef Int -> DisplayCallback
-display year day = do
+display :: State -> DisplayCallback
+display state = do
    clear [ ColorBuffer ]
    -- resolve overloading, not needed in "real" programs
    let color3f = color :: Color3 GLfloat -> IO ()
@@ -28,10 +37,10 @@ display year day = do
 
    preservingMatrix $ do
       renderObject Wireframe (Sphere' 1 20 16)   -- draw sun
-      y <- get year
+      y <- get (year state)
       rotate (fromIntegral y :: GLfloat) (Vector3 0 1 0)
       translatef (Vector3 2 0 0)
-      d <- get day
+      d <- get (day state)
       rotate (fromIntegral d :: GLfloat) (Vector3 0 1 0)
       renderObject Wireframe (Sphere' 0.2 10 8)  -- draw smaller planet
 
@@ -47,18 +56,18 @@ reshape size@(Size w h) = do
    loadIdentity
    lookAt (Vertex3 0 0 5) (Vertex3 0 0 0) (Vector3 0 1 0)
 
-keyboard :: IORef Int -> IORef Int -> KeyboardMouseCallback
-keyboard day _    (Char 'd')   Down _ _ = update day    10
-keyboard day _    (Char 'D')   Down _ _ = update day  (-10)
-keyboard _   year (Char 'y')   Down _ _ = update year    5
-keyboard _   year (Char 'Y')   Down _ _ = update year ( -5)
-keyboard _   _    (Char '\27') Down _ _ = exitWith ExitSuccess
-keyboard _   _    _            _    _ _ = return ()
-
-update :: IORef Int -> Int -> IO ()
-update angle inc = do
-   angle $~ ((`mod` 360) . (+ inc))
-   postRedisplay Nothing
+keyboard :: State -> KeyboardMouseCallback
+keyboard state (Char c) Down _ _ = case c of
+   'd'   -> update day    10
+   'D'   -> update day  (-10)
+   'y'   -> update year   10
+   'Y'   -> update year (-10)
+   '\27' -> exitWith ExitSuccess
+   _     -> return ()
+   where update angle inc = do
+            angle state $~ ((`mod` 360) . (+ inc))
+            postRedisplay Nothing
+keyboard _ _ _ _ _ = return ()
 
 main :: IO ()
 main = do
@@ -68,9 +77,8 @@ main = do
    initialWindowPosition $= Position 100 100
    createWindow progName
    myInit
-   year <- newIORef 0
-   day <- newIORef 0
-   displayCallback $= display year day
+   state <- makeState
+   displayCallback $= display state
    reshapeCallback $= Just reshape
-   keyboardMouseCallback $= Just (keyboard year day)
+   keyboardMouseCallback $= Just (keyboard state)
    mainLoop
