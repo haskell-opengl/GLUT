@@ -23,6 +23,7 @@ module Graphics.UI.GLUT.Callbacks.Window (
    -- * Keyboard and mouse input callback
    Key(..), SpecialKey(..), MouseButton(..), KeyState(..), Modifiers(..),
    KeyboardMouseCallback, setKeyboardMouseCallback,
+   marshalMouseButton,   -- used only internally
 
    -- * Mouse movement callbacks
    MotionCallback, setMotionCallback, setPassiveMotionCallback,
@@ -341,6 +342,13 @@ data MouseButton
    | WheelUp
    | WheelDown
    deriving ( Eq, Ord )
+
+marshalMouseButton :: MouseButton -> CInt
+marshalMouseButton LeftButton   = glut_LEFT_BUTTON
+marshalMouseButton MiddleButton = glut_MIDDLE_BUTTON
+marshalMouseButton RightButton  = glut_RIGHT_BUTTON
+marshalMouseButton WheelUp      = glut_WHEEL_UP
+marshalMouseButton WheelDown    = glut_WHEEL_DOWN
 
 unmarshalMouseButton :: CInt -> MouseButton
 unmarshalMouseButton b

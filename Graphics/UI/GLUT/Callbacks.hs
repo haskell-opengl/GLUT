@@ -43,5 +43,5 @@ module Graphics.UI.GLUT.Callbacks (
    module Graphics.UI.GLUT.Callbacks.Global
 ) where
 
-import Graphics.UI.GLUT.Callbacks.Window
+import Graphics.UI.GLUT.Callbacks.Window hiding ( marshalMouseButton )
 import Graphics.UI.GLUT.Callbacks.Global
