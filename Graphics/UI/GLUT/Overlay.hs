@@ -39,7 +39,12 @@ import Graphics.UI.GLUT.Constants (
    glut_OVERLAY_POSSIBLE, glut_HAS_OVERLAY, glut_NORMAL, glut_OVERLAY,
    glut_LAYER_IN_USE )
 import Graphics.UI.GLUT.QueryUtils ( layerGet )
+#ifdef __NHC__
+import Graphics.UI.GLUT.Types ( Window(..) )
+import NHC.FFI ( CInt(..) )
+#else
 import Graphics.UI.GLUT.Window ( Window )
+#endif
 
 --------------------------------------------------------------------------------
 

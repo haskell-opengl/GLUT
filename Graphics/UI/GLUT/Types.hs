@@ -15,7 +15,11 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Types (
+#ifdef __NHC__
+   Window(..),                               -- constructor used only internally
+#else
    Window,                                   -- constructor used only internally
+#endif
    makeWindow,                               -- used only internally
    Relation(..),
    relationToString,                         -- used only internally

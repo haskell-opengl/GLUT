@@ -72,7 +72,11 @@ import Graphics.UI.GLUT.Constants (
    glut_CURSOR_INHERIT, glut_CURSOR_NONE, glut_CURSOR_FULL_CROSSHAIR,
    glut_WINDOW_CURSOR )
 import Graphics.UI.GLUT.QueryUtils ( simpleGet )
+#ifdef __NHC__
+import Graphics.UI.GLUT.Types ( Window(..), makeWindow )
+#else
 import Graphics.UI.GLUT.Types ( Window, makeWindow )
+#endif
 
 --------------------------------------------------------------------------------
 
