@@ -8,7 +8,7 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- GLUT supports two type of font rendering: stroke fonts, meaning each
+-- GLUT supports two types of font rendering: stroke fonts, meaning each
 -- character is rendered as a set of line segments; and bitmap fonts, where each
 -- character is a bitmap generated with 'Graphics.Rendering.OpenGL.GL.bitmap'.
 -- Stroke fonts have the advantage that because they are geometry, they can be
@@ -18,14 +18,27 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Fonts (
-   -- * Bitmap fonts
-   BitmapFont(..), bitmapCharacter, bitmapWidth,
-   -- * Stroke fonts
-   StrokeFont(..), strokeCharacter, strokeWidth
+   -- * Fonts
+   Font(..), BitmapFont(..), StrokeFont(..),
+
+   -- * Text representation
+   Text(..),
+
+   -- * Rendering and measuring text
+   renderText, textWidth
 ) where
 
+import Data.Char ( ord )
+import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
 import Foreign.Ptr ( Ptr )
+
+--------------------------------------------------------------------------------
+
+data Font
+   = BitmapFont BitmapFont
+   | StrokeFont StrokeFont
+   deriving ( Eq, Ord )
 
 --------------------------------------------------------------------------------
 
@@ -72,35 +85,6 @@ marhshalBitmapFont f = case f of
    Helvetica12  -> hOpenGL_marshalBitmapFont 5
    Helvetica18  -> hOpenGL_marshalBitmapFont 6
 
--- | Render the character in the named bitmap font, without using any display
--- lists. Rendering a nonexistent character has no effect. 'bitmapCharacter'
--- automatically sets the OpenGL unpack pixel storage modes it needs
--- appropriately and saves and restores the previous modes before returning.
--- The generated call to 'Graphics.Rendering.OpenGL.GL.bitmap' will adjust the
--- current raster position based on the width of the character.
-
-bitmapCharacter :: BitmapFont -- ^ Bitmap font to use.
-                -> CInt       -- ^ Character to return width of (not confined to
-                              --   8 bits).
-                -> IO ()
-bitmapCharacter f c = flip glutBitmapCharacter c =<< marhshalBitmapFont f
-
-foreign import ccall "glutBitmapCharacter" glutBitmapCharacter ::
-   GLUTbitmapFont -> CInt -> IO ()
-
--- | Return the width in pixels of a bitmap character in a supported bitmap
--- font. While the width of characters in a font may vary (though fixed width
--- fonts do not vary), the maximum height characteristics of a particular font
--- are fixed.
-
-bitmapWidth :: BitmapFont -- ^ Bitmap font to use.
-            -> CInt       -- ^ Character to render (not confined to 8 bits).
-            -> IO CInt    -- ^ Width in pixels.
-bitmapWidth f c = flip glutBitmapWidth c =<< marhshalBitmapFont f
-
-foreign import ccall "glutBitmapWidth" glutBitmapWidth ::
-   GLUTbitmapFont -> CInt -> IO CInt
-
 --------------------------------------------------------------------------------
 
 data StrokeFont
@@ -113,7 +97,6 @@ data StrokeFont
                --   descends 33.33 units. Each character is 104.76 units wide.
    deriving ( Eq, Ord )
 
-
 -- Same remarks as for GLUTstrokeFont
 type GLUTstrokeFont = Ptr ()
 
@@ -125,18 +108,115 @@ marhshalStrokeFont f = case f of
    Roman     -> hOpenGL_marshalStrokeFont 0
    MonoRoman -> hOpenGL_marshalStrokeFont 1
 
+--------------------------------------------------------------------------------
+
+data Text
+   = Char Char
+   | String String
+   deriving ( Eq, Ord )
+
+withChar :: Char -> (CInt -> IO a) -> IO a
+withChar c f = f . fromIntegral . ord $ c
+
+--------------------------------------------------------------------------------
+
+renderText :: Font -> Text -> IO ()
+renderText (BitmapFont f) (Char   c) = bitmapCharacter f c
+renderText (BitmapFont f) (String s) = bitmapString    f s
+renderText (StrokeFont f) (Char   c) = strokeCharacter f c
+renderText (StrokeFont f) (String s) = strokeString    f s
+
+--------------------------------------------------------------------------------
+
+textWidth :: Font -> Text -> IO CInt
+textWidth (BitmapFont f) (Char   c) = bitmapWidth  f c
+textWidth (BitmapFont f) (String s) = bitmapLength f s
+textWidth (StrokeFont f) (Char   c) = strokeWidth  f c
+textWidth (StrokeFont f) (String s) = strokeLength f s
+
+--------------------------------------------------------------------------------
+
+-- | Render the character in the named bitmap font, without using any display
+-- lists. Rendering a nonexistent character has no effect. 'bitmapCharacter'
+-- automatically sets the OpenGL unpack pixel storage modes it needs
+-- appropriately and saves and restores the previous modes before returning.
+-- The generated call to 'Graphics.Rendering.OpenGL.GL.bitmap' will adjust the
+-- current raster position based on the width of the character.
+
+bitmapCharacter :: BitmapFont -- ^ Bitmap font to use.
+                -> Char       -- ^ Character to return width of (not confined to
+                              --   8 bits).
+                -> IO ()
+bitmapCharacter f c = do
+   i <- marhshalBitmapFont f
+   withChar c (glutBitmapCharacter i)
+
+foreign import ccall "glutBitmapCharacter" glutBitmapCharacter ::
+   GLUTbitmapFont -> CInt -> IO ()
+
+--------------------------------------------------------------------------------
+
+bitmapString :: BitmapFont -> String -> IO ()
+bitmapString f s = do
+   i <- marhshalBitmapFont f
+   mapM_ (\c -> withChar c (glutBitmapCharacter i)) s
+
+--------------------------------------------------------------------------------
+
+-- | Return the width in pixels of a bitmap character in a supported bitmap
+-- font. While the width of characters in a font may vary (though fixed width
+-- fonts do not vary), the maximum height characteristics of a particular font
+-- are fixed.
+
+bitmapWidth :: BitmapFont -- ^ Bitmap font to use.
+            -> Char       -- ^ Character to return width of (not confined to 8
+                          --   bits).
+            -> IO CInt    -- ^ Width in pixels.
+bitmapWidth f c = do
+   i <- marhshalBitmapFont f
+   withChar c (glutBitmapWidth i)
+
+foreign import ccall "glutBitmapWidth" glutBitmapWidth ::
+   GLUTbitmapFont -> CInt -> IO CInt
+
+--------------------------------------------------------------------------------
+
+bitmapLength :: BitmapFont -- ^ Bitmap font to use.
+             -> String     -- ^ String to return width of (not confined to 8
+                           --   bits).
+             -> IO CInt    -- ^ Width in pixels.
+bitmapLength f s = do
+   i <- marhshalBitmapFont f
+   withCString s (glutBitmapLength i)
+
+foreign import ccall "glutBitmapLength" glutBitmapLength ::
+   GLUTbitmapFont -> CString -> IO CInt
+
+--------------------------------------------------------------------------------
+
 -- | Render the character in the named stroke font, without using any display
 -- lists. Rendering a nonexistent character has no effect. A
 -- 'Graphics.Rendering.OpenGL.GL.translatef' is used to translate the current
 -- model view matrix to advance the width of the character.
 
 strokeCharacter :: StrokeFont -- ^ Stroke font to use.
-                -> CInt       -- ^ Character to render (not confined to 8 bits).
+                -> Char       -- ^ Character to render (not confined to 8 bits).
                 -> IO ()
-strokeCharacter f i = flip glutStrokeCharacter i =<< marhshalStrokeFont f
+strokeCharacter f c = do
+   i <- marhshalStrokeFont f
+   withChar c (glutStrokeCharacter i)
 
 foreign import ccall "glutStrokeCharacter" glutStrokeCharacter ::
    GLUTstrokeFont -> CInt -> IO ()
+
+--------------------------------------------------------------------------------
+
+strokeString :: StrokeFont -> String -> IO ()
+strokeString f s = do
+   i <- marhshalStrokeFont f
+   mapM_ (\c -> withChar c (glutStrokeCharacter i)) s
+
+--------------------------------------------------------------------------------
 
 -- | Return the width in pixels of a stroke character in a supported stroke
 -- font. While the width of characters in a font may vary (though fixed width
@@ -144,10 +224,25 @@ foreign import ccall "glutStrokeCharacter" glutStrokeCharacter ::
 -- are fixed.
 
 strokeWidth :: StrokeFont -- ^ Stroke font to use.
-            -> CInt       -- ^ Character to return width of (not confined to 8
+            -> Char       -- ^ Character to return width of (not confined to 8
                           --   bits).
             -> IO CInt    -- ^ Width in pixels.
-strokeWidth f c = flip glutStrokeWidth c =<< marhshalStrokeFont f
+strokeWidth f c = do
+   i <- marhshalStrokeFont f
+   withChar c (glutStrokeWidth i)
 
 foreign import ccall "glutStrokeWidth" glutStrokeWidth ::
    GLUTstrokeFont -> CInt -> IO CInt
+
+--------------------------------------------------------------------------------
+
+strokeLength :: StrokeFont -- ^ Stroke font to use.
+             -> String     -- ^ String to return width of (not confined to 8
+                           --   bits).
+             -> IO CInt    -- ^ Width in pixels.
+strokeLength f s = do
+   i <- marhshalStrokeFont f
+   withCString s (glutStrokeLength i)
+
+foreign import ccall "glutStrokeLength" glutStrokeLength ::
+   GLUTstrokeFont -> CString -> IO CInt
