@@ -152,6 +152,7 @@ type BitsPerPlane = Int
 type RefreshRate = Int
 
 data GameModeInfo = GameModeInfo Size BitsPerPlane RefreshRate
+   deriving ( Eq, Ord, Show )
 
 --------------------------------------------------------------------------------
 

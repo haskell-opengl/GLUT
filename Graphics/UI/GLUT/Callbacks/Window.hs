@@ -562,6 +562,7 @@ data SpaceballInput
    = SpaceballMotion   SpaceballMotion SpaceballMotion SpaceballMotion
    | SpaceballRotation SpaceballRotation SpaceballRotation SpaceballRotation
    | SpaceballButton   ButtonIndex KeyState
+   deriving ( Eq, Ord, Show )
 
 -- | A SpaceballButton callback
 
@@ -723,12 +724,14 @@ foreign import CALLCONV unsafe "glutDialsFunc" glutDialsFunc ::
 -- 0 to 2000 inclusive
 
 data TabletPosition = TabletPosition Int Int
+   deriving ( Eq, Ord, Show )
 
 -- | The table state has changed.
 
 data TabletInput
    = TabletMotion
    | TabletButton ButtonIndex KeyState
+   deriving ( Eq, Ord, Show )
 
 -- | A tablet callback
 
