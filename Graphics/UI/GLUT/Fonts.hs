@@ -27,7 +27,7 @@ import Data.Char ( ord )
 import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
 import Foreign.Ptr ( Ptr )
-import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint )
+import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint, GLfloat )
 
 #ifdef __HUGS__
 {-# CFILES cbits/HsGLUT.c #-}
@@ -57,15 +57,22 @@ class Font a where
 
    stringWidth :: a -> String -> IO GLint
 
+   -- | (/freeglut only/) For a bitmap font, return the maximum height of the
+   -- characters in the given font measured in pixels. For a stroke font,
+   -- return the width in units.
+
+   fontHeight :: a -> IO GLfloat
 
 instance Font BitmapFont where
-   renderString   = bitmapString
-   stringWidth  f = liftM fromIntegral . bitmapLength f
+   renderString = bitmapString
+   stringWidth  = bitmapLength
+   fontHeight   = bitmapHeight
 
 
 instance Font StrokeFont where
-   renderString   = strokeString
-   stringWidth  f = liftM fromIntegral . strokeLength f
+   renderString = strokeString
+   stringWidth  = strokeLength
+   fontHeight   = strokeHeight
 
 --------------------------------------------------------------------------------
 
@@ -156,31 +163,49 @@ strokeString f s = do
    i <- marhshalStrokeFont f
    mapM_ (\c -> withChar c (glutStrokeCharacter i)) s
 
-foreign import CALLCONV unsafe "glutStrokeCharacter" glutStrokeCharacter ::
-   GLUTstrokeFont -> CInt -> IO ()
+foreign import CALLCONV unsafe "glutStrokeCharacter"
+   glutStrokeCharacter :: GLUTstrokeFont -> CInt -> IO ()
 
 --------------------------------------------------------------------------------
 
 bitmapLength :: BitmapFont -- ^ Bitmap font to use.
              -> String     -- ^ String to return width of (not confined to 8
                            --   bits).
-             -> IO CInt    -- ^ Width in pixels.
+             -> IO GLint   -- ^ Width in pixels.
 bitmapLength f s = do
    i <- marhshalBitmapFont f
-   withCString s (glutBitmapLength i)
+   liftM fromIntegral $ withCString s (glutBitmapLength i)
 
-foreign import CALLCONV unsafe "glutBitmapLength" glutBitmapLength ::
-   GLUTbitmapFont -> CString -> IO CInt
+foreign import CALLCONV unsafe "glutBitmapLength"
+   glutBitmapLength :: GLUTbitmapFont -> CString -> IO CInt
 
 --------------------------------------------------------------------------------
 
 strokeLength :: StrokeFont -- ^ Stroke font to use.
              -> String     -- ^ String to return width of (not confined to 8
                            --   bits).
-             -> IO CInt    -- ^ Width in units.
+             -> IO GLint   -- ^ Width in units.
 strokeLength f s = do
    i <- marhshalStrokeFont f
-   withCString s (glutStrokeLength i)
+   liftM fromIntegral $ withCString s (glutStrokeLength i)
 
-foreign import CALLCONV unsafe "glutStrokeLength" glutStrokeLength ::
-   GLUTstrokeFont -> CString -> IO CInt
+foreign import CALLCONV unsafe "glutStrokeLength"
+   glutStrokeLength :: GLUTstrokeFont -> CString -> IO CInt
+
+--------------------------------------------------------------------------------
+
+bitmapHeight :: BitmapFont -- ^ Bitmap font to use.
+             -> IO GLfloat -- ^ Height in pixels.
+bitmapHeight f = liftM fromIntegral $ glutBitmapHeight =<< marhshalBitmapFont f
+
+foreign import CALLCONV unsafe "glutBitmapHeight"
+   glutBitmapHeight :: GLUTbitmapFont -> IO CInt
+
+--------------------------------------------------------------------------------
+
+strokeHeight :: StrokeFont -- ^ Stroke font to use.
+             -> IO GLfloat -- ^ Height in units.
+strokeHeight f = glutStrokeHeight =<< marhshalStrokeFont f
+
+foreign import CALLCONV unsafe "glutStrokeHeight"
+   glutStrokeHeight :: GLUTstrokeFont -> IO GLfloat

@@ -17,8 +17,7 @@ module Graphics.UI.GLUT.FreeGLUT where
 
 import Foreign.Ptr ( Ptr )
 import Foreign.C.Types ( CInt )
-import Graphics.Rendering.OpenGL.GL.BasicTypes (
-   GLint, GLenum, GLfloat, GLdouble )
+import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint, GLenum, GLdouble )
 
 -----------------------------------------------------------------------------
 -- New glutGet parameters
@@ -67,15 +66,6 @@ glut_USE_CURRENT_CONTEXT               = 1
 
 foreign import CALLCONV unsafe "glutSetOption"
    glutSetOption :: GLenum -> CInt -> IO ()
-
------------------------------------------------------------------------------
--- Font stuff
-
-foreign import CALLCONV unsafe "glutBitmapHeight"
-   glutBitmapHeight :: Ptr a -> IO CInt
-
-foreign import CALLCONV unsafe "glutStrokeHeight"
-   glutStrokeHeight :: Ptr a -> IO GLfloat
 
 -----------------------------------------------------------------------------
 -- Geometry functions
