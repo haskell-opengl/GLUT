@@ -20,7 +20,7 @@ myInit = do
 
 triangle :: IO ()
 triangle =
-   withBeginMode Triangles $ do
+   renderPrimitive Triangles $ do
       color (Color3 1 0 (0 :: GLfloat))
       vertex (Vertex2 5 (5 :: GLfloat))
       color (Color3 0 1 (0 :: GLfloat))
