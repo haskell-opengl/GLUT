@@ -9,9 +9,9 @@ import Control.Monad ( unless )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT hiding ( initialize )
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Setup GLUT and OpenGL, drop into the event loop.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 main :: IO ()
 main = do
    -- Setup the basic GLUT stuff
@@ -36,10 +36,10 @@ main = do
    -- Control is returned as events occur, via the callback functions.
    mainLoop
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- One time setup, including creating menus, creating a light, setting the
 -- shading mode and clear color, and loading textures.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 initialize :: IO ()
 initialize = do
    -- set up the only meny
@@ -47,18 +47,18 @@ initialize = do
 
    depthFunc $= Just Less
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Handle mouse and keyboard events. For this simple demo, just exit on a
 -- left click or when q is pressed.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 keyboardMouseHandler :: KeyboardMouseCallback
 keyboardMouseHandler (MouseButton LeftButton)_ _ _ = exitWith ExitSuccess
 keyboardMouseHandler (Char 'q')              _ _ _ = exitWith ExitSuccess
 keyboardMouseHandler _                       _ _ _ = postRedisplay Nothing
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Reset the viewport for window changes.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 reshape :: ReshapeCallback
 reshape size@(Size width height) =
    unless (height == 0) $ do
@@ -69,9 +69,9 @@ reshape size@(Size width height) =
 
       matrixMode $= Modelview 0
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Clear and redraw the scene.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 display :: DisplayCallback
 display = do
    -- set up the camera

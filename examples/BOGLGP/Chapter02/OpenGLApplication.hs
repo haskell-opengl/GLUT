@@ -7,20 +7,22 @@
 
 import Control.Monad ( when, unless )
 import Data.IORef ( IORef, newIORef )
+import Data.Maybe ( isJust )
 import Graphics.UI.GLUT hiding ( initialize )
 import System.Console.GetOpt
 import System.Environment ( getProgName )
 import System.Exit ( exitWith, ExitCode(..) )
 import System.IO ( hPutStr, stderr )
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Setup GLUT and OpenGL, drop into the event loop.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 main :: IO ()
 main = do
    -- Setup the basic GLUT stuff
    (_, args) <- getArgsAndInitialize
    opts <- parseOptions args
+   initialDisplayMode $= [ DoubleBuffered, RGBMode, WithDepthBuffer ]
    (if useFullscreen opts then fullscreenMode else windowedMode) opts
 
    state <- initialize
@@ -43,21 +45,24 @@ fullscreenMode opts = do
        addCapability GameModeHeight (Just (windowHeight opts)) .
        addCapability GameModeBitsPerPlane (bpp opts) .
        addCapability GameModeRefreshRate (refreshRate opts)) []
-   (_, modeChanged) <- enterGameMode
-   unless modeChanged $ do
-      hPutStr stderr "Could not enter fullscreen mode, using windowed mode\n"
-      windowedMode (opts { useFullscreen = False } )
+   enterGameMode
+   maybeWin <- get currentWindow
+   if isJust maybeWin
+      then cursor $= None
+      else do
+         hPutStr stderr "Could not enter fullscreen mode, using windowed mode\n"
+         windowedMode (opts { useFullscreen = False } )
 
 windowedMode :: Options -> IO ()
 windowedMode opts = do
-   initialDisplayMode $= [ DoubleBuffered, RGBMode, WithDepthBuffer ]
-   initialWindowSize $= getSize opts
+   initialWindowSize $=
+      Size (fromIntegral (windowWidth opts)) (fromIntegral (windowHeight opts))
    createWindow "BOGLGP - Chapter 2 - OpenGL Application"
    return ()
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Option handling
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 data Options = Options {
    useFullscreen :: Bool,
    windowWidth   :: Int,
@@ -74,10 +79,6 @@ startOpt = Options {
    bpp           = Nothing,
    refreshRate   = Nothing
    }
-
-getSize :: Options -> Size
-getSize opts =
-   Size (fromIntegral (windowWidth opts)) (fromIntegral (windowHeight opts))
 
 options :: [OptDescr (Options -> IO Options)]
 options = [
@@ -132,10 +133,10 @@ dieWith errs = do
    mapM_ (hPutStr stderr) (errs ++ [u])
    safeExitWith (ExitFailure 1)
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Handle mouse and keyboard events. For this simple demo, just exit when
 -- ESCAPE is pressed.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 keyboardMouseHandler :: KeyboardMouseCallback
 keyboardMouseHandler (Char '\27') Down _ _ = safeExitWith ExitSuccess
 keyboardMouseHandler _             _   _ _ = return ()
@@ -146,11 +147,11 @@ safeExitWith code = do
     when gma leaveGameMode
     exitWith code
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- The globale state, which is only the current angle in this simple demo.
 -- We don't need the window dimensions here, they are not used and would
 -- be easily available via GLUT anyway.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 data State = State { angle :: IORef GLfloat }
 
 makeState :: IO State
@@ -158,9 +159,9 @@ makeState = do
    a <- newIORef 0
    return $ State { angle = a }
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Do one time setup, i.e. set the clear color and create the global state.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 initialize :: IO State
 initialize = do
    -- clear to black background
@@ -168,9 +169,9 @@ initialize = do
 
    makeState
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Reset the viewport for window changes.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 setupProjection :: ReshapeCallback
 setupProjection (Size width height) = do
    -- don't want a divide by zero
@@ -190,17 +191,17 @@ setupProjection (Size width height) = do
    -- reset modelview matrix
    loadIdentity
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Perform any data-specific updates for a frame. Here we only increment the
 -- angle for the rotation of the triangle.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 prepare :: State -> IdleCallback
 prepare state = do
    angle state $~ (+ 0.1)
 
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Clear and redraw the scene.
-----------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 render :: State -> DisplayCallback
 render state = do
    -- clear screen and depth buffer
