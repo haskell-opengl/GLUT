@@ -63,7 +63,7 @@ endif
 
 # -----------------------------------------------------------------------------
 
-DIST_CLEAN_FILES += HsGLUTConfig.h GLUT.buildinfo config.cache config.status 
+DIST_CLEAN_FILES += GLUT.buildinfo config.cache config.status 
 LATE_DIST_CLEAN_FILES += config.mk
 
 extraclean::
