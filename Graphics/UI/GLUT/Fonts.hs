@@ -28,6 +28,10 @@ import Foreign.C.Types ( CInt )
 import Foreign.Ptr ( Ptr )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint )
 
+#ifdef __HUGS__
+{-# CBITS HsGLUT.c #-}
+#endif
+
 --------------------------------------------------------------------------------
 
 class Font a where
