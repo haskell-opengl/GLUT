@@ -33,9 +33,9 @@ keyboardMouse (MouseButton LeftButton)  Down _ (Position x y) = do
    projMatrix <- get (matrix (Just Projection)) :: IO (GLmatrix GLdouble)
    let realY = h - y -1
    putStrLn ("Coordinates at cursor are (" ++ show x ++", " ++ show realY ++ ")")
-   Just w0 <- unProject (Vertex3 (fromIntegral x) (fromIntegral realY) 0) mvMatrix projMatrix v
+   w0 <- unProject (Vertex3 (fromIntegral x) (fromIntegral realY) 0) mvMatrix projMatrix v
    putStrLn ("World coords at z=0.0 are " ++ show w0)
-   Just w1 <- unProject (Vertex3 (fromIntegral x) (fromIntegral realY) 1) mvMatrix projMatrix v
+   w1 <- unProject (Vertex3 (fromIntegral x) (fromIntegral realY) 1) mvMatrix projMatrix v
    putStrLn ("World coords at z=1.0 are " ++ show w1)
 keyboardMouse (MouseButton RightButton) Down _ _ = exitWith ExitSuccess
 keyboardMouse (Char '\27')              Down _ _ = exitWith ExitSuccess
