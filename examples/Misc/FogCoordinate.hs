@@ -41,12 +41,12 @@ triangle =
 display :: DisplayCallback
 display = do
    clear [ ColorBuffer ]
-   fog $= False
+   fog $= Disabled
    triangle
    matrixExcursion $ do
       let translatef = translate :: Vector3 GLfloat -> IO ()
       translatef (Vector3 12.5 0 0)
-      fog $= True
+      fog $= Enabled
       triangle
    flush
 

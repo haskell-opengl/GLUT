@@ -22,8 +22,8 @@ myInit = do
    depthFunc $= Just Less
 
    position (Light 0) $= Vertex4 0.5 0.5 3.0 0.0
-   lighting $= True
-   light (Light 0) $= True
+   lighting $= Enabled
+   light (Light 0) $= Enabled
 
    -- NOTE: The alpha values are missing from fog.c!
    materialAmbient   Front $= Color4 0.1745   0.01175  0.01175  1.0
@@ -31,7 +31,7 @@ myInit = do
    materialSpecular  Front $= Color4 0.727811 0.626959 0.626959 1.0
    materialShininess Front $= 0.6 * 128
 
-   fog $= True
+   fog $= Enabled
    let c = Color4 0.5 0.5 0.5 1.0
    fogMode $= Exp 0.35
    fogColor $= c
