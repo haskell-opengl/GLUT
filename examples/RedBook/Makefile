@@ -10,7 +10,8 @@ BINS        := $(addsuffix $(exeext),$(EXAMPLES:.hs=))
 CLEAN_FILES += $(BINS)
 
 HC           = $(GHC_INPLACE)
-SRC_HC_OPTS += -Wall -O -package GLUT
+MKDEPENDHS   = $(GHC_INPLACE)
+SRC_HC_OPTS += -Wall -package GLUT
 
 all:: $(BINS)
 

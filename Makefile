@@ -7,6 +7,10 @@ include $(TOP)/mk/boilerplate.mk
 
 SUBDIRS = cbits include
 
+ifeq "$(IncludeExampleDirsInBuild)" "YES"
+SUBDIRS += examples
+endif
+
 ALL_DIRS = \
 	Graphics/UI \
 	Graphics/UI/GLUT \
@@ -44,13 +48,6 @@ CLEAN_FILES += $(STUBOBJS) \
    Graphics/UI/GLUT/Callbacks/Global_stub.[ch] \
    Graphics/UI/GLUT/Callbacks/Registration_stub.[ch] \
    Graphics/UI/GLUT/Callbacks/Window_stub.[ch]
-
-# -----------------------------------------------------------------------------
-
-.PHONY: examples
-
-examples:
-	$(MAKE) -C examples
 
 # -----------------------------------------------------------------------------
 
