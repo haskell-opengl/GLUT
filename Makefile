@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# $Id: Makefile,v 1.14 2003/01/23 18:57:32 panne Exp $
+# $Id: Makefile,v 1.15 2003/03/02 19:30:20 panne Exp $
 
 TOP = ..
 include $(TOP)/mk/boilerplate.mk
@@ -45,6 +45,13 @@ CLEAN_FILES += $(STUBOBJS) \
    Graphics/UI/GLUT/Callbacks/Global_stub.[ch] \
    Graphics/UI/GLUT/Callbacks/Registration_stub.[ch] \
    Graphics/UI/GLUT/Callbacks/Window_stub.[ch]
+
+# -----------------------------------------------------------------------------
+
+.PHONY: examples
+
+examples:
+	$(MAKE) -C examples
 
 # -----------------------------------------------------------------------------
 
