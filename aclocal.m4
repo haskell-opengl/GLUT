@@ -300,7 +300,13 @@ if test x"$use_quartz_opengl" = xno; then
     GLUT_LIBS="$X_PRE_LIBS -lXmu -lXi $X_EXTRA_LIBS $GLUT_LIBS"
   fi
 
-  AC_CHECK_HEADERS([windows.h GL/glut.h])
+  AC_CHECK_HEADERS([windows.h])
+
+  fp_save_cppflags="$CPPFLAGS"
+  CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+  AC_CHECK_HEADERS([GL/glut.h])
+  CPPFLAGS="$fp_save_cppflags"
+
   # Note 1: On Cygwin with X11, GL/GLU functions use the "normal" calling
   # convention, but GLUT functions use stdcall. To get this right, it is
   # necessary to include <windows.h> first.
