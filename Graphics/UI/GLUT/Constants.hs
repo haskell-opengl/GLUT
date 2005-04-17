@@ -22,7 +22,7 @@ import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 -- * Display mode bit masks
 glut_RGB, glut_RGBA, glut_INDEX, glut_SINGLE, glut_DOUBLE, glut_ACCUM,
    glut_ALPHA, glut_DEPTH, glut_STENCIL, glut_MULTISAMPLE, glut_STEREO,
-   glut_LUMINANCE :: CUInt
+   glut_LUMINANCE, glut_AUX1, glut_AUX2, glut_AUX3, glut_AUX4 :: CUInt
 glut_RGB                               = 0x0000
 glut_RGBA                              = glut_RGB
 glut_INDEX                             = 0x0001
@@ -35,6 +35,10 @@ glut_STENCIL                           = 0x0020
 glut_MULTISAMPLE                       = 0x0080
 glut_STEREO                            = 0x0100
 glut_LUMINANCE                         = 0x0200
+glut_AUX1                              = 0x1000
+glut_AUX2                              = 0x2000
+glut_AUX3                              = 0x4000
+glut_AUX4                              = 0x8000
 
 -----------------------------------------------------------------------------
 -- * Mouse buttons

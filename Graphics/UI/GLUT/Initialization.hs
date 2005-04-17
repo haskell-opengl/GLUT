@@ -64,7 +64,7 @@ import Graphics.UI.GLUT.Constants (
    glut_INIT_WINDOW_WIDTH, glut_INIT_WINDOW_HEIGHT,
    glut_RGBA, glut_RGB, glut_INDEX, glut_SINGLE, glut_DOUBLE, glut_ACCUM,
    glut_ALPHA, glut_DEPTH, glut_STENCIL, glut_MULTISAMPLE, glut_STEREO,
-   glut_LUMINANCE,
+   glut_LUMINANCE, glut_AUX1, glut_AUX2, glut_AUX3, glut_AUX4,
    glut_INIT_DISPLAY_MODE,
    glut_DISPLAY_MODE_POSSIBLE,
    glut_RENDERING_CONTEXT, glut_CREATE_NEW_CONTEXT, glut_USE_CURRENT_CONTEXT,
@@ -227,6 +227,7 @@ data DisplayMode
    | WithAccumBuffer    -- ^ Select a window with an accumulation buffer.
    | WithDepthBuffer    -- ^ Select a window with a depth buffer.
    | WithStencilBuffer  -- ^ Select a window with a stencil buffer.
+   | WithAuxBuffers Int -- ^ (/freeglut only/) Select a window with /n/ (1 .. 4) auxiliary buffers. Any /n/ outside the range 1 .. 4 is a fatal error.
    | SingleBuffered     -- ^ Select a single buffered window. This is the default if neither 'DoubleBuffered' nor 'SingleBuffered' are specified.
    | DoubleBuffered     -- ^ Select a double buffered window. This overrides 'SingleBuffered' if it is also specified.
    | Multisampling      -- ^ Select a window with multisampling support. If multisampling is not available, a non-multisampling
@@ -246,6 +247,12 @@ marshalDisplayMode m = case m of
    WithAlphaComponent -> glut_ALPHA
    WithDepthBuffer -> glut_DEPTH
    WithStencilBuffer -> glut_STENCIL
+   WithAuxBuffers 1 -> glut_AUX1
+   WithAuxBuffers 2 -> glut_AUX2
+   WithAuxBuffers 3 -> glut_AUX3
+   WithAuxBuffers 4 -> glut_AUX4
+   WithAuxBuffers n ->
+      error ("marshalDisplayMode: illegal number of auxiliary buffers: " ++ show n)
    Multisampling -> glut_MULTISAMPLE
    Stereoscopic -> glut_STEREO
    LuminanceMode -> glut_LUMINANCE
@@ -271,7 +278,9 @@ i2dms :: CInt -> [DisplayMode]
 i2dms bitfield =
    [ c | c <- [ RGBAMode, RGBMode, IndexMode, SingleBuffered, DoubleBuffered,
                 WithAccumBuffer, WithAlphaComponent, WithDepthBuffer,
-                WithStencilBuffer, Multisampling, Stereoscopic, LuminanceMode ]
+                WithStencilBuffer, WithAuxBuffers 1, WithAuxBuffers 2,
+                WithAuxBuffers 3, WithAuxBuffers 4, Multisampling, Stereoscopic,
+                LuminanceMode ]
        , (fromIntegral bitfield .&. marshalDisplayMode c) /= 0 ]
 
 setInitialDisplayMode :: [DisplayMode] -> IO ()
@@ -356,6 +365,8 @@ data DisplayCapability
                   --   appropriate for medical imaging applications. Do not
                   --   expect many machines to support extended precision
                   --   luminance display modes.
+   | DisplayAux   -- ^ (/freeglut only/) Number of auxiliary buffers. Default is
+                  --   \"'IsEqualTo' @1@\".
    | DisplayNum   -- ^ A special capability name indicating where the value
                   --   represents the Nth frame buffer configuration matching
                   --   the description string. When not specified,
@@ -430,6 +441,7 @@ displayCapabilityToString x = case x of
    DisplaySamples      -> "samples"
    DisplayStereo       -> "stereo"
    DisplayLuminance    -> "luminance"
+   DisplayAux          -> "aux"
    DisplayNum          -> "num"
    DisplayConformant   -> "conformant"
    DisplaySlow         -> "slow"
