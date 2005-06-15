@@ -11,6 +11,13 @@ description:
 	system independent toolkit for writing OpenGL programs. For more
 	information about the C library on which this binding is based,
 	please see: <http://www.opengl.org/resources/libraries/glut.html>.
+other-files:
+	-- The first three files are not in this directory of the CVS
+	-- repository; copy them from ../..
+	config.guess config.sub install-sh configure.ac
+	configure config.mk.in GLUT.buildinfo.in
+	include/HsGLUTConfig.h.in include/HsGLUT.h.in
+	include/HsGLUTExt.h
 exposed-modules:
 	Graphics.UI.GLUT,
 	Graphics.UI.GLUT.Begin,
@@ -38,4 +45,4 @@ include-dirs:	include
 includes:	"HsGLUT.h"
 c-sources:	cbits/HsGLUT.c
 build-depends:	base, OpenGL
-extensions:	CPP
+extensions:	CPP, ForeignFunctionInterface
