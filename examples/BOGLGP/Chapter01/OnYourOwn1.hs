@@ -21,7 +21,7 @@ main = do
    -- Create the window
    initialWindowSize $= Size 1024 768
    initialWindowPosition $= Position 100 150
-   createWindow "BOGLGP Chapter 1 - On Your Own 1"
+   createWindow "BOGLGP - Chapter 1 - On Your Own 1"
 
    initialize
 

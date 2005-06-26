@@ -57,7 +57,7 @@ windowedMode :: Options -> IO ()
 windowedMode opts = do
    initialWindowSize $=
       Size (fromIntegral (windowWidth opts)) (fromIntegral (windowHeight opts))
-   createWindow "BOGLGP - Chapter 2 - OpenGL Application"
+   createWindow "BOGLGP - Chapter 2 - On Your Own 1"
    return ()
 
 --------------------------------------------------------------------------------
