@@ -1,5 +1,5 @@
 {-
-   OnYourOwn1.hs (adapted from CGfxOpenGL.cpp which is (c) 2004 Astle/Hawkins)
+   OnYourOwn1.hs (adapted from OnYourOwn1 which is (c) 2004 Astle/Hawkins)
    Copyright (c) Sven Panne 2005 <sven.panne@aedion.de>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
