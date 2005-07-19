@@ -66,7 +66,7 @@ else
 fi
 AC_SUBST([BUILD_PACKAGE_BOOL])
 
-case "$target" in
+case "$host" in
 *-mingw32) CALLCONV=stdcall ;;
 *)	CALLCONV=ccall ;;
 esac
