@@ -4,6 +4,12 @@ TOP = ..
 include $(TOP)/mk/boilerplate.mk
 -include config.mk
 
+ifneq "$(findstring clean, $(MAKECMDGOALS))" ""
+# if we're cleaning, then config.mk might have been cleaned already
+GLUT_BUILD_PACKAGE=yes
+PACKAGE=GLUT
+endif
+
 ifneq "$(GLUT_BUILD_PACKAGE)" "no"
 
 # -----------------------------------------------------------------------------
@@ -63,8 +69,7 @@ endif
 
 # -----------------------------------------------------------------------------
 
-DIST_CLEAN_FILES += GLUT.buildinfo config.cache config.status 
-LATE_DIST_CLEAN_FILES += config.mk
+DIST_CLEAN_FILES += GLUT.buildinfo config.cache config.status config.mk
 
 extraclean::
 	$(RM) -rf autom4te.cache
