@@ -215,13 +215,13 @@ foreign import CALLCONV unsafe "glutReshapeFunc" glutReshapeFunc ::
 -- | The visibility state of the /current window/
 
 data Visibility
-   = NotVisible -- ^ The /current window/ is totally or partially visible. GLUT
+   = NotVisible -- ^ No part of the /current window/ is visible, i.e., until the
+                --   window\'s visibility changes, all further rendering to the
+                --   window is discarded.
+   | Visible    -- ^ The /current window/ is totally or partially visible. GLUT
                 --   considers a window visible if any pixel of the window is
                 --   visible or any pixel of any descendant window is visible on
                 --   the screen.
-   | Visible    -- ^ No part of the /current window/ is visible, i.e., until the
-                --   window\'s visibility changes, all further rendering to the
-                --   window is discarded.
    deriving ( Eq, Ord, Show )
 
 unmarshalVisibility :: CInt -> Visibility
