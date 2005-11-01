@@ -30,7 +30,6 @@ module Graphics.UI.GLUT.GameMode (
    gameModeActive
 ) where
 
-import Control.Monad ( liftM )
 import Data.List ( intersperse )
 import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
@@ -193,7 +192,7 @@ gameModeInfo = makeGettableStateVar $ do
       else return Nothing
 
 getBool :: GLenum -> IO Bool
-getBool = liftM (/= 0) . glutGameModeGet
+getBool = fmap (/= 0) . glutGameModeGet
 
 foreign import CALLCONV unsafe "glutGameModeGet" glutGameModeGet ::
    GLenum -> IO CInt

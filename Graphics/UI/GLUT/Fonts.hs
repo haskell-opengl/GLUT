@@ -22,7 +22,6 @@ module Graphics.UI.GLUT.Fonts (
    Font(..), BitmapFont(..), StrokeFont(..),
 ) where
 
-import Control.Monad ( liftM )
 import Data.Char ( ord )
 import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
@@ -179,7 +178,7 @@ bitmapLength :: BitmapFont -- ^ Bitmap font to use.
              -> IO GLint   -- ^ Width in pixels.
 bitmapLength f s = do
    i <- marhshalBitmapFont f
-   liftM fromIntegral $ withCString s (glutBitmapLength i)
+   fmap fromIntegral $ withCString s (glutBitmapLength i)
 
 foreign import CALLCONV unsafe "glutBitmapLength"
    glutBitmapLength :: GLUTbitmapFont -> CString -> IO CInt
@@ -192,7 +191,7 @@ strokeLength :: StrokeFont -- ^ Stroke font to use.
              -> IO GLint   -- ^ Width in units.
 strokeLength f s = do
    i <- marhshalStrokeFont f
-   liftM fromIntegral $ withCString s (glutStrokeLength i)
+   fmap fromIntegral $ withCString s (glutStrokeLength i)
 
 foreign import CALLCONV unsafe "glutStrokeLength"
    glutStrokeLength :: GLUTstrokeFont -> CString -> IO CInt
@@ -201,7 +200,7 @@ foreign import CALLCONV unsafe "glutStrokeLength"
 
 bitmapHeight :: BitmapFont -- ^ Bitmap font to use.
              -> IO GLfloat -- ^ Height in pixels.
-bitmapHeight f = liftM fromIntegral $ glutBitmapHeight =<< marhshalBitmapFont f
+bitmapHeight f = fmap fromIntegral $ glutBitmapHeight =<< marhshalBitmapFont f
 
 EXTENSION_ENTRY(unsafe,"freeglut",glutBitmapHeight,GLUTbitmapFont -> IO CInt)
 

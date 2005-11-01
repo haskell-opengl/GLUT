@@ -17,7 +17,7 @@ module Graphics.UI.GLUT.Callbacks.Registration (
 
 --------------------------------------------------------------------------------
 
-import Control.Monad ( liftM, when )
+import Control.Monad ( when )
 import Data.IORef ( IORef, newIORef, readIORef, writeIORef, modifyIORef )
 import qualified Data.Map as Map ( empty, lookup, insert, delete )
 import Data.Map ( Map )
@@ -58,7 +58,7 @@ getCallbackID :: CallbackType -> IO CallbackID
 getCallbackID callbackType = do
    maybeWindow <- if isGlobal callbackType
                      then return Nothing
-                     else liftM Just $ getCurrentWindow "getCallbackID"
+                     else fmap Just $ getCurrentWindow "getCallbackID"
    return $ CallbackID maybeWindow callbackType
 
 getCurrentWindow :: String -> IO Window
@@ -89,7 +89,7 @@ emptyCallbackTable = Map.empty
 
 lookupInCallbackTable :: CallbackID -> IO (Maybe (FunPtr a))
 lookupInCallbackTable callbackID =
-   liftM (Map.lookup callbackID) getCallbackTable
+   fmap (Map.lookup callbackID) getCallbackTable
 
 deleteFromCallbackTable :: CallbackID -> IO ()
 deleteFromCallbackTable callbackID =

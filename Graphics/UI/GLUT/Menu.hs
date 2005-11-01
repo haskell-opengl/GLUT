@@ -27,7 +27,7 @@ import Data.Map ( Map )
 import Foreign.C.String ( CString, withCString )
 import Foreign.C.Types ( CInt )
 import Foreign.Ptr ( FunPtr, freeHaskellFunPtr )
-import Control.Monad ( liftM, unless, zipWithM, when )
+import Control.Monad ( unless, zipWithM, when )
 import System.IO.Unsafe ( unsafePerformIO )
 import Graphics.Rendering.OpenGL.GL.StateVar (
    HasGetter(get), HasSetter(($=)),
@@ -153,7 +153,7 @@ emptyMenuTable = Map.empty
 
 lookupInMenuTable :: MenuHook -> IO (Maybe Destructor)
 lookupInMenuTable callbackID =
-   liftM (Map.lookup callbackID) getMenuTable
+   fmap (Map.lookup callbackID) getMenuTable
 
 deleteFromMenuTable :: MenuHook -> IO ()
 deleteFromMenuTable callbackID =

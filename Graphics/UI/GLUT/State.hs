@@ -45,7 +45,6 @@ module Graphics.UI.GLUT.State (
  glutVersion
 ) where
 
-import Control.Monad ( liftM )
 import Foreign.C.Types ( CInt )
 import Foreign.Ptr ( nullFunPtr )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
@@ -306,7 +305,7 @@ getDeviceInfo :: GLenum -> IO a -> GettableStateVar (Maybe a)
 getDeviceInfo dev act =
    makeGettableStateVar $ do
       hasDevice <- deviceGet i2b dev
-      if hasDevice then liftM Just act else return Nothing
+      if hasDevice then fmap Just act else return Nothing
 
 -----------------------------------------------------------------------------
 
@@ -318,7 +317,7 @@ glutVersion :: GettableStateVar String
 glutVersion = makeGettableStateVar $ do
    let isGLUT = isUnknown "glutSetOption"
        isFreeglut = isUnknown "glutSetWindowStayOnTop"
-       isUnknown = liftM (== nullFunPtr) . getProcAddressInternal
+       isUnknown = fmap (== nullFunPtr) . getProcAddressInternal
        showVersionPart x = shows (x `mod` 100)
        showVersion v = showVersionPart (v `div` 10000) . showChar '.' .
                        showVersionPart (v `div`   100) . showChar '.' .

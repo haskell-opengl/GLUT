@@ -13,7 +13,7 @@
    Texture objects are only used when GL_EXT_texture_object is supported.
 -}
 
-import Control.Monad ( liftM, when )
+import Control.Monad ( when )
 import Data.Maybe ( isJust, listToMaybe )
 import Data.Bits ( (.&.) )
 import Foreign ( withArray )
@@ -43,7 +43,7 @@ myInit = do
 
    exts <- get glExtensions
    mbTexName <- if "GL_EXT_texture_object" `elem` exts
-                   then liftM listToMaybe $ genObjectNames 1
+                   then fmap listToMaybe $ genObjectNames 1
                    else return Nothing
    when (isJust mbTexName) $ textureBinding Texture2D $= mbTexName
 

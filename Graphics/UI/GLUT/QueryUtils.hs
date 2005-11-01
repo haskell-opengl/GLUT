@@ -17,7 +17,6 @@ module Graphics.UI.GLUT.QueryUtils (
   Getter, simpleGet, layerGet, deviceGet, glutSetOption
 ) where
 
-import Control.Monad ( liftM )
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 import Graphics.UI.GLUT.Extensions
@@ -32,7 +31,7 @@ type PrimGetter =                GLenum -> IO CInt
 type Getter a   = (CInt -> a) -> GLenum -> IO a
 
 makeGetter :: PrimGetter -> Getter a
-makeGetter g f = liftM f . g
+makeGetter g f = fmap f . g
 
 simpleGet, layerGet, deviceGet :: Getter a
 simpleGet = makeGetter glutGet

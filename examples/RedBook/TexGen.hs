@@ -14,7 +14,7 @@
    (x + y + z = 0). Pressing the 'x' key switches it back to x = 0.
 -}
 
-import Control.Monad ( liftM, when )
+import Control.Monad ( when )
 import Data.Char ( toLower )
 import Data.Maybe ( isJust, listToMaybe )
 import Foreign ( withArray )
@@ -47,7 +47,7 @@ myInit = do
 
    exts <- get glExtensions
    mbTexName <- if "GL_EXT_texture_object" `elem` exts
-                   then liftM listToMaybe $ genObjectNames 1
+                   then fmap listToMaybe $ genObjectNames 1
                    else return Nothing
    when (isJust mbTexName) $ textureBinding Texture1D $= mbTexName
 

@@ -10,7 +10,7 @@
    with several different colors.
 -}
 
-import Control.Monad ( liftM, when )
+import Control.Monad ( when )
 import Data.Maybe ( isJust, listToMaybe )
 import Foreign ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
@@ -37,7 +37,7 @@ myInit = do
 
    exts <- get glExtensions
    mbTexName <- if "GL_EXT_texture_object" `elem` exts
-                   then liftM listToMaybe $ genObjectNames 1
+                   then fmap listToMaybe $ genObjectNames 1
                    else return Nothing
    when (isJust mbTexName) $ textureBinding Texture2D $= mbTexName
 

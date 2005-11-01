@@ -15,7 +15,6 @@
    keys, you change the zoom factors.
 -}
 
-import Control.Monad ( liftM )
 import Data.Bits ( (.&.) )
 import Data.IORef ( IORef, newIORef )
 import Foreign ( newArray )
@@ -37,7 +36,7 @@ type Image = PixelData (Color3 GLubyte)
 
 makeCheckImage :: Size -> GLsizei -> (GLubyte -> (Color3 GLubyte)) -> IO Image
 makeCheckImage (Size w h) n f =
-   liftM (PixelData RGB UnsignedByte) $
+   fmap (PixelData RGB UnsignedByte) $
       newArray [ f c |
                  i <- [ 0 .. w - 1 ],
                  j <- [ 0 .. h - 1 ],

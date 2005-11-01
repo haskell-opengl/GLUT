@@ -10,7 +10,7 @@
    original texture. If the r key is pressed, the original texture is restored.
 -}
 
-import Control.Monad ( liftM, when )
+import Control.Monad ( when )
 import Data.Char ( toLower )
 import Data.Bits ( (.&.) )
 import Foreign ( newArray )
@@ -26,7 +26,7 @@ type Image = PixelData (Color4 GLubyte)
 makeCheckImage ::
    TextureSize2D -> GLsizei -> (GLubyte -> (Color4 GLubyte)) -> IO Image
 makeCheckImage (TextureSize2D w h) n f =
-   liftM (PixelData RGBA UnsignedByte) $
+   fmap (PixelData RGBA UnsignedByte) $
       newArray [ f c |
                  i <- [ 0 .. w - 1 ],
                  j <- [ 0 .. h - 1 ],

@@ -47,7 +47,6 @@ module Graphics.UI.GLUT.Callbacks.Window (
    JoystickCallback, joystickCallback
 ) where
 
-import Control.Monad ( liftM )
 import Data.Bits ( Bits((.&.)) )
 import Data.Char ( chr )
 import Data.Maybe ( fromJust )
@@ -432,7 +431,7 @@ unmarshalModifiers m = Modifiers {
    alt   = if (m .&. glut_ACTIVE_ALT  ) /= 0 then Down else Up }
 
 getModifiers :: IO Modifiers
-getModifiers = liftM unmarshalModifiers glutGetModifiers
+getModifiers = fmap unmarshalModifiers glutGetModifiers
 
 foreign import CALLCONV unsafe "glutGetModifiers" glutGetModifiers :: IO CInt
 
