@@ -74,7 +74,6 @@ display state displayLists = do
       depthMask $= Enabled
       blend $= Disabled
 
-   flush
    swapBuffers
 
 reshape :: ReshapeCallback
