@@ -126,7 +126,6 @@ keyboard _ _ _ _ _ = return ()
 main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
-   -- The original C example uses single buffering, which flickers a lot.
    initialDisplayMode $= [ DoubleBuffered, RGBMode, Multisampling ]
    initialWindowSize $= Size 600 300
    createWindow progName
