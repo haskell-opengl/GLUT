@@ -64,6 +64,7 @@ keyboard (Char 's')   Down _ _ = do
    Just (width, format, sink) <- get (histogram NoProxy)
    let newSink = if sink == Sink then PassThrough else Sink
    histogram NoProxy $= Just (width, format, newSink)
+   postRedisplay Nothing
 keyboard (Char '\27') Down _ _ = exitWith ExitSuccess
 keyboard _            _    _ _ = return ()
 
