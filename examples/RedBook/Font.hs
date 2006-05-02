@@ -4,14 +4,14 @@
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 
-   Draws some text in a bitmapped font. Uses bitmap and other pixel
-   routines. Also demonstrates use of display lists.
+   Draws some text in a bitmapped font. Uses bitmap and other pixel routines.
+   Also demonstrates use of display lists.
 -}
 
 import Control.Monad ( zipWithM_ )
-import Data.Char ( ord )
-import Data.List ( genericLength )
-import Foreign ( withArray )
+import Data.List ( genericDrop, genericLength )
+import Foreign.C.String ( castCharToCChar )
+import Foreign.Marshal.Array ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -48,12 +48,15 @@ letters = [
    [ 0x00, 0x00, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x3c, 0x3c, 0x66, 0x66, 0xc3 ],
    [ 0x00, 0x00, 0xff, 0xc0, 0xc0, 0x60, 0x30, 0x7e, 0x0c, 0x06, 0x03, 0x03, 0xff ]]
 
+charToGLubyte :: Char -> GLubyte
+charToGLubyte = fromIntegral . castCharToCChar
+
 makeRasterFont :: IO DisplayList
 makeRasterFont = do
    rowAlignment Unpack $= 1
 
    fontDisplayLists@(fontOffset:_) <- genObjectNames 128
-   let listsStartingWith ch = drop (ord ch) fontDisplayLists
+   let listsStartingWith ch = genericDrop (charToGLubyte ch) fontDisplayLists
        makeLetter dl letter =
           defineList dl Compile $
              withArray letter $
@@ -72,11 +75,8 @@ printString :: DisplayList -> String -> IO ()
 printString fontOffset s =
    preservingAttrib [ ListAttributes ] $ do
       listBase $= fontOffset
-      withArray (stringToGLubytes s) $
+      withArray (map charToGLubyte s) $
          callLists (genericLength s) UnsignedByte
-
-stringToGLubytes :: String -> [GLubyte]
-stringToGLubytes = map (fromIntegral . ord)
 
 -- Everything above this line could be in a library 
 -- that defines a font.  To make it work, you've got 
