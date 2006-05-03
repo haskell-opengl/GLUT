@@ -8,6 +8,7 @@
    orthographic parallel projection.
 -}
 
+import Data.List ( genericLength )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -94,7 +95,7 @@ display = do
          -- to world coordinates.
          translate (Vector3 (x*4.5/fromIntegral w) (y*4.5/fromIntegral h) 0)
          displayObjects
-      accum Accum (recip (fromIntegral (length j8)))
+      accum Accum (recip (genericLength j8))
 
    accum Return 1
    flush

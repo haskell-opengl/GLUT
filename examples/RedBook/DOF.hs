@@ -11,6 +11,7 @@
    case, the gold teapot remains in focus.
 -}
 
+import Data.List ( genericLength )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -153,7 +154,8 @@ display teapotList = do
                    (Color4 0.0        0.50980392 0.50980392 1)
                    (Color4 0.50196078 0.50196078 0.50196078 1)
                     0.25
-      accum Accum (recip (fromIntegral (length j8)))
+      accum Accum (recip (genericLength j8))
+
    accum Return 1
    flush
 

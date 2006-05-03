@@ -9,6 +9,7 @@
    accPerspective.
 -}
 
+import Data.List ( genericLength )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
@@ -137,7 +138,7 @@ display = do
       accPerspective 50 (fromIntegral w / fromIntegral h) 1 15
                      (Vector2 x y) (Vector2 0 0) 1
       displayObjects
-      accum Accum (recip (fromIntegral (length j8)))
+      accum Accum (recip (genericLength j8))
 
    accum Return 1
    flush
