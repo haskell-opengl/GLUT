@@ -130,14 +130,14 @@ displayObjects = do
 display :: DisplayCallback
 display = do
    (_, Size w h) <- get viewport
-
    clear [ AccumBuffer ]
+
    flip mapM_ j8 $ \(Vector2 x y) -> do
       clear [ ColorBuffer, DepthBuffer ]
       accPerspective 50 (fromIntegral w / fromIntegral h) 1 15
                      (Vector2 x y) (Vector2 0 0) 1
       displayObjects
-      accum Accum 0.125
+      accum Accum (recip (fromIntegral (length j8)))
 
    accum Return 1
    flush
