@@ -12,8 +12,6 @@ description:
 	information about the C library on which this binding is based,
 	please see: <http://www.opengl.org/resources/libraries/glut/>.
 extra-source-files:
-	-- The first three files are not in this directory of the CVS
-	-- repository; copy them from ../..
 	config.guess config.sub install-sh
 	configure.ac configure config.mk.in GLUT.buildinfo.in
 	include/HsGLUTConfig.h.in include/HsGLUT.h.in
