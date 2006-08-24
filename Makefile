@@ -20,6 +20,8 @@ ifeq "$(IncludeExampleDirsInBuild)" "YES"
 SUBDIRS += examples
 endif
 
+EXCLUDED_SRCS += Setup.hs
+
 ALL_DIRS = \
 	Graphics/UI \
 	Graphics/UI/GLUT \
