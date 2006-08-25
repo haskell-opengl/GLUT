@@ -20,8 +20,6 @@ ifeq "$(IncludeExampleDirsInBuild)" "YES"
 SUBDIRS += examples
 endif
 
-EXCLUDED_SRCS += Setup.hs
-
 ALL_DIRS = \
 	Graphics/UI \
 	Graphics/UI/GLUT \
@@ -68,6 +66,8 @@ CLEAN_FILES += $(STUBOBJS) \
    Graphics/UI/GLUT/Callbacks/Window_stub.[ch]
 
 endif
+
+EXCLUDED_SRCS += Setup.hs
 
 # -----------------------------------------------------------------------------
 
