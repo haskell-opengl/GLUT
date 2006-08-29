@@ -43,7 +43,7 @@ other-modules:
 	Graphics.UI.GLUT.QueryUtils,
 	Graphics.UI.GLUT.Types
 include-dirs:	include
-includes:	"HsGLUT.h"
+install-includes: HsGLUT.h
 c-sources:	cbits/HsGLUT.c
 build-depends:	base, OpenGL
 extensions:	CPP, ForeignFunctionInterface
