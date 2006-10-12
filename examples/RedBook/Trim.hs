@@ -12,7 +12,6 @@
    just a test for the internals...
 -}
 
-import Foreign.Ptr ( castPtr )
 import Foreign.Marshal ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
@@ -61,21 +60,21 @@ display = do
 
       withNURBSObj () $ \nurbsObj -> do
          setSamplingMethod nurbsObj (PathLength 25)
-         setDisplayMode nurbsObj Fill'
-         checkForError nurbsObj $
+         setDisplayMode' nurbsObj Fill'
+         checkForNURBSError nurbsObj $
             nurbsBeginEndSurface nurbsObj $
                withArray (concat ctlPoints) $ \cBuf ->
                   withArray knots $ \kBuf -> do
-                     gluNurbsSurface nurbsObj 8 kBuf 8 kBuf (4 * 3) 3 (castPtr cBuf) 4 4 0xdb7 -- GL_MAP2_VERTEX_3
+                     nurbsSurface nurbsObj 8 kBuf 8 kBuf (4 * 3) 3 cBuf 4 4
                      nurbsBeginEndTrim nurbsObj $
                         withArray edgePt $ \edgePtBuf ->
-                           gluPwlCurve nurbsObj 5 (castPtr edgePtBuf) 2 100210 -- GLU_MAP1_TRIM_2
+                           pwlCurve nurbsObj 5 edgePtBuf 2
                      nurbsBeginEndTrim nurbsObj $ do
                         withArray curveKnots $ \curveKnotsBuf ->
                            withArray curvePt $ \curvePtBuf ->
-                              gluNurbsCurve nurbsObj 8 curveKnotsBuf 2 (castPtr curvePtBuf) 4 100210 -- GLU_MAP1_TRIM_2
+                              trimmingCurve nurbsObj 8 curveKnotsBuf 2 curvePtBuf 4
                         withArray pwlPt $ \pwlPtBuf ->
-                           gluPwlCurve nurbsObj 3 (castPtr pwlPtBuf) 2 100210 -- GLU_MAP1_TRIM_2
+                           pwlCurve nurbsObj 3 pwlPtBuf 2
 
    flush
 

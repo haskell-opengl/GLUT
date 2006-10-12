@@ -21,7 +21,6 @@
 import Control.Monad ( when, unless )
 import Data.Char ( toLower )
 import Data.IORef ( IORef, newIORef )
-import Foreign.Ptr ( castPtr )
 import Foreign.Marshal ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
 import Graphics.UI.GLUT
@@ -69,16 +68,16 @@ display state = do
       withNURBSObj () $ \nurbsObj -> do
          setNURBSMode nurbsObj NURBSTessellator
          setSamplingMethod nurbsObj (PathLength 25)
-         setDisplayMode nurbsObj Fill'
-         checkForError nurbsObj $
-            withBeginCallback nurbsObj print $
-               withVertexCallback nurbsObj print $
-                  withNormalCallback nurbsObj print $
-                     withEndCallback nurbsObj (putStrLn "end") $
+         setDisplayMode' nurbsObj Fill'
+         checkForNURBSError nurbsObj $
+            withNURBSBeginCallback nurbsObj print $
+               withNURBSVertexCallback nurbsObj print $
+                  withNURBSNormalCallback nurbsObj print $
+                     withNURBSEndCallback nurbsObj (putStrLn "end") $
                         nurbsBeginEndSurface nurbsObj $
                            withArray (concat ctlPoints) $ \cBuf ->
                               withArray knots $ \kBuf ->
-                                 gluNurbsSurface nurbsObj 8 kBuf 8 kBuf (4 * 3) 3 (castPtr cBuf) 4 4 0xdb7 -- GL_MAP2_VERTEX_3
+                                 nurbsSurface nurbsObj 8 kBuf 8 kBuf (4 * 3) 3 cBuf 4 4
 
       s <- get (showPoints state)
       when s $ do
