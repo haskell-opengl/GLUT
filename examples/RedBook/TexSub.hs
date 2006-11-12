@@ -107,8 +107,8 @@ main = do
    initialWindowPosition $= Position 100 100
    createWindow progName
    -- we have to do this *after* createWindow, otherwise we have no OpenGL context
-   version <- get glVersion
-   when (take 3 version == "1.0") $ do
+   version <- get (majorMinor glVersion)
+   when (version == (1,0)) $ do
       putStrLn "This program demonstrates a feature which is not in OpenGL Version 1.0."
       putStrLn "If your implementation of OpenGL Version 1.0 has the right extensions,"
       putStrLn "you may be able to modify this program to make it run."

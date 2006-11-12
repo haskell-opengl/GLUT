@@ -18,7 +18,7 @@
    just a test for the internals...
 -}
 
-import Control.Monad ( when, unless )
+import Control.Monad ( when )
 import Data.Char ( toLower )
 import Data.IORef ( IORef, newIORef )
 import Foreign.Marshal ( withArray )
@@ -114,8 +114,8 @@ main = do
    initialWindowSize $= Size 500 500
    initialWindowPosition $= Position 100 100
    createWindow progName
-   version <- get gluVersion
-   unless (take 3 version == "1.3") $ do
+   version <- get (majorMinor gluVersion)
+   when (version < (1,3)) $ do
       putStrLn "This program demonstrates a feature which is introduced in the"
       putStrLn "OpenGL Utility Library (GLU) Version 1.3."
       putStrLn "If your implementation of GLU has the right extensions,"
