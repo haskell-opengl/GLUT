@@ -45,5 +45,5 @@ other-modules:
 include-dirs:	include
 install-includes: HsGLUT.h
 c-sources:	cbits/HsGLUT.c
-build-depends:	base, OpenGL
+build-depends:	base, OpenGL >= 2.2
 extensions:	CPP, ForeignFunctionInterface
