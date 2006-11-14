@@ -1,13 +1,22 @@
 # -----------------------------------------------------------------------------
 
-TOP = ../..
+TOP = ../../../..
 include $(TOP)/mk/boilerplate.mk
 
 # -----------------------------------------------------------------------------
 
-ifeq "$(way)" ""
-SUBDIRS = RedBook OrangeBook BOGLGP Misc
-endif
+EXAMPLES    := $(wildcard *.hs)
+BINS        := $(addsuffix $(exeext),$(EXAMPLES:.hs=))
+CLEAN_FILES += $(BINS)
+
+HC           = $(GHC_INPLACE)
+MKDEPENDHS   = $(GHC_INPLACE)
+SRC_HC_OPTS += -Wall -O -package GLUT
+
+all:: $(BINS)
+
+$(BINS): %$(exeext): %.o
+	$(HC) -o $@ $(HC_OPTS) $(LD_OPTS) $<
 
 # -----------------------------------------------------------------------------
 
