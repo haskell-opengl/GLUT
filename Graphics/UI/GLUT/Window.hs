@@ -3,7 +3,7 @@
 -- Module      :  Graphics.UI.GLUT.Window
 -- Copyright   :  (c) Sven Panne 2002-2005
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
--- 
+--
 -- Maintainer  :  sven.panne@aedion.de
 -- Stability   :  stable
 -- Portability :  portable
@@ -208,7 +208,7 @@ foreign import CALLCONV unsafe "glutPostRedisplay" glutPostRedisplay :: IO ()
 -- The advantage of this routine is that it saves the cost of using
 -- 'currentWindow' (entailing an expensive OpenGL context switch), which is
 -- particularly useful when multiple windows need redisplays posted at the same
--- time. 
+-- time.
 
 foreign import CALLCONV unsafe "glutPostWindowRedisplay"
    glutPostWindowRedisplay :: Window -> IO ()

@@ -29,7 +29,7 @@ ramp2Start = 48
 -- Initialize antialiasing for color index mode, including loading a green color
 -- ramp starting at ramp1Start, and a blue color ramp starting at ramp2Start.
 -- The ramps must be a multiple of 16.
-myInit :: IO () 
+myInit :: IO ()
 myInit = do
    flip mapM_ [ 0 .. rampSize - 1 ] $ \i -> do
       let shade = fromIntegral i / fromIntegral rampSize
@@ -88,7 +88,7 @@ keyboard state (Char c) Down _ _ = case toLower c of
 keyboard _ _ _ _ _ = return ()
 
 -- Main Loop
--- Open window with initial window size, title bar, 
+-- Open window with initial window size, title bar,
 -- color index display mode, and handle input events.
 main :: IO ()
 main = do

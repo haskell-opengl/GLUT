@@ -8,7 +8,7 @@
    imaging subset. This program demonstrates use of blendEquation.
 
    The following keys change the selected blend equation function:
- 
+
        'a'  ->  FuncAdd
        's'  ->  FuncSubtract
        'r'  ->  FuncReverseSubtract

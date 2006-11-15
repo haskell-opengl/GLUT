@@ -129,7 +129,7 @@ display (texName0, texName1, dl) = do
    combineRGB $= Subtract
    drawAt 5 4
 
-   -- interpolate combine with constant color; 1 texture unit 
+   -- interpolate combine with constant color; 1 texture unit
    -- use different alpha values for constant color
    -- defaults are:
    -- argRGB Arg0 $= Arg SrcColor CurrentUnit

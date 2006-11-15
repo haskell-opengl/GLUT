@@ -3,7 +3,7 @@
 -- Module      :  Graphics.UI.GLUT.Objects
 -- Copyright   :  (c) Sven Panne 2002-2005
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
--- 
+--
 -- Maintainer  :  sven.panne@aedion.de
 -- Stability   :  stable
 -- Portability :  portable
@@ -96,7 +96,7 @@ data Object
      -- which are identical rhombi, but which have some vertices at which three
      -- faces meet and some vertices at which four faces meet. The length of
      -- each side is @(sqrt 3)\/2@. Vertices at which four faces meet are found
-     -- at @(0, 0, +\/-1)@ and @(+\/-(sqrt 2)\/2, +\/-(sqrt 2)\/2, 0)@. 
+     -- at @(0, 0, +\/-1)@ and @(+\/-(sqrt 2)\/2, +\/-(sqrt 2)\/2, 0)@.
      RhombicDodecahedron
    | -- | A sphere centered at the modeling coordinates origin of the specified
      --   radius. The sphere is subdivided around the Z axis into slices
@@ -120,7 +120,7 @@ data Object
    | -- | A teapot with a given relative size.
      Teapot Height
    | -- |(/freeglut only/) A Sierpinski sponge of a given level, where a level
-     -- 0 sponge is the same as a 'Tetrahedron'. 
+     -- 0 sponge is the same as a 'Tetrahedron'.
      SierpinskiSponge NumLevels
    deriving ( Eq, Ord, Show )
 
@@ -148,13 +148,13 @@ renderObject Wireframe Tetrahedron          = wireTetrahedron
 renderObject Solid     RhombicDodecahedron  = glutSolidRhombicDodecahedron
 renderObject Wireframe RhombicDodecahedron  = glutWireRhombicDodecahedron
 renderObject Solid     (Sphere' r s t)      = solidSphere r s t
-renderObject Wireframe (Sphere' r s t)      = wireSphere  r s t 
+renderObject Wireframe (Sphere' r s t)      = wireSphere  r s t
 renderObject Solid     (Cone r h s t)       = solidCone r h s t
 renderObject Wireframe (Cone r h s t)       = wireCone  r h s t
 renderObject Solid     (Cylinder' r h s t)  = glutSolidCylinder r h s t
 renderObject Wireframe (Cylinder' r h s t)  = glutWireCylinder r h s t
 renderObject Solid     (Torus i o s r)      = solidTorus i o s r
-renderObject Wireframe (Torus i o s r)      = wireTorus  i o s r 
+renderObject Wireframe (Torus i o s r)      = wireTorus  i o s r
 renderObject Solid     (Teapot h)           = solidTeapot h
 renderObject Wireframe (Teapot h)           = wireTeapot  h
 renderObject Solid     (SierpinskiSponge n) = solidSierpinskiSponge n
@@ -313,7 +313,7 @@ foreign import CALLCONV unsafe "glutWireTorus" wireTorus
 
 -- | Render a solid teapot.
 
-foreign import CALLCONV unsafe "glutSolidTeapot" solidTeapot  
+foreign import CALLCONV unsafe "glutSolidTeapot" solidTeapot
    :: Height -- ^ Relative size of the teapot
    -> IO ()
 

@@ -4,8 +4,8 @@
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 
-   This program demonstrates how to make and execute a 
-   display list.  Note that attributes, such as current 
+   This program demonstrates how to make and execute a
+   display list.  Note that attributes, such as current
    color and matrix, are changed.
 -}
 
@@ -70,7 +70,7 @@ keyboard :: KeyboardMouseCallback
 keyboard (Char '\27') Down _ _ = exitWith ExitSuccess
 keyboard _            _    _ _ = return ()
 
--- Open window with initial window size, title bar, 
+-- Open window with initial window size, title bar,
 -- RGBA display mode, and handle input events.
 main :: IO ()
 main = do

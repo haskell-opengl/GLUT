@@ -79,7 +79,7 @@ myInit = do
    ambient (Light 0) $= Color4 0 0 0 1
    diffuse (Light 0) $= Color4 1 1 1 1
    position (Light 0) $= Vertex4 0 3 3 0
-    
+
    lightModelAmbient $= Color4 0.2 0.2 0.2 1
    lightModelLocalViewer $= Disabled
 

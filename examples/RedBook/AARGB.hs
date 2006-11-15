@@ -24,12 +24,12 @@ makeState = do
 -- Initialize antialiasing for RGBA mode, including alpha blending, hint, and
 -- line width. Print out implementation specific info on line width granularity
 -- and width.
-myInit :: IO () 
+myInit :: IO ()
 myInit = do
    g <- get smoothLineWidthGranularity
    putStrLn ("smoothLineWidthGranularity is " ++ show g)
 
-   r <- get smoothLineWidthRange 
+   r <- get smoothLineWidthRange
    putStrLn ("smoothLineWidthRange is " ++ show r)
 
    lineSmooth $= Enabled
@@ -88,7 +88,7 @@ keyboard state (Char c) Down _ _ = case toLower c of
 keyboard _ _ _ _ _ = return ()
 
 -- Main Loop
--- Open window with initial window size, title bar, 
+-- Open window with initial window size, title bar,
 -- RGBA display mode, and handle input events.
 main :: IO ()
 main = do

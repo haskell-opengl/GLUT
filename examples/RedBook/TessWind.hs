@@ -174,7 +174,7 @@ keyboard state displayLists (Char c) Down _ _ = case toLower c of
 keyboard _ _ _ _ _ _ = return ()
 
 nextWindingRule :: TessWinding -> TessWinding
-nextWindingRule r = case r of 
+nextWindingRule r = case r of
    TessWindingOdd       -> TessWindingNonzero
    TessWindingNonzero   -> TessWindingPositive
    TessWindingPositive  -> TessWindingNegative

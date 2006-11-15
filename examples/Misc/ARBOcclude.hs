@@ -42,7 +42,7 @@ idle state = do
    let timeDiff = fromIntegral (time - l)
 
    when (timeDiff >= 20) $ do -- 50Hz update
-      lastTime state $= time   
+      lastTime state $= time
 
       s <- get (sign state)
       step state (timeDiff / 1000 * s)

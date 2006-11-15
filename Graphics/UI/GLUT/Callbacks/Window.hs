@@ -3,7 +3,7 @@
 -- Module      :  Graphics.UI.GLUT.Callbacks.Window
 -- Copyright   :  (c) Sven Panne 2002-2005
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
--- 
+--
 -- Maintainer  :  sven.panne@aedion.de
 -- Stability   :  stable
 -- Portability :  portable
@@ -239,7 +239,7 @@ type VisibilityCallback' = CInt -> IO ()
 
 -- | Controls the visibility callback for the /current window./ The visibility
 -- callback for a window is called when the visibility of a window changes.
--- 
+--
 -- If the visibility callback for a window is disabled and later re-enabled, the
 -- visibility status of the window is undefined; any change in window visibility
 -- will be reported, that is if you disable a visibility callback and re-enable
@@ -773,7 +773,7 @@ setTabletCallback :: Maybe TabletCallback -> IO ()
 setTabletCallback Nothing = do
    setTabletMotionCallback Nothing
    setTabletButtonCallback Nothing
-setTabletCallback (Just cb) = do 
+setTabletCallback (Just cb) = do
    setTabletMotionCallback (Just (\p     -> cb TabletMotion       p))
    setTabletButtonCallback (Just (\b s p -> cb (TabletButton b s) p))
 

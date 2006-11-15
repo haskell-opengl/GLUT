@@ -33,13 +33,13 @@ makeState :: IO State
 makeState = do
    f <- newIORef 0
    t <- newIORef 0
-   v <- newIORef (20, 30, 0) 
+   v <- newIORef (20, 30, 0)
    a <- newIORef 0
    return $ State { frames = f, t0 = t, viewRot = v, angle' = a }
 
 --  Draw a gear wheel.  You'll probably want to call this function when
 --  building a display list since we do a lot of trig here.
--- 
+--
 --  Input: innerRadius - radius of hole at center
 --         outerRadius - radius at center of teeth
 --         width - width of gear
@@ -95,7 +95,7 @@ teethFront _ r1 r2 w da teeth i angle =
 
 -- draw back face
 gearBack :: Renderer
-gearBack r0 r1 _ w da teeth i angle = do 
+gearBack r0 r1 _ w da teeth i angle = do
    vertex (Vertex3 (r1 * cos angle) (r1 * sin angle) (-w))
    vertex (Vertex3 (r0 * cos angle) (r0 * sin angle) (-w))
    when (i < teeth) $ do
@@ -145,7 +145,7 @@ gearInside r0 _ _ w _ _ _ angle = do
    currentNormal $= Normal3 (-cos angle) (-sin angle) 0
    vertex (Vertex3 (r0 * cos angle) (r0 * sin angle) (-w))
    vertex (Vertex3 (r0 * cos angle) (r0 * sin angle)   w )
-     
+
 draw :: (DisplayList,DisplayList,DisplayList,Int) -> State -> IO ()
 draw (gear1, gear2, gear3, autoexit) state = do
    clear [ ColorBuffer, DepthBuffer ]
@@ -173,7 +173,7 @@ draw (gear1, gear2, gear3, autoexit) state = do
          rotate (-2 * a - 25) (Vector3 0 0 1)
          callList gear3
 
-   swapBuffers  
+   swapBuffers
    frames state $~! (+1)
    t0' <- get (t0 state)
    t <- get elapsedTime
@@ -229,7 +229,7 @@ argInfo  = [
    Option ['e'] ["exit"] (NoArg AutoExit) "auto exit after 30 seconds" ]
 
 opts :: [String] -> IO [Flag]
-opts args = 
+opts args =
    case getOpt Permute argInfo args of
       (o,_,[])   -> return o
       (_,_,errs) -> do

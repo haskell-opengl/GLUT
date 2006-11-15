@@ -3,7 +3,7 @@
  * Module      :  GLUT extension support for Graphics.UI.GLUT
  * Copyright   :  (c) Sven Panne 2002-2005
  * License     :  BSD-style (see the file libraries/OpenGL/LICENSE)
- * 
+ *
  * Maintainer  :  sven.panne@aedion.de
  * Stability   :  provisional
  * Portability :  portable

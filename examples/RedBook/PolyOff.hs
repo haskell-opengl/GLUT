@@ -64,7 +64,7 @@ display state sphereList = do
    flush
 
 -- specify initial properties
--- create display list with sphere  
+-- create display list with sphere
 -- initialize lighting and depth buffer
 gfxinit :: IO DisplayList
 gfxinit = do

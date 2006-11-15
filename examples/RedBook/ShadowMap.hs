@@ -128,7 +128,7 @@ drawObjects torusAngle' shadowRender = do
       normal3f (Normal3 0 0 1)
       color3f (Color3 1 1 1)
       rectf (Vertex2 (-20) (-20)) (Vertex2 20 20)
-    
+
    preservingMatrix $ do
       translatef (Vector3 11 11 11)
       rotatef 54.73 (Vector3 (-5) 5 0)

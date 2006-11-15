@@ -29,7 +29,7 @@ display = do
    -- start processing buffered OpenGL routines
    flush
 
-myInit :: IO () 
+myInit :: IO ()
 myInit = do
    -- select clearing color
    clearColor $= Color4 0 0 0 0

@@ -5,7 +5,7 @@
    See the file libraries/GLUT/LICENSE
 
    This program uses the color matrix to exchange the color channels of an image.
- 
+
      Red   -> Green
      Green -> Blue
      Blue  -> Red

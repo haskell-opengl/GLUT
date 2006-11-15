@@ -3,7 +3,7 @@
 -- Module      :  Graphics.UI.GLUT.Overlay
 -- Copyright   :  (c) Sven Panne 2002-2005
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
--- 
+--
 -- Maintainer  :  sven.panne@aedion.de
 -- Stability   :  stable
 -- Portability :  portable
@@ -65,7 +65,7 @@ import Graphics.UI.GLUT.Window ( Window )
 -- Setting 'hasOverlay' to 'False' is safe even if no overlay is currently
 -- established, nothing happens in this case. Implicitly, the window\'s /layer
 -- in use/ changes to the normal plane immediately once the overlay is removed.
--- 
+--
 -- If the program intends to re-establish the overlay later, it is typically
 -- faster and less resource intensive to use 'overlayVisible' to simply change
 -- the display status of the overlay.
@@ -75,7 +75,7 @@ import Graphics.UI.GLUT.Window ( Window )
 -- convention allows for opaque overlays (no transparency) and overlays with the
 -- transparency specified as a bitmask, GLUT overlay management only provides
 -- access to transparent pixel overlays.
--- 
+--
 -- Until RGBA overlays are better understood, GLUT only supports color index
 -- overlays.
 

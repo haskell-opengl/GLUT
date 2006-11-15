@@ -46,7 +46,7 @@ keyboard (Char '\27') Down _ _ = exitWith ExitSuccess
 keyboard _            _    _ _ = return ()
 
 -- Main Loop
--- Open window with initial window size, title bar, 
+-- Open window with initial window size, title bar,
 -- RGBA display mode, and handle input events.
 main :: IO ()
 main = do

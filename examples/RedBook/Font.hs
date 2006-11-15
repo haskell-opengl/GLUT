@@ -78,9 +78,9 @@ printString fontOffset s =
       withArray (map charToGLubyte s) $
          callLists (genericLength s) UnsignedByte
 
--- Everything above this line could be in a library 
--- that defines a font.  To make it work, you've got 
--- to call makeRasterFont before you start making 
+-- Everything above this line could be in a library
+-- that defines a font.  To make it work, you've got
+-- to call makeRasterFont before you start making
 -- calls to printString.
 display :: DisplayList -> DisplayCallback
 display fontOffset = do
@@ -111,7 +111,7 @@ keyboard (Char '\27') Down _ _ = exitWith ExitSuccess
 keyboard _            _    _ _ = return ()
 
 -- Main Loop
--- Open window with initial window size, title bar, 
+-- Open window with initial window size, title bar,
 -- RGBA display mode, and handle input events.
 main :: IO ()
 main = do

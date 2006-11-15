@@ -6,7 +6,7 @@
 -- Module      :  Graphics.UI.GLUT.Callbacks.Registration
 -- Copyright   :  (c) Sven Panne 2002-2005
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
--- 
+--
 -- Maintainer  :  sven.panne@aedion.de
 -- Stability   :  stable
 -- Portability :  portable

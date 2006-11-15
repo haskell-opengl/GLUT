@@ -45,7 +45,7 @@ myInit = do
    clearColor $= Color4 0 0 0 0
    shadeModel $= Smooth
    setupPointer
-   makeMultiDrawInfo [ [ 0, 1, 2, 3, 4, 5, 6 ], 
+   makeMultiDrawInfo [ [ 0, 1, 2, 3, 4, 5, 6 ],
                        [ 1, 7, 8, 9, 10, 11 ] ]
 
 display :: MultiDrawInfo GLubyte -> DisplayCallback

@@ -3,7 +3,7 @@
 -- Module      :  Graphics.UI.GLUT.Begin
 -- Copyright   :  (c) Sven Panne 2002-2005
 -- License     :  BSD-style (see the file libraries/GLUT/LICENSE)
--- 
+--
 -- Maintainer  :  sven.panne@aedion.de
 -- Stability   :  stable
 -- Portability :  portable
@@ -63,7 +63,7 @@ EXTENSION_ENTRY(safe,"freeglut",glutMainLoopEvent,IO ())
 -- 'leaveMainLoop', the behaviour is undefined. It may leave only the inner
 -- nested loop or it may leave both loops. If the reader has a strong preference
 -- for one behaviour over the other he should contact the freeglut Programming
--- Consortium and ask for the code to be fixed. 
+-- Consortium and ask for the code to be fixed.
 
 leaveMainLoop :: IO ()
 leaveMainLoop = glutLeaveMainLoop

@@ -58,7 +58,7 @@ display texName = do
    texture Texture2D $= Enabled
    textureFunction $= Decal
    textureBinding Texture2D $= Just texName
-   
+
    -- resolve overloading, not needed in "real" programs
    let texCoord2f = texCoord :: TexCoord2 GLfloat -> IO ()
        vertex3f = vertex :: Vertex3 GLfloat -> IO ()

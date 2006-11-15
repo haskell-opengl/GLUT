@@ -7,7 +7,7 @@
 // Copyright (c) 2002-2004 3Dlabs Inc. Ltd.
 //
 // See 3Dlabs-License.txt for license information
-//  
+//
 
 uniform vec3  BrickColor, MortarColor;
 uniform vec2  BrickSize;
@@ -20,7 +20,7 @@ void main(void)
 {
     vec3  color;
     vec2  position, useBrick;
-    
+
     position = MCposition / BrickSize;
 
     if (fract(position.y * 0.5) > 0.5)

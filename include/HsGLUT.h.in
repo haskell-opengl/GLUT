@@ -3,7 +3,7 @@
  * Module      :  C support for Graphics.UI.GLUT.Fonts
  * Copyright   :  (c) Sven Panne 2002-2005
  * License     :  BSD-style (see the file libraries/GLUT/LICENSE)
- * 
+ *
  * Maintainer  :  sven.panne@aedion.de
  * Stability   :  provisional
  * Portability :  portable
