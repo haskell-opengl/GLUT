@@ -305,6 +305,8 @@ readAndCompileShader filePath = do
    compileShader shader
    reportErrors
    ok <- get (compileStatus shader)
+   infoLog <- get (shaderInfoLog shader)
+   mapM_ putStrLn ["Shader info log for '" ++ filePath ++ "':", infoLog, ""]
    unless ok $ do
       deleteObjectNames [shader]
       ioError (userError "shader compilation failed")
@@ -317,6 +319,8 @@ installBrickShaders vs fs = do
    linkProgram brickProg
    reportErrors
    ok <- get (linkStatus brickProg)
+   infoLog <- get (programInfoLog brickProg)
+   mapM_ putStrLn ["Program info log:", infoLog, ""]
    unless ok $ do
       deleteObjectNames [brickProg]
       ioError (userError "linking failed")
