@@ -105,12 +105,6 @@ step (Vector3 x1 y1 z1) (Vector3 x2 y2 z2) =
 dot :: Num a => Vector3 a -> Vector3 a -> a
 dot (Vector3 x1 y1 z1) (Vector3 x2 y2 z2) = x1 * x2 + y1 * y2 + z1 * z2
 
-nextClearColor :: State -> IO ()
-nextClearColor state = do
-   cc <- get (colorCycle state)
-   clearColor $= head cc
-   colorCycle state $~ tail
-
 drawFace :: Normal3 GLfloat -> Vertex3 GLfloat -> Vertex3 GLfloat
          -> Vertex3 GLfloat -> Vertex3 GLfloat -> IO ()
 drawFace p q r s t = do
@@ -175,6 +169,12 @@ display state = do
    flush
    swapBuffers
 
+nextClearColor :: State -> IO ()
+nextClearColor state = do
+   cc <- get (colorCycle state)
+   clearColor $= head cc
+   colorCycle state $~ tail
+
 toggleRotation :: State -> IO ()
 toggleRotation state = do
    rot <- get (shouldRotate state)
@@ -205,6 +205,25 @@ printHelp = mapM_ putStrLn [
    "<arrow keys> or <drag> - rotate model",
    ""]
 
+resetState :: State -> IO ()
+resetState state = do
+   diff state $= initialDiff
+   lastIncr state $= 0
+   inertia state $= initialInertia
+   theScale state $= 1
+
+calcInertia :: State -> IO ()
+calcInertia state = do
+   lastPosition state $= Position (-1) (-1)
+   li <- get (lastIncr state)
+   ia <- get (inertia state)
+   let t = fromScalar inertiaThreshold
+       f = fromScalar inertiaFactor
+       l = (1 - (step (-t) li)) * ((li + t) * f - ia)
+       r = (step t li) * ((li - t) * f - ia)
+   inertia state $= l + ia + r
+   lastIncr state $= 0
+
 keyboard :: State -> KeyboardMouseCallback
 keyboard state key keyState mods _ = do
    modifiers state $= mods
@@ -218,11 +237,7 @@ keyboard state key keyState mods _ = do
       (Char '+', Down) -> theScale state $~ (+ scaleIncrement)
       (Char '-', Down) -> theScale state $~ (+ (- scaleIncrement))
       (Char _, Down) -> printHelp
-      (SpecialKey KeyHome, Down) -> do
-         diff state $= initialDiff
-         lastIncr state $= 0
-         inertia state $= initialInertia
-         theScale state $= 1
+      (SpecialKey KeyHome, Down) -> resetState state
       (SpecialKey KeyLeft, Down) -> diff state $~ (+ (- Vector3 1 0 0))
       (SpecialKey KeyRight, Down) -> diff state $~ (+ Vector3 1 0 0)
       (SpecialKey KeyUp, Down) -> diff state $~ (+ (- Vector3 0 1 0))
@@ -230,16 +245,7 @@ keyboard state key keyState mods _ = do
       (MouseButton LeftButton, Down) -> do
          inertia state $= 0
          lastIncr state $= 0
-      (MouseButton LeftButton, Up) -> do
-         lastPosition state $= Position (-1) (-1)
-         li <- get (lastIncr state)
-         ia <- get (inertia state)
-         let t = fromScalar inertiaThreshold
-             f = fromScalar inertiaFactor
-             l = (1 - (step (-t) li)) * ((li + t) * f - ia)
-             r = (step t li) * ((li - t) * f - ia)
-         inertia state $= l + ia + r
-         lastIncr state $= 0
+      (MouseButton LeftButton, Up) -> calcInertia state
       (_, _) -> return ()
 
 motion :: State -> MotionCallback
@@ -281,42 +287,52 @@ reshape size@(Size w h) = do
    loadIdentity
    translate (Vector3 0 0 (-5 :: GLfloat))
 
+-- Make sure that GLSL is supported by the driver, either directly by the core
+-- or via an extension.
+checkGLSLSupport :: IO ()
+checkGLSLSupport = do
+   version <- get (majorMinor glVersion)
+   unless (version >= (2,0)) $ do
+      extensions <- get glExtensions
+      unless ("GL_ARB_shading_language_100" `elem` extensions) $
+         ioError (userError "No GLSL support found.")
+
 readAndCompileShader :: Shader s => FilePath -> IO s
 readAndCompileShader filePath = do
-   [shader] <- genObjectNames 1
    src <- readFile filePath
+   [shader] <- genObjectNames 1
    shaderSource shader $= [src]
    compileShader shader
---    printOpenGLError();  // Check for OpenGL errors
---    glGetShaderiv(brickVS, GL_COMPILE_STATUS, &vertCompiled);
+   reportErrors
+   ok <- get (compileStatus shader)
+   unless ok $ do
+      deleteObjectNames [shader]
+      ioError (userError "shader compilation failed")
    return shader
 
-installBrickShaders :: VertexShader -> FragmentShader -> IO ()
+installBrickShaders :: [VertexShader] -> [FragmentShader] -> IO ()
 installBrickShaders vs fs = do
    [brickProg] <- genObjectNames 1
-   attachedShaders brickProg $= ([vs], [fs])
+   attachedShaders brickProg $= (vs, fs)
    linkProgram brickProg
+   reportErrors
+   ok <- get (linkStatus brickProg)
+   unless ok $ do
+      deleteObjectNames [brickProg]
+      ioError (userError "linking failed")
+
    currentProgram $= Just brickProg
 
    let setUniform var val = do
-          loc <- get (uniformLocation brickProg var)
-          uniform loc val
+       loc <- get (uniformLocation brickProg var)
+       reportErrors
+       uniform loc val
 
    setUniform "BrickColor" (Color3 1.0 0.3 (0.2 :: GLfloat))
    setUniform "MortarColor" (Color3 0.85 0.86 (0.84 :: GLfloat))
    setUniform "BrickSize" (Vertex2 0.30 (0.15 :: GLfloat))
    setUniform "BrickPct" (Vertex2 0.90 (0.85 :: GLfloat))
    setUniform "LightPosition" (Vertex3 0 0 (4 :: GLfloat))
-
--- Make sure that GLSL is supported by the driver, either directly by the core
--- or via an extension.
-glslSupported :: IO Bool
-glslSupported = do
-   version <- get (majorMinor glVersion)
-   if version >= (2,0)
-      then return True
-      else do extensions <- get glExtensions
-              return ("GL_ARB_shading_language_100" `elem` extensions)
 
 main :: IO ()
 main = do
@@ -333,20 +349,20 @@ main = do
    motionCallback $= Just (motion state)
    addTimerCallback timerFrequencyMillis (timer state)
 
-   glslSupp <- glslSupported
-   if glslSupp
-      then do
+   catch
+     (do checkGLSLSupport
          vs <- readAndCompileShader "Brick.vert"
          fs <- readAndCompileShader "Brick.frag"
-         installBrickShaders vs fs
-      else do
-         putStrLn "No GLSL support found, shaders are not used"
+         installBrickShaders [vs] [fs])
+     (\exception -> do
+         print exception
+         putStrLn "Using fixed function pipeline."
          materialDiffuse Front $= Color4 1 0.3 0.2 1
          materialSpecular Front $= Color4 0.3 0.3 0.3 1
          materialShininess Front $= 16
          position (Light 0) $= Vertex4 0 0 4 0
          lighting $= Enabled
-         light (Light 0) $= Enabled
+         light (Light 0) $= Enabled)
 
    depthFunc $= Just Less
    nextClearColor state
