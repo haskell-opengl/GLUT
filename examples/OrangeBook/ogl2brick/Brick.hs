@@ -328,9 +328,9 @@ installBrickShaders vs fs = do
    currentProgram $= Just brickProg
 
    let setUniform var val = do
-       loc <- get (uniformLocation brickProg var)
+       location <- get (uniformLocation brickProg var)
        reportErrors
-       uniform loc val
+       uniform location $= val
 
    setUniform "BrickColor" (Color3 1.0 0.3 (0.2 :: GLfloat))
    setUniform "MortarColor" (Color3 0.85 0.86 (0.84 :: GLfloat))
