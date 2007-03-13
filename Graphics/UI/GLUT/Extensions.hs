@@ -42,5 +42,5 @@ throwIfNull msg act = do
 getProcAddressInternal :: String -> IO (FunPtr a)
 getProcAddressInternal call = withCString call hs_GLUT_getProcAddress
 
-foreign import CALLCONV unsafe "hs_GLUT_getProcAddress" hs_GLUT_getProcAddress
+foreign import ccall unsafe "hs_GLUT_getProcAddress" hs_GLUT_getProcAddress
    :: CString -> IO (FunPtr a)
