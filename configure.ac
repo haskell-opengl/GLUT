@@ -1,4 +1,4 @@
-AC_INIT([Haskell GLUT package], [2.1], [sven.panne@aedion.de], [GLUT])
+AC_INIT([Haskell GLUT package], [2.1.1], [sven.panne@aedion.de], [GLUT])
 
 # Safety check: Ensure that we are in the correct source directory.
 AC_CONFIG_SRCDIR([include/HsGLUT.h.in])
