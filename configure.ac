@@ -21,8 +21,8 @@ if test x"$enable_glut" = xyes; then
 FP_CHECK_GLUT
 
 if test "$GLUT_LIBS" = no; then
-  AC_MSG_WARN([no GLUT library found, so this package will not be built])
-else
+  AC_MSG_FAILURE([no GLUT library found, so this package cannot be built])
+fi
 
 # check for GLUT include files
 glut_found_header=no
@@ -32,8 +32,8 @@ AC_CHECK_HEADERS([GL/glut.h GLUT/glut.h], [glut_found_header=yes])
 CPPFLAGS="$fp_save_cppflags"
 
 if test "$glut_found_header" = no; then
-  AC_MSG_WARN([no GLUT header found, so this package will not be built])
-else
+  AC_MSG_FAILURE([no GLUT header found, so this package cannot be built])
+fi
 
 GLUT_BUILD_PACKAGE=yes
 
@@ -55,8 +55,6 @@ AC_DEFINE_UNQUOTED([GLUT_FRAMEWORKS],
   [`echo '' $GLUT_FRAMEWORKS | sed -e 's/-[[^ ]]*/,"&"/g' -e 's/^ *,//'`],
   [Framework flags for GLUT, as a list of string literals.])
 
-fi
-fi
 fi
 
 if test "$GLUT_BUILD_PACKAGE" = yes; then
