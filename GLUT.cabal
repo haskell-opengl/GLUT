@@ -11,6 +11,8 @@ description:
 	system independent toolkit for writing OpenGL programs. For more
 	information about the C library on which this binding is based,
 	please see: <http://www.opengl.org/resources/libraries/glut/>.
+build-type:     Configure
+cabal-version:  >=1.2
 extra-source-files:
 	config.guess config.sub install-sh
 	configure.ac configure config.mk.in GLUT.buildinfo.in
@@ -19,32 +21,40 @@ extra-source-files:
 extra-tmp-files:
 	config.log config.status autom4te.cache
 	config.mk GLUT.buildinfo include/HsGLUTConfig.h include/HsGLUT.h
-exposed-modules:
-	Graphics.UI.GLUT,
-	Graphics.UI.GLUT.Begin,
-	Graphics.UI.GLUT.Callbacks,
-	Graphics.UI.GLUT.Callbacks.Global,
-	Graphics.UI.GLUT.Callbacks.Window,
-	Graphics.UI.GLUT.Colormap,
-	Graphics.UI.GLUT.Debugging,
-	Graphics.UI.GLUT.DeviceControl,
-	Graphics.UI.GLUT.Fonts,
-	Graphics.UI.GLUT.GameMode,
-	Graphics.UI.GLUT.Initialization,
-	Graphics.UI.GLUT.Menu,
-	Graphics.UI.GLUT.Objects,
-	Graphics.UI.GLUT.Overlay,
-	Graphics.UI.GLUT.State,
-	Graphics.UI.GLUT.Window
-other-modules:
-	Graphics.UI.GLUT.Callbacks.Registration,
-	Graphics.UI.GLUT.Constants,
-	Graphics.UI.GLUT.Extensions,
-	Graphics.UI.GLUT.QueryUtils,
-	Graphics.UI.GLUT.Types
-include-dirs:	include
-includes: HsGLUT.h
-install-includes: HsGLUT.h
-c-sources:	cbits/HsGLUT.c
-build-depends:	base, array, containers, OpenGL >= 2.2
-extensions:	CPP, ForeignFunctionInterface
+
+flag split-base
+
+library
+  exposed-modules:
+        Graphics.UI.GLUT,
+        Graphics.UI.GLUT.Begin,
+        Graphics.UI.GLUT.Callbacks,
+        Graphics.UI.GLUT.Callbacks.Global,
+        Graphics.UI.GLUT.Callbacks.Window,
+        Graphics.UI.GLUT.Colormap,
+        Graphics.UI.GLUT.Debugging,
+        Graphics.UI.GLUT.DeviceControl,
+        Graphics.UI.GLUT.Fonts,
+        Graphics.UI.GLUT.GameMode,
+        Graphics.UI.GLUT.Initialization,
+        Graphics.UI.GLUT.Menu,
+        Graphics.UI.GLUT.Objects,
+        Graphics.UI.GLUT.Overlay,
+        Graphics.UI.GLUT.State,
+        Graphics.UI.GLUT.Window
+  other-modules:
+        Graphics.UI.GLUT.Callbacks.Registration,
+        Graphics.UI.GLUT.Constants,
+        Graphics.UI.GLUT.Extensions,
+        Graphics.UI.GLUT.QueryUtils,
+        Graphics.UI.GLUT.Types
+  include-dirs:	include
+  includes: HsGLUT.h
+  install-includes: HsGLUT.h
+  c-sources:	cbits/HsGLUT.c
+  if flag(split-base)
+    build-depends:	base >= 3, array, containers
+  else
+    build-depends:	base < 3
+  build-depends: OpenGL >= 2.2
+  extensions:	CPP, ForeignFunctionInterface
