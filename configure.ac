@@ -8,6 +8,12 @@ AC_CONFIG_SRCDIR([include/HsGLUT.h.in])
 # contains all kinds of stuff which is needed for using this package.
 AC_CONFIG_HEADERS([include/HsGLUTConfig.h include/HsGLUT.h])
 
+# Necessary for Cabal, which passes with --with-cc flag on Windows:
+AC_ARG_WITH([cc],
+            [C compiler],
+            [CC=$withval])
+AC_PROG_CC()
+
 # We set this to "yes" later when we have found GLUT libs and headers.
 GLUT_BUILD_PACKAGE=no
 AC_SUBST([GLUT_BUILD_PACKAGE])
