@@ -15,12 +15,12 @@ build-type:     Configure
 cabal-version:  >=1.2
 extra-source-files:
 	config.guess config.sub install-sh
-	configure.ac configure config.mk.in GLUT.buildinfo.in
+	configure.ac configure GLUT.buildinfo.in
 	include/HsGLUTConfig.h.in include/HsGLUT.h.in
 	include/HsGLUTExt.h
 extra-tmp-files:
 	config.log config.status autom4te.cache
-	config.mk GLUT.buildinfo include/HsGLUTConfig.h include/HsGLUT.h
+	GLUT.buildinfo include/HsGLUTConfig.h include/HsGLUT.h
 
 flag split-base
 

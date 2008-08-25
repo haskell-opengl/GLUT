@@ -16,7 +16,6 @@ AC_PROG_CC()
 
 # We set this to "yes" later when we have found GLUT libs and headers.
 GLUT_BUILD_PACKAGE=no
-AC_SUBST([GLUT_BUILD_PACKAGE])
 
 # Shall we build this package at all?
 FP_ARG_GLUT
@@ -76,5 +75,5 @@ case "$host" in
 esac
 AC_SUBST([CALLCONV])
 
-AC_CONFIG_FILES([config.mk GLUT.buildinfo])
+AC_CONFIG_FILES([GLUT.buildinfo])
 AC_OUTPUT
