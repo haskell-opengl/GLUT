@@ -14,6 +14,10 @@ AC_ARG_WITH([cc],
             [CC=$withval])
 AC_PROG_CC()
 
+# we do not really care about this here, but this avoids a warning about an
+# unknown option
+FP_ARG_COMPILER
+
 # We set this to "yes" later when we have found GLUT libs and headers.
 GLUT_BUILD_PACKAGE=no
 
