@@ -292,11 +292,11 @@ getInitialDisplayMode = simpleGet i2dms glut_INIT_DISPLAY_MODE
 
 i2dms :: CInt -> [DisplayMode]
 i2dms bitfield =
-   [ c | c <- [ RGBAMode, RGBMode, IndexMode, SingleBuffered, DoubleBuffered,
-                WithAccumBuffer, WithAlphaComponent, WithDepthBuffer,
-                WithStencilBuffer, WithAuxBuffers 1, WithAuxBuffers 2,
-                WithAuxBuffers 3, WithAuxBuffers 4, Multisampling, Stereoscopic,
-                LuminanceMode ]
+   [ c | c <- [ RGBAMode, RGBMode, IndexMode, LuminanceMode, WithAlphaComponent,
+                WithAccumBuffer, WithDepthBuffer, WithStencilBuffer,
+                WithAuxBuffers 1, WithAuxBuffers 2, WithAuxBuffers 3,
+                WithAuxBuffers 4, SingleBuffered, DoubleBuffered, Multisampling,
+                Stereoscopic, Captionless, Borderless ]
        , (fromIntegral bitfield .&. marshalDisplayMode c) /= 0 ]
 
 setInitialDisplayMode :: [DisplayMode] -> IO ()
