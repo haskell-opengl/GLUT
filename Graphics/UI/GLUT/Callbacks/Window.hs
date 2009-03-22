@@ -61,7 +61,7 @@ import Graphics.UI.GLUT.Constants (
    glut_KEY_F7, glut_KEY_F8, glut_KEY_F9, glut_KEY_F10, glut_KEY_F11,
    glut_KEY_F12, glut_KEY_LEFT, glut_KEY_UP, glut_KEY_RIGHT, glut_KEY_DOWN,
    glut_KEY_PAGE_UP, glut_KEY_PAGE_DOWN, glut_KEY_HOME, glut_KEY_END,
-   glut_KEY_INSERT,
+   glut_KEY_INSERT, glut_KEY_NUM_LOCK, glut_KEY_BEGIN, glut_KEY_DELETE,
    glut_DOWN, glut_UP,
    glut_ACTIVE_SHIFT, glut_ACTIVE_CTRL, glut_ACTIVE_ALT,
    glut_LEFT, glut_ENTERED,
@@ -326,6 +326,9 @@ data SpecialKey
    | KeyHome
    | KeyEnd
    | KeyInsert
+   | KeyNumLock
+   | KeyBegin
+   | KeyDelete
    deriving ( Eq, Ord, Show )
 
 unmarshalSpecialKey :: CInt -> SpecialKey
@@ -351,6 +354,9 @@ unmarshalSpecialKey x
    | x == glut_KEY_HOME = KeyHome
    | x == glut_KEY_END = KeyEnd
    | x == glut_KEY_INSERT = KeyInsert
+   | x == glut_KEY_NUM_LOCK = KeyNumLock
+   | x == glut_KEY_BEGIN = KeyBegin
+   | x == glut_KEY_DELETE = KeyDelete
    | otherwise = error ("unmarshalSpecialKey: illegal value " ++ show x)
 
 --------------------------------------------------------------------------------

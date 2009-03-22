@@ -77,7 +77,8 @@ glut_KEY_F12                           = 12
 -----------------------------------------------------------------------------
 -- * Directional Keys
 glut_KEY_LEFT, glut_KEY_UP, glut_KEY_RIGHT, glut_KEY_DOWN, glut_KEY_PAGE_UP,
-   glut_KEY_PAGE_DOWN, glut_KEY_HOME, glut_KEY_END, glut_KEY_INSERT :: CInt
+   glut_KEY_PAGE_DOWN, glut_KEY_HOME, glut_KEY_END, glut_KEY_INSERT,
+   glut_KEY_NUM_LOCK, glut_KEY_BEGIN, glut_KEY_DELETE :: CInt
 glut_KEY_LEFT                          = 100
 glut_KEY_UP                            = 101
 glut_KEY_RIGHT                         = 102
@@ -87,6 +88,9 @@ glut_KEY_PAGE_DOWN                     = 105
 glut_KEY_HOME                          = 106
 glut_KEY_END                           = 107
 glut_KEY_INSERT                        = 108
+glut_KEY_NUM_LOCK                      = 109
+glut_KEY_BEGIN                         = 110
+glut_KEY_DELETE                        = 111
 
 -----------------------------------------------------------------------------
 -- * Entry\/exit state
