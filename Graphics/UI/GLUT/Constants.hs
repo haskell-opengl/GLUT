@@ -152,7 +152,8 @@ glut_WINDOW_X, glut_WINDOW_Y, glut_WINDOW_WIDTH, glut_WINDOW_HEIGHT,
    glut_INIT_WINDOW_HEIGHT, glut_INIT_DISPLAY_MODE, glut_ELAPSED_TIME,
    glut_WINDOW_FORMAT_ID, glut_ACTION_ON_WINDOW_CLOSE, glut_WINDOW_BORDER_WIDTH,
    glut_WINDOW_HEADER_HEIGHT, glut_VERSION, glut_RENDERING_CONTEXT,
-   glut_DIRECT_RENDERING :: GLenum
+   glut_DIRECT_RENDERING, glut_INIT_MAJOR_VERSION, glut_INIT_MINOR_VERSION,
+   glut_INIT_FLAGS :: GLenum
 glut_WINDOW_X                          = 100
 glut_WINDOW_Y                          = 101
 glut_WINDOW_WIDTH                      = 102
@@ -195,6 +196,9 @@ glut_WINDOW_HEADER_HEIGHT              = 507
 glut_VERSION                           = 508
 glut_RENDERING_CONTEXT                 = 509
 glut_DIRECT_RENDERING                  = 510
+glut_INIT_MAJOR_VERSION                = 512
+glut_INIT_MINOR_VERSION                = 513
+glut_INIT_FLAGS                        = 514
 
 -----------------------------------------------------------------------------
 -- * @glutDeviceGet@ parameters
@@ -348,3 +352,9 @@ glut_ACTION_CONTINUE_EXECUTION         = 2
 glut_CREATE_NEW_CONTEXT, glut_USE_CURRENT_CONTEXT :: CInt
 glut_CREATE_NEW_CONTEXT                = 0
 glut_USE_CURRENT_CONTEXT               = 1
+
+-----------------------------------------------------------------------------
+-- OpenGL 3.x context creation flags (freeglut extension)
+glut_DEBUG, glut_FORWARD_COMPATIBLE :: CInt
+glut_DEBUG                             = 1
+glut_FORWARD_COMPATIBLE                = 2

@@ -42,7 +42,10 @@ module Graphics.UI.GLUT.Initialization (
    RenderingContext(..), renderingContext,
 
    -- * Direct\/indirect rendering
-   DirectRendering(..), directRendering
+   DirectRendering(..), directRendering,
+
+   -- * OpenGL 3.x context support
+   initContextVersion, ContextFlag(..), initContextFlags
 ) where
 
 import Data.Bits ( Bits((.|.),(.&.)) )
@@ -72,9 +75,16 @@ import Graphics.UI.GLUT.Constants (
    glut_RENDERING_CONTEXT, glut_CREATE_NEW_CONTEXT, glut_USE_CURRENT_CONTEXT,
    glut_DIRECT_RENDERING,
    glut_FORCE_INDIRECT_CONTEXT, glut_ALLOW_DIRECT_CONTEXT,
-   glut_TRY_DIRECT_CONTEXT, glut_FORCE_DIRECT_CONTEXT )
+   glut_TRY_DIRECT_CONTEXT, glut_FORCE_DIRECT_CONTEXT,
+   glut_INIT_MAJOR_VERSION, glut_INIT_MINOR_VERSION,
+   glut_DEBUG, glut_FORWARD_COMPATIBLE, glut_INIT_FLAGS )
+import Graphics.UI.GLUT.Extensions
 import Graphics.UI.GLUT.QueryUtils ( simpleGet, glutSetOption )
 import Graphics.UI.GLUT.Types ( Relation(..), relationToString )
+
+--------------------------------------------------------------------------------
+
+#include "HsGLUTExt.h"
 
 --------------------------------------------------------------------------------
 
@@ -599,3 +609,80 @@ directRendering =
    makeStateVar
       (simpleGet unmarshalDirectRendering glut_DIRECT_RENDERING)
       (glutSetOption glut_DIRECT_RENDERING . marshalDirectRendering)
+
+-----------------------------------------------------------------------------
+
+-- | (/freeglut only/) Controls the API major\/minor version of the OpenGL
+-- context. If a version less than or equal to 2.1 is requested, the context
+-- returned may implement any version no less than that requested and no
+-- greater than 2.1. If version 3.0 is requested, the context returned must
+-- implement exactly version 3.0. Versioning behavior once GL versions beyond
+-- 3.0 are defined will be defined by an amendment to the OpenGL specification
+-- to define dependencies on such GL versions.
+--
+-- 'Graphics.Rendering.OpenGL.GL.StringQueries.glVersion' and
+-- 'Graphics.Rendering.OpenGL.GL.StringQueries.majorMinor' will return the
+-- actual version supported by a context.
+--
+-- The default context version is (1, 0), which will typically return an
+-- OpenGL 2.1 context, if one is available.
+
+initContextVersion :: StateVar (Int, Int)
+initContextVersion = makeStateVar getContextVersion setContextVersion
+
+getContextVersion :: IO (Int, Int)
+getContextVersion = do
+   major <- simpleGet fromIntegral glut_INIT_MAJOR_VERSION
+   minor <- simpleGet fromIntegral glut_INIT_MINOR_VERSION
+   return (major, minor)
+
+setContextVersion :: (Int, Int) -> IO ()
+setContextVersion (major, minor) =
+   glutInitContextVersion (fromIntegral major) (fromIntegral minor)
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutInitContextVersion,CInt -> CInt -> IO ())
+
+-----------------------------------------------------------------------------
+
+-- | A flag affecting the rendering context to create, used in conjunction
+-- with 'initContextFlags'.
+
+data ContextFlag
+   = -- | Debug contexts are intended for use during application development,
+     -- and provide additional runtime checking, validation, and logging
+     -- functionality while possibly incurring performance penalties. The
+     -- additional functionality provided by debug contexts may vary according
+     -- to the implementation. In some cases a debug context may be identical
+     -- to a non-debug context.
+     DebugContext
+   | -- | Forward-compatible contexts are defined only for OpenGL versions 3.0
+     -- and later. They must not support functionality marked as /deprecated/
+     -- by that version of the API, while a non-forward-compatible context must
+     -- support all functionality in that version, deprecated or not.
+     ForwardCompatibleContext
+   deriving ( Eq, Ord, Show )
+
+marshalContextFlag :: ContextFlag -> CInt
+marshalContextFlag x = case x of
+   DebugContext -> glut_DEBUG
+   ForwardCompatibleContext -> glut_FORWARD_COMPATIBLE
+
+-----------------------------------------------------------------------------
+
+-- | (/freeglut only/) Controls the set of flags for the rendering context.
+
+initContextFlags :: StateVar [ContextFlag]
+initContextFlags = makeStateVar getContextFlags setContextFlags
+
+getContextFlags :: IO [ContextFlag]
+getContextFlags = simpleGet i2cfs glut_INIT_FLAGS
+
+i2cfs :: CInt -> [ContextFlag]
+i2cfs bitfield =
+   [ c | c <- [ DebugContext, ForwardCompatibleContext ]
+       , (fromIntegral bitfield .&. marshalContextFlag c) /= 0 ]
+
+setContextFlags :: [ContextFlag] -> IO ()
+setContextFlags = glutInitContextFlags . toBitfield marshalContextFlag
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutInitContextFlags,CInt -> IO ())
