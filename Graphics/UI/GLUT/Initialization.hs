@@ -62,9 +62,11 @@ import Graphics.Rendering.OpenGL.GL.StateVar (
 import Graphics.UI.GLUT.Constants (
    glut_INIT_WINDOW_X, glut_INIT_WINDOW_Y,
    glut_INIT_WINDOW_WIDTH, glut_INIT_WINDOW_HEIGHT,
-   glut_RGBA, glut_RGB, glut_INDEX, glut_SINGLE, glut_DOUBLE, glut_ACCUM,
-   glut_ALPHA, glut_DEPTH, glut_STENCIL, glut_MULTISAMPLE, glut_STEREO,
-   glut_LUMINANCE, glut_AUX1, glut_AUX2, glut_AUX3, glut_AUX4,
+   glut_RGBA, glut_RGB, glut_INDEX, glut_LUMINANCE,
+   glut_ALPHA, glut_ACCUM, glut_DEPTH, glut_STENCIL,
+   glut_AUX1, glut_AUX2, glut_AUX3, glut_AUX4,
+   glut_SINGLE, glut_DOUBLE, glut_MULTISAMPLE, glut_STEREO,
+   glut_CAPTIONLESS, glut_BORDERLESS,
    glut_INIT_DISPLAY_MODE,
    glut_DISPLAY_MODE_POSSIBLE,
    glut_RENDERING_CONTEXT, glut_CREATE_NEW_CONTEXT, glut_USE_CURRENT_CONTEXT,
@@ -233,7 +235,9 @@ data DisplayMode
    | Multisampling      -- ^ Select a window with multisampling support. If multisampling is not available, a non-multisampling
                         --   window will automatically be chosen. Note: both the OpenGL client-side and server-side implementations
                         --   must support the @GLX_SAMPLE_SGIS@ extension for multisampling to be available.
-   | Stereoscopic       -- ^ Select A Stereo Window.
+   | Stereoscopic       -- ^ Select a stereo window.
+   | Captionless        -- ^ Select a window without a caption (/freeglut only/).
+   | Borderless         -- ^ Select a window without any borders (/freeglut only/).
    deriving ( Eq, Ord, Show )
 
 marshalDisplayMode :: DisplayMode -> CUInt
@@ -241,10 +245,9 @@ marshalDisplayMode m = case m of
    RGBAMode -> glut_RGBA
    RGBMode -> glut_RGB
    IndexMode -> glut_INDEX
-   SingleBuffered -> glut_SINGLE
-   DoubleBuffered -> glut_DOUBLE
-   WithAccumBuffer -> glut_ACCUM
+   LuminanceMode -> glut_LUMINANCE
    WithAlphaComponent -> glut_ALPHA
+   WithAccumBuffer -> glut_ACCUM
    WithDepthBuffer -> glut_DEPTH
    WithStencilBuffer -> glut_STENCIL
    WithAuxBuffers 1 -> glut_AUX1
@@ -253,9 +256,12 @@ marshalDisplayMode m = case m of
    WithAuxBuffers 4 -> glut_AUX4
    WithAuxBuffers n ->
       error ("marshalDisplayMode: illegal number of auxiliary buffers: " ++ show n)
+   SingleBuffered -> glut_SINGLE
+   DoubleBuffered -> glut_DOUBLE
    Multisampling -> glut_MULTISAMPLE
    Stereoscopic -> glut_STEREO
-   LuminanceMode -> glut_LUMINANCE
+   Captionless -> glut_CAPTIONLESS
+   Borderless -> glut_BORDERLESS
 
 --------------------------------------------------------------------------------
 
