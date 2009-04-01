@@ -28,6 +28,9 @@ module Graphics.UI.GLUT.Callbacks.Window (
    Key(..), SpecialKey(..), MouseButton(..), KeyState(..), Modifiers(..),
    KeyboardMouseCallback, keyboardMouseCallback,
 
+   -- * Mouse wheel callback
+   WheelNumber, WheelDirection, MouseWheelCallback, mouseWheelCallback,
+
    -- * Mouse movement callbacks
    MotionCallback, motionCallback, passiveMotionCallback,
    Crossing(..), CrossingCallback, crossingCallback,
@@ -289,9 +292,9 @@ type WindowStateCallback = WindowState -> IO ()
 
 type WindowStateCallback_ = CInt -> IO ()
 
--- | (/freeglut only/) Controls the window state callback for the /current
--- window./ The window state callback for a window is called when the window
--- state of a window changes.
+-- | (/freeglut only/) Controls the window state callback for the
+-- /current window./ The window state callback for a window is called when the
+-- window state of a window changes.
 --
 -- If the window state callback for a window is disabled and later re-enabled,
 -- the window state state of the window is undefined; any change in the window
@@ -539,6 +542,32 @@ setKeyboardMouseCallback (Just cb) = do
                                              cb (SpecialKey  s) Up   m p))
    setMouseCallback      (Just (\b s p -> do m <- getModifiers
                                              cb (MouseButton b) s    m p))
+
+--------------------------------------------------------------------------------
+
+type WheelNumber = Int
+
+type WheelDirection = Int
+
+type MouseWheelCallback = WheelNumber -> WheelDirection -> Position -> IO ()
+
+type MouseWheelCallback_ = CInt -> CInt -> CInt -> CInt -> IO ()
+
+-- | (/freeglut only/) Controls the mouse wheel callback for the
+-- /current window./ The mouse wheel callback for a window is called when a
+-- mouse wheel is used and the wheel number is greater than or equal to
+-- 'Graphics.UI.GLUT.State.numMouseButtons'.
+
+mouseWheelCallback :: SettableStateVar (Maybe MouseWheelCallback)
+mouseWheelCallback = makeSettableStateVar $
+   setCallback MouseWheelCB glutMouseWheelFunc (makeMouseWheelCallback . unmarshal)
+   where unmarshal cb n d x y = cb (fromIntegral n) (fromIntegral d)
+                                   (Position (fromIntegral x) (fromIntegral y))
+
+foreign import ccall "wrapper" makeMouseWheelCallback ::
+   MouseWheelCallback_ -> IO (FunPtr MouseWheelCallback_)
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutMouseWheelFunc,FunPtr MouseWheelCallback_ -> IO ())
 
 --------------------------------------------------------------------------------
 
