@@ -17,8 +17,9 @@ module Graphics.UI.GLUT.Callbacks.Window (
    -- * Reshape callback
    ReshapeCallback, reshapeCallback,
 
-   -- * Callback for visibility changes
+   -- * Callbacks for visibility changes
    Visibility(..), VisibilityCallback, visibilityCallback,
+   WindowState(..), WindowStateCallback, windowStateCallback,
 
    -- * Window close callback
    CloseCallback, closeCallback,
@@ -57,6 +58,7 @@ import Graphics.Rendering.OpenGL.GL.StateVar (
 import Graphics.UI.GLUT.Callbacks.Registration ( CallbackType(..), setCallback )
 import Graphics.UI.GLUT.Constants (
    glut_NOT_VISIBLE, glut_VISIBLE,
+   glut_HIDDEN, glut_FULLY_RETAINED, glut_PARTIALLY_RETAINED, glut_FULLY_COVERED,
    glut_KEY_F1, glut_KEY_F2, glut_KEY_F3, glut_KEY_F4, glut_KEY_F5, glut_KEY_F6,
    glut_KEY_F7, glut_KEY_F8, glut_KEY_F9, glut_KEY_F10, glut_KEY_F11,
    glut_KEY_F12, glut_KEY_LEFT, glut_KEY_UP, glut_KEY_RIGHT, glut_KEY_DOWN,
@@ -231,7 +233,7 @@ unmarshalVisibility x
 
 --------------------------------------------------------------------------------
 
--- | A visibilty callback
+-- | A visibility callback
 
 type VisibilityCallback = Visibility -> IO ()
 
@@ -244,6 +246,9 @@ type VisibilityCallback' = CInt -> IO ()
 -- visibility status of the window is undefined; any change in window visibility
 -- will be reported, that is if you disable a visibility callback and re-enable
 -- the callback, you are guaranteed the next visibility change will be reported.
+--
+-- Note that you can either use 'visibilityCallback' or 'windowStateCallback',
+-- but not both, because the former is implemented via the latter.
 
 visibilityCallback :: SettableStateVar (Maybe VisibilityCallback)
 visibilityCallback = makeSettableStateVar $
@@ -256,6 +261,57 @@ foreign import ccall "wrapper" makeVisibilityCallback ::
 
 foreign import CALLCONV unsafe "glutVisibilityFunc" glutVisibilityFunc ::
    FunPtr VisibilityCallback' -> IO ()
+
+--------------------------------------------------------------------------------
+
+-- | The window state of the /current window/
+
+data WindowState
+   = Unmapped          -- ^ The /current window/ is unmapped.
+   | FullyRetained     -- ^ The /current window/ is unobscured.
+   | PartiallyRetained -- ^ The /current window/ is partially obscured.
+   | FullyCovered      -- ^ The /current window/ is fully obscured.
+   deriving ( Eq, Ord, Show )
+
+unmarshalWindowState :: CInt -> WindowState
+unmarshalWindowState x
+   | x == glut_HIDDEN = Unmapped
+   | x == glut_FULLY_RETAINED = FullyRetained
+   | x == glut_PARTIALLY_RETAINED = PartiallyRetained
+   | x == glut_FULLY_COVERED = FullyCovered
+   | otherwise = error ("unmarshalWindowState: illegal value " ++ show x)
+
+--------------------------------------------------------------------------------
+
+-- | A window state callback
+
+type WindowStateCallback = WindowState -> IO ()
+
+type WindowStateCallback_ = CInt -> IO ()
+
+-- | (/freeglut only/) Controls the window state callback for the /current
+-- window./ The window state callback for a window is called when the window
+-- state of a window changes.
+--
+-- If the window state callback for a window is disabled and later re-enabled,
+-- the window state state of the window is undefined; any change in the window
+-- state will be reported, that is if you disable a window state callback and
+-- re-enable the callback, you are guaranteed the next window state change will
+-- be reported.
+--
+-- Note that you can either use 'visibilityCallback' or 'windowStateCallback',
+-- but not both, because the former is implemented via the latter.
+
+windowStateCallback :: SettableStateVar (Maybe WindowStateCallback)
+windowStateCallback = makeSettableStateVar $
+   setCallback WindowStatusCB glutWindowStateFunc
+               (makeWindowStateCallback . unmarshal)
+   where unmarshal cb  = cb . unmarshalWindowState
+
+foreign import ccall "wrapper" makeWindowStateCallback ::
+   WindowStateCallback_ -> IO (FunPtr WindowStateCallback_)
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutWindowStateFunc,FunPtr WindowStateCallback_ -> IO ())
 
 --------------------------------------------------------------------------------
 
