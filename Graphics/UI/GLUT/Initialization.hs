@@ -45,7 +45,7 @@ module Graphics.UI.GLUT.Initialization (
    DirectRendering(..), directRendering,
 
    -- * OpenGL 3.x context support
-   initContextVersion, ContextFlag(..), initContextFlags
+   initialContextVersion, ContextFlag(..), initialContextFlags
 ) where
 
 import Data.Bits ( Bits((.|.),(.&.)) )
@@ -627,8 +627,8 @@ directRendering =
 -- The default context version is (1, 0), which will typically return an
 -- OpenGL 2.1 context, if one is available.
 
-initContextVersion :: StateVar (Int, Int)
-initContextVersion = makeStateVar getContextVersion setContextVersion
+initialContextVersion :: StateVar (Int, Int)
+initialContextVersion = makeStateVar getContextVersion setContextVersion
 
 getContextVersion :: IO (Int, Int)
 getContextVersion = do
@@ -645,7 +645,7 @@ EXTENSION_ENTRY(unsafe,"freeglut",glutInitContextVersion,CInt -> CInt -> IO ())
 -----------------------------------------------------------------------------
 
 -- | A flag affecting the rendering context to create, used in conjunction
--- with 'initContextFlags'.
+-- with 'initialContextFlags'.
 
 data ContextFlag
    = -- | Debug contexts are intended for use during application development,
@@ -671,8 +671,8 @@ marshalContextFlag x = case x of
 
 -- | (/freeglut only/) Controls the set of flags for the rendering context.
 
-initContextFlags :: StateVar [ContextFlag]
-initContextFlags = makeStateVar getContextFlags setContextFlags
+initialContextFlags :: StateVar [ContextFlag]
+initialContextFlags = makeStateVar getContextFlags setContextFlags
 
 getContextFlags :: IO [ContextFlag]
 getContextFlags = simpleGet i2cfs glut_INIT_FLAGS
