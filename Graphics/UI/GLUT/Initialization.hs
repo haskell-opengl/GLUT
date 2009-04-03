@@ -48,20 +48,21 @@ module Graphics.UI.GLUT.Initialization (
    initialContextVersion, ContextFlag(..), initialContextFlags
 ) where
 
-import Data.Bits ( Bits((.|.),(.&.)) )
-import Data.List ( genericLength, intersperse )
+import Control.Monad ( when )
+import Data.Bits ( Bits((.|.),(.&.)), complement )
+import Data.List ( genericLength, intersperse, mapAccumR )
 import Foreign.C.String ( CString, withCString, peekCString )
 import Foreign.C.Types ( CInt, CUInt )
 import Foreign.Marshal.Array ( withArray0, peekArray )
 import Foreign.Marshal.Utils ( with, withMany )
-import Foreign.Ptr ( Ptr, nullPtr )
+import Foreign.Ptr ( Ptr, nullPtr, nullFunPtr )
 import Foreign.Storable ( Storable(..) )
 import System.Environment ( getProgName, getArgs )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
 import Graphics.Rendering.OpenGL.GL.StateVar (
    GettableStateVar, makeGettableStateVar,
    SettableStateVar, makeSettableStateVar,
-   StateVar, makeStateVar )
+   StateVar, makeStateVar, HasGetter(..), HasSetter(..) )
 import Graphics.UI.GLUT.Constants (
    glut_INIT_WINDOW_X, glut_INIT_WINDOW_Y,
    glut_INIT_WINDOW_WIDTH, glut_INIT_WINDOW_HEIGHT,
@@ -226,28 +227,56 @@ foreign import CALLCONV unsafe "glutInitWindowSize" glutInitWindowSize ::
 -- with 'initialDisplayMode'.
 
 data DisplayMode
-   = RGBAMode           -- ^ Select an RGBA mode window. This is the default if neither 'RGBAMode' nor 'IndexMode' are specified.
-   | RGBMode            -- ^ An alias for 'RGBAMode'.
-   | IndexMode          -- ^ Select a color index mode window. This overrides 'RGBAMode' if it is also specified.
-   | LuminanceMode      -- ^ Select a window with a \"luminance\" color model. This model provides the functionality of OpenGL\'s
-                        --   RGBA color model, but the green and blue components are not maintained in the frame buffer. Instead
-                        --   each pixel\'s red component is converted to an index between zero and  'Graphics.UI.GLUT.Colormap.numColorMapEntries'
-                        --   and looked up in a per-window color map to determine the color of pixels within the window. The initial
-                        --   colormap of 'LuminanceMode' windows is initialized to be a linear gray ramp, but can be modified with GLUT\'s
-                        --   colormap actions. /Implementation Notes:/ 'LuminanceMode' is not supported on most OpenGL platforms.
-   | WithAlphaComponent -- ^ Select a window with an alpha component to the color buffer(s).
-   | WithAccumBuffer    -- ^ Select a window with an accumulation buffer.
-   | WithDepthBuffer    -- ^ Select a window with a depth buffer.
-   | WithStencilBuffer  -- ^ Select a window with a stencil buffer.
-   | WithAuxBuffers Int -- ^ (/freeglut only/) Select a window with /n/ (1 .. 4) auxiliary buffers. Any /n/ outside the range 1 .. 4 is a fatal error.
-   | SingleBuffered     -- ^ Select a single buffered window. This is the default if neither 'DoubleBuffered' nor 'SingleBuffered' are specified.
-   | DoubleBuffered     -- ^ Select a double buffered window. This overrides 'SingleBuffered' if it is also specified.
-   | Multisampling      -- ^ Select a window with multisampling support. If multisampling is not available, a non-multisampling
-                        --   window will automatically be chosen. Note: both the OpenGL client-side and server-side implementations
-                        --   must support the @GLX_SAMPLE_SGIS@ extension for multisampling to be available.
-   | Stereoscopic       -- ^ Select a stereo window.
-   | Captionless        -- ^ Select a window without a caption (/freeglut only/).
-   | Borderless         -- ^ Select a window without any borders (/freeglut only/).
+   = RGBAMode
+     -- ^ Select an RGBA mode window. This is the default if neither 'RGBAMode'
+     -- nor 'IndexMode' are specified.
+   | RGBMode
+     -- ^ An alias for 'RGBAMode'.
+   | IndexMode
+     -- ^ Select a color index mode window. This overrides 'RGBAMode' if it is
+     -- also specified.
+   | LuminanceMode
+     -- ^ Select a window with a \"luminance\" color model. This model provides
+     -- the functionality of OpenGL\'s RGBA color model, but the green and blue
+     -- components are not maintained in the frame buffer. Instead each pixel\'s
+     -- red component is converted to an index between zero and
+     --  'Graphics.UI.GLUT.Colormap.numColorMapEntries' and looked up in a
+     -- per-window color map to determine the color of pixels within the window.
+     -- The initial colormap of 'LuminanceMode' windows is initialized to be a
+     -- linear gray ramp, but can be modified with GLUT\'s colormap actions.
+     -- /Implementation Notes:/ 'LuminanceMode' is not supported on most OpenGL
+     -- platforms.
+   | WithAlphaComponent
+     -- ^ Select a window with an alpha component to the color buffer(s).
+   | WithAccumBuffer
+     -- ^ Select a window with an accumulation buffer.
+   | WithDepthBuffer
+     -- ^ Select a window with a depth buffer.
+   | WithStencilBuffer
+     -- ^ Select a window with a stencil buffer.
+   | WithAuxBuffers Int
+     -- ^ (/freeglut only/) Select a window with /n/ (1 .. 4) auxiliary buffers.
+     -- Any /n/ outside the range 1 .. 4 is a fatal error.
+   | SingleBuffered
+     -- ^ Select a single buffered window. This is the default if neither
+     -- 'DoubleBuffered' nor 'SingleBuffered' are specified.
+   | DoubleBuffered
+     -- ^ Select a double buffered window. This overrides 'SingleBuffered' if it
+     -- is also specified.
+   | Multisampling
+     -- ^ Select a window with multisampling support. If multisampling is not
+     -- available, a non-multisampling window will automatically be chosen.
+     -- Note: both the OpenGL client-side and server-side implementations must
+     -- support the @GLX_SAMPLE_SGIS@ extension for multisampling to be
+     -- available. Deprecated, use 'WithSamplesPerPixel'.
+   | WithSamplesPerPixel Int
+     -- ^ Select a window with multisampling, using the given samples per pixel.
+   | Stereoscopic
+     -- ^ Select a stereo window.
+   | Captionless
+     -- ^ Select a window without a caption (/freeglut only/).
+   | Borderless
+     -- ^ Select a window without any borders (/freeglut only/).
    deriving ( Eq, Ord, Show )
 
 marshalDisplayMode :: DisplayMode -> CUInt
@@ -269,6 +298,7 @@ marshalDisplayMode m = case m of
    SingleBuffered -> glut_SINGLE
    DoubleBuffered -> glut_DOUBLE
    Multisampling -> glut_MULTISAMPLE
+   WithSamplesPerPixel _ -> error ("marshalDisplayMode: this should not happen")
    Stereoscopic -> glut_STEREO
    Captionless -> glut_CAPTIONLESS
    Borderless -> glut_BORDERLESS
@@ -288,19 +318,38 @@ initialDisplayMode :: StateVar [DisplayMode]
 initialDisplayMode = makeStateVar getInitialDisplayMode setInitialDisplayMode
 
 getInitialDisplayMode :: IO [DisplayMode]
-getInitialDisplayMode = simpleGet i2dms glut_INIT_DISPLAY_MODE
+getInitialDisplayMode = do
+   mode <- simpleGet fromIntegral glut_INIT_DISPLAY_MODE
+   let displayModes = i2dms (mode .&. complement glut_MULTISAMPLE)
+   if mode .&. glut_MULTISAMPLE == 0
+      then return displayModes
+      else do
+         n <- get samplesPerPixel
+         return $ WithSamplesPerPixel n : displayModes
 
-i2dms :: CInt -> [DisplayMode]
-i2dms bitfield =
-   [ c | c <- [ RGBAMode, RGBMode, IndexMode, LuminanceMode, WithAlphaComponent,
+i2dms :: CUInt -> [DisplayMode]
+i2dms bitfield | IndexMode `elem` modes || LuminanceMode `elem` modes = modes
+               | otherwise = RGBAMode : modes
+   where modes = i2dmsWithoutRGBA bitfield
+
+i2dmsWithoutRGBA :: CUInt -> [DisplayMode]
+i2dmsWithoutRGBA bitfield =
+   [ c | c <- [ IndexMode, LuminanceMode, WithAlphaComponent,
                 WithAccumBuffer, WithDepthBuffer, WithStencilBuffer,
                 WithAuxBuffers 1, WithAuxBuffers 2, WithAuxBuffers 3,
                 WithAuxBuffers 4, SingleBuffered, DoubleBuffered, Multisampling,
                 Stereoscopic, Captionless, Borderless ]
-       , (fromIntegral bitfield .&. marshalDisplayMode c) /= 0 ]
+       , (bitfield .&. marshalDisplayMode c) /= 0 ]
 
 setInitialDisplayMode :: [DisplayMode] -> IO ()
-setInitialDisplayMode = glutInitDisplayMode . toBitfield marshalDisplayMode
+setInitialDisplayMode modes = do
+   let (spps, transformedModes) = mapAccumR handleMultisampling [] modes
+   mapM_ (samplesPerPixel $=) spps
+   glutInitDisplayMode (toBitfield marshalDisplayMode transformedModes)
+
+handleMultisampling :: [Int] -> DisplayMode -> ([Int], DisplayMode)
+handleMultisampling spps (WithSamplesPerPixel spp) = (spp : spps, Multisampling)
+handleMultisampling spps mode                      = (spps, mode)
 
 toBitfield :: (Bits b) => (a -> b) -> [a] -> b
 toBitfield marshal = foldl (.|.) 0 . map marshal
@@ -314,6 +363,31 @@ foreign import CALLCONV unsafe "glutInitDisplayMode" glutInitDisplayMode ::
 displayModePossible :: GettableStateVar Bool
 displayModePossible =
    makeGettableStateVar $ simpleGet (/= 0) glut_DISPLAY_MODE_POSSIBLE
+
+--------------------------------------------------------------------------------
+
+samplesPerPixel :: StateVar Int
+samplesPerPixel = makeStateVar getSamplesPerPixel setSamplesPerPixel
+
+getSamplesPerPixel :: IO Int
+getSamplesPerPixel = do
+   m <- multisamplingSupported
+   if m
+      then simpleGet fromIntegral (fromIntegral glut_MULTISAMPLE)
+      else return defaultSamplesPerPixels
+
+defaultSamplesPerPixels :: Int
+defaultSamplesPerPixels = 4
+
+setSamplesPerPixel :: Int -> IO ()
+setSamplesPerPixel spp = do
+   m <- multisamplingSupported
+   when m $
+      glutSetOption (fromIntegral glut_MULTISAMPLE) (fromIntegral spp)
+
+multisamplingSupported :: IO Bool
+multisamplingSupported = isKnown "glutGetModeValues"
+   where isKnown = fmap (/= nullFunPtr) . getProcAddressInternal
 
 --------------------------------------------------------------------------------
 
