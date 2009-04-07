@@ -33,7 +33,7 @@ module Graphics.UI.GLUT.Window (
    -- * Changing the window geometry
 
    -- $ChangingTheWindowGeometry
-   windowPosition, windowSize, fullScreen,
+   windowPosition, windowSize, fullScreen, fullScreenToggle,
 
    -- * Manipulating the stacking order
 
@@ -71,8 +71,13 @@ import Graphics.UI.GLUT.Constants (
    glut_CURSOR_BOTTOM_RIGHT_CORNER, glut_CURSOR_BOTTOM_LEFT_CORNER,
    glut_CURSOR_INHERIT, glut_CURSOR_NONE, glut_CURSOR_FULL_CROSSHAIR,
    glut_WINDOW_CURSOR )
+import Graphics.UI.GLUT.Extensions
 import Graphics.UI.GLUT.QueryUtils ( simpleGet )
 import Graphics.UI.GLUT.Types ( Window, makeWindow )
+
+--------------------------------------------------------------------------------
+
+#include "HsGLUTExt.h"
 
 --------------------------------------------------------------------------------
 
@@ -316,6 +321,15 @@ getWindowSize = do
 -- @_MOTIF_WM_HINTS@.
 
 foreign import CALLCONV unsafe "glutFullScreen" fullScreen :: IO ()
+
+--------------------------------------------------------------------------------
+
+-- | (/freeglut only/) Toggle between windowed and full screen mode.
+
+fullScreenToggle :: IO ()
+fullScreenToggle = glutFullScreenToggle
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutFullScreenToggle,IO ())
 
 --------------------------------------------------------------------------------
 

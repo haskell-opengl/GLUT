@@ -23,6 +23,7 @@ module Graphics.UI.GLUT.State (
   doubleBuffered, stereo,
   accumBufferDepths, depthBufferDepth, stencilBufferDepth,
   SampleCount, sampleCount, formatID,
+  fullScreenMode,
 
   -- * GLUT state pertaining to the layers of the /current window/
   damaged,
@@ -45,12 +46,13 @@ module Graphics.UI.GLUT.State (
   glutVersion, initState
 ) where
 
+import Control.Monad ( unless )
 import Foreign.C.Types ( CInt )
 import Foreign.Ptr ( nullFunPtr )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Size(..) )
 import Graphics.Rendering.OpenGL.GL.StateVar (
-   GettableStateVar, makeGettableStateVar )
+   StateVar, makeStateVar, GettableStateVar, makeGettableStateVar )
 import Graphics.UI.GLUT.Constants (
    glut_WINDOW_RGBA,
    glut_WINDOW_RED_SIZE, glut_WINDOW_GREEN_SIZE, glut_WINDOW_BLUE_SIZE,
@@ -63,6 +65,7 @@ import Graphics.UI.GLUT.Constants (
    glut_NORMAL_DAMAGED, glut_OVERLAY_DAMAGED,
    glut_SCREEN_WIDTH, glut_SCREEN_HEIGHT,
    glut_SCREEN_WIDTH_MM, glut_SCREEN_HEIGHT_MM,
+   glut_FULL_SCREEN,
    glut_HAS_KEYBOARD,
    glut_HAS_MOUSE, glut_NUM_MOUSE_BUTTONS,
    glut_HAS_SPACEBALL, glut_NUM_SPACEBALL_BUTTONS,
@@ -72,9 +75,9 @@ import Graphics.UI.GLUT.Constants (
    glut_JOYSTICK_AXES,
    glut_VERSION, glut_WINDOW_BORDER_WIDTH, glut_WINDOW_HEADER_HEIGHT,
    glut_INIT_STATE )
-
 import Graphics.UI.GLUT.Overlay ( Layer(..) )
 import Graphics.UI.GLUT.QueryUtils ( simpleGet, layerGet, deviceGet )
+import Graphics.UI.GLUT.Window ( fullScreenToggle )
 import Graphics.UI.GLUT.Extensions ( getProcAddressInternal )
 
 --------------------------------------------------------------------------------
@@ -165,6 +168,22 @@ sampleCount =
 
 formatID :: GettableStateVar Int
 formatID = makeGettableStateVar $ simpleGet fromIntegral glut_WINDOW_FORMAT_ID
+
+--------------------------------------------------------------------------------
+
+-- | (/freeglut only/) Contains 'True' if the /current window/ is in full screen
+-- mode, 'False' otherwise.
+
+fullScreenMode :: StateVar Bool
+fullScreenMode = makeStateVar getFullScreenMode setFullScreenMode
+
+getFullScreenMode :: IO Bool
+getFullScreenMode = simpleGet i2b glut_FULL_SCREEN
+
+setFullScreenMode :: Bool -> IO ()
+setFullScreenMode newMode = do
+   oldMode <- getFullScreenMode
+   unless (newMode == oldMode) fullScreenToggle
 
 --------------------------------------------------------------------------------
 
