@@ -360,3 +360,8 @@ glut_USE_CURRENT_CONTEXT               = 1
 glut_DEBUG, glut_FORWARD_COMPATIBLE :: CInt
 glut_DEBUG                             = 1
 glut_FORWARD_COMPATIBLE                = 2
+
+-----------------------------------------------------------------------------
+-- glutGetModeValues parameter (freeglut extension)
+glut_AUX :: GLenum
+glut_AUX                               = 0x1000

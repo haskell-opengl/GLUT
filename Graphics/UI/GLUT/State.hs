@@ -41,6 +41,7 @@ module Graphics.UI.GLUT.State (
   DialCount, numDialsAndButtons,
   numTabletButtons,
   AxisCount, PollRate, joystickInfo,
+  supportedNumAuxBuffers, supportedSamplesPerPixel,
 
   -- * GLUT information
   glutVersion, initState
@@ -48,7 +49,10 @@ module Graphics.UI.GLUT.State (
 
 import Control.Monad ( unless )
 import Foreign.C.Types ( CInt )
-import Foreign.Ptr ( nullFunPtr )
+import Foreign.Marshal.Alloc ( alloca )
+import Foreign.Marshal.Array ( peekArray )
+import Foreign.Ptr ( Ptr, nullFunPtr )
+import Foreign.Storable ( Storable(..) )
 import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
 import Graphics.Rendering.OpenGL.GL.CoordTrans ( Size(..) )
 import Graphics.Rendering.OpenGL.GL.StateVar (
@@ -73,12 +77,17 @@ import Graphics.UI.GLUT.Constants (
    glut_HAS_TABLET, glut_NUM_TABLET_BUTTONS,
    glut_HAS_JOYSTICK, glut_JOYSTICK_BUTTONS, glut_JOYSTICK_POLL_RATE,
    glut_JOYSTICK_AXES,
+   glut_AUX, glut_MULTISAMPLE,
    glut_VERSION, glut_WINDOW_BORDER_WIDTH, glut_WINDOW_HEADER_HEIGHT,
    glut_INIT_STATE )
 import Graphics.UI.GLUT.Overlay ( Layer(..) )
 import Graphics.UI.GLUT.QueryUtils ( simpleGet, layerGet, deviceGet )
 import Graphics.UI.GLUT.Window ( fullScreenToggle )
-import Graphics.UI.GLUT.Extensions ( getProcAddressInternal )
+import Graphics.UI.GLUT.Extensions
+
+--------------------------------------------------------------------------------
+
+#include "HsGLUTExt.h"
 
 --------------------------------------------------------------------------------
 
@@ -312,6 +321,29 @@ joystickInfo =
       a <- deviceGet fromIntegral glut_JOYSTICK_AXES
       r <- deviceGet fromIntegral glut_JOYSTICK_POLL_RATE
       return (b, a, r)
+
+-----------------------------------------------------------------------------
+
+-- | (/freeglut only/) Contains a list of the number of auxiliary buffers
+-- supported, in increasing order.
+
+supportedNumAuxBuffers :: GettableStateVar [Int]
+supportedNumAuxBuffers = getModeValues glut_AUX
+
+-- | (/freeglut only/) Contains a list of the number of samples per pixel
+-- supported for multisampling, in increasing order.
+
+supportedSamplesPerPixel :: GettableStateVar [SampleCount]
+supportedSamplesPerPixel = getModeValues (fromIntegral glut_MULTISAMPLE)
+
+getModeValues :: Integral a => GLenum -> GettableStateVar [a]
+getModeValues what = makeGettableStateVar $
+   alloca $ \sizeBuffer -> do
+      valuesBuffer <- glutGetModeValues what sizeBuffer
+      size <- peek sizeBuffer
+      fmap (map fromIntegral) $ peekArray (fromIntegral size) valuesBuffer
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutGetModeValues,GLenum -> Ptr CInt -> IO (Ptr CInt))
 
 --------------------------------------------------------------------------------
 -- Convenience unmarshalers
