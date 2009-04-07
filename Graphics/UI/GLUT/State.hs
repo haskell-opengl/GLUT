@@ -42,7 +42,7 @@ module Graphics.UI.GLUT.State (
   AxisCount, PollRate, joystickInfo,
 
   -- * GLUT information
- glutVersion
+  glutVersion, initState
 ) where
 
 import Foreign.C.Types ( CInt )
@@ -70,7 +70,8 @@ import Graphics.UI.GLUT.Constants (
    glut_HAS_TABLET, glut_NUM_TABLET_BUTTONS,
    glut_HAS_JOYSTICK, glut_JOYSTICK_BUTTONS, glut_JOYSTICK_POLL_RATE,
    glut_JOYSTICK_AXES,
-   glut_VERSION, glut_WINDOW_BORDER_WIDTH, glut_WINDOW_HEADER_HEIGHT )
+   glut_VERSION, glut_WINDOW_BORDER_WIDTH, glut_WINDOW_HEADER_HEIGHT,
+   glut_INIT_STATE )
 
 import Graphics.UI.GLUT.Overlay ( Layer(..) )
 import Graphics.UI.GLUT.QueryUtils ( simpleGet, layerGet, deviceGet )
@@ -348,3 +349,13 @@ windowHeaderHeight :: GettableStateVar Int
 windowHeaderHeight =
    makeGettableStateVar (simpleGet fromIntegral glut_WINDOW_HEADER_HEIGHT)
 
+-----------------------------------------------------------------------------
+
+-- | (/freeglut only/) Contains 'True' if GLUT has been initialized 
+-- with 'Graphics.UI.GLUT.Initialization.initialize' or
+-- 'Graphics.UI.GLUT.Initialization.getArgsAndInitialize' has and not yet
+-- been de-initialized with 'Graphics.UI.GLUT.Initialization.exit'. Contains
+-- 'False' otherwise.
+
+initState :: GettableStateVar Bool
+initState = makeGettableStateVar$ simpleGet i2b glut_INIT_STATE

@@ -26,7 +26,7 @@
 
 module Graphics.UI.GLUT.Initialization (
    -- * Primary initialization
-   initialize, getArgsAndInitialize,
+   initialize, getArgsAndInitialize, exit,
 
    -- * Initial window geometry
    initialWindowPosition, initialWindowSize,
@@ -157,6 +157,16 @@ getArgsAndInitialize = do
    args <- getArgs
    nonGLUTArgs <- initialize prog args
    return (prog, nonGLUTArgs)
+
+-----------------------------------------------------------------------------
+
+-- | (/freeglut only/) De-initialize GLUT. After this, one has to use
+-- 'initialize' or 'getArgsAndInitialize' to initialize GLUT again.
+
+exit :: IO ()
+exit = glutExit
+
+EXTENSION_ENTRY(unsafe,"freeglut",glutExit,IO ())
 
 --------------------------------------------------------------------------------
 
