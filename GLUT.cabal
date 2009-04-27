@@ -1,8 +1,9 @@
 name:		GLUT
-version:	2.2
+version:	2.1.2.0
 license:	BSD3
 license-file:	LICENSE
 maintainer:	Sven Panne <sven.panne@aedion.de>
+bug-reports:	mailto:hopengl@haskell.org
 homepage:	http://www.haskell.org/HOpenGL/
 category:	Graphics
 synopsis:	A binding for the OpenGL Utility Toolkit
