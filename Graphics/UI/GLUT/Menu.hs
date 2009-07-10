@@ -22,25 +22,22 @@ module Graphics.UI.GLUT.Menu (
    numMenuItems
 ) where
 
-import Data.Array ( listArray, (!) )
-import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
+import Data.Array
+import Data.IORef
 import qualified Data.Map as Map ( empty, lookup, insert, delete )
 import Data.Map ( Map )
-import Foreign.C.String ( CString, withCString )
-import Foreign.C.Types ( CInt )
-import Foreign.Ptr ( FunPtr, freeHaskellFunPtr )
-import Control.Monad ( unless, zipWithM, when )
-import System.IO.Unsafe ( unsafePerformIO )
-import Graphics.Rendering.OpenGL.GL.StateVar (
-   HasGetter(get), HasSetter(($=)),
-   GettableStateVar, makeGettableStateVar,
-   StateVar, makeStateVar )
-import Graphics.UI.GLUT.Constants ( glut_MENU_NUM_ITEMS )
-import Graphics.UI.GLUT.QueryUtils ( simpleGet )
-import Graphics.UI.GLUT.Types ( marshalMouseButton )
-import Graphics.UI.GLUT.Window ( Window )
-import Graphics.UI.GLUT.Callbacks.Registration ( getCurrentWindow )
-import Graphics.UI.GLUT.Callbacks.Window ( MouseButton )
+import Foreign.C.String
+import Foreign.C.Types
+import Foreign.Ptr
+import Control.Monad
+import System.IO.Unsafe
+import Graphics.Rendering.OpenGL
+import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Types
+import Graphics.UI.GLUT.Window
+import Graphics.UI.GLUT.Callbacks.Registration
+import Graphics.UI.GLUT.Callbacks.Window
 
 --------------------------------------------------------------------------------
 

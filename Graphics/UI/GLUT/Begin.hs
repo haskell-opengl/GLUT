@@ -22,12 +22,10 @@ module Graphics.UI.GLUT.Begin (
    ActionOnWindowClose(..), actionOnWindowClose
 ) where
 
-import Foreign.C.Types ( CInt )
-import Graphics.Rendering.OpenGL.GL.StateVar ( StateVar, makeStateVar )
-import Graphics.UI.GLUT.Constants (
-   glut_ACTION_ON_WINDOW_CLOSE, glut_ACTION_EXIT,
-   glut_ACTION_GLUTMAINLOOP_RETURNS, glut_ACTION_CONTINUE_EXECUTION )
-import Graphics.UI.GLUT.QueryUtils ( simpleGet, glutSetOption )
+import Foreign.C.Types
+import Graphics.Rendering.OpenGL
+import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Extensions
 
 --------------------------------------------------------------------------------

@@ -41,16 +41,11 @@ module Graphics.UI.GLUT.Colormap (
    transparentIndex
 ) where
 
-import Foreign.C.Types ( CInt )
-import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint, GLfloat )
-import Graphics.Rendering.OpenGL.GL.StateVar (
-   GettableStateVar, makeGettableStateVar, StateVar, makeStateVar )
-import Graphics.Rendering.OpenGL.GL.VertexSpec ( Color3(..), Index1(..) )
-import Graphics.UI.GLUT.Constants (
-   glut_RED, glut_GREEN, glut_BLUE,
-   glut_WINDOW_COLORMAP_SIZE, glut_TRANSPARENT_INDEX )
-import Graphics.UI.GLUT.QueryUtils ( simpleGet, layerGet )
-import Graphics.UI.GLUT.Window ( Window )
+import Foreign.C.Types
+import Graphics.Rendering.OpenGL
+import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Window
 
 --------------------------------------------------------------------------------
 

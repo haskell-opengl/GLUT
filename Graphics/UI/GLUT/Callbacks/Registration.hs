@@ -19,15 +19,15 @@ module Graphics.UI.GLUT.Callbacks.Registration (
 
 --------------------------------------------------------------------------------
 
-import Control.Monad ( when )
-import Data.IORef ( IORef, newIORef, readIORef, writeIORef, modifyIORef )
+import Control.Monad
+import Data.IORef
 import qualified Data.Map as Map ( empty, lookup, insert, delete )
 import Data.Map ( Map )
-import Foreign.C.Types ( CInt, CUInt )
-import Foreign.Ptr ( FunPtr, nullFunPtr, freeHaskellFunPtr )
-import System.IO.Unsafe ( unsafePerformIO )
-import Graphics.Rendering.OpenGL.GL.StateVar ( HasGetter(get) )
-import Graphics.UI.GLUT.Window ( Window, currentWindow )
+import Data.StateVar
+import Foreign.C.Types
+import Foreign.Ptr
+import Graphics.UI.GLUT.Window
+import System.IO.Unsafe
 
 --------------------------------------------------------------------------------
 -- No timer callback here, because they are one-shot and "self destroy"

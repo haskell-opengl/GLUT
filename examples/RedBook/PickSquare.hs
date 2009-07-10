@@ -14,7 +14,7 @@ import Data.IORef ( IORef, newIORef )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
-type Board = Array (GLint,GLint) (IORef Int)
+type Board = Array (Int,Int) (IORef Int)
 
 data State = State { board :: Board }
 
@@ -46,7 +46,9 @@ drawSquares state =
             color3f (Color3 (fromIntegral i   / 3.0)
                             (fromIntegral j   / 3.0)
                             (fromIntegral val / 3.0))
-            rect (Vertex2 i j) (Vertex2 (i + 1) (j + 1))
+            let vertex2i :: Int -> Int -> Vertex2 GLint
+                vertex2i x y = Vertex2 (fromIntegral x) (fromIntegral y)
+            rect (vertex2i i j) (vertex2i (i + 1) (j + 1))
 
 -- processHits prints the hit records and updates the board array.
 processHits :: Maybe[HitRecord] -> State -> IO ()

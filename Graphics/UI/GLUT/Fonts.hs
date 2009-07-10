@@ -22,11 +22,11 @@ module Graphics.UI.GLUT.Fonts (
    Font(..), BitmapFont(..), StrokeFont(..),
 ) where
 
-import Data.Char ( ord )
-import Foreign.C.String ( CString, withCString )
-import Foreign.C.Types ( CInt )
-import Foreign.Ptr ( Ptr )
-import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint, GLfloat )
+import Data.Char
+import Foreign.C.String
+import Foreign.C.Types
+import Foreign.Ptr
+import Graphics.Rendering.OpenGL
 import Graphics.UI.GLUT.Extensions
 
 #ifdef __HUGS__

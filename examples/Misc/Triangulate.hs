@@ -80,14 +80,16 @@ drawTriangulation (Triangulation triangles) =
          drawTriangleVertex tv2
          drawTriangleVertex tv3
 
+-- CFloat has no Random instance, so we go via Float
+randomGLfloat :: IO GLfloat
+randomGLfloat = fmap (realToFrac :: Float -> GLfloat) randomIO
+
 randomColor :: IO ()
 randomColor = do
-   r <- randomIO
-   g <- randomIO
-   b <- randomIO
-   -- resolve overloading, not needed in "real" programs
-   let color3f = color :: Color3 GLfloat -> IO ()
-   color3f (Color3 r g b)
+   r <- randomGLfloat
+   g <- randomGLfloat
+   b <- randomGLfloat
+   color (Color3 r g b)
 
 drawTriangleVertex :: TriangleVertex DontCare -> IO ()
 drawTriangleVertex (AnnotatedVertex plainVertex (_, e)) = do

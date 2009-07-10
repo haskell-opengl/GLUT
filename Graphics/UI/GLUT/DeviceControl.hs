@@ -19,12 +19,10 @@ module Graphics.UI.GLUT.DeviceControl (
    forceJoystickCallback
 ) where
 
-import Foreign.C.Types ( CInt )
-import Graphics.Rendering.OpenGL.GL.StateVar ( StateVar, makeStateVar )
-import Graphics.UI.GLUT.Constants (
-   glut_KEY_REPEAT_OFF, glut_KEY_REPEAT_ON, glut_KEY_REPEAT_DEFAULT,
-   glut_DEVICE_KEY_REPEAT, glut_DEVICE_IGNORE_KEY_REPEAT )
-import Graphics.UI.GLUT.QueryUtils ( deviceGet )
+import Foreign.C.Types
+import Graphics.Rendering.OpenGL
+import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.QueryUtils
 
 --------------------------------------------------------------------------------
 

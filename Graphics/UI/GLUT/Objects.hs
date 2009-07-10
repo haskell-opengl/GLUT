@@ -33,12 +33,10 @@ module Graphics.UI.GLUT.Objects (
    renderObject
 ) where
 
-import Foreign.C.Types ( CInt )
-import Foreign.Marshal.Utils ( with )
-import Foreign.Ptr ( Ptr )
-import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLint, GLdouble )
-import Graphics.Rendering.OpenGL.GL.VertexSpec ( Vertex3(..) )
-import Graphics.Rendering.OpenGL.GLU.Quadrics ( Radius, Height, Slices, Stacks )
+import Foreign.C.Types
+import Foreign.Marshal.Utils
+import Foreign.Ptr
+import Graphics.Rendering.OpenGL
 import Graphics.UI.GLUT.Extensions
 
 --------------------------------------------------------------------------------

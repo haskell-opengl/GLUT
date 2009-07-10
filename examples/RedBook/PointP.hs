@@ -41,17 +41,24 @@ makeState = do
    d <- newIORef (-10)
    return $ State { distance = d }
 
+-- CFloat has no Random instance, so we go via Float
+randomGLfloat :: (GLfloat, GLfloat) -> IO GLfloat
+randomGLfloat = fmap floatToGLfloat . randomRIO . fmapPair glFloatToFloat
+  where fmapPair f (x, y) = (f x, f y)
+        floatToGLfloat = realToFrac :: Float -> GLfloat
+        glFloatToFloat = realToFrac :: GLfloat -> Float
+
 randomColor :: IO (Color3 GLfloat)
 randomColor = do
-   g <- randomRIO (0.5, 1)
-   b <- randomRIO (0, 1)
+   g <- randomGLfloat (0.5, 1)
+   b <- randomGLfloat (0, 1)
    return $ Color3 1 g b
 
 randomVertex :: IO (Vertex3 GLfloat)
 randomVertex = do
-   x <- randomRIO (-5, 5)
-   y <- randomRIO (-5, 5)
-   z <- randomRIO (-5, -45)
+   x <- randomGLfloat (-5, 5)
+   y <- randomGLfloat (-5, 5)
+   z <- randomGLfloat (-5, -45)
    return $ Vertex3 x y z
 
 myInit :: IO DisplayList

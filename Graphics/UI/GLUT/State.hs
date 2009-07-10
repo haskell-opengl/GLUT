@@ -47,42 +47,17 @@ module Graphics.UI.GLUT.State (
   glutVersion, initState
 ) where
 
-import Control.Monad ( unless )
-import Foreign.C.Types ( CInt )
-import Foreign.Marshal.Alloc ( alloca )
-import Foreign.Marshal.Array ( peekArray )
-import Foreign.Ptr ( Ptr, nullFunPtr )
-import Foreign.Storable ( Storable(..) )
-import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
-import Graphics.Rendering.OpenGL.GL.CoordTrans ( Size(..) )
-import Graphics.Rendering.OpenGL.GL.StateVar (
-   StateVar, makeStateVar, GettableStateVar, makeGettableStateVar )
-import Graphics.UI.GLUT.Constants (
-   glut_WINDOW_RGBA,
-   glut_WINDOW_RED_SIZE, glut_WINDOW_GREEN_SIZE, glut_WINDOW_BLUE_SIZE,
-   glut_WINDOW_ALPHA_SIZE, glut_WINDOW_BUFFER_SIZE,
-   glut_WINDOW_DOUBLEBUFFER, glut_WINDOW_STEREO,
-   glut_WINDOW_ACCUM_RED_SIZE, glut_WINDOW_ACCUM_GREEN_SIZE,
-   glut_WINDOW_ACCUM_BLUE_SIZE, glut_WINDOW_ACCUM_ALPHA_SIZE,
-   glut_WINDOW_DEPTH_SIZE, glut_WINDOW_STENCIL_SIZE, glut_WINDOW_NUM_SAMPLES,
-   glut_WINDOW_FORMAT_ID, glut_ELAPSED_TIME,
-   glut_NORMAL_DAMAGED, glut_OVERLAY_DAMAGED,
-   glut_SCREEN_WIDTH, glut_SCREEN_HEIGHT,
-   glut_SCREEN_WIDTH_MM, glut_SCREEN_HEIGHT_MM,
-   glut_FULL_SCREEN,
-   glut_HAS_KEYBOARD,
-   glut_HAS_MOUSE, glut_NUM_MOUSE_BUTTONS,
-   glut_HAS_SPACEBALL, glut_NUM_SPACEBALL_BUTTONS,
-   glut_HAS_DIAL_AND_BUTTON_BOX, glut_NUM_DIALS, glut_NUM_BUTTON_BOX_BUTTONS,
-   glut_HAS_TABLET, glut_NUM_TABLET_BUTTONS,
-   glut_HAS_JOYSTICK, glut_JOYSTICK_BUTTONS, glut_JOYSTICK_POLL_RATE,
-   glut_JOYSTICK_AXES,
-   glut_AUX, glut_MULTISAMPLE,
-   glut_VERSION, glut_WINDOW_BORDER_WIDTH, glut_WINDOW_HEADER_HEIGHT,
-   glut_INIT_STATE )
-import Graphics.UI.GLUT.Overlay ( Layer(..) )
-import Graphics.UI.GLUT.QueryUtils ( simpleGet, layerGet, deviceGet )
-import Graphics.UI.GLUT.Window ( fullScreenToggle )
+import Control.Monad
+import Foreign.C.Types
+import Foreign.Marshal.Alloc
+import Foreign.Marshal.Array
+import Foreign.Ptr
+import Foreign.Storable
+import Graphics.Rendering.OpenGL
+import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.Overlay
+import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Window
 import Graphics.UI.GLUT.Extensions
 
 --------------------------------------------------------------------------------

@@ -17,10 +17,9 @@ module Graphics.UI.GLUT.Debugging (
    reportErrors
 ) where
 
-import System.Environment ( getProgName )
-import System.IO ( hPutStrLn, stderr )
-import Graphics.Rendering.OpenGL.GL.StateVar ( HasGetter(get) )
-import Graphics.Rendering.OpenGL.GLU.Errors ( Error(..), errors )
+import System.Environment
+import System.IO
+import Graphics.Rendering.OpenGL
 
 --------------------------------------------------------------------------------
 

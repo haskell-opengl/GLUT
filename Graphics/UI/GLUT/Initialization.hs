@@ -48,40 +48,21 @@ module Graphics.UI.GLUT.Initialization (
    initialContextVersion, ContextFlag(..), initialContextFlags
 ) where
 
-import Control.Monad ( when )
-import Data.Bits ( Bits((.|.),(.&.)), complement )
-import Data.List ( genericLength, intersperse, mapAccumR )
-import Foreign.C.String ( CString, withCString, peekCString )
-import Foreign.C.Types ( CInt, CUInt )
-import Foreign.Marshal.Array ( withArray0, peekArray )
-import Foreign.Marshal.Utils ( with, withMany )
-import Foreign.Ptr ( Ptr, nullPtr, nullFunPtr )
-import Foreign.Storable ( Storable(..) )
-import System.Environment ( getProgName, getArgs )
-import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
-import Graphics.Rendering.OpenGL.GL.StateVar (
-   GettableStateVar, makeGettableStateVar,
-   SettableStateVar, makeSettableStateVar,
-   StateVar, makeStateVar, HasGetter(..), HasSetter(..) )
-import Graphics.UI.GLUT.Constants (
-   glut_INIT_WINDOW_X, glut_INIT_WINDOW_Y,
-   glut_INIT_WINDOW_WIDTH, glut_INIT_WINDOW_HEIGHT,
-   glut_RGBA, glut_RGB, glut_INDEX, glut_LUMINANCE,
-   glut_ALPHA, glut_ACCUM, glut_DEPTH, glut_STENCIL,
-   glut_AUX1, glut_AUX2, glut_AUX3, glut_AUX4,
-   glut_SINGLE, glut_DOUBLE, glut_MULTISAMPLE, glut_STEREO,
-   glut_CAPTIONLESS, glut_BORDERLESS,
-   glut_INIT_DISPLAY_MODE,
-   glut_DISPLAY_MODE_POSSIBLE,
-   glut_RENDERING_CONTEXT, glut_CREATE_NEW_CONTEXT, glut_USE_CURRENT_CONTEXT,
-   glut_DIRECT_RENDERING,
-   glut_FORCE_INDIRECT_CONTEXT, glut_ALLOW_DIRECT_CONTEXT,
-   glut_TRY_DIRECT_CONTEXT, glut_FORCE_DIRECT_CONTEXT,
-   glut_INIT_MAJOR_VERSION, glut_INIT_MINOR_VERSION,
-   glut_DEBUG, glut_FORWARD_COMPATIBLE, glut_INIT_FLAGS )
+import Control.Monad
+import Data.Bits
+import Data.List
+import Foreign.C.String
+import Foreign.C.Types
+import Foreign.Marshal.Array
+import Foreign.Marshal.Utils
+import Foreign.Ptr
+import Foreign.Storable
+import System.Environment
+import Graphics.Rendering.OpenGL
+import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Extensions
-import Graphics.UI.GLUT.QueryUtils ( simpleGet, glutSetOption )
-import Graphics.UI.GLUT.Types ( Relation(..), relationToString )
+import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Types
 
 --------------------------------------------------------------------------------
 

@@ -52,28 +52,14 @@ module Graphics.UI.GLUT.Window (
    Cursor(..), cursor, pointerPosition
 ) where
 
-import Foreign.C.String ( CString, withCString )
-import Foreign.C.Types ( CInt )
-import Graphics.Rendering.OpenGL.GL.CoordTrans ( Position(..), Size(..) )
-import Graphics.Rendering.OpenGL.GL.StateVar (
-   GettableStateVar, makeGettableStateVar,
-   SettableStateVar, makeSettableStateVar,
-   StateVar, makeStateVar )
-import Graphics.UI.GLUT.Constants (
-   glut_WINDOW_PARENT, glut_WINDOW_NUM_CHILDREN,
-   glut_WINDOW_X, glut_WINDOW_Y, glut_WINDOW_WIDTH, glut_WINDOW_HEIGHT,
-   glut_CURSOR_RIGHT_ARROW, glut_CURSOR_LEFT_ARROW, glut_CURSOR_INFO,
-   glut_CURSOR_DESTROY, glut_CURSOR_HELP, glut_CURSOR_CYCLE, glut_CURSOR_SPRAY,
-   glut_CURSOR_WAIT, glut_CURSOR_TEXT, glut_CURSOR_CROSSHAIR,
-   glut_CURSOR_UP_DOWN, glut_CURSOR_LEFT_RIGHT, glut_CURSOR_TOP_SIDE,
-   glut_CURSOR_BOTTOM_SIDE, glut_CURSOR_LEFT_SIDE, glut_CURSOR_RIGHT_SIDE,
-   glut_CURSOR_TOP_LEFT_CORNER, glut_CURSOR_TOP_RIGHT_CORNER,
-   glut_CURSOR_BOTTOM_RIGHT_CORNER, glut_CURSOR_BOTTOM_LEFT_CORNER,
-   glut_CURSOR_INHERIT, glut_CURSOR_NONE, glut_CURSOR_FULL_CROSSHAIR,
-   glut_WINDOW_CURSOR )
+import Data.StateVar
+import Foreign.C.String
+import Foreign.C.Types
+import Graphics.Rendering.OpenGL.GL.CoordTrans
+import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Extensions
-import Graphics.UI.GLUT.QueryUtils ( simpleGet )
-import Graphics.UI.GLUT.Types ( Window, makeWindow )
+import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Types
 
 --------------------------------------------------------------------------------
 

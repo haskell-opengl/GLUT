@@ -30,19 +30,10 @@ module Graphics.UI.GLUT.Overlay (
    postOverlayRedisplay
 ) where
 
-import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
-import Graphics.Rendering.OpenGL.GL.StateVar (
-   GettableStateVar, makeGettableStateVar,
-   SettableStateVar, makeSettableStateVar,
-   StateVar, makeStateVar )
-import Graphics.UI.GLUT.Constants (
-   glut_OVERLAY_POSSIBLE, glut_HAS_OVERLAY, glut_NORMAL, glut_OVERLAY,
-   glut_LAYER_IN_USE )
-import Graphics.UI.GLUT.QueryUtils ( layerGet )
-#ifdef __NHC__
-import NHC.FFI ( CInt )
-#endif
-import Graphics.UI.GLUT.Window ( Window )
+import Graphics.Rendering.OpenGL
+import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Window
 
 --------------------------------------------------------------------------------
 

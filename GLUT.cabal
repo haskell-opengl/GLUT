@@ -1,5 +1,5 @@
 name:		GLUT
-version:	2.1.2.1
+version:	2.2.0.0
 license:	BSD3
 license-file:	LICENSE
 maintainer:	Sven Panne <sven.panne@aedion.de>
@@ -156,5 +156,5 @@ library
     build-depends:	base >= 3, array, containers
   else
     build-depends:	base < 3
-  build-depends: OpenGL >= 2.2
+  build-depends: OpenGL >= 2.3, StateVar
   extensions:	CPP, ForeignFunctionInterface

@@ -30,22 +30,14 @@ module Graphics.UI.GLUT.GameMode (
    gameModeActive
 ) where
 
-import Data.List ( intersperse )
-import Foreign.C.String ( CString, withCString )
-import Foreign.C.Types ( CInt )
-import Graphics.Rendering.OpenGL.GL.BasicTypes ( GLenum )
-import Graphics.Rendering.OpenGL.GL.CoordTrans ( Size(..) )
-import Graphics.Rendering.OpenGL.GL.StateVar (
-   GettableStateVar, makeGettableStateVar,
-   SettableStateVar, makeSettableStateVar )
-import Graphics.UI.GLUT.Constants (
-   glut_GAME_MODE_DISPLAY_CHANGED, glut_GAME_MODE_POSSIBLE,
-   glut_GAME_MODE_WIDTH, glut_GAME_MODE_HEIGHT,
-   glut_GAME_MODE_PIXEL_DEPTH, glut_GAME_MODE_REFRESH_RATE,
-   glut_GAME_MODE_ACTIVE )
-import Graphics.UI.GLUT.Types ( makeWindow, relationToString )
-import Graphics.UI.GLUT.Window ( Window )
-import Graphics.UI.GLUT.Initialization ( Relation(..) )
+import Data.List
+import Foreign.C.String
+import Foreign.C.Types
+import Graphics.Rendering.OpenGL
+import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.Types
+import Graphics.UI.GLUT.Window
+import Graphics.UI.GLUT.Initialization
 
 --------------------------------------------------------------------------------
 
