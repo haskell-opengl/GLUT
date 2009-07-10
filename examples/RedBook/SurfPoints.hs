@@ -22,7 +22,7 @@ import Control.Monad ( when )
 import Data.Char ( toLower )
 import Data.IORef ( IORef, newIORef )
 import Foreign.Marshal ( withArray )
-import System.Exit ( exitWith, ExitCode(ExitSuccess), exitFailure )
+import System.Exit ( exitWith, ExitCode(ExitSuccess) )
 import Graphics.UI.GLUT
 
 data State = State { showPoints :: IORef Bool }
@@ -120,7 +120,7 @@ main = do
       putStrLn "OpenGL Utility Library (GLU) Version 1.3."
       putStrLn "If your implementation of GLU has the right extensions,"
       putStrLn "you may be able to modify this program to make it run."
-      exitFailure
+      putStrLn "Continuing anyway..."
    state <- makeState
    myInit
    reshapeCallback $= Just reshape

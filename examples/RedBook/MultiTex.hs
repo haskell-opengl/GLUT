@@ -97,11 +97,13 @@ main = do
    initialWindowPosition $= Position 100 100
    createWindow progName
    -- we have to do this *after* createWindow, otherwise we have no OpenGL context
-   exts <- get glExtensions
-   unless ("GL_ARB_multitexture"   `elem` exts &&
-           "GL_EXT_texture_object" `elem` exts) $ do
-      putStrLn "Sorry, this demo requires the GL_ARB_multitexture and GL_EXT_texture_object extensions."
-      exitFailure
+   version <- get (majorMinor glVersion)
+   unless (version >= (1, 3)) $ do
+      exts <- get glExtensions
+      unless ("GL_ARB_multitexture"   `elem` exts &&     -- part of 1.3 core
+              "GL_EXT_texture_object" `elem` exts) $ do  -- part of 1.1 core
+        putStrLn "Sorry, this demo requires the GL_ARB_multitexture and GL_EXT_texture_object extensions."
+        exitFailure
    myInit
    reshapeCallback $= Just reshape
    displayCallback $= display
