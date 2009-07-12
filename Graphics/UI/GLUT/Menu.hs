@@ -26,12 +26,12 @@ import Data.Array
 import Data.IORef
 import qualified Data.Map as Map ( empty, lookup, insert, delete )
 import Data.Map ( Map )
+import Data.StateVar
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr
 import Control.Monad
 import System.IO.Unsafe
-import Graphics.Rendering.OpenGL
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Types

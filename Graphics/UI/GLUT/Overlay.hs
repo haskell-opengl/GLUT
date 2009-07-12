@@ -30,7 +30,8 @@ module Graphics.UI.GLUT.Overlay (
    postOverlayRedisplay
 ) where
 
-import Graphics.Rendering.OpenGL
+import Data.StateVar
+import Graphics.Rendering.OpenGL ( GLenum )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Window

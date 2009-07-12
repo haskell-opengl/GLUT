@@ -17,9 +17,10 @@ module Graphics.UI.GLUT.Debugging (
    reportErrors
 ) where
 
+import Data.StateVar
 import System.Environment
 import System.IO
-import Graphics.Rendering.OpenGL
+import Graphics.Rendering.OpenGL ( Error(..), errors )
 
 --------------------------------------------------------------------------------
 

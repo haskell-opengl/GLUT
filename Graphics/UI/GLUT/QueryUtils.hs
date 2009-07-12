@@ -18,8 +18,8 @@ module Graphics.UI.GLUT.QueryUtils (
 ) where
 
 import Foreign.C.Types
+import Graphics.Rendering.OpenGL ( GLenum )
 import Graphics.UI.GLUT.Extensions
-import Graphics.Rendering.OpenGL
 
 --------------------------------------------------------------------------------
 

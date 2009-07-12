@@ -36,7 +36,7 @@ module Graphics.UI.GLUT.Objects (
 import Foreign.C.Types
 import Foreign.Marshal.Utils
 import Foreign.Ptr
-import Graphics.Rendering.OpenGL
+import Graphics.Rendering.OpenGL ( Height, Radius, Slices, Stacks, GLint, GLdouble, Vertex3(..) )
 import Graphics.UI.GLUT.Extensions
 
 --------------------------------------------------------------------------------

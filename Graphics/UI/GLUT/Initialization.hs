@@ -51,6 +51,7 @@ module Graphics.UI.GLUT.Initialization (
 import Control.Monad
 import Data.Bits
 import Data.List
+import Data.StateVar
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Marshal.Array
@@ -58,7 +59,7 @@ import Foreign.Marshal.Utils
 import Foreign.Ptr
 import Foreign.Storable
 import System.Environment
-import Graphics.Rendering.OpenGL
+import Graphics.Rendering.OpenGL ( Position(..), Size(..) )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Extensions
 import Graphics.UI.GLUT.QueryUtils

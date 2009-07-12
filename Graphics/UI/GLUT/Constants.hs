@@ -16,7 +16,7 @@
 module Graphics.UI.GLUT.Constants where
 
 import Foreign.C.Types
-import Graphics.Rendering.OpenGL
+import Graphics.Rendering.OpenGL ( GLenum )
 
 -----------------------------------------------------------------------------
 -- * Display mode bit masks

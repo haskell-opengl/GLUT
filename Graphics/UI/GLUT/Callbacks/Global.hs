@@ -22,9 +22,10 @@ module Graphics.UI.GLUT.Callbacks.Global (
 ) where
 
 import Control.Monad.Fix
+import Data.StateVar
 import Foreign.C.Types
 import Foreign.Ptr
-import Graphics.Rendering.OpenGL
+import Graphics.Rendering.OpenGL ( Position(..) )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Callbacks.Registration
 

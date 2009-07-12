@@ -26,7 +26,7 @@ import Data.Char
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr
-import Graphics.Rendering.OpenGL
+import Graphics.Rendering.OpenGL ( GLint, GLfloat )
 import Graphics.UI.GLUT.Extensions
 
 #ifdef __HUGS__

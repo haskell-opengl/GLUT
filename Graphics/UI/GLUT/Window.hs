@@ -55,7 +55,7 @@ module Graphics.UI.GLUT.Window (
 import Data.StateVar
 import Foreign.C.String
 import Foreign.C.Types
-import Graphics.Rendering.OpenGL.GL.CoordTrans
+import Graphics.Rendering.OpenGL ( Position(..), Size(..) )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Extensions
 import Graphics.UI.GLUT.QueryUtils

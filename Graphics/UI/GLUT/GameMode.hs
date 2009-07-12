@@ -31,9 +31,10 @@ module Graphics.UI.GLUT.GameMode (
 ) where
 
 import Data.List
+import Data.StateVar
 import Foreign.C.String
 import Foreign.C.Types
-import Graphics.Rendering.OpenGL
+import Graphics.Rendering.OpenGL ( GLenum, Size(..) )
 import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Types
 import Graphics.UI.GLUT.Window
