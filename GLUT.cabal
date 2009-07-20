@@ -156,5 +156,5 @@ library
     build-depends:	base >= 3, array, containers
   else
     build-depends:	base < 3
-  build-depends: OpenGL >= 2.3, StateVar
+  build-depends: OpenGL >= 2.3, StateVar, Tensor
   extensions:	CPP, ForeignFunctionInterface

@@ -33,10 +33,11 @@ module Graphics.UI.GLUT.Objects (
    renderObject
 ) where
 
+import Data.Tensor
 import Foreign.C.Types
 import Foreign.Marshal.Utils
 import Foreign.Ptr
-import Graphics.Rendering.OpenGL ( Height, Radius, Slices, Stacks, GLint, GLdouble, Vertex3(..) )
+import Graphics.Rendering.OpenGL ( Height, Radius, Slices, Stacks, GLint, GLdouble )
 import Graphics.UI.GLUT.Extensions
 
 --------------------------------------------------------------------------------
