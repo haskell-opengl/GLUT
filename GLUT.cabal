@@ -154,8 +154,8 @@ library
   install-includes: HsGLUT.h
   c-sources:	cbits/HsGLUT.c
   if flag(split-base)
-    build-depends:	base >= 3, array, containers
+    build-depends: base >= 3 && <5, array, containers
   else
-    build-depends:	base < 3
+    build-depends: base < 3
   build-depends: OpenGL >= 2.3, StateVar, Tensor
   extensions:	CPP, ForeignFunctionInterface
