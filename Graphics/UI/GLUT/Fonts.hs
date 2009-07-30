@@ -27,15 +27,7 @@ import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr
 import Graphics.Rendering.OpenGL ( GLint, GLfloat )
-import Graphics.UI.GLUT.Extensions
-
-#ifdef __HUGS__
-{-# CFILES cbits/HsGLUT.c #-}
-#endif
-
---------------------------------------------------------------------------------
-
-#include "HsGLUTExt.h"
+import Graphics.UI.GLUT.Raw
 
 --------------------------------------------------------------------------------
 
@@ -110,9 +102,6 @@ data BitmapFont
 -- small C wrappers around those macros. *sigh*
 type GLUTbitmapFont = Ptr ()
 
-foreign import ccall unsafe "hs_GLUT_marshalBitmapFont"
-   hs_GLUT_marshalBitmapFont :: CInt -> IO GLUTbitmapFont
-
 marhshalBitmapFont :: BitmapFont -> IO GLUTbitmapFont
 marhshalBitmapFont x = case x of
    Fixed8By13 -> hs_GLUT_marshalBitmapFont 0
@@ -139,9 +128,6 @@ data StrokeFont
 -- Same remarks as for GLUTbitmapFont
 type GLUTstrokeFont = Ptr ()
 
-foreign import ccall unsafe "hs_GLUT_marshalStrokeFont"
-   hs_GLUT_marshalStrokeFont :: CInt -> IO GLUTstrokeFont
-
 marhshalStrokeFont :: StrokeFont -> IO GLUTstrokeFont
 marhshalStrokeFont x = case x of
    Roman -> hs_GLUT_marshalStrokeFont 0
@@ -157,18 +143,12 @@ bitmapString f s = do
 withChar :: Char -> (CInt -> IO a) -> IO a
 withChar c f = f . fromIntegral . ord $ c
 
-foreign import CALLCONV "glutBitmapCharacter" glutBitmapCharacter ::
-   GLUTbitmapFont -> CInt -> IO ()
-
 --------------------------------------------------------------------------------
 
 strokeString :: StrokeFont -> String -> IO ()
 strokeString f s = do
    i <- marhshalStrokeFont f
    mapM_ (\c -> withChar c (glutStrokeCharacter i)) s
-
-foreign import CALLCONV unsafe "glutStrokeCharacter"
-   glutStrokeCharacter :: GLUTstrokeFont -> CInt -> IO ()
 
 --------------------------------------------------------------------------------
 
@@ -178,10 +158,7 @@ bitmapLength :: BitmapFont -- ^ Bitmap font to use.
              -> IO GLint   -- ^ Width in pixels.
 bitmapLength f s = do
    i <- marhshalBitmapFont f
-   fmap fromIntegral $ withCString s (glutBitmapLength i)
-
-foreign import CALLCONV unsafe "glutBitmapLength"
-   glutBitmapLength :: GLUTbitmapFont -> CString -> IO CInt
+   fmap fromIntegral $ withCString s (glutBitmapLength i . castPtr)
 
 --------------------------------------------------------------------------------
 
@@ -191,10 +168,7 @@ strokeLength :: StrokeFont -- ^ Stroke font to use.
              -> IO GLint   -- ^ Width in units.
 strokeLength f s = do
    i <- marhshalStrokeFont f
-   fmap fromIntegral $ withCString s (glutStrokeLength i)
-
-foreign import CALLCONV unsafe "glutStrokeLength"
-   glutStrokeLength :: GLUTstrokeFont -> CString -> IO CInt
+   fmap fromIntegral $ withCString s (glutStrokeLength i . castPtr)
 
 --------------------------------------------------------------------------------
 
@@ -202,12 +176,8 @@ bitmapHeight :: BitmapFont -- ^ Bitmap font to use.
              -> IO GLfloat -- ^ Height in pixels.
 bitmapHeight f = fmap fromIntegral $ glutBitmapHeight =<< marhshalBitmapFont f
 
-EXTENSION_ENTRY(unsafe,"freeglut",glutBitmapHeight,GLUTbitmapFont -> IO CInt)
-
 --------------------------------------------------------------------------------
 
 strokeHeight :: StrokeFont -- ^ Stroke font to use.
              -> IO GLfloat -- ^ Height in units.
 strokeHeight f = glutStrokeHeight =<< marhshalStrokeFont f
-
-EXTENSION_ENTRY(unsafe,"freeglut",glutStrokeHeight,GLUTstrokeFont -> IO GLfloat)

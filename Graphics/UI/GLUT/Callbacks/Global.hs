@@ -24,10 +24,9 @@ module Graphics.UI.GLUT.Callbacks.Global (
 import Control.Monad.Fix
 import Data.StateVar
 import Foreign.C.Types
-import Foreign.Ptr
 import Graphics.Rendering.OpenGL ( Position(..) )
-import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Callbacks.Registration
+import Graphics.UI.GLUT.Raw
 
 --------------------------------------------------------------------------------
 
@@ -43,8 +42,6 @@ unmarshalMenuUsage x
    | otherwise = error ("unmarshalMenuUsage: illegal value " ++ show x)
 
 type MenuStatusCallback  = MenuUsage -> Position -> IO ()
-
-type MenuStatusCallback' = CInt -> CInt -> CInt -> IO ()
 
 -- | Controls the global menu status callback so a GLUT program can determine
 -- when a menu is in use or not. When a menu status callback is registered, it
@@ -68,16 +65,10 @@ menuStatusCallback :: SettableStateVar (Maybe MenuStatusCallback)
 menuStatusCallback =
    makeSettableStateVar $
       setCallback MenuStatusCB glutMenuStatusFunc
-                  (makeMenuStatusCallback . unmarshal)
+                  (makeMenuStatusFunc . unmarshal)
    where unmarshal cb s x y =
             cb (unmarshalMenuUsage s)
                (Position (fromIntegral x) (fromIntegral y))
-
-foreign import ccall "wrapper" makeMenuStatusCallback ::
-   MenuStatusCallback' -> IO (FunPtr MenuStatusCallback')
-
-foreign import CALLCONV unsafe "glutMenuStatusFunc" glutMenuStatusFunc ::
-   FunPtr MenuStatusCallback' -> IO ()
 
 --------------------------------------------------------------------------------
 
@@ -97,13 +88,7 @@ type IdleCallback = IO ()
 
 idleCallback :: SettableStateVar (Maybe IdleCallback)
 idleCallback =
-   makeSettableStateVar $ setCallback IdleCB glutIdleFunc makeIdleCallback
-
-foreign import ccall "wrapper" makeIdleCallback ::
-   IdleCallback -> IO (FunPtr IdleCallback)
-
-foreign import CALLCONV unsafe "glutIdleFunc" glutIdleFunc ::
-   FunPtr IdleCallback -> IO ()
+   makeSettableStateVar $ setCallback IdleCB glutIdleFunc makeIdleFunc
 
 --------------------------------------------------------------------------------
 
@@ -111,8 +96,6 @@ foreign import CALLCONV unsafe "glutIdleFunc" glutIdleFunc ::
 type Timeout = Int
 
 type TimerCallback  = IO ()
-
-type TimerCallback' = CInt -> IO ()
 
 -- | Register a one-shot timer callback to be triggered after at least the given
 -- amount of time. Multiple timer callbacks at same or differing times may be
@@ -125,12 +108,6 @@ type TimerCallback' = CInt -> IO ()
 
 addTimerCallback :: Timeout -> TimerCallback -> IO ()
 addTimerCallback msecs timerCallback = do
-   funPtr <- mfix (\self -> makeTimerCallback (\_ -> do registerForCleanup self
-                                                        timerCallback))
+   funPtr <- mfix (\self -> makeTimerFunc (\_ -> do registerForCleanup self
+                                                    timerCallback))
    glutTimerFunc (fromIntegral msecs) funPtr 0
-
-foreign import ccall "wrapper" makeTimerCallback ::
-   TimerCallback' -> IO (FunPtr TimerCallback')
-
-foreign import CALLCONV unsafe "glutTimerFunc" glutTimerFunc ::
-   CUInt -> FunPtr TimerCallback' -> CInt -> IO ()

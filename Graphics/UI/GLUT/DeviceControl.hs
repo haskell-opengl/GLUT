@@ -21,8 +21,8 @@ module Graphics.UI.GLUT.DeviceControl (
 
 import Data.StateVar
 import Foreign.C.Types
-import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Raw
 
 --------------------------------------------------------------------------------
 
@@ -42,8 +42,8 @@ marshalGlobalKeyRepeat x = case x of
 
 unmarshalGlobalKeyRepeat :: CInt -> GlobalKeyRepeat
 unmarshalGlobalKeyRepeat x
-   | x == glut_KEY_REPEAT_OFF     = GlobalKeyRepeatOff
-   | x == glut_KEY_REPEAT_ON      = GlobalKeyRepeatOn
+   | x == glut_KEY_REPEAT_OFF = GlobalKeyRepeatOff
+   | x == glut_KEY_REPEAT_ON = GlobalKeyRepeatOn
    | x == glut_KEY_REPEAT_DEFAULT = GlobalKeyRepeatDefault
    | otherwise = error ("unmarshalGlobalKeyRepeat: illegal value " ++ show x)
 
@@ -76,9 +76,6 @@ globalKeyRepeat :: StateVar GlobalKeyRepeat
 globalKeyRepeat =
    makeStateVar (deviceGet unmarshalGlobalKeyRepeat glut_DEVICE_KEY_REPEAT)
                 (glutSetKeyRepeat . marshalGlobalKeyRepeat)
-
-foreign import CALLCONV unsafe "glutSetKeyRepeat" glutSetKeyRepeat ::
-   CInt -> IO ()
 
 --------------------------------------------------------------------------------
 
@@ -114,15 +111,12 @@ perWindowKeyRepeat =
       (deviceGet unmarshalPerWindowKeyRepeat glut_DEVICE_IGNORE_KEY_REPEAT)
       (glutIgnoreKeyRepeat . marshalPerWindowKeyRepeat)
 
-foreign import CALLCONV unsafe "glutIgnoreKeyRepeat" glutIgnoreKeyRepeat ::
-   CInt -> IO ()
-
 --------------------------------------------------------------------------------
 
 -- | Execute the joystick callback set by
 -- 'Graphics.UI.GLUT.Callbacks.Window.joystickCallback' once (if one exists).
 -- This is done in a synchronous fashion within the current context, i.e. when
 -- 'forceJoystickCallback' returns, the callback will have already happened.
-		
-foreign import CALLCONV unsafe "glutForceJoystickFunc" forceJoystickCallback ::
-   IO ()
+
+forceJoystickCallback :: IO ()
+forceJoystickCallback = glutForceJoystickFunc

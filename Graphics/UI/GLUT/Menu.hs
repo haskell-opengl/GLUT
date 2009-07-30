@@ -25,19 +25,18 @@ module Graphics.UI.GLUT.Menu (
 import Data.Array
 import Data.IORef
 import qualified Data.Map as Map ( empty, lookup, insert, delete )
+import Control.Monad
 import Data.Map ( Map )
 import Data.StateVar
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr
-import Control.Monad
-import System.IO.Unsafe
-import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.Callbacks.Registration
 import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
 import Graphics.UI.GLUT.Window
-import Graphics.UI.GLUT.Callbacks.Registration
-import Graphics.UI.GLUT.Callbacks.Window
+import System.IO.Unsafe
 
 --------------------------------------------------------------------------------
 
@@ -166,40 +165,6 @@ addToMenuTable callbackID funPtr =
 
 type MenuID = CInt
 type Value  = CInt
-type Item   = CInt
-
---------------------------------------------------------------------------------
-
--- | The type of a menu callback action that is called when a menu entry from a
--- menu is selected. The value passed to the callback is determined by the value
--- for the selected menu entry.
-
-type MenuCB = CInt -> IO ()
-
--- | Create a new pop-up menu and return a unique identifier for it, which can
--- be used when setting 'currentMenu'. Implicitly, the /current menu/ is set to
--- the newly created menu.
---
--- When the menu callback is called because a menu entry is selected for the
--- menu, the /current menu/ will be implicitly set to the menu with the selected
--- entry before the callback is made.
---
--- /X Implementation Notes:/ If available, GLUT for X will take advantage of
--- overlay planes for implementing pop-up menus. The use of overlay planes can
--- eliminate display callbacks when pop-up menus are deactivated. The
--- @SERVER_OVERLAY_VISUALS@ convention is used to determine if overlay visuals
--- are available.
-
-foreign import CALLCONV unsafe "glutCreateMenu" glutCreateMenu ::
-   FunPtr MenuCB -> IO MenuID
-
-foreign import ccall "wrapper" makeMenuFunc :: MenuCB -> IO (FunPtr MenuCB)
-
--- | Destroy the specified menu. If it was the /current menu/, the /current
--- menu/ becomes invalid and 'currentMenu' will contain 'Nothing'.
-
-foreign import CALLCONV unsafe "glutDestroyMenu" glutDestroyMenu ::
-   MenuID -> IO ()
 
 --------------------------------------------------------------------------------
 
@@ -208,10 +173,6 @@ foreign import CALLCONV unsafe "glutDestroyMenu" glutDestroyMenu ::
 
 currentMenu :: StateVar MenuID
 currentMenu = makeStateVar glutGetMenu glutSetMenu
-
-foreign import CALLCONV unsafe "glutSetMenu" glutSetMenu :: MenuID -> IO ()
-
-foreign import CALLCONV unsafe "glutGetMenu" glutGetMenu :: IO MenuID
 
 -- | Returns 'True' if the given menu identifier refers to a real menu, not
 -- a pseudo one.
@@ -229,9 +190,6 @@ isRealMenu = (/= 0)
 addMenuEntry :: String -> Value -> IO ()
 addMenuEntry name value = withCString name $ \n -> glutAddMenuEntry n value
 
-foreign import CALLCONV unsafe "glutAddMenuEntry" glutAddMenuEntry ::
-   CString -> Value -> IO ()
-
 -- | Add a sub-menu trigger to the bottom of the /current menu./ The given
 -- string will be displayed for the newly added sub-menu trigger. If the
 -- sub-menu trigger is entered, the sub-menu specified by the given menu
@@ -239,9 +197,6 @@ foreign import CALLCONV unsafe "glutAddMenuEntry" glutAddMenuEntry ::
 
 addSubMenu :: String -> MenuID -> IO ()
 addSubMenu name menuID = withCString name $ \n -> glutAddSubMenu n menuID
-
-foreign import CALLCONV unsafe "glutAddSubMenu" glutAddSubMenu ::
-   CString -> MenuID -> IO ()
 
 --------------------------------------------------------------------------------
 
@@ -271,16 +226,6 @@ foreign import CALLCONV unsafe "glutChangeToSubMenu" glutChangeToSubMenu ::
 
 --------------------------------------------------------------------------------
 
--- | Remove the menu item at the given position, regardless of whether it is a
--- menu entry or sub-menu trigger. The position must be between 1 (the topmost
--- menu item) and 'Graphics.UI.GLUT.State.getNumMenuItems' inclusive. Menu items
--- below the removed menu item are renumbered.
-
-foreign import CALLCONV unsafe "glutRemoveMenuItem" glutRemoveMenuItem ::
-   Item -> IO ()
-
---------------------------------------------------------------------------------
-
 -- | Attach a mouse button for the /current window/ to the identifier of the
 -- /current menu./ By attaching a menu identifier to a button, the named menu
 -- will be popped up when the user presses the specified button. Note that the
@@ -290,14 +235,10 @@ foreign import CALLCONV unsafe "glutRemoveMenuItem" glutRemoveMenuItem ::
 attachMenu_ :: MouseButton -> IO ()
 attachMenu_ = glutAttachMenu . marshalMouseButton
 
-foreign import CALLCONV unsafe "glutAttachMenu" glutAttachMenu :: CInt -> IO ()
-
 -- | Detach an attached mouse button from the /current window./
 
 detachMenu_ :: MouseButton -> IO ()
 detachMenu_ = glutDetachMenu . marshalMouseButton
-
-foreign import CALLCONV unsafe "glutDetachMenu" glutDetachMenu :: CInt -> IO ()
 
 --------------------------------------------------------------------------------
 

@@ -14,16 +14,12 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.QueryUtils (
-  Getter, simpleGet, layerGet, deviceGet, glutSetOption
+  Getter, simpleGet, layerGet, deviceGet
 ) where
 
 import Foreign.C.Types
 import Graphics.Rendering.OpenGL ( GLenum )
-import Graphics.UI.GLUT.Extensions
-
---------------------------------------------------------------------------------
-
-#include "HsGLUTExt.h"
+import Graphics.UI.GLUT.Raw
 
 --------------------------------------------------------------------------------
 
@@ -37,10 +33,3 @@ simpleGet, layerGet, deviceGet :: Getter a
 simpleGet = makeGetter glutGet
 layerGet  = makeGetter glutLayerGet
 deviceGet = makeGetter glutDeviceGet
-
-foreign import CALLCONV unsafe "glutGet"       glutGet       :: PrimGetter
-foreign import CALLCONV unsafe "glutLayerGet"  glutLayerGet  :: PrimGetter
-foreign import CALLCONV unsafe "glutDeviceGet" glutDeviceGet :: PrimGetter
-
--- Not really a query function, but it's quite handy to have it here
-EXTENSION_ENTRY(unsafe,"freeglut",glutSetOption,GLenum -> CInt -> IO ())

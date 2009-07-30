@@ -24,13 +24,8 @@ module Graphics.UI.GLUT.Begin (
 
 import Data.StateVar
 import Foreign.C.Types
-import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.QueryUtils
-import Graphics.UI.GLUT.Extensions
-
---------------------------------------------------------------------------------
-
-#include "HsGLUTExt.h"
+import Graphics.UI.GLUT.Raw
 
 --------------------------------------------------------------------------------
 
@@ -38,7 +33,8 @@ import Graphics.UI.GLUT.Extensions
 -- callbacks that have been registered. This routine should be called at most
 -- once in a GLUT program.
 
-foreign import CALLCONV safe "glutMainLoop" mainLoop :: IO ()
+mainLoop :: IO ()
+mainLoop = glutMainLoop
 
 --------------------------------------------------------------------------------
 
@@ -48,8 +44,6 @@ foreign import CALLCONV safe "glutMainLoop" mainLoop :: IO ()
 
 mainLoopEvent :: IO ()
 mainLoopEvent = glutMainLoopEvent
-
-EXTENSION_ENTRY(safe,"freeglut",glutMainLoopEvent,IO ())
 
 --------------------------------------------------------------------------------
 
@@ -65,8 +59,6 @@ EXTENSION_ENTRY(safe,"freeglut",glutMainLoopEvent,IO ())
 
 leaveMainLoop :: IO ()
 leaveMainLoop = glutLeaveMainLoop
-
-EXTENSION_ENTRY(safe,"freeglut",glutLeaveMainLoop,IO ())
 
 --------------------------------------------------------------------------------
 

@@ -33,12 +33,10 @@ module Graphics.UI.GLUT.GameMode (
 import Data.List
 import Data.StateVar
 import Foreign.C.String
-import Foreign.C.Types
 import Graphics.Rendering.OpenGL ( GLenum, Size(..) )
-import Graphics.UI.GLUT.Constants
+import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
 import Graphics.UI.GLUT.Window
-import Graphics.UI.GLUT.Initialization
 
 --------------------------------------------------------------------------------
 
@@ -98,9 +96,6 @@ gameModeCapabilities :: SettableStateVar [GameModeCapabilityDescription]
 gameModeCapabilities = makeSettableStateVar $ \ds ->
    withCString (descriptionsToString ds) glutGameModeString
 
-foreign import CALLCONV unsafe "glutGameModeString" glutGameModeString ::
-   CString -> IO ()
-
 -- freeglut currently handles only simple game mode descriptions like "WxH:B@R",
 -- so we try hard to use this format instead of the more general format allowed
 -- by the "real" GLUT.
@@ -140,16 +135,15 @@ enterGameMode :: IO (Window, Bool)
 enterGameMode = do
    w <- glutEnterGameMode
    c <- getBool glut_GAME_MODE_DISPLAY_CHANGED
-   return (makeWindow w, c)
-
-foreign import CALLCONV unsafe "glutEnterGameMode" glutEnterGameMode :: IO CInt
+   return (Window w, c)
 
 --------------------------------------------------------------------------------
 
 -- | Leave /game mode/, restoring the old display mode and destroying the game
 -- mode window.
 
-foreign import CALLCONV unsafe "glutLeaveGameMode" leaveGameMode :: IO ()
+leaveGameMode :: IO ()
+leaveGameMode = glutLeaveGameMode
 
 --------------------------------------------------------------------------------
 
@@ -186,9 +180,6 @@ gameModeInfo = makeGettableStateVar $ do
 
 getBool :: GLenum -> IO Bool
 getBool = fmap (/= 0) . glutGameModeGet
-
-foreign import CALLCONV unsafe "glutGameModeGet" glutGameModeGet ::
-   GLenum -> IO CInt
 
 --------------------------------------------------------------------------------
 

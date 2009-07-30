@@ -15,18 +15,15 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Types (
-   Window,                                   -- constructor used only internally
-   makeWindow,                               -- used only internally
+   Window(..),                               -- constructor used only internally
    Relation(..),
    relationToString,                         -- used only internally
    MouseButton(..),
    marshalMouseButton, unmarshalMouseButton  -- used only internally
 ) where
 
-import Foreign.C.Types ( CInt )
-import Graphics.UI.GLUT.Constants (
-   glut_LEFT_BUTTON, glut_MIDDLE_BUTTON, glut_RIGHT_BUTTON,
-   glut_WHEEL_UP, glut_WHEEL_DOWN )
+import Foreign.C.Types
+import Graphics.UI.GLUT.Raw
 
 --------------------------------------------------------------------------------
 
@@ -34,9 +31,6 @@ import Graphics.UI.GLUT.Constants (
 
 newtype Window = Window CInt
    deriving ( Eq, Ord, Show )
-
-makeWindow :: CInt -> Window
-makeWindow = Window
 
 --------------------------------------------------------------------------------
 
@@ -89,7 +83,7 @@ marshalMouseButton x = case x of
    LeftButton -> glut_LEFT_BUTTON
    MiddleButton -> glut_MIDDLE_BUTTON
    RightButton -> glut_RIGHT_BUTTON
-   WheelUp ->glut_WHEEL_UP
+   WheelUp -> glut_WHEEL_UP
    WheelDown -> glut_WHEEL_DOWN
 
 unmarshalMouseButton :: CInt -> MouseButton
@@ -100,3 +94,9 @@ unmarshalMouseButton x
    | x == glut_WHEEL_UP = WheelUp
    | x == glut_WHEEL_DOWN = WheelDown
    | otherwise = error ("unmarshalMouseButton: illegal value " ++ show x)
+
+glut_WHEEL_UP :: CInt
+glut_WHEEL_UP = 3
+
+glut_WHEEL_DOWN :: CInt
+glut_WHEEL_DOWN = 4

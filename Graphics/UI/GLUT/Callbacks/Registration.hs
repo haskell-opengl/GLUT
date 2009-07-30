@@ -24,8 +24,8 @@ import Data.IORef
 import qualified Data.Map as Map ( empty, lookup, insert, delete )
 import Data.Map ( Map )
 import Data.StateVar
-import Foreign.C.Types
 import Foreign.Ptr
+import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Window
 import System.IO.Unsafe
 
@@ -121,24 +121,14 @@ setCleanupList = writeIORef theCleanupList
 -- callback which frees all function pointers on the cleanup list.
 
 {-# NOINLINE theScavenger #-}
-theScavenger :: IORef (FunPtr TimerCallback)
-theScavenger = unsafePerformIO (newIORef =<< makeTimerCallback (\_ -> do
+theScavenger :: IORef (FunPtr TimerFunc)
+theScavenger = unsafePerformIO (newIORef =<< makeTimerFunc (\_ -> do
    cleanupList <- getCleanupList
    mapM_ freeHaskellFunPtr cleanupList
    setCleanupList []))
 
-getScavenger :: IO (FunPtr TimerCallback)
+getScavenger :: IO (FunPtr TimerFunc)
 getScavenger = readIORef theScavenger
-
--- More or less copied from Global.hs to avoid mutual dependencies
-
-type TimerCallback = CInt -> IO ()
-
-foreign import ccall "wrapper" makeTimerCallback ::
-   TimerCallback -> IO (FunPtr TimerCallback)
-
-foreign import CALLCONV unsafe "glutTimerFunc" glutTimerFunc ::
-   CUInt -> FunPtr TimerCallback -> CInt -> IO ()
 
 --------------------------------------------------------------------------------
 -- Here is the really cunning stuff: If an element is added to the cleanup list

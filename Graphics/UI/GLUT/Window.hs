@@ -56,14 +56,9 @@ import Data.StateVar
 import Foreign.C.String
 import Foreign.C.Types
 import Graphics.Rendering.OpenGL ( Position(..), Size(..) )
-import Graphics.UI.GLUT.Constants
-import Graphics.UI.GLUT.Extensions
 import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
-
---------------------------------------------------------------------------------
-
-#include "HsGLUTExt.h"
 
 --------------------------------------------------------------------------------
 
@@ -94,10 +89,7 @@ import Graphics.UI.GLUT.Types
 createWindow
    :: String    -- ^ The window name
    -> IO Window -- ^ The identifier for the newly created window
-createWindow name = withCString name glutCreateWindow
-
-foreign import CALLCONV unsafe "glutCreateWindow" glutCreateWindow ::
-      CString -> IO Window
+createWindow name = fmap Window $ withCString name glutCreateWindow
 
 --------------------------------------------------------------------------------
 
@@ -111,13 +103,11 @@ createSubWindow
                 --   origin.
    -> Size      -- ^ Window size in pixels
    -> IO Window -- ^ The identifier for the newly created subwindow
-createSubWindow win (Position x y) (Size w h) =
-   glutCreateSubWindow win
-                       (fromIntegral x) (fromIntegral y)
-                       (fromIntegral w) (fromIntegral h)
-
-foreign import CALLCONV unsafe "glutCreateSubWindow" glutCreateSubWindow ::
-      Window -> CInt -> CInt -> CInt -> CInt -> IO Window
+createSubWindow (Window win) (Position x y) (Size w h) =
+   fmap Window $
+      glutCreateSubWindow win
+                          (fromIntegral x) (fromIntegral y)
+                          (fromIntegral w) (fromIntegral h)
 
 --------------------------------------------------------------------------------
 
@@ -127,7 +117,7 @@ foreign import CALLCONV unsafe "glutCreateSubWindow" glutCreateSubWindow ::
 parentWindow :: GettableStateVar (Maybe Window)
 parentWindow =
    makeGettableStateVar $
-      getWindow (simpleGet makeWindow glut_WINDOW_PARENT)
+      getWindow (simpleGet Window glut_WINDOW_PARENT)
 
 --------------------------------------------------------------------------------
 
@@ -148,8 +138,8 @@ numSubWindows =
 -- /current window/, the /current window/ becomes invalid ('currentWindow' will
 -- contain 'Nothing').
 
-foreign import CALLCONV unsafe "glutDestroyWindow" destroyWindow ::
-   Window -> IO ()
+destroyWindow :: Window -> IO ()
+destroyWindow (Window win) = glutDestroyWindow win
 
 --------------------------------------------------------------------------------
 
@@ -160,16 +150,14 @@ foreign import CALLCONV unsafe "glutDestroyWindow" destroyWindow ::
 
 currentWindow :: StateVar (Maybe Window)
 currentWindow =
-   makeStateVar (getWindow glutGetWindow) (maybe (return ()) glutSetWindow)
+   makeStateVar
+      (getWindow (fmap Window glutGetWindow))
+      (maybe (return ()) (\(Window win) -> glutSetWindow win))
 
 getWindow :: IO Window -> IO (Maybe Window)
 getWindow act = do
    win <- act
-   return $ if win == makeWindow 0 then Nothing else Just win
-
-foreign import CALLCONV unsafe "glutSetWindow" glutSetWindow :: Window -> IO ()
-
-foreign import CALLCONV unsafe "glutGetWindow" glutGetWindow :: IO Window
+   return $ if win == Window 0 then Nothing else Just win
 
 --------------------------------------------------------------------------------
 
@@ -189,9 +177,7 @@ foreign import CALLCONV unsafe "glutGetWindow" glutGetWindow :: IO Window
 -- Also, see 'Graphics.UI.GLUT.Overlay.postOverlayRedisplay'.
 
 postRedisplay :: Maybe Window -> IO ()
-postRedisplay = maybe glutPostRedisplay glutPostWindowRedisplay
-
-foreign import CALLCONV unsafe "glutPostRedisplay" glutPostRedisplay :: IO ()
+postRedisplay = maybe glutPostRedisplay (\(Window win) -> glutPostWindowRedisplay win)
 
 -- | Mark the normal plane of the given window as needing to be redisplayed,
 -- otherwise the same as 'postRedisplay'.
@@ -200,9 +186,6 @@ foreign import CALLCONV unsafe "glutPostRedisplay" glutPostRedisplay :: IO ()
 -- 'currentWindow' (entailing an expensive OpenGL context switch), which is
 -- particularly useful when multiple windows need redisplays posted at the same
 -- time.
-
-foreign import CALLCONV unsafe "glutPostWindowRedisplay"
-   glutPostWindowRedisplay :: Window -> IO ()
 
 --------------------------------------------------------------------------------
 
@@ -220,7 +203,8 @@ foreign import CALLCONV unsafe "glutPostWindowRedisplay"
 --
 -- If the /layer in use/ is not double buffered, 'swapBuffers' has no effect.
 
-foreign import CALLCONV unsafe "glutSwapBuffers" swapBuffers :: IO ()
+swapBuffers :: IO ()
+swapBuffers = glutSwapBuffers
 
 --------------------------------------------------------------------------------
 
@@ -252,9 +236,6 @@ setWindowPosition :: Position -> IO ()
 setWindowPosition (Position x y) =
    glutPositionWindow (fromIntegral x) (fromIntegral y)
 
-foreign import CALLCONV unsafe "glutPositionWindow" glutPositionWindow ::
-   CInt -> CInt -> IO ()
-
 getWindowPosition :: IO Position
 getWindowPosition = do
    x <- simpleGet fromIntegral glut_WINDOW_X
@@ -280,9 +261,6 @@ setWindowSize :: Size -> IO ()
 setWindowSize (Size w h) =
    glutReshapeWindow (fromIntegral w) (fromIntegral h)
 
-foreign import CALLCONV unsafe "glutReshapeWindow" glutReshapeWindow ::
-   CInt -> CInt -> IO ()
-
 getWindowSize :: IO Size
 getWindowSize = do
    w <- simpleGet fromIntegral glut_WINDOW_WIDTH
@@ -306,7 +284,8 @@ getWindowSize = do
 -- absolutely no decorations. Non-Motif window managers may not respond to
 -- @_MOTIF_WM_HINTS@.
 
-foreign import CALLCONV unsafe "glutFullScreen" fullScreen :: IO ()
+fullScreen :: IO ()
+fullScreen = glutFullScreen
 
 --------------------------------------------------------------------------------
 
@@ -314,8 +293,6 @@ foreign import CALLCONV unsafe "glutFullScreen" fullScreen :: IO ()
 
 fullScreenToggle :: IO ()
 fullScreenToggle = glutFullScreenToggle
-
-EXTENSION_ENTRY(unsafe,"freeglut",glutFullScreenToggle,IO ())
 
 --------------------------------------------------------------------------------
 
@@ -330,12 +307,14 @@ EXTENSION_ENTRY(unsafe,"freeglut",glutFullScreenToggle,IO ())
 -- | Change the stacking order of the /current window/ relative to its siblings
 -- (lowering it).
 
-foreign import CALLCONV unsafe "glutPushWindow" pushWindow :: IO ()
+pushWindow :: IO ()
+pushWindow = glutPushWindow
 
 -- | Change the stacking order of the /current window/ relative to its siblings,
 -- bringing the /current window/ closer to the top.
 
-foreign import CALLCONV unsafe "glutPopWindow" popWindow :: IO ()
+popWindow :: IO ()
+popWindow = glutPopWindow
 
 --------------------------------------------------------------------------------
 
@@ -362,12 +341,6 @@ windowStatus = makeSettableStateVar setStatus
          setStatus Hidden    = glutHideWindow
          setStatus Iconified = glutIconifyWindow
 
-foreign import CALLCONV unsafe "glutShowWindow" glutShowWindow :: IO ()
-
-foreign import CALLCONV unsafe "glutHideWindow" glutHideWindow :: IO ()
-
-foreign import CALLCONV unsafe "glutIconifyWindow" glutIconifyWindow :: IO ()
-
 --------------------------------------------------------------------------------
 
 -- $ChangingTheWindowIconTitle
@@ -387,18 +360,12 @@ windowTitle =
    makeSettableStateVar $ \name ->
       withCString name glutSetWindowTitle
 
-foreign import CALLCONV unsafe "glutSetWindowTitle" glutSetWindowTitle ::
-      CString -> IO ()
-
 -- | Controls the icon title of the /current top-level window/.
 
 iconTitle :: SettableStateVar String
 iconTitle =
    makeSettableStateVar $ \name ->
       withCString name glutSetIconTitle
-
-foreign import CALLCONV unsafe "glutSetIconTitle" glutSetIconTitle ::
-      CString -> IO ()
 
 --------------------------------------------------------------------------------
 
@@ -501,8 +468,6 @@ cursor = makeStateVar getCursor setCursor
 setCursor :: Cursor -> IO ()
 setCursor = glutSetCursor . marshalCursor
 
-foreign import CALLCONV unsafe "glutSetCursor" glutSetCursor :: CInt -> IO ()
-
 getCursor :: IO Cursor
 getCursor = simpleGet unmarshalCursor glut_WINDOW_CURSOR
 
@@ -525,6 +490,3 @@ pointerPosition :: SettableStateVar Position
 pointerPosition =
    makeSettableStateVar $ \(Position x y) ->
       glutWarpPointer (fromIntegral x) (fromIntegral y)
-
-foreign import CALLCONV unsafe "glutWarpPointer" glutWarpPointer ::
-   CInt -> CInt -> IO ()

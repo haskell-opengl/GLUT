@@ -58,16 +58,11 @@ import Foreign.Marshal.Array
 import Foreign.Marshal.Utils
 import Foreign.Ptr
 import Foreign.Storable
-import System.Environment
 import Graphics.Rendering.OpenGL ( Position(..), Size(..) )
-import Graphics.UI.GLUT.Constants
-import Graphics.UI.GLUT.Extensions
 import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
-
---------------------------------------------------------------------------------
-
-#include "HsGLUTExt.h"
+import System.Environment
 
 --------------------------------------------------------------------------------
 
@@ -127,9 +122,6 @@ initialize prog args =
    newArgv <- mapM peekCString newArgvPtrs
    return $ tail newArgv
 
-foreign import CALLCONV unsafe "glutInit" glutInit ::
-   Ptr CInt -> Ptr CString -> IO ()
-
 -- | Convenience action: Initialize GLUT, returning the program name and any
 -- non-GLUT command line arguments.
 
@@ -147,8 +139,6 @@ getArgsAndInitialize = do
 
 exit :: IO ()
 exit = glutExit
-
-EXTENSION_ENTRY(unsafe,"freeglut",glutExit,IO ())
 
 --------------------------------------------------------------------------------
 
@@ -178,9 +168,6 @@ setInitialWindowPosition :: Position -> IO ()
 setInitialWindowPosition (Position x y) =
     glutInitWindowPosition (fromIntegral x) (fromIntegral y)
 
-foreign import CALLCONV unsafe "glutInitWindowPosition" glutInitWindowPosition
-   :: CInt -> CInt -> IO ()
-
 --------------------------------------------------------------------------------
 
 -- | Controls the /initial window size/.  Windows created by
@@ -209,9 +196,6 @@ getInitialWindowSize = do
 setInitialWindowSize :: Size -> IO ()
 setInitialWindowSize (Size w h) =
    glutInitWindowSize (fromIntegral w) (fromIntegral h)
-
-foreign import CALLCONV unsafe "glutInitWindowSize" glutInitWindowSize ::
-   CInt -> CInt -> IO ()
 
 --------------------------------------------------------------------------------
 
@@ -346,9 +330,6 @@ handleMultisampling spps mode                      = (spps, mode)
 toBitfield :: (Bits b) => (a -> b) -> [a] -> b
 toBitfield marshal = foldl (.|.) 0 . map marshal
 
-foreign import CALLCONV unsafe "glutInitDisplayMode" glutInitDisplayMode ::
-   CUInt -> IO ()
-
 -- | Contains 'True' if the /current display mode/ is supported, 'False'
 -- otherwise.
 
@@ -379,7 +360,7 @@ setSamplesPerPixel spp = do
 
 multisamplingSupported :: IO Bool
 multisamplingSupported = isKnown "glutGetModeValues"
-   where isKnown = fmap (/= nullFunPtr) . getProcAddressInternal
+   where isKnown = fmap (/= nullFunPtr) . getAPIEntryInternal
 
 --------------------------------------------------------------------------------
 
@@ -591,9 +572,6 @@ initialDisplayCapabilities =
           caps)
          glutInitDisplayString
 
-foreign import CALLCONV unsafe "glutInitDisplayString" glutInitDisplayString ::
-  CString -> IO ()
-
 -----------------------------------------------------------------------------
 
 -- | How rendering context for new windows are created.
@@ -706,8 +684,6 @@ setContextVersion :: (Int, Int) -> IO ()
 setContextVersion (major, minor) =
    glutInitContextVersion (fromIntegral major) (fromIntegral minor)
 
-EXTENSION_ENTRY(unsafe,"freeglut",glutInitContextVersion,CInt -> CInt -> IO ())
-
 -----------------------------------------------------------------------------
 
 -- | A flag affecting the rendering context to create, used in conjunction
@@ -750,5 +726,3 @@ i2cfs bitfield =
 
 setContextFlags :: [ContextFlag] -> IO ()
 setContextFlags = glutInitContextFlags . toBitfield marshalContextFlag
-
-EXTENSION_ENTRY(unsafe,"freeglut",glutInitContextFlags,CInt -> IO ())

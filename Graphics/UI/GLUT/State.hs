@@ -14,37 +14,37 @@
 --------------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.State (
-  -- * State of all windows
-  windowBorderWidth, windowHeaderHeight,
+   -- * State of all windows
+   windowBorderWidth, windowHeaderHeight,
 
-  -- * State of the /current window/
-  rgba,
-  BufferDepth, rgbaBufferDepths, colorBufferDepth,
-  doubleBuffered, stereo,
-  accumBufferDepths, depthBufferDepth, stencilBufferDepth,
-  SampleCount, sampleCount, formatID,
-  fullScreenMode,
+   -- * State of the /current window/
+   rgba,
+   BufferDepth, rgbaBufferDepths, colorBufferDepth,
+   doubleBuffered, stereo,
+   accumBufferDepths, depthBufferDepth, stencilBufferDepth,
+   SampleCount, sampleCount, formatID,
+   fullScreenMode,
 
-  -- * GLUT state pertaining to the layers of the /current window/
-  damaged,
+   -- * GLUT state pertaining to the layers of the /current window/
+   damaged,
 
-  -- * Timing
-  elapsedTime,
+   -- * Timing
+   elapsedTime,
 
-  -- * Device information
+   -- * Device information
 
-  -- $DeviceInformation
-  screenSize, screenSizeMM,
-  hasKeyboard,
-  ButtonCount, numMouseButtons,
-  numSpaceballButtons,
-  DialCount, numDialsAndButtons,
-  numTabletButtons,
-  AxisCount, PollRate, joystickInfo,
-  supportedNumAuxBuffers, supportedSamplesPerPixel,
+   -- $DeviceInformation
+   screenSize, screenSizeMM,
+   hasKeyboard,
+   ButtonCount, numMouseButtons,
+   numSpaceballButtons,
+   DialCount, numDialsAndButtons,
+   numTabletButtons,
+   AxisCount, PollRate, joystickInfo,
+   supportedNumAuxBuffers, supportedSamplesPerPixel,
 
-  -- * GLUT information
-  glutVersion, initState
+   -- * GLUT information
+   glutVersion, initState
 ) where
 
 import Control.Monad
@@ -55,15 +55,10 @@ import Foreign.Marshal.Array
 import Foreign.Ptr
 import Foreign.Storable
 import Graphics.Rendering.OpenGL ( GLenum, Size(..) )
-import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.Overlay
 import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Window
-import Graphics.UI.GLUT.Extensions
-
---------------------------------------------------------------------------------
-
-#include "HsGLUTExt.h"
 
 --------------------------------------------------------------------------------
 
@@ -319,8 +314,6 @@ getModeValues what = makeGettableStateVar $
       size <- peek sizeBuffer
       fmap (map fromIntegral) $ peekArray (fromIntegral size) valuesBuffer
 
-EXTENSION_ENTRY(unsafe,"freeglut",glutGetModeValues,GLenum -> Ptr CInt -> IO (Ptr CInt))
-
 --------------------------------------------------------------------------------
 -- Convenience unmarshalers
 
@@ -345,7 +338,7 @@ glutVersion :: GettableStateVar String
 glutVersion = makeGettableStateVar $ do
    let isGLUT = isUnknown "glutSetOption"
        isFreeglut = isUnknown "glutSetWindowStayOnTop"
-       isUnknown = fmap (== nullFunPtr) . getProcAddressInternal
+       isUnknown = fmap (== nullFunPtr) . getAPIEntryInternal
        showVersionPart x = shows (x `mod` 100)
        showVersion v = showVersionPart (v `div` 10000) . showChar '.' .
                        showVersionPart (v `div`   100) . showChar '.' .

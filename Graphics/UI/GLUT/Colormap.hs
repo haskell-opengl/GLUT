@@ -44,8 +44,9 @@ module Graphics.UI.GLUT.Colormap (
 import Data.StateVar
 import Foreign.C.Types
 import Graphics.Rendering.OpenGL ( GLfloat, GLint, Color3(..), Index1(..) )
-import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Raw
+import Graphics.UI.GLUT.Types
 import Graphics.UI.GLUT.Window
 
 --------------------------------------------------------------------------------
@@ -68,18 +69,12 @@ colorMapEntry (Index1 cell) =
 setColorMapEntry :: CInt -> Color3 GLfloat -> IO ()
 setColorMapEntry cell (Color3 r g b) = glutSetColor cell r g b
 
-foreign import CALLCONV unsafe "glutSetColor" glutSetColor ::
-   CInt -> GLfloat -> GLfloat -> GLfloat -> IO ()
-
 getColorMapEntry :: CInt -> IO (Color3 GLfloat)
 getColorMapEntry cell = do
    r <- glutGetColor cell glut_RED
    g <- glutGetColor cell glut_GREEN
    b <- glutGetColor cell glut_BLUE
    return $ Color3 r g b
-
-foreign import CALLCONV unsafe "glutGetColor" glutGetColor ::
-   CInt -> CInt -> IO GLfloat
 
 --------------------------------------------------------------------------------
 
@@ -92,8 +87,8 @@ foreign import CALLCONV unsafe "glutGetColor" glutGetColor ::
 -- 'copyColormap' should only be called when both the /current window/ and the
 -- specified window are color index windows.
 
-foreign import CALLCONV unsafe "glutCopyColormap" copyColormap ::
-      Window -> IO ()
+copyColormap :: Window -> IO ()
+copyColormap (Window win) = glutCopyColormap win
 
 --------------------------------------------------------------------------------
 

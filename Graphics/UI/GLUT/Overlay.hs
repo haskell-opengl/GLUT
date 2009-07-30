@@ -32,8 +32,9 @@ module Graphics.UI.GLUT.Overlay (
 
 import Data.StateVar
 import Graphics.Rendering.OpenGL ( GLenum )
-import Graphics.UI.GLUT.Constants
 import Graphics.UI.GLUT.QueryUtils
+import Graphics.UI.GLUT.Raw
+import Graphics.UI.GLUT.Types
 import Graphics.UI.GLUT.Window
 
 --------------------------------------------------------------------------------
@@ -78,10 +79,6 @@ setHasOverlay :: Bool -> IO ()
 setHasOverlay False = glutRemoveOverlay
 setHasOverlay True  = glutEstablishOverlay
 
-foreign import CALLCONV safe "glutRemoveOverlay" glutRemoveOverlay :: IO ()
-
-foreign import CALLCONV safe "glutEstablishOverlay" glutEstablishOverlay :: IO ()
-
 getHasOverlay :: IO Bool
 getHasOverlay = layerGet (/= 0) glut_HAS_OVERLAY
 
@@ -109,10 +106,6 @@ overlayVisible :: SettableStateVar Bool
 overlayVisible =
    makeSettableStateVar $ \flag ->
       if flag then glutShowOverlay else glutHideOverlay
-
-foreign import CALLCONV safe "glutShowOverlay" glutShowOverlay :: IO ()
-
-foreign import CALLCONV safe "glutHideOverlay" glutHideOverlay :: IO ()
 
 --------------------------------------------------------------------------------
 
@@ -148,8 +141,6 @@ layerInUse =
 setLayerInUse :: Layer -> IO ()
 setLayerInUse = glutUseLayer . marshalLayer
 
-foreign import CALLCONV safe "glutUseLayer" glutUseLayer :: GLenum -> IO ()
-
 getLayerInUse :: IO Layer
 getLayerInUse = layerGet (unmarshalLayer . fromIntegral) glut_LAYER_IN_USE
 
@@ -174,10 +165,4 @@ getLayerInUse = layerGet (unmarshalLayer . fromIntegral) glut_LAYER_IN_USE
 
 postOverlayRedisplay :: Maybe Window -> IO ()
 postOverlayRedisplay =
-   maybe glutPostOverlayRedisplay glutPostWindowOverlayRedisplay
-
-foreign import CALLCONV safe "glutPostOverlayRedisplay"
-   glutPostOverlayRedisplay :: IO ()
-
-foreign import CALLCONV safe "glutPostWindowOverlayRedisplay"
-   glutPostWindowOverlayRedisplay :: Window -> IO ()
+   maybe glutPostOverlayRedisplay (\(Window win) -> glutPostWindowOverlayRedisplay win)

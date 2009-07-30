@@ -38,11 +38,7 @@ import Foreign.C.Types
 import Foreign.Marshal.Utils
 import Foreign.Ptr
 import Graphics.Rendering.OpenGL ( Height, Radius, Slices, Stacks, GLint, GLdouble )
-import Graphics.UI.GLUT.Extensions
-
---------------------------------------------------------------------------------
-
-#include "HsGLUTExt.h"
+import Graphics.UI.GLUT.Raw
 
 --------------------------------------------------------------------------------
 
@@ -164,71 +160,74 @@ renderObject Wireframe (SierpinskiSponge n) = wireSierpinskiSponge n
 -- | Render a solid cube centered at the modeling coordinates origin with sides
 -- of the given length.
 
-foreign import CALLCONV unsafe "glutSolidCube" solidCube
+solidCube
    :: Height -- ^ Length of the cube sides
    -> IO ()
+solidCube = glutSolidCube
 
 -- | Render a wireframe cube centered at the modeling coordinates origin with
 -- sides of the given length.
 
-foreign import CALLCONV unsafe "glutWireCube" wireCube
+wireCube
    :: Height -- ^ Length of the cube sides
    -> IO ()
+wireCube = glutWireCube
 
 --------------------------------------------------------------------------------
 
 -- | Render a solid dodecahedron (12-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of @sqrt 3@.
 
-foreign import CALLCONV unsafe "glutSolidDodecahedron" solidDodecahedron ::
-   IO ()
+solidDodecahedron :: IO ()
+solidDodecahedron = glutSolidDodecahedron
 
 -- | Render a wireframe dodecahedron (12-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of @sqrt 3@.
 
-foreign import CALLCONV unsafe "glutWireDodecahedron" wireDodecahedron :: IO ()
+wireDodecahedron :: IO ()
+wireDodecahedron = glutWireDodecahedron
 
 --------------------------------------------------------------------------------
 
 -- | Render a solid icosahedron (20-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of 1.0.
 
-foreign import CALLCONV unsafe "glutWireIcosahedron" wireIcosahedron :: IO ()
+wireIcosahedron :: IO ()
+wireIcosahedron = glutWireIcosahedron
 
 -- | Render a wireframe icosahedron (20-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of 1.0.
 
-foreign import CALLCONV unsafe "glutSolidIcosahedron" solidIcosahedron :: IO ()
+solidIcosahedron :: IO ()
+solidIcosahedron = glutSolidIcosahedron
 
 --------------------------------------------------------------------------------
 
 -- | Render a solid octahedron (8-sided regular solid) centered at the modeling
 -- coordinates origin with a radius of 1.0.
 
-foreign import CALLCONV unsafe "glutSolidOctahedron" solidOctahedron :: IO ()
+solidOctahedron :: IO ()
+solidOctahedron = glutSolidOctahedron
 
 -- | Render a wireframe octahedron (8-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of 1.0.
 
-foreign import CALLCONV unsafe "glutWireOctahedron" wireOctahedron :: IO ()
+wireOctahedron :: IO ()
+wireOctahedron = glutWireOctahedron
 
 --------------------------------------------------------------------------------
 
 -- | Render a solid tetrahedron (4-sided regular solid) centered at the modeling
 -- coordinates origin with a radius of @sqrt 3@.
 
-foreign import CALLCONV unsafe "glutWireTetrahedron" wireTetrahedron :: IO ()
+wireTetrahedron :: IO ()
+wireTetrahedron = glutWireTetrahedron
 
 -- | Render a wireframe tetrahedron (4-sided regular solid) centered at the
 -- modeling coordinates origin with a radius of @sqrt 3@.
 
-foreign import CALLCONV unsafe "glutSolidTetrahedron" solidTetrahedron  :: IO ()
-
---------------------------------------------------------------------------------
-
-EXTENSION_ENTRY(unsafe,"freeglut",glutSolidRhombicDodecahedron,IO ())
-
-EXTENSION_ENTRY(unsafe,"freeglut",glutWireRhombicDodecahedron,IO ())
+solidTetrahedron  :: IO ()
+solidTetrahedron = glutSolidTetrahedron
 
 --------------------------------------------------------------------------------
 
@@ -236,25 +235,27 @@ EXTENSION_ENTRY(unsafe,"freeglut",glutWireRhombicDodecahedron,IO ())
 -- specified radius. The sphere is subdivided around the Z axis into slices
 -- and along the Z axis into stacks.
 
-foreign import CALLCONV unsafe "glutSolidSphere" solidSphere
+solidSphere
    :: Radius   -- ^ Radius of the sphere.
    -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar
                --   to lines of longitude.
    -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis,
                --   similar to lines of latitude.
    -> IO ()
+solidSphere = glutSolidSphere
 
 -- | Render a wireframe sphere centered at the modeling coordinates origin of
 -- the specified radius. The sphere is subdivided around the Z axis into slices
 -- and along the Z axis into stacks.
 
-foreign import CALLCONV unsafe "glutWireSphere" wireSphere
+wireSphere
    :: Radius   -- ^ Radius of the sphere.
    -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar
                --   to lines of longitude.
    -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis,
                --   similar to lines of latitude.
    -> IO ()
+wireSphere = glutWireSphere
 
 --------------------------------------------------------------------------------
 
@@ -262,80 +263,76 @@ foreign import CALLCONV unsafe "glutWireSphere" wireSphere
 -- placed at Z = 0, and the top at Z = height. The cone is subdivided around the
 -- Z axis into slices, and along the Z axis into stacks.
 
-foreign import CALLCONV unsafe "glutSolidCone" solidCone
+solidCone
    :: Radius   -- ^ Radius of the base of the cone.
    -> Height   -- ^ Height of the cone.
    -> Slices   -- ^ Number of subdivisions around the Z axis.
    -> Stacks   -- ^ The number of subdivisions along the Z axis.
    -> IO ()
+solidCone = glutSolidCone
 
 -- | Render a wireframe cone oriented along the Z axis. The base of the cone is
 -- placed at Z = 0, and the top at Z = height. The cone is subdivided around the
 -- Z axis into slices, and along the Z axis into stacks.
 
-foreign import CALLCONV unsafe "glutWireCone" wireCone
+wireCone
    :: Radius   -- ^ Radius of the base of the cone.
    -> Height   -- ^ Height of the cone.
    -> Slices   -- ^ Number of subdivisions around the Z axis.
    -> Stacks   -- ^ The number of subdivisions along the Z axis.
    -> IO ()
-
---------------------------------------------------------------------------------
-
-EXTENSION_ENTRY(unsafe,"freeglut",glutSolidCylinder,Radius -> Height -> Slices -> Stacks -> IO ())
-
-EXTENSION_ENTRY(unsafe,"freeglut",glutWireCylinder,Radius -> Height -> Slices -> Stacks -> IO ())
+wireCone = glutWireCone
 
 --------------------------------------------------------------------------------
 
 -- | Render a solid torus (doughnut) centered at the modeling coordinates origin
 -- whose axis is aligned with the Z axis.
 
-foreign import CALLCONV unsafe "glutSolidTorus" solidTorus
+solidTorus
    :: Radius   -- ^ Inner radius of the torus.
    -> Radius   -- ^ Outer radius of the torus.
    -> Slices   -- ^ Number of sides for each radial section.
    -> Stacks   -- ^ Number of radial divisions for the torus.
    -> IO ()
+solidTorus = glutSolidTorus
 
 -- | Render a wireframe torus (doughnut) centered at the modeling coordinates
 -- origin whose axis is aligned with the Z axis.
 
-foreign import CALLCONV unsafe "glutWireTorus" wireTorus
+wireTorus
    :: Radius   -- ^ Inner radius of the torus.
    -> Radius   -- ^ Outer radius of the torus.
    -> Slices   -- ^ Number of sides for each radial section.
    -> Stacks   -- ^ Number of radial divisions for the torus.
    -> IO ()
+wireTorus = glutWireTorus
 
 --------------------------------------------------------------------------------
 
 -- | Render a solid teapot.
 
-foreign import CALLCONV unsafe "glutSolidTeapot" solidTeapot
+solidTeapot
    :: Height -- ^ Relative size of the teapot
    -> IO ()
+solidTeapot = glutSolidTeapot
 
 -- | Render a wireframe teapot.
 
-foreign import CALLCONV unsafe "glutWireTeapot" wireTeapot
+wireTeapot
    :: Height -- ^ Relative size of the teapot
    -> IO ()
+wireTeapot = glutWireTeapot
 
 --------------------------------------------------------------------------------
 
 solidSierpinskiSponge :: NumLevels -> IO ()
 solidSierpinskiSponge = sierpinskiSponge glutSolidSierpinskiSponge
 
-EXTENSION_ENTRY(unsafe,"freeglut",glutSolidSierpinskiSponge,CInt -> Ptr (Vertex3 GLdouble) -> Height -> IO ())
-
 wireSierpinskiSponge :: NumLevels -> IO ()
 wireSierpinskiSponge = sierpinskiSponge glutWireSierpinskiSponge
 
-EXTENSION_ENTRY(unsafe,"freeglut",glutWireSierpinskiSponge,CInt -> Ptr (Vertex3 GLdouble) -> Height -> IO ())
-
 -- for consistency, we hide the offset and scale on the Haskell side
-sierpinskiSponge :: (CInt -> Ptr (Vertex3 GLdouble) -> Height -> IO ()) -> NumLevels -> IO ()
+sierpinskiSponge :: (CInt -> Ptr GLdouble -> Height -> IO ()) -> NumLevels -> IO ()
 sierpinskiSponge f n =
    with (Vertex3 0 0 0) $ \offsetBuf ->
-      f (fromIntegral n) offsetBuf 1
+      f (fromIntegral n) ((castPtr :: Ptr (Vertex3 GLdouble) -> Ptr GLdouble) offsetBuf) 1
