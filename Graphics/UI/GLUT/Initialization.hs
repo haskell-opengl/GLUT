@@ -45,7 +45,8 @@ module Graphics.UI.GLUT.Initialization (
    DirectRendering(..), directRendering,
 
    -- * OpenGL 3.x context support
-   initialContextVersion, ContextFlag(..), initialContextFlags
+   initialContextVersion, ContextFlag(..), initialContextFlags,
+   ContextProfile(..), initialContextProfile
 ) where
 
 import Control.Monad
@@ -253,6 +254,8 @@ data DisplayMode
      -- ^ Select a window without a caption (/freeglut only/).
    | Borderless
      -- ^ Select a window without any borders (/freeglut only/).
+   | SRGBMode
+     -- ^ Select an sRGB mode window (/freeglut only/).
    deriving ( Eq, Ord, Show )
 
 marshalDisplayMode :: DisplayMode -> CUInt
@@ -278,6 +281,7 @@ marshalDisplayMode m = case m of
    Stereoscopic -> glut_STEREO
    Captionless -> glut_CAPTIONLESS
    Borderless -> glut_BORDERLESS
+   SRGBMode -> glut_SRGB
 
 --------------------------------------------------------------------------------
 
@@ -314,7 +318,7 @@ i2dmsWithoutRGBA bitfield =
                 WithAccumBuffer, WithDepthBuffer, WithStencilBuffer,
                 WithAuxBuffers 1, WithAuxBuffers 2, WithAuxBuffers 3,
                 WithAuxBuffers 4, SingleBuffered, DoubleBuffered, Multisampling,
-                Stereoscopic, Captionless, Borderless ]
+                Stereoscopic, Captionless, Borderless, SRGBMode ]
        , (bitfield .&. marshalDisplayMode c) /= 0 ]
 
 setInitialDisplayMode :: [DisplayMode] -> IO ()
@@ -726,3 +730,41 @@ i2cfs bitfield =
 
 setContextFlags :: [ContextFlag] -> IO ()
 setContextFlags = glutInitContextFlags . toBitfield marshalContextFlag
+
+
+-----------------------------------------------------------------------------
+
+-- | An OpenGL API profile, affecting the rendering context to create, used
+-- in conjunction with 'initialContextProfile'.
+
+data ContextProfile
+   = -- | The OpenGL /core/ profile, which all OpenGL 3.2 implementations
+     -- are required to support.
+      CoreProfile
+   | -- | The OpenGL /compatibility/ profile, which is optional for OpenGL
+     -- 3.2 implementations.
+     CompatibilityProfile
+   deriving ( Eq, Ord, Show )
+
+marshalContextProfile :: ContextProfile -> CInt
+marshalContextProfile x = case x of
+   CoreProfile -> glut_CORE_PROFILE
+   CompatibilityProfile -> glut_COMPATIBILITY_PROFILE
+
+-----------------------------------------------------------------------------
+
+-- | (/freeglut only/) Controls the set of profiles for the rendering context.
+
+initialContextProfile :: StateVar [ContextProfile]
+initialContextProfile = makeStateVar getContextProfiles setContextProfiles
+
+getContextProfiles :: IO [ContextProfile]
+getContextProfiles = simpleGet i2cps glut_INIT_PROFILE
+
+i2cps :: CInt -> [ContextProfile]
+i2cps bitfield =
+   [ c | c <- [ CoreProfile, CompatibilityProfile ]
+       , (fromIntegral bitfield .&. marshalContextProfile c) /= 0 ]
+
+setContextProfiles :: [ContextProfile] -> IO ()
+setContextProfiles = glutInitContextProfile . toBitfield marshalContextProfile
