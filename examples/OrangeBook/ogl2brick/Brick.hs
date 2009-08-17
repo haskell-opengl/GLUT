@@ -5,10 +5,16 @@
    See the file libraries/GLUT/LICENSE
 -}
 
+import Prelude hiding ( sum )
+import Control.Applicative
 import Control.Monad
+import Data.Foldable ( Foldable, sum )
 import Data.IORef
 import System.Exit
 import Graphics.UI.GLUT
+
+infixl 6 $+, $-
+infixl 7 $*
 
 inertiaThreshold, inertiaFactor :: GLfloat
 inertiaThreshold = 1
@@ -21,7 +27,7 @@ scaleIncrement = 0.5
 timerFrequencyMillis :: Timeout
 timerFrequencyMillis = 20
 
-clearColors :: [Color4 GLfloat]
+clearColors :: [Color4 GLclampf]
 clearColors = [
    Color4 0.0 0.0 0.0 1,
    Color4 0.2 0.2 0.3 1,
@@ -48,7 +54,7 @@ data State = State {
    theScale :: IORef GLfloat,
    lastPosition :: IORef Position,
    shouldRotate :: IORef Bool,
-   colorCycle :: IORef [Color4 GLfloat],
+   colorCycle :: IORef [Color4 GLclampf],
    modelCycle :: IORef [IO ()],
    modifiers :: IORef Modifiers
    }
@@ -56,9 +62,9 @@ data State = State {
 makeState :: IO State
 makeState = do
    di <- newIORef initialDiff
-   li <- newIORef 0
+   li <- newIORef (pure 0)
    ia <- newIORef initialInertia
-   io <- newIORef 0
+   io <- newIORef (pure 0)
    sc <- newIORef 1
    lp <- newIORef (Position (-1) (-1))
    sr <- newIORef True
@@ -78,32 +84,17 @@ makeState = do
       modifiers = mo
       }
 
-instance Num a => Num (Vector3 a) where
-   (Vector3 x1 y1 z1) + (Vector3 x2 y2 z2) =
-      Vector3 (x1 + x2) (y1 + y2) (z1 + z2)
-   (Vector3 x1 y1 z1) - (Vector3 x2 y2 z2) =
-      Vector3 (x1 - x2) (y1 - y2) (z1 - z2)
-   (Vector3 x1 y1 z1) * (Vector3 x2 y2 z2) =
-      Vector3 (x1 * x2) (y1 * y2) (z1 * z2)
-   negate (Vector3 x y z) =
-      Vector3 (negate x) (negate y) (negate z)
-   abs (Vector3 x y z) =
-      Vector3 (abs x) (abs y) (abs z)
-   signum (Vector3 x y z) =
-      Vector3 (signum x) (signum y) (signum z)
-   fromInteger i =
-      Vector3 (fromInteger i) (fromInteger i) (fromInteger i)
+-- Our tiny vector math library...
+($+), ($-), ($*) :: (Applicative t, Num a) => t a -> t a -> t a
+($+) = liftA2 (+)
+($-) = liftA2 (-)
+($*) = liftA2 (*)
 
-fromScalar :: Num a => a -> Vector3 a
-fromScalar s = Vector3 s s s
+step :: (Applicative t, Num a, Ord a) => t a -> t a -> t a
+step = liftA2 (\e x -> if x < e then 0 else 1)
 
-step :: (Num a, Ord a) => Vector3 a -> Vector3 a -> Vector3 a
-step (Vector3 x1 y1 z1) (Vector3 x2 y2 z2) =
-   Vector3 (s x1 x2) (s y1 y2) (s z1 z2)
-   where s e x = if x < e then 0 else 1
-
-dot :: Num a => Vector3 a -> Vector3 a -> a
-dot (Vector3 x1 y1 z1) (Vector3 x2 y2 z2) = x1 * x2 + y1 * y2 + z1 * z2
+dot :: (Applicative t, Foldable t, Num a) => t a -> t a -> a
+dot v1 v2 = sum (v1 $* v2)
 
 drawFace :: Normal3 GLfloat -> Vertex3 GLfloat -> Vertex3 GLfloat
          -> Vertex3 GLfloat -> Vertex3 GLfloat -> IO ()
@@ -208,7 +199,7 @@ printHelp = mapM_ putStrLn [
 resetState :: State -> IO ()
 resetState state = do
    diff state $= initialDiff
-   lastIncr state $= 0
+   lastIncr state $= pure 0
    inertia state $= initialInertia
    theScale state $= 1
 
@@ -217,12 +208,12 @@ calcInertia state = do
    lastPosition state $= Position (-1) (-1)
    li <- get (lastIncr state)
    ia <- get (inertia state)
-   let t = fromScalar inertiaThreshold
-       f = fromScalar inertiaFactor
-       l = (1 - (step (-t) li)) * ((li + t) * f - ia)
-       r = (step t li) * ((li - t) * f - ia)
-   inertia state $= l + ia + r
-   lastIncr state $= 0
+   let t = pure inertiaThreshold
+       f = pure inertiaFactor
+       l = (pure 1 $- (step (fmap negate t) li)) $* ((li $+ t) $* f $- ia)
+       r = (step t li) $* ((li $- t) $* f $- ia)
+   inertia state $= l $+ ia $+ r
+   lastIncr state $= pure 0
 
 keyboard :: State -> KeyboardMouseCallback
 keyboard state key keyState mods _ = do
@@ -238,13 +229,13 @@ keyboard state key keyState mods _ = do
       (Char '-', Down) -> theScale state $~ (+ (- scaleIncrement))
       (Char _, Down) -> printHelp
       (SpecialKey KeyHome, Down) -> resetState state
-      (SpecialKey KeyLeft, Down) -> diff state $~ (+ (- Vector3 1 0 0))
-      (SpecialKey KeyRight, Down) -> diff state $~ (+ Vector3 1 0 0)
-      (SpecialKey KeyUp, Down) -> diff state $~ (+ (- Vector3 0 1 0))
-      (SpecialKey KeyDown, Down) -> diff state $~ (+ Vector3 0 1 0)
+      (SpecialKey KeyLeft, Down) -> diff state $~ ($- Vector3 1 0 0)
+      (SpecialKey KeyRight, Down) -> diff state $~ ($+ Vector3 1 0 0)
+      (SpecialKey KeyUp, Down) -> diff state $~ ($- Vector3 0 1 0)
+      (SpecialKey KeyDown, Down) -> diff state $~ ($+ Vector3 0 1 0)
       (MouseButton LeftButton, Down) -> do
-         inertia state $= 0
-         lastIncr state $= 0
+         inertia state $= pure 0
+         lastIncr state $= pure 0
       (MouseButton LeftButton, Up) -> calcInertia state
       (_, _) -> return ()
 
@@ -259,16 +250,16 @@ motion state pos@(Position x y) = do
       when (xt /= -1) $ do
          mods <- get (modifiers state)
          if ctrl mods == Down
-            then do diff state $~ (+ Vector3 0 0 xl)
+            then do diff state $~ ($+ Vector3 0 0 xl)
                     theScale state $~ (+ (yl * scaleFactor))
-            else diff state $~ (+ li)
+            else diff state $~ ($+ li)
 
 timer :: State -> TimerCallback
 timer state = do
    rot <- get (shouldRotate state)
    when rot $ do
       ia <- get (inertia state)
-      diff state $~ (+ ia)
+      diff state $~ ($+ ia)
       postRedisplay Nothing
    addTimerCallback timerFrequencyMillis (timer state)
 
