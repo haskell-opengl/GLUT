@@ -48,7 +48,7 @@ rectAndTri = ComplexPolygon [ rectangle, tri ]
 noOpCombiner :: Combiner DontCare
 noOpCombiner _newVertex _weightedProperties = 0
 
-star :: ComplexPolygon (Color3 GLclampf)
+star :: ComplexPolygon (Color3 GLfloat)
 star = ComplexPolygon [
    ComplexContour [
       AnnotatedVertex (Vertex3 250  50 0) (Color3 1 0 1),
@@ -57,7 +57,7 @@ star = ComplexPolygon [
       AnnotatedVertex (Vertex3 250 150 0) (Color3 1 0 0),
       AnnotatedVertex (Vertex3 400 150 0) (Color3 0 1 0) ] ]
 
-combineColors :: Combiner (Color3 GLclampf)
+combineColors :: Combiner (Color3 GLfloat)
 combineColors
    _newVertex
    (WeightedProperties
