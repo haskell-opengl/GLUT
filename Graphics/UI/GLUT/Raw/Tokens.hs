@@ -18,7 +18,7 @@ module Graphics.UI.GLUT.Raw.Tokens where
 import Foreign.C.Types
 import Graphics.Rendering.OpenGL ( GLenum )
 
-glut_ACCUM :: GLenum
+glut_ACCUM :: CUInt
 glut_ACCUM = 0x0004
 
 glut_ACTION_CONTINUE_EXECUTION :: CInt
@@ -45,31 +45,31 @@ glut_ACTIVE_SHIFT = 0x0001
 glut_ALLOW_DIRECT_CONTEXT :: CInt
 glut_ALLOW_DIRECT_CONTEXT = 1
 
-glut_ALPHA :: GLenum
+glut_ALPHA :: CUInt
 glut_ALPHA = 0x0008
 
 glut_AUX :: GLenum
 glut_AUX = 0x1000
 
-glut_AUX1 :: GLenum
+glut_AUX1 :: CUInt
 glut_AUX1 = 0x1000
 
-glut_AUX2 :: GLenum
+glut_AUX2 :: CUInt
 glut_AUX2 = 0x2000
 
-glut_AUX3 :: GLenum
+glut_AUX3 :: CUInt
 glut_AUX3 = 0x4000
 
-glut_AUX4 :: GLenum
+glut_AUX4 :: CUInt
 glut_AUX4 = 0x8000
 
 glut_BLUE :: CInt
 glut_BLUE = 0x0002
 
-glut_BORDERLESS :: GLenum
+glut_BORDERLESS :: CUInt
 glut_BORDERLESS = 0x0800
 
-glut_CAPTIONLESS :: GLenum
+glut_CAPTIONLESS :: CUInt
 glut_CAPTIONLESS = 0x0400
 
 glut_CORE_PROFILE :: CInt
@@ -153,7 +153,7 @@ glut_CURSOR_WAIT = 0x0007
 glut_DEBUG :: CInt
 glut_DEBUG = 0x0001
 
-glut_DEPTH :: GLenum
+glut_DEPTH :: CUInt
 glut_DEPTH = 0x0010
 
 glut_DEVICE_IGNORE_KEY_REPEAT :: GLenum
@@ -168,7 +168,7 @@ glut_DIRECT_RENDERING = 0x01FE
 glut_DISPLAY_MODE_POSSIBLE :: GLenum
 glut_DISPLAY_MODE_POSSIBLE = 0x0190
 
-glut_DOUBLE :: GLenum
+glut_DOUBLE :: CUInt
 glut_DOUBLE = 0x0002
 
 glut_DOWN :: CInt
@@ -246,7 +246,7 @@ glut_HAS_TABLET = 0x025C
 glut_HIDDEN :: CInt
 glut_HIDDEN = 0x0000
 
-glut_INDEX :: GLenum
+glut_INDEX :: CUInt
 glut_INDEX = 0x0001
 
 glut_INIT_DISPLAY_MODE :: GLenum
@@ -285,16 +285,16 @@ glut_JOYSTICK_AXES = 0x0267
 glut_JOYSTICK_BUTTONS :: GLenum
 glut_JOYSTICK_BUTTONS = 0x0266
 
-glut_JOYSTICK_BUTTON_A :: GLenum
+glut_JOYSTICK_BUTTON_A :: CUInt
 glut_JOYSTICK_BUTTON_A = 0x0001
 
-glut_JOYSTICK_BUTTON_B :: GLenum
+glut_JOYSTICK_BUTTON_B :: CUInt
 glut_JOYSTICK_BUTTON_B = 0x0002
 
-glut_JOYSTICK_BUTTON_C :: GLenum
+glut_JOYSTICK_BUTTON_C :: CUInt
 glut_JOYSTICK_BUTTON_C = 0x0004
 
-glut_JOYSTICK_BUTTON_D :: GLenum
+glut_JOYSTICK_BUTTON_D :: CUInt
 glut_JOYSTICK_BUTTON_D = 0x0008
 
 glut_JOYSTICK_POLL_RATE :: GLenum
@@ -390,7 +390,7 @@ glut_LEFT = 0x0000
 glut_LEFT_BUTTON :: CInt
 glut_LEFT_BUTTON = 0x0000
 
-glut_LUMINANCE :: GLenum
+glut_LUMINANCE :: CUInt
 glut_LUMINANCE = 0x0200
 
 glut_MENU_IN_USE :: CInt
@@ -405,7 +405,7 @@ glut_MENU_NUM_ITEMS = 0x012C
 glut_MIDDLE_BUTTON :: CInt
 glut_MIDDLE_BUTTON = 0x0001
 
-glut_MULTISAMPLE :: GLenum
+glut_MULTISAMPLE :: CUInt
 glut_MULTISAMPLE = 0x0080
 
 glut_NORMAL :: GLenum
@@ -453,10 +453,10 @@ glut_RED = 0x0000
 glut_RENDERING_CONTEXT :: GLenum
 glut_RENDERING_CONTEXT = 0x01FD
 
-glut_RGB :: GLenum
+glut_RGB :: CUInt
 glut_RGB = 0x0000
 
-glut_RGBA :: GLenum
+glut_RGBA :: CUInt
 glut_RGBA = 0x0000
 
 glut_RIGHT_BUTTON :: CInt
@@ -474,16 +474,16 @@ glut_SCREEN_WIDTH = 0x00C8
 glut_SCREEN_WIDTH_MM :: GLenum
 glut_SCREEN_WIDTH_MM = 0x00CA
 
-glut_SINGLE :: GLenum
+glut_SINGLE :: CUInt
 glut_SINGLE = 0x0000
 
-glut_SRGB :: GLenum
+glut_SRGB :: CUInt
 glut_SRGB = 0x1000
 
-glut_STENCIL :: GLenum
+glut_STENCIL :: CUInt
 glut_STENCIL = 0x0020
 
-glut_STEREO :: GLenum
+glut_STEREO :: CUInt
 glut_STEREO = 0x0100
 
 glut_TRANSPARENT_INDEX :: GLenum
