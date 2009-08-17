@@ -71,7 +71,7 @@ reshape size@(Size w h) = do
 motion :: State -> MotionCallback
 motion state (Position x y) = do
    Size _ height <- get windowSize
-   let screenY = height - y
+   let screenY = fromIntegral height - y
    -- resolve overloading, not needed in "real" programs
    let rasterPos2i = rasterPos :: Vertex2 GLint -> IO ()
    rasterPos2i (Vertex2 x screenY)

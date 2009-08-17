@@ -31,7 +31,7 @@ keyboardMouse (MouseButton LeftButton)  Down _ (Position x y) = do
    v@(_, Size _ h) <- get viewport
    mvMatrix <- get (matrix (Just (Modelview 0))) :: IO (GLmatrix GLdouble)
    projMatrix <- get (matrix (Just Projection)) :: IO (GLmatrix GLdouble)
-   let realY = h - y -1
+   let realY = fromIntegral h - y -1
    putStrLn ("Coordinates at cursor are (" ++ show x ++", " ++ show realY ++ ")")
    w0 <- unProject (Vertex3 (fromIntegral x) (fromIntegral realY) 0) mvMatrix projMatrix v
    putStrLn ("World coords at z=0.0 are " ++ show w0)
