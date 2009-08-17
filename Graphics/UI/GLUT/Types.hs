@@ -76,6 +76,7 @@ data MouseButton
    | RightButton
    | WheelUp
    | WheelDown
+   | AdditionalButton Int
    deriving ( Eq, Ord, Show )
 
 marshalMouseButton :: MouseButton -> CInt
@@ -85,6 +86,7 @@ marshalMouseButton x = case x of
    RightButton -> glut_RIGHT_BUTTON
    WheelUp -> glut_WHEEL_UP
    WheelDown -> glut_WHEEL_DOWN
+   AdditionalButton b -> fromIntegral b
 
 unmarshalMouseButton :: CInt -> MouseButton
 unmarshalMouseButton x
@@ -93,7 +95,7 @@ unmarshalMouseButton x
    | x == glut_RIGHT_BUTTON = RightButton
    | x == glut_WHEEL_UP = WheelUp
    | x == glut_WHEEL_DOWN = WheelDown
-   | otherwise = error ("unmarshalMouseButton: illegal value " ++ show x)
+   | otherwise = AdditionalButton (fromIntegral x)
 
 glut_WHEEL_UP :: CInt
 glut_WHEEL_UP = 3
