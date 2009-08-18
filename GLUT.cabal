@@ -157,12 +157,12 @@ library
    ghc-options: -Wall
    if os(windows) && flag(UseNativeWindowsLibraries)
       cpp-options: "-DCALLCONV=stdcall"
-      extra-libraries: glut32
       cc-options: "-DUSE_GETPROCADDRESS"
+      extra-libraries: glut32
    else
       cpp-options: "-DCALLCONV=ccall"
-      extra-libraries: glut
+      cc-options: "-DUSE_DLSYM"
       if os(darwin)
-         cc-options: "-DUSE_NSADDRESSOFSYMBOL"
+         frameworks: GLUT
       else
-         cc-options: "-DUSE_DLSYM"
+         extra-libraries: glut
