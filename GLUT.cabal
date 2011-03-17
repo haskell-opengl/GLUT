@@ -13,7 +13,7 @@ description:
    on which this binding is based, please see:
    <http://www.opengl.org/resources/libraries/glut/>.
 build-type: Simple
-cabal-version: >=1.2
+cabal-version: >=1.6
 extra-source-files:
    README
    examples/BOGLGP/Chapter01/OnYourOwn1.hs
