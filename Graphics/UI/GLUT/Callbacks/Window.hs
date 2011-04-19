@@ -322,6 +322,7 @@ data SpecialKey
    | KeyNumLock
    | KeyBegin
    | KeyDelete
+   | KeyUnknown Int
    deriving ( Eq, Ord, Show )
 
 unmarshalSpecialKey :: CInt -> SpecialKey
@@ -350,7 +351,7 @@ unmarshalSpecialKey x
    | x == glut_KEY_NUM_LOCK = KeyNumLock
    | x == glut_KEY_BEGIN = KeyBegin
    | x == glut_KEY_DELETE = KeyDelete
-   | otherwise = error ("unmarshalSpecialKey: illegal value " ++ show x)
+   | otherwise = KeyUnknown (fromIntegral x)
 
 --------------------------------------------------------------------------------
 
