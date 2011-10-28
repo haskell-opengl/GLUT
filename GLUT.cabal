@@ -2,8 +2,8 @@ name: GLUT
 version: 2.2.2.1
 license: BSD3
 license-file: LICENSE
-maintainer: Sven Panne <sven.panne@aedion.de>
-bug-reports: mailto:hopengl@haskell.org
+maintainer: Jason Dagit <dagitj@gmail.com>, Sven Panne <sven.panne@aedion.de>
+bug-reports: https://github.com/haskell-opengl/GLUT/issues
 homepage: http://www.haskell.org/haskellwiki/Opengl
 category: Graphics
 synopsis: A binding for the OpenGL Utility Toolkit
@@ -168,5 +168,5 @@ library
          extra-libraries: glut
 
 source-repository head
-  type:     darcs
-  location: http://code.haskell.org/GLUT/
+  type:     git
+  location: https://github.com/haskell-opengl/GLUT
