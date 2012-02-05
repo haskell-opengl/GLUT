@@ -161,7 +161,7 @@ module Graphics.UI.GLUT.Raw.Functions (
 
 import Foreign.C.Types
 import Foreign.Ptr
-import Graphics.Rendering.OpenGL ( GLint, GLenum, GLfloat, GLdouble )
+import Graphics.Rendering.OpenGL.Raw.Core31.TypesInternal
 import Graphics.UI.GLUT.Raw.APIEntry
 import Graphics.UI.GLUT.Raw.Callbacks
 

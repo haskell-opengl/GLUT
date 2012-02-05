@@ -36,7 +36,6 @@ import Foreign.C.String
 import Graphics.Rendering.OpenGL ( GLenum, Size(..) )
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
-import Graphics.UI.GLUT.Window
 
 --------------------------------------------------------------------------------
 

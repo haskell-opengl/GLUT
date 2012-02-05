@@ -35,8 +35,6 @@ import Graphics.UI.GLUT.Callbacks.Registration
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
-import Graphics.UI.GLUT.Window
-import System.IO.Unsafe
 
 --------------------------------------------------------------------------------
 

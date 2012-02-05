@@ -1,5 +1,5 @@
 name: GLUT
-version: 2.2.2.1
+version: 2.3.0.0
 license: BSD3
 license-file: LICENSE
 maintainer: Jason Dagit <dagitj@gmail.com>, Sven Panne <sven.panne@aedion.de>
@@ -150,10 +150,10 @@ library
    c-sources:
       cbits/HsGLUT.c
    if flag(split-base)
-      build-depends: base >= 3 && <5, array, containers
+      build-depends: base >= 3 && < 5, array >= 0.3 && < 0.5, containers >= 0.3 && < 0.5
    else
       build-depends: base < 3
-   build-depends: OpenGL >= 2.3, StateVar, Tensor
+   build-depends: OpenGL == 2.5.*, OpenGLRaw == 1.2.*, StateVar == 1.0.*, Tensor == 1.0.*
    ghc-options: -Wall
    if os(windows) && flag(UseNativeWindowsLibraries)
       cpp-options: "-DCALLCONV=stdcall"

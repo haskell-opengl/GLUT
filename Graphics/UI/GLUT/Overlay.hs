@@ -35,7 +35,6 @@ import Graphics.Rendering.OpenGL ( GLenum )
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
-import Graphics.UI.GLUT.Window
 
 --------------------------------------------------------------------------------
 

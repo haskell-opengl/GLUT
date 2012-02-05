@@ -27,7 +27,6 @@ import Data.StateVar
 import Foreign.Ptr
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Window
-import System.IO.Unsafe
 
 --------------------------------------------------------------------------------
 -- No timer callback here, because they are one-shot and "self destroy"
