@@ -24,6 +24,15 @@ module Graphics.UI.GLUT.Callbacks.Window (
    -- * Window close callback
    CloseCallback, closeCallback,
 
+   -- * Keyboard callback
+   KeyboardCallback, keyboardCallback, keyboardUpCallback,
+
+   -- * Special callback
+   SpecialCallback, specialCallback, specialUpCallback,
+
+   -- * Mouse callback
+   MouseCallback, mouseCallback,
+
    -- * Keyboard and mouse input callback
    Key(..), SpecialKey(..), MouseButton(..), KeyState(..), Modifiers(..),
    KeyboardMouseCallback, keyboardMouseCallback,
@@ -276,6 +285,7 @@ closeCallback = makeSettableStateVar $
 
 --------------------------------------------------------------------------------
 
+-- | A keyboard callback
 type KeyboardCallback = Char -> Position -> IO ()
 
 setKeyboardCallback :: Maybe KeyboardCallback -> IO ()
@@ -283,6 +293,11 @@ setKeyboardCallback =
    setCallback KeyboardCB glutKeyboardFunc (makeKeyboardFunc . unmarshal)
    where unmarshal cb c x y = cb (chr (fromIntegral c))
                                  (Position (fromIntegral x) (fromIntegral y))
+
+-- | Controls the keyboard callback for the /current window/. This is
+-- activated only when a key is pressed.
+keyboardCallback :: SettableStateVar (Maybe KeyboardCallback)
+keyboardCallback = makeSettableStateVar setKeyboardCallback
 
 --------------------------------------------------------------------------------
 
@@ -293,6 +308,10 @@ setKeyboardUpCallback =
    where unmarshal cb c x y = cb (chr (fromIntegral c))
                                  (Position (fromIntegral x) (fromIntegral y))
 
+-- | Controls the keyboard callback for the /current window/. This is
+-- activated only when a key is released.
+keyboardUpCallback :: SettableStateVar (Maybe KeyboardCallback)
+keyboardUpCallback = makeSettableStateVar setKeyboardUpCallback
 --------------------------------------------------------------------------------
 
 -- | Special keys
@@ -355,6 +374,7 @@ unmarshalSpecialKey x
 
 --------------------------------------------------------------------------------
 
+-- | A special key callback
 type SpecialCallback = SpecialKey -> Position -> IO ()
 
 setSpecialCallback :: Maybe SpecialCallback -> IO ()
@@ -363,6 +383,10 @@ setSpecialCallback =
    where unmarshal cb k x y = cb (unmarshalSpecialKey k)
                                  (Position (fromIntegral x) (fromIntegral y))
 
+-- | Controls the special key callback for the /current window/. This is
+-- activated only when a special key is pressed.
+specialCallback :: SettableStateVar (Maybe SpecialCallback)
+specialCallback = makeSettableStateVar setSpecialCallback
 --------------------------------------------------------------------------------
 
 setSpecialUpCallback :: Maybe SpecialCallback -> IO ()
@@ -371,6 +395,10 @@ setSpecialUpCallback =
    where unmarshal cb k x y = cb (unmarshalSpecialKey k)
                                  (Position (fromIntegral x) (fromIntegral y))
 
+-- | Controls the special key callback for the /current window/. This is
+-- activated only when a special key is released.
+specialUpCallback :: SettableStateVar (Maybe SpecialCallback)
+specialUpCallback = makeSettableStateVar setSpecialUpCallback
 --------------------------------------------------------------------------------
 
 -- | The current state of a key or button
@@ -388,6 +416,7 @@ unmarshalKeyState x
 
 --------------------------------------------------------------------------------
 
+-- | A mouse callback
 type MouseCallback = MouseButton -> KeyState -> Position -> IO ()
 
 setMouseCallback :: Maybe MouseCallback -> IO ()
@@ -397,6 +426,9 @@ setMouseCallback =
                                    (unmarshalKeyState s)
                                    (Position (fromIntegral x) (fromIntegral y))
 
+-- | Controls the mouse callback for the /current window/.
+mouseCallback :: SettableStateVar (Maybe MouseCallback)
+mouseCallback = makeSettableStateVar setMouseCallback
 --------------------------------------------------------------------------------
 
 -- | The state of the keyboard modifiers
@@ -434,6 +466,10 @@ type KeyboardMouseCallback =
 -- mouse button changes. The callback parameters indicate the new state of the
 -- key\/button, the state of the keyboard modifiers, and the mouse location in
 -- window relative coordinates.
+--
+-- Note that this is a convenience function that should not ordinarily be used
+-- in conjunction with `keyboardCallback`, `keyboardUpCallback`,
+-- `specialCallback`, `specialUpCallback`, or `mouseCallback`.
 
 keyboardMouseCallback :: SettableStateVar (Maybe KeyboardMouseCallback)
 keyboardMouseCallback = makeSettableStateVar setKeyboardMouseCallback
