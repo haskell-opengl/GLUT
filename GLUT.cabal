@@ -150,7 +150,7 @@ library
    c-sources:
       cbits/HsGLUT.c
    if flag(split-base)
-      build-depends: base >= 3 && < 5, array >= 0.3 && < 0.5, containers >= 0.3 && < 0.5
+      build-depends: base >= 3 && < 5, array >= 0.3 && < 0.5, containers >= 0.3 && < 0.6
    else
       build-depends: base < 3
    build-depends: OpenGL == 2.5.*, OpenGLRaw == 1.2.*, StateVar == 1.0.*, Tensor == 1.0.*
