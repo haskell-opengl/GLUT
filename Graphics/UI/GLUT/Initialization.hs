@@ -331,8 +331,10 @@ handleMultisampling :: [Int] -> DisplayMode -> ([Int], DisplayMode)
 handleMultisampling spps (WithSamplesPerPixel spp) = (spp : spps, Multisampling)
 handleMultisampling spps mode                      = (spps, mode)
 
-toBitfield :: (Num b, Bits b) => (a -> b) -> [a] -> b
-toBitfield marshal = foldl (.|.) 0 . map marshal
+toBitfield :: (Bits b) => (a -> b) -> [a] -> b
+toBitfield marshal = foldl (.|.) zero . map marshal
+           where
+                zero = (bit 0) `xor` (bit 0)
 
 -- | Contains 'True' if the /current display mode/ is supported, 'False'
 -- otherwise.
