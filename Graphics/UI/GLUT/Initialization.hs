@@ -146,7 +146,7 @@ exit = glutExit
 -- | Controls the /initial window position/.  Windows created by
 -- 'Graphics.UI.GLUT.Window.createWindow' will be requested to be created with
 -- the current /initial window position/. The initial value of the /initial
--- window position/ GLUT state is @'Size' (-1) (-1)@. If either the X or Y
+-- window position/ GLUT state is @'Position' (-1) (-1)@. If either the X or Y
 -- component of the /initial window position/ is negative, the actual window
 -- position is left to the window system to determine.
 --
