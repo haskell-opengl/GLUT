@@ -23,8 +23,8 @@ import Control.Monad
 import Data.IORef
 import qualified Data.Map as Map ( empty, lookup, insert, delete )
 import Data.Map ( Map )
-import Data.StateVar
 import Foreign.Ptr
+import Graphics.Rendering.OpenGL ( get )
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Window
 

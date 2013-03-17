@@ -48,13 +48,14 @@ module Graphics.UI.GLUT.State (
 ) where
 
 import Control.Monad
-import Data.StateVar
 import Foreign.C.Types
 import Foreign.Marshal.Alloc
 import Foreign.Marshal.Array
 import Foreign.Ptr
 import Foreign.Storable
-import Graphics.Rendering.OpenGL ( GLenum, Size(..) )
+import Graphics.Rendering.OpenGL ( GLenum, Size(..)
+                                 , StateVar, makeStateVar
+                                 , GettableStateVar, makeGettableStateVar )
 import Graphics.UI.GLUT.Overlay
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw

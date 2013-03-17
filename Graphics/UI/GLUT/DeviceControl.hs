@@ -19,8 +19,8 @@ module Graphics.UI.GLUT.DeviceControl (
    forceJoystickCallback
 ) where
 
-import Data.StateVar
 import Foreign.C.Types
+import Graphics.Rendering.OpenGL ( StateVar, makeStateVar )
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 

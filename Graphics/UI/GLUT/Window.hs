@@ -52,10 +52,12 @@ module Graphics.UI.GLUT.Window (
    Cursor(..), cursor, pointerPosition
 ) where
 
-import Data.StateVar
 import Foreign.C.String
 import Foreign.C.Types
-import Graphics.Rendering.OpenGL ( Position(..), Size(..) )
+import Graphics.Rendering.OpenGL ( Position(..), Size(..)
+                                 , StateVar, makeStateVar
+                                 , GettableStateVar, makeGettableStateVar
+                                 , SettableStateVar, makeSettableStateVar )
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types

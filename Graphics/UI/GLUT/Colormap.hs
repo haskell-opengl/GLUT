@@ -41,9 +41,10 @@ module Graphics.UI.GLUT.Colormap (
    transparentIndex
 ) where
 
-import Data.StateVar
 import Foreign.C.Types
-import Graphics.Rendering.OpenGL ( GLfloat, GLint, Color3(..), Index1(..) )
+import Graphics.Rendering.OpenGL ( GLfloat, GLint, Color3(..), Index1(..)
+                                 , StateVar, makeStateVar, GettableStateVar
+                                 , makeGettableStateVar )
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types

@@ -52,14 +52,17 @@ module Graphics.UI.GLUT.Initialization (
 import Control.Monad
 import Data.Bits
 import Data.List
-import Data.StateVar
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Marshal.Array
 import Foreign.Marshal.Utils
 import Foreign.Ptr
 import Foreign.Storable
-import Graphics.Rendering.OpenGL ( Position(..), Size(..) )
+import Graphics.Rendering.OpenGL ( Position(..), Size(..)
+                                 , StateVar, GettableStateVar, get
+                                 , SettableStateVar, makeStateVar, ($=)
+                                 , makeGettableStateVar
+                                 , makeSettableStateVar )
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types

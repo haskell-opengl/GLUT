@@ -22,8 +22,8 @@ module Graphics.UI.GLUT.Begin (
    ActionOnWindowClose(..), actionOnWindowClose
 ) where
 
-import Data.StateVar
 import Foreign.C.Types
+import Graphics.Rendering.OpenGL.GL.StateVar
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 

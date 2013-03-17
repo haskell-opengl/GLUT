@@ -63,9 +63,9 @@ module Graphics.UI.GLUT.Callbacks.Window (
 import Data.Bits hiding ( shift )
 import Data.Char
 import Data.Maybe
-import Data.StateVar
 import Foreign.C.Types
-import Graphics.Rendering.OpenGL ( Position(..), Size(..) )
+import Graphics.Rendering.OpenGL ( Position(..), Size(..)
+                                 , SettableStateVar, makeSettableStateVar )
 import Graphics.UI.GLUT.Callbacks.Registration
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.State

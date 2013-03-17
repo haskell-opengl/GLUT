@@ -27,10 +27,12 @@ import Data.IORef
 import qualified Data.Map as Map ( empty, lookup, insert, delete )
 import Control.Monad
 import Data.Map ( Map )
-import Data.StateVar
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr
+import Graphics.Rendering.OpenGL ( get, ($=), StateVar
+                                 , makeStateVar, GettableStateVar
+                                 , makeGettableStateVar )
 import Graphics.UI.GLUT.Callbacks.Registration
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw

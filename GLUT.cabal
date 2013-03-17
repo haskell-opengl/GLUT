@@ -1,8 +1,8 @@
 name: GLUT
-version: 2.3.1.0
+version: 2.4.0.0
 license: BSD3
 license-file: LICENSE
-maintainer: Jason Dagit <dagitj@gmail.com>, Sven Panne <sven.panne@aedion.de>
+maintainer: Jason Dagit <dagitj@gmail.com>
 bug-reports: https://github.com/haskell-opengl/GLUT/issues
 homepage: http://www.haskell.org/haskellwiki/Opengl
 category: Graphics
@@ -135,8 +135,7 @@ library
       Graphics.UI.GLUT.Objects,
       Graphics.UI.GLUT.Overlay,
       Graphics.UI.GLUT.State,
-      Graphics.UI.GLUT.Window
-   other-modules:
+      Graphics.UI.GLUT.Window,
       Graphics.UI.GLUT.Callbacks.Registration,
       Graphics.UI.GLUT.QueryUtils,
       Graphics.UI.GLUT.Raw,
@@ -153,8 +152,8 @@ library
       build-depends: base >= 3 && < 5, array >= 0.3 && < 0.5, containers >= 0.3 && < 0.6
    else
       build-depends: base < 3
-   build-depends: OpenGL == 2.6.*, OpenGLRaw == 1.3.*, StateVar == 1.0.*, Tensor == 1.0.*
-   ghc-options: -Wall
+   build-depends: OpenGL == 2.8.*, OpenGLRaw == 1.3.*
+   ghc-options: -Wall -O2
    if os(windows) && flag(UseNativeWindowsLibraries)
       cpp-options: "-DCALLCONV=stdcall"
       cc-options: "-DUSE_GETPROCADDRESS"

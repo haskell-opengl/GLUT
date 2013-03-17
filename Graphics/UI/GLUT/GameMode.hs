@@ -31,9 +31,12 @@ module Graphics.UI.GLUT.GameMode (
 ) where
 
 import Data.List
-import Data.StateVar
 import Foreign.C.String
-import Graphics.Rendering.OpenGL ( GLenum, Size(..) )
+import Graphics.Rendering.OpenGL ( GLenum, Size(..)
+                                 , GettableStateVar
+                                 , SettableStateVar
+                                 , makeGettableStateVar
+                                 , makeSettableStateVar )
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
 
