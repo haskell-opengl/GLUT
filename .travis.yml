@@ -15,3 +15,5 @@ before_install:
   - cabal install
   - popd
   - ghc-pkg list
+script:
+  - cabal install --enable-documentation
