@@ -28,7 +28,7 @@ display = do
    lineStipple $= Just (1, 0x0101)  --  dotted
    drawOneLine (Vertex2  50 125) (Vertex2 150 125)
    lineStipple $= Just (1, 0x00FF)  --  dashed
-   drawOneLine (Vertex2 150 125) (Vertex2  50 125)
+   drawOneLine (Vertex2 150 125) (Vertex2  250 125)
    lineStipple $= Just (1, 0x1C47)  --  dash/dot/dash
    drawOneLine (Vertex2 250 125) (Vertex2 350 125)
 
