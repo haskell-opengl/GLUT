@@ -24,7 +24,7 @@ display displayLists = do
    -- resolve overloading, not needed in "real" programs
    let color3f = color :: Color3 GLfloat -> IO ()
    color3f (Color3 1 1 1)
-   mapM callList displayLists
+   mapM_ callList displayLists
    flush
 
 -- 'Float' is a dummy, any marshalable type would do
@@ -114,7 +114,7 @@ main = do
    (progName, _args) <- getArgsAndInitialize
    initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 500 500
-   createWindow progName
+   _ <- createWindow progName
    displayLists <- myInit
    displayCallback $= display displayLists
    reshapeCallback $= Just reshape

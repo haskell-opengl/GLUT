@@ -17,7 +17,7 @@ main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
    initialDisplayMode $= [ SingleBuffered, RGBMode ]
-   createWindow progName
+   _ <- createWindow progName
 
    currentColor $= Color4 1 1 1 1
    materialAmbient Front $= Color4 0.1 0.1 0.1 1

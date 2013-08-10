@@ -182,7 +182,7 @@ main = do
    initialWindowPosition $= Position 0 0
    initialWindowSize $= Size 400 400
    initialDisplayMode $= [ RGBMode, DoubleBuffered, WithDepthBuffer ]
-   createWindow progName
+   _ <- createWindow progName
    state <- makeState
    reshapeCallback $= Just (\size -> viewport $= (Position 0 0, size))
    keyboardMouseCallback $= Just (keyboard state)

@@ -7,6 +7,7 @@
 
 import Prelude hiding ( sum )
 import Control.Applicative
+import Control.Exception ( IOException, catch )
 import Control.Monad
 import Data.Foldable ( Foldable, sum )
 import Data.IORef
@@ -331,10 +332,10 @@ installBrickShaders vs fs = do
 
 main :: IO ()
 main = do
-   getArgsAndInitialize
+   _ <- getArgsAndInitialize
    initialDisplayMode $= [ RGBMode, WithDepthBuffer, DoubleBuffered ]
    initialWindowSize $= Size 500 500
-   createWindow "3Dlabs Brick Shader"
+   _ <- createWindow "3Dlabs Brick Shader"
 
    -- Note: We don't use an idle callback, we redisplay more intelligently.
    state <- makeState
@@ -350,7 +351,7 @@ main = do
          fs <- readAndCompileShader "Brick.frag"
          installBrickShaders [vs] [fs])
      (\exception -> do
-         print exception
+         print (exception :: IOException)
          putStrLn "Using fixed function pipeline."
          materialDiffuse Front $= Color4 1 0.3 0.2 1
          materialSpecular Front $= Color4 0.3 0.3 0.3 1

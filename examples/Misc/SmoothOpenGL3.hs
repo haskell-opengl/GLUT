@@ -27,7 +27,7 @@ checkError functionName = get errors >>= mapM_ reportError
    where reportError e = 
             hPutStrLn stderr (showError e ++ " detected in " ++ functionName)
          showError (Error category message) =
-            "GL error" ++ show category ++ " (" ++ message ++ ")"
+            "GL error " ++ show category ++ " (" ++ message ++ ")"
 
 varray :: [GLfloat]
 varray = [
@@ -257,7 +257,7 @@ main = do
       initialContextFlags $= [ ForwardCompatibleContext, DebugContext ]
    initialWindowSize $= Size 500 500
    initialWindowPosition $= Position 100 100
-   createWindow progName
+   _ <- createWindow progName
    dumpInfo
    state <- myInit
    displayCallback $= display state

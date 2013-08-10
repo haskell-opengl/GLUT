@@ -289,7 +289,7 @@ main  = do
 
    initialWindowPosition $= Position 0 0
    initialWindowSize $= Size 300 300
-   createWindow "Gears"
+   _ <- createWindow "Gears"
    state <- makeState
    gearsAndAuto <- myInit args
 

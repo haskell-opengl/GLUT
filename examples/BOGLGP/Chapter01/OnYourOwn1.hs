@@ -15,13 +15,13 @@ import Graphics.UI.GLUT hiding ( initialize )
 main :: IO ()
 main = do
    -- Setup the basic GLUT stuff
-   getArgsAndInitialize
+   _ <- getArgsAndInitialize
    initialDisplayMode $= [ DoubleBuffered, RGBMode, WithDepthBuffer ]
 
    -- Create the window
    initialWindowSize $= Size 1024 768
    initialWindowPosition $= Position 100 150
-   createWindow "BOGLGP - Chapter 1 - On Your Own 1"
+   _ <- createWindow "BOGLGP - Chapter 1 - On Your Own 1"
 
    initialize
 

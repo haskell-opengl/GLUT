@@ -45,7 +45,7 @@ fullscreenMode opts = do
        addCapability GameModeHeight (Just (windowHeight opts)) .
        addCapability GameModeBitsPerPlane (bpp opts) .
        addCapability GameModeRefreshRate (refreshRate opts)) []
-   enterGameMode
+   _ <- enterGameMode
    maybeWin <- get currentWindow
    if isJust maybeWin
       then cursor $= None
@@ -57,7 +57,7 @@ windowedMode :: Options -> IO ()
 windowedMode opts = do
    initialWindowSize $=
       Size (fromIntegral (windowWidth opts)) (fromIntegral (windowHeight opts))
-   createWindow "BOGLGP - Chapter 3 - Polygons"
+   _ <- createWindow "BOGLGP - Chapter 3 - Polygons"
    return ()
 
 --------------------------------------------------------------------------------
