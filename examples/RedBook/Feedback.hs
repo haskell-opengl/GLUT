@@ -70,7 +70,7 @@ main = do
    initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 100 100
    initialWindowPosition $= Position 100 100
-   createWindow progName
+   _ <- createWindow progName
    myInit
    displayCallback $= display
    keyboardMouseCallback $= Just keyboard

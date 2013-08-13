@@ -95,7 +95,7 @@ main = do
    initialDisplayMode $= [ SingleBuffered, RGBMode, WithDepthBuffer ]
    initialWindowSize $= Size 250 250
    initialWindowPosition $= Position 100 100
-   createWindow progName
+   _ <- createWindow progName
    -- we have to do this *after* createWindow, otherwise we have no OpenGL context
    version <- get (majorMinor glVersion)
    unless (version >= (1, 3)) $ do

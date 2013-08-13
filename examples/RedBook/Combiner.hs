@@ -228,7 +228,7 @@ main = do
    initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 400 400
    initialWindowPosition $= Position 100 100
-   createWindow progName
+   _ <- createWindow progName
    texNamesAndDL <- myInit
    displayCallback $= display texNamesAndDL
    reshapeCallback $= Just reshape

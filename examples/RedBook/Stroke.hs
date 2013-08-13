@@ -119,7 +119,7 @@ main = do
    (progName, _args) <- getArgsAndInitialize
    initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 440 120
-   createWindow progName
+   _ <- createWindow progName
    myInit
    reshapeCallback $= Just reshape
    keyboardMouseCallback $= Just keyboard

@@ -133,7 +133,7 @@ main :: IO ()
 main = do
    (progName, _args) <- getArgsAndInitialize
    initialDisplayMode $= [ SingleBuffered, RGBMode, WithDepthBuffer ]
-   createWindow progName
+   _ <- createWindow progName
 
    -- we have to do this *after* createWindow, otherwise we have no OpenGL context
    version <- get (majorMinor glVersion)

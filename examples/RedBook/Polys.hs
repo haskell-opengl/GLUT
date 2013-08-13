@@ -76,7 +76,7 @@ main = do
    (progName, _args) <- getArgsAndInitialize
    initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 350 150
-   createWindow progName
+   _ <- createWindow progName
    stipples <- myInit
    displayCallback $= display stipples
    reshapeCallback $= Just reshape

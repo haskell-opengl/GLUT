@@ -45,11 +45,11 @@ myInit = do
 -- process events.
 main :: IO ()
 main = do
-   getArgsAndInitialize
+   _ <- getArgsAndInitialize
    initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 250 250
    initialWindowPosition $= Position 100 100
-   createWindow "hello"
+   _ <- createWindow "hello"
    myInit
    displayCallback $= display
    mainLoop

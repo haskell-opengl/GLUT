@@ -115,7 +115,7 @@ main = do
    -- The original C example uses single buffering, which flickers a lot.
    initialDisplayMode $= [ DoubleBuffered, RGBMode, WithDepthBuffer ]
    initialWindowSize $= Size 500 500
-   createWindow progName
+   _ <- createWindow progName
    state <- makeState
    displayLists <- myInit
    reshapeCallback $= Just reshape

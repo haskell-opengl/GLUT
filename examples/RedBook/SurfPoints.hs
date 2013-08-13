@@ -113,7 +113,7 @@ main = do
    initialDisplayMode $= [ SingleBuffered, RGBMode, WithDepthBuffer ]
    initialWindowSize $= Size 500 500
    initialWindowPosition $= Position 100 100
-   createWindow progName
+   _ <- createWindow progName
    version <- get (majorMinor gluVersion)
    when (version < (1,3)) $ do
       putStrLn "This program demonstrates a feature which is introduced in the"

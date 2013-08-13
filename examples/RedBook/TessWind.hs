@@ -186,7 +186,7 @@ main = do
    (progName, _args) <- getArgsAndInitialize
    initialDisplayMode $= [ SingleBuffered, RGBMode ]
    initialWindowSize $= Size 500 500
-   createWindow progName
+   _ <- createWindow progName
    state <- makeState
    displayLists <- myInit state
    displayCallback $= display displayLists

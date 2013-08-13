@@ -111,7 +111,7 @@ main = do
    (progName, _args) <- getArgsAndInitialize
    initialDisplayMode $= [ DoubleBuffered, RGBMode ]
    initialWindowSize $= Size 500 500
-   createWindow progName
+   _ <- createWindow progName
    state <- makeState
    myInit
    reshapeCallback $= Just reshape

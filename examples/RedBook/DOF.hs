@@ -174,7 +174,7 @@ main = do
    initialDisplayMode $= [ SingleBuffered, RGBMode, WithAccumBuffer, WithDepthBuffer ]
    initialWindowSize $= Size 400 400
    initialWindowPosition $= Position 100 100
-   createWindow progName
+   _ <- createWindow progName
    teapotList <- myInit
    reshapeCallback $= Just reshape
    keyboardMouseCallback $= Just keyboard

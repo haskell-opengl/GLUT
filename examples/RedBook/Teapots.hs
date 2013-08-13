@@ -218,7 +218,7 @@ main = do
    initialDisplayMode $= [ SingleBuffered, RGBMode, WithDepthBuffer ]
    initialWindowSize $= Size 500 600
    initialWindowPosition $= Position 50 50
-   createWindow progName
+   _ <- createWindow progName
    teapotList <- myInit
    reshapeCallback $= Just reshape
    displayCallback $= display teapotList

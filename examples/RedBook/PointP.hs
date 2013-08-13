@@ -134,7 +134,7 @@ main = do
    initialDisplayMode $= [ RGBMode, DoubleBuffered, WithDepthBuffer, Multisampling ]
    initialWindowSize $= Size 500 500
    initialWindowPosition $= Position 100 100
-   createWindow progName
+   _ <- createWindow progName
 
    -- We have to do this *after* createWindow, otherwise we have no OpenGL
    -- context. Note that the original C example simply tests for OpenGL 1.4 at

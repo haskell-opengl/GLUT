@@ -109,7 +109,7 @@ main = do
    initialDisplayMode $= [ DoubleBuffered, RGBMode, WithDepthBuffer ]
    initialWindowSize $= Size 400 400
    initialWindowPosition $= Position 50 50
-   createWindow progName
+   _ <- createWindow progName
    state <- makeState
    myInit
    displayCallback $= display state
