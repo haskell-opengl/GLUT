@@ -97,12 +97,12 @@ checked action getStatus getInfoLog message object = do
    unless status $
       hPutStrLn stderr . ((message ++ " log: ") ++) =<< get (getInfoLog object)
 
-compileAndCheck :: Shader s => s -> IO ()
+compileAndCheck :: Shader -> IO ()
 compileAndCheck = checked compileShader compileStatus shaderInfoLog "compile"
 
-compileShaderSource :: Shader s => [String] -> IO s
-compileShaderSource source = do
-   [shader] <- genObjectNames 1
+compileShaderSource :: ShaderType -> [String] -> IO Shader
+compileShaderSource st source = do
+   shader <- createShader st
    shaderSource shader $= source
    compileAndCheck shader
    return shader
@@ -110,18 +110,18 @@ compileShaderSource source = do
 linkAndCheck :: Program -> IO ()
 linkAndCheck = checked linkProgram linkStatus programInfoLog "link"
 
-createProgram :: [VertexShader] -> [FragmentShader] -> IO Program
-createProgram vertexShaders fragmentShaders = do
-   [program] <- genObjectNames 1
-   attachedShaders program $= (vertexShaders, fragmentShaders)
+createProgramUsing :: [Shader] -> IO Program
+createProgramUsing shaders = do
+   program <- createProgram
+   attachedShaders program $= shaders
    linkAndCheck program
    return program
 
 initShader :: IO (UniformLocation, AttribLocation, AttribLocation)
 initShader = do
-   vertexShader <- compileShaderSource [vertexShaderSource]
-   fragmentShader <- compileShaderSource [fragmentShaderSource]
-   program <- createProgram [vertexShader] [fragmentShader]
+   vertexShader <- compileShaderSource VertexShader [vertexShaderSource]
+   fragmentShader <- compileShaderSource FragmentShader [fragmentShaderSource]
+   program <- createProgramUsing [vertexShader, fragmentShader]
    currentProgram $= Just program
 
    projectionMatrixIndex <- get (uniformLocation program "fg_ProjectionMatrix")

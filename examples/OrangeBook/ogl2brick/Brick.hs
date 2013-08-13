@@ -289,10 +289,10 @@ checkGLSLSupport = do
       unless ("GL_ARB_shading_language_100" `elem` extensions) $
          ioError (userError "No GLSL support found.")
 
-readAndCompileShader :: Shader s => FilePath -> IO s
-readAndCompileShader filePath = do
+readAndCompileShader :: ShaderType -> FilePath -> IO Shader
+readAndCompileShader st filePath = do
    src <- readFile filePath
-   [shader] <- genObjectNames 1
+   shader <- createShader st
    shaderSource shader $= [src]
    compileShader shader
    reportErrors
@@ -304,10 +304,10 @@ readAndCompileShader filePath = do
       ioError (userError "shader compilation failed")
    return shader
 
-installBrickShaders :: [VertexShader] -> [FragmentShader] -> IO ()
-installBrickShaders vs fs = do
-   [brickProg] <- genObjectNames 1
-   attachedShaders brickProg $= (vs, fs)
+installBrickShaders :: [Shader] -> IO ()
+installBrickShaders shaders = do
+   brickProg <- createProgram
+   attachedShaders brickProg $= shaders
    linkProgram brickProg
    reportErrors
    ok <- get (linkStatus brickProg)
@@ -347,9 +347,9 @@ main = do
 
    catch
      (do checkGLSLSupport
-         vs <- readAndCompileShader "Brick.vert"
-         fs <- readAndCompileShader "Brick.frag"
-         installBrickShaders [vs] [fs])
+         vs <- readAndCompileShader VertexShader "Brick.vert"
+         fs <- readAndCompileShader FragmentShader "Brick.frag"
+         installBrickShaders [vs, fs])
      (\exception -> do
          print (exception :: IOException)
          putStrLn "Using fixed function pipeline."
