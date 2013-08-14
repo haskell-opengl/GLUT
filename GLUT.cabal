@@ -15,26 +15,34 @@ description:
 build-type: Simple
 cabal-version: >=1.6
 extra-source-files:
-   README
+   README.md
+   examples/BOGLGP/Chapter01/Makefile
    examples/BOGLGP/Chapter01/OnYourOwn1.hs
    examples/BOGLGP/Chapter01/Simple.hs
+   examples/BOGLGP/Chapter02/Makefile
    examples/BOGLGP/Chapter02/OnYourOwn1.hs
    examples/BOGLGP/Chapter02/OpenGLApplication.hs
    examples/BOGLGP/Chapter03/Lines.hs
+   examples/BOGLGP/Chapter03/Makefile
    examples/BOGLGP/Chapter03/OnYourOwn1.hs
    examples/BOGLGP/Chapter03/Points.hs
    examples/BOGLGP/Chapter03/Polygons.hs
    examples/BOGLGP/Chapter03/TrianglesQuads.hs
+   examples/BOGLGP/Makefile
+   examples/Makefile
    examples/Misc/ARBOcclude.hs
    examples/Misc/ExtractContours.hs
    examples/Misc/Gears.hs
+   examples/Misc/Makefile
    examples/Misc/Pitfall14.hs
    examples/Misc/SmoothOpenGL3.hs
    examples/Misc/Triangulate.hs
    examples/OrangeBook/3Dlabs-License.txt
+   examples/OrangeBook/Makefile
    examples/OrangeBook/ogl2brick/Brick.frag
    examples/OrangeBook/ogl2brick/Brick.hs
    examples/OrangeBook/ogl2brick/Brick.vert
+   examples/OrangeBook/ogl2brick/Makefile
    examples/RedBook/00-README
    examples/RedBook/AAIndex.hs
    examples/RedBook/AARGB.hs
@@ -71,6 +79,7 @@ extra-source-files:
    examples/RedBook/Light.hs
    examples/RedBook/Lines.hs
    examples/RedBook/MVArray.hs
+   examples/RedBook/Makefile
    examples/RedBook/Material.hs
    examples/RedBook/Minmax.hs
    examples/RedBook/Mipmap.hs
@@ -109,6 +118,7 @@ extra-source-files:
    examples/RedBook/UnProject.hs
    examples/RedBook/VArray.hs
    examples/RedBook/Wrap.hs
+   examples/examples.mk
    include/HsGLUTExt.h
 
 flag split-base
