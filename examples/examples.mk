@@ -1,7 +1,7 @@
 ALL_DIRS         := $(SUBDIRS:%=all-%)
 CLEAN_DIRS       := $(SUBDIRS:%=clean-%)
 HC               := ghc
-HC_FLAGS         := -Wall
+HC_FLAGS         := --make -v0 -Wall
 HS_SOURCES       := $(wildcard *.hs)
 HS_PROG_SOURCES  := $(filter-out $(EXCLUDED_SOURCES), $(HS_SOURCES))
 HS_PROGS         := $(HS_PROG_SOURCES:.hs=)
@@ -22,4 +22,4 @@ $(CLEAN_DIRS):
 	$(MAKE) -C $(@:clean-%=%) clean
 
 $(HS_PROGS): %: %.hs
-	$(HC) --make $(HC_FLAGS) $<
+	$(HC) $(HC_FLAGS) $(EXTRA_HC_FLAGS) $<
