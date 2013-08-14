@@ -345,7 +345,7 @@ main = do
    motionCallback $= Just (motion state)
    addTimerCallback timerFrequencyMillis (timer state)
 
-   catch
+   Control.Exception.catch
      (do checkGLSLSupport
          vs <- readAndCompileShader VertexShader "Brick.vert"
          fs <- readAndCompileShader FragmentShader "Brick.frag"
