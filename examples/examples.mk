@@ -15,7 +15,7 @@ $(ALL_DIRS):
 
 clean: $(CLEAN_DIRS)
 ifneq ($(HS_SOURCES),)
-	$(RM) $(HS_SOURCES:.hs=.hi) $(HS_SOURCES:.hs=.o) $(HS_PROGS)
+	$(RM) $(HS_SOURCES:.hs=.hi) $(HS_SOURCES:.hs=.o) $(HS_PROG_SOURCES:.hs=.exe) $(HS_PROGS)
 endif
 
 $(CLEAN_DIRS): 
