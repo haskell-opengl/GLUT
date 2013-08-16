@@ -169,7 +169,7 @@ type Value  = CInt
 --------------------------------------------------------------------------------
 
 -- | Controls the /current menu./ If no menus exist or the previous /current
--- menu/ was destroyed, a pseudo menu is returned, see 'isRealMenu'.
+-- menu/ was destroyed, a pseudo menu is returned.
 
 currentMenu :: StateVar MenuID
 currentMenu = makeStateVar glutGetMenu glutSetMenu

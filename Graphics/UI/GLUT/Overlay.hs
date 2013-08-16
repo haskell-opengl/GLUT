@@ -85,8 +85,8 @@ getHasOverlay = layerGet (/= 0) glut_HAS_OVERLAY
 --------------------------------------------------------------------------------
 
 -- | Contains 'True' if an overlay could be established for the /current window/
--- given the current /initial display mode/. If it contains 'False',
--- 'setHasOverlay' will fail with a fatal error if called.
+-- given the current /initial display mode/. If it contains 'False', setting
+-- 'hasOverlay' will fail with a fatal error.
 
 overlayPossible :: GettableStateVar Bool
 overlayPossible = makeGettableStateVar $ layerGet (/= 0) glut_OVERLAY_POSSIBLE
