@@ -43,7 +43,7 @@ myInit = do
    subImage   <- makeCheckImage subImageSize   0x4 (\c -> Color4 c 0 0 255)
    rowAlignment Unpack $= 1
 
-   [texName] <- genObjectNames 1
+   texName <- genObjectName
    textureBinding Texture2D $= Just texName
 
    textureWrapMode Texture2D S $= (Repeated, Repeat)

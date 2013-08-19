@@ -14,7 +14,7 @@
 -}
 
 import Control.Monad ( when )
-import Data.Maybe ( isJust, listToMaybe )
+import Data.Maybe ( isJust )
 import Data.Bits ( (.&.) )
 import Foreign ( withArray )
 import System.Exit ( exitWith, ExitCode(ExitSuccess) )
@@ -43,7 +43,7 @@ myInit = do
 
    exts <- get glExtensions
    mbTexName <- if "GL_EXT_texture_object" `elem` exts
-                   then fmap listToMaybe $ genObjectNames 1
+                   then fmap Just genObjectName
                    else return Nothing
    when (isJust mbTexName) $ textureBinding Texture2D $= mbTexName
 

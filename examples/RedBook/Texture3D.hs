@@ -34,7 +34,7 @@ myInit = do
    depthFunc $= Just Less
    rowAlignment Unpack $= 1
 
-   [texName] <- genObjectNames 1
+   texName <- genObjectName
    textureBinding Texture3D $= Just texName
    textureWrapMode Texture3D S $= (Repeated, Clamp)
    textureWrapMode Texture3D T $= (Repeated, Clamp)

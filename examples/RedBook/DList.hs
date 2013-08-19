@@ -14,7 +14,7 @@ import Graphics.UI.GLUT
 
 myInit :: IO DisplayList
 myInit = do
-   [listName] <- genObjectNames 1
+   listName <- genObjectName
    -- resolve overloading, not needed in "real" programs
    let color3f = color :: Color3 GLfloat -> IO ()
        vertex2f = vertex :: Vertex2 GLfloat -> IO ()

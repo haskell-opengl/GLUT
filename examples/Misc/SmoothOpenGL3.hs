@@ -60,7 +60,7 @@ numElements = fromIntegral sizeOfVarray `div` fromIntegral stride
 
 initBuffer :: IO BufferObject
 initBuffer = do
-   [bufferObject] <- genObjectNames 1
+   bufferObject <- genObjectName
    bindBuffer ArrayBuffer $= Just bufferObject
    withArray varray $ \buffer ->
       bufferData ArrayBuffer $= (fromIntegral sizeOfVarray, buffer, StaticDraw)

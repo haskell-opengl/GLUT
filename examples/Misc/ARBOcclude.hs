@@ -187,7 +187,7 @@ main = do
    reshapeCallback $= Just (\size -> viewport $= (Position 0 0, size))
    keyboardMouseCallback $= Just (keyboard state)
    setIdleCallback state
-   [ occQuery ] <- genObjectNames 1
+   occQuery <- genObjectName
    displayCallback $= display occQuery state
    myInit
    mainLoop
