@@ -1,3 +1,7 @@
 /cabal-dev/
 /dist/
 *.swp
+*.o
+*.hi
+*.exe
+*~
