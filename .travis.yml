@@ -24,4 +24,4 @@ before_install:
   - ghc-pkg list
 script:
   - cabal install --enable-documentation
-  - make -C examples
+  - make -j2 -C examples
