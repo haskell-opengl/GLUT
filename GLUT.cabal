@@ -2,7 +2,7 @@ name: GLUT
 version: 2.5.0.0
 license: BSD3
 license-file: LICENSE
-maintainer: Jason Dagit <dagitj@gmail.com>, Sven Panne <svenpanne@gmail.com>
+maintainer: Sven Panne <svenpanne@gmail.com>, Jason Dagit <dagitj@gmail.com>
 bug-reports: https://github.com/haskell-opengl/GLUT/issues
 homepage: http://www.haskell.org/haskellwiki/Opengl
 category: Graphics
@@ -145,7 +145,8 @@ library
       Graphics.UI.GLUT.Objects,
       Graphics.UI.GLUT.Overlay,
       Graphics.UI.GLUT.State,
-      Graphics.UI.GLUT.Window,
+      Graphics.UI.GLUT.Window
+   other-modules:
       Graphics.UI.GLUT.Callbacks.Registration,
       Graphics.UI.GLUT.QueryUtils,
       Graphics.UI.GLUT.Raw,
