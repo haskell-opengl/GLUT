@@ -91,7 +91,7 @@ data Descriptor = Descriptor VertexArrayObject ArrayIndex NumArrayIndices
 
 init :: IO Descriptor
 init = do
-  [triangles] <- genObjectNames 1
+  triangles <- genObjectName
   bindVertexArrayObject $= Just triangles
 
   let vertices = [
@@ -103,7 +103,7 @@ init = do
         Vertex2 (-0.85)   0.90 ] :: [Vertex2 GLfloat]
       numVertices = length vertices
 
-  [arrayBuffer] <- genObjectNames 1
+  arrayBuffer <- genObjectName
   bindBuffer ArrayBuffer $= Just arrayBuffer
   withArray vertices $ \ptr -> do
     let size = fromIntegral (numVertices * sizeOf (head vertices))
