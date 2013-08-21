@@ -165,7 +165,10 @@ library
    build-depends: OpenGL == 2.9.*, OpenGLRaw == 1.4.*
    ghc-options: -Wall -O2
    if os(windows) && flag(UseNativeWindowsLibraries)
-      cpp-options: "-DCALLCONV=stdcall"
+      if arch(i386)
+         cpp-options: "-DCALLCONV=stdcall"
+      else
+         cpp-options: "-DCALLCONV=ccall"
       cc-options: "-DUSE_GETPROCADDRESS"
       extra-libraries: glut32
    else
