@@ -19,4 +19,6 @@ This directory contains OpenGL example programs from various sources:
 If you have 'make' and 'ghc' installed, you can just issue 'make' at any
 directory level to compile the examples. 'make clean' cleans up afterwards, and
 you can use '-j [N]' for parallel builds. Directly loading the examples into
-e.g. ghci is possible, too, just ':load' an example and run it via 'main'.
+e.g. ghci is possible, too, just ':load' an example and run it via 'main'. For
+some examples, you might have to extend the search path like '-i../common', see
+the corresponding Makefile.

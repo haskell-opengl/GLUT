@@ -7,7 +7,6 @@
    Our first OpenGL program.
 -}
 
-import Control.Exception
 import Control.Monad
 import Foreign.Marshal.Array
 import Foreign.Ptr
@@ -15,6 +14,7 @@ import Foreign.Storable
 import Graphics.UI.GLUT
 import Prelude hiding ( init )
 import System.IO
+import LoadShaders
 
 -- TODO: Just for debugging, remove me later.
 checkError :: String -> IO ()
@@ -24,68 +24,8 @@ checkError functionName = get errors >>= mapM_ reportError
         showError (Error category message) =
           "GL error " ++ show category ++ " (" ++ message ++ ")"
 
-data ShaderSource =
-     FileSource FilePath
-   | StringSource String
-
-data ShaderInfo = ShaderInfo ShaderType ShaderSource
-
-checked :: (t -> IO ())
-        -> (t -> GettableStateVar Bool)
-        -> (t -> GettableStateVar String)
-        -> String
-        -> t
-        -> IO ()
-checked action getStatus getInfoLog message object = do
-   action object
-   ok <- get (getStatus object)
-   unless ok $ do
-      infoLog <- get (getInfoLog object)
-      fail (message ++ " log: " ++ infoLog)
-
-compileAndCheck :: Shader -> IO ()
-compileAndCheck = checked compileShader compileStatus shaderInfoLog "compile"
-
-getSource :: ShaderSource -> IO String
-getSource (FileSource path) = readFile path
-getSource (StringSource src) = return src
-
-linkAndCheck :: Program -> IO ()
-linkAndCheck = checked linkProgram linkStatus programInfoLog "link"
-
-traceCreation :: Show a => IO a -> IO a
-traceCreation create = do
-   x <- create
-   putStrLn ("Created " ++ show x)
-   return x
-
-traceDeletion :: Show a => (a -> IO b) -> a -> IO b
-traceDeletion delete x = do
-   putStrLn ("Deleting " ++ show x)
-   delete x
-
-loadCompileAttach :: Program -> [ShaderInfo] -> IO ()
-loadCompileAttach _ [] = return ()
-loadCompileAttach program (ShaderInfo shType source : infos) =
-   (traceCreation $ createShader shType) `bracketOnError` (traceDeletion deleteObjectName) $ \shader -> do
-      src <- getSource source
-      shaderSource shader $= [src]
-      compileAndCheck shader
-      attachShader program shader
-      loadCompileAttach program infos
-
-loadShaders :: [ShaderInfo] -> IO Program
-loadShaders infos =
-   (traceCreation createProgram) `bracketOnError` (traceDeletion deleteObjectName) $ \program -> do
-      loadCompileAttach program infos
-      linkAndCheck program
-      return program
-
 bufferOffset :: Integral a => a -> Ptr b
 bufferOffset = plusPtr nullPtr . fromIntegral
-
-vPosition :: AttribLocation
-vPosition = AttribLocation 0
 
 data Descriptor = Descriptor VertexArrayObject ArrayIndex NumArrayIndices
 
@@ -115,6 +55,7 @@ init = do
   currentProgram $= Just program
 
   let firstIndex = 0
+      vPosition = AttribLocation 0
   vertexAttribPointer vPosition $=
     (ToFloat, VertexArrayDescriptor 2 Float 0 (bufferOffset firstIndex))
   vertexAttribArray vPosition $= Enabled
