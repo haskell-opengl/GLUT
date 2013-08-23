@@ -1,6 +1,6 @@
 {-
    Pitfall14
-   Copyright (c) Sven Panne 2002-2005 <sven.panne@aedion.de>
+   Copyright (c) Sven Panne 2002-2005 <svenpanne@gmail.com>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 

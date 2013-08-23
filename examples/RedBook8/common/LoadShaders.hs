@@ -2,9 +2,9 @@
 -- |
 -- Module      :  LoadShaders
 -- Copyright   :  (c) Sven Panne 2013
--- License     :  BSD-style (see the file GLUT/LICENSE)
+-- License     :  BSD3
 --
--- Maintainer  :  svenpanne@gmail.com
+-- Maintainer  :  Sven Panne <svenpanne@gmail.com>
 -- Stability   :  stable
 -- Portability :  portable
 --

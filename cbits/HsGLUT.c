@@ -1,11 +1,11 @@
 /* -----------------------------------------------------------------------------
  *
  * Module      :  C support for Graphics.UI.GLUT.Raw
- * Copyright   :  (c) Sven Panne 2002-2009
- * License     :  BSD-style (see the file LICENSE)
+ * Copyright   :  (c) Sven Panne 2002-2013
+ * License     :  BSD3
  *
- * Maintainer  :  sven.panne@aedion.de
- * Stability   :  provisional
+ * Maintainer  :  Sven Panne <svenpanne@gmail.com>
+ * Stability   :  stable
  * Portability :  portable
  *
  * -------------------------------------------------------------------------- */

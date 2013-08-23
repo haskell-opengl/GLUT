@@ -1,11 +1,11 @@
 /* -----------------------------------------------------------------------------
  *
  * Module      :  GLUT extension support for Graphics.UI.GLUT
- * Copyright   :  (c) Sven Panne 2002-2005
- * License     :  BSD-style (see the file libraries/OpenGL/LICENSE)
+ * Copyright   :  (c) Sven Panne 2002-2013
+ * License     :  BSD3
  *
- * Maintainer  :  sven.panne@aedion.de
- * Stability   :  provisional
+ * Maintainer  :  Sven Panne <svenpanne@gmail.com>
+ * Stability   :  stable
  * Portability :  portable
  *
  * This header should only define preprocessor macros!

@@ -1,7 +1,7 @@
 {-
    Gears.hs (adapted from gears.c which is (c) Brian Paul)
    Copyright (c) Shawn P. Garbett 2004 <shawn@garbett.org>
-   Further hacked by Sven Panne <sven.panne@aedion.de>
+   Further hacked by Sven Panne <svenpanne@gmail.com>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 

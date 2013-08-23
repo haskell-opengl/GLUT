@@ -1,6 +1,6 @@
 {-
    Brick.hs (adapted from ogl2brick.c which is (c) 3Dlabs Inc. Ltd.)
-   Copyright (c) Sven Panne 2006 <sven.panne@aedion.de>
+   Copyright (c) Sven Panne 2006 <svenpanne@gmail.com>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 -}

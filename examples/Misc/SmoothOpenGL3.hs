@@ -1,6 +1,6 @@
 {-
    SmoothOpenGL3.hs (adapted from freeglut's smooth_opengl3.c example)
-   Copyright (c) Sven Panne 2009 <sven.panne@aedion.de>
+   Copyright (c) Sven Panne 2009 <svenpanne@gmail.com>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file LICENSE
 -}
