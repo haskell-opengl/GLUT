@@ -1,5 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface, CPP #-}
--- #hide
+{-# OPTIONS_HADDOCK hide #-}
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Raw.APIEntry

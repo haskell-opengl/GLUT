@@ -1,5 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
--- #hide
+{-# OPTIONS_HADDOCK hide #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Raw.Fonts
