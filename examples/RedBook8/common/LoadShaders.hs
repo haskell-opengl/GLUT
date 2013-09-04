@@ -14,7 +14,7 @@
 --------------------------------------------------------------------------------
 
 module LoadShaders (
-   ShaderSource(..), ShaderInfo(..), loadShaders
+   ShaderSource'(..), ShaderInfo(..), loadShaders
 ) where
 
 import Control.Exception
@@ -25,14 +25,14 @@ import Graphics.Rendering.OpenGL
 
 -- | The source of the shader source code.
 
-data ShaderSource =
+data ShaderSource' =
      FileSource FilePath
      -- ^ The shader source code is located in the file at the given 'FilePath'.
    | StringSource String
      -- ^ The shader source code is directly given as a 'String'.
    deriving ( Eq, Ord, Show )
 
-getSource :: ShaderSource -> IO String
+getSource :: ShaderSource' -> IO String
 getSource (FileSource path) = readFile path
 getSource (StringSource src) = return src
 
@@ -40,7 +40,7 @@ getSource (StringSource src) = return src
 
 -- | A description of a shader: The type of the shader plus its source code.
 
-data ShaderInfo = ShaderInfo ShaderType ShaderSource
+data ShaderInfo = ShaderInfo ShaderType ShaderSource'
    deriving ( Eq, Ord, Show )
 
 --------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ loadCompileAttach _ [] = return ()
 loadCompileAttach program (ShaderInfo shType source : infos) =
    createShader shType `bracketOnError` deleteObjectName $ \shader -> do
       src <- getSource source
-      shaderSource shader $= [src]
+      shaderSource shader $= src
       compileAndCheck shader
       attachShader program shader
       loadCompileAttach program infos

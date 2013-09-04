@@ -100,7 +100,7 @@ checked action getStatus getInfoLog message object = do
 compileAndCheck :: Shader -> IO ()
 compileAndCheck = checked compileShader compileStatus shaderInfoLog "compile"
 
-compileShaderSource :: ShaderType -> [String] -> IO Shader
+compileShaderSource :: ShaderType -> String -> IO Shader
 compileShaderSource st source = do
    shader <- createShader st
    shaderSource shader $= source
@@ -119,8 +119,8 @@ createProgramUsing shaders = do
 
 initShader :: IO (UniformLocation, AttribLocation, AttribLocation)
 initShader = do
-   vertexShader <- compileShaderSource VertexShader [vertexShaderSource]
-   fragmentShader <- compileShaderSource FragmentShader [fragmentShaderSource]
+   vertexShader <- compileShaderSource VertexShader vertexShaderSource
+   fragmentShader <- compileShaderSource FragmentShader fragmentShaderSource
    program <- createProgramUsing [vertexShader, fragmentShader]
    currentProgram $= Just program
 

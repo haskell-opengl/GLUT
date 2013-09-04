@@ -293,7 +293,7 @@ readAndCompileShader :: ShaderType -> FilePath -> IO Shader
 readAndCompileShader st filePath = do
    src <- readFile filePath
    shader <- createShader st
-   shaderSource shader $= [src]
+   shaderSource shader $= src
    compileShader shader
    reportErrors
    ok <- get (compileStatus shader)
