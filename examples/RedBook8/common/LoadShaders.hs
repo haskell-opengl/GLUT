@@ -14,33 +14,42 @@
 --------------------------------------------------------------------------------
 
 module LoadShaders (
-   ShaderSource'(..), ShaderInfo(..), loadShaders
+   ShaderSource(..), ShaderInfo(..), loadShaders
 ) where
 
 import Control.Exception
 import Control.Monad
+import qualified Data.ByteString as B
+import qualified Data.Text as T
+import qualified Data.Text.Encoding as TE
 import Graphics.Rendering.OpenGL
 
 --------------------------------------------------------------------------------
 
 -- | The source of the shader source code.
 
-data ShaderSource' =
-     FileSource FilePath
-     -- ^ The shader source code is located in the file at the given 'FilePath'.
+data ShaderSource =
+     ByteStringSource B.ByteString
+     -- ^ The shader source code is directly given as a 'B.ByteString'.
    | StringSource String
      -- ^ The shader source code is directly given as a 'String'.
+   | FileSource FilePath
+     -- ^ The shader source code is located in the file at the given 'FilePath'.
    deriving ( Eq, Ord, Show )
 
-getSource :: ShaderSource' -> IO String
-getSource (FileSource path) = readFile path
-getSource (StringSource src) = return src
+getSource :: ShaderSource -> IO B.ByteString
+getSource (ByteStringSource bs) = return bs
+getSource (StringSource str) = return $ packUtf8 str
+getSource (FileSource path) = B.readFile path
+
+packUtf8 :: String -> B.ByteString
+packUtf8 = TE.encodeUtf8 . T.pack
 
 --------------------------------------------------------------------------------
 
 -- | A description of a shader: The type of the shader plus its source code.
 
-data ShaderInfo = ShaderInfo ShaderType ShaderSource'
+data ShaderInfo = ShaderInfo ShaderType ShaderSource
    deriving ( Eq, Ord, Show )
 
 --------------------------------------------------------------------------------

@@ -6,7 +6,10 @@
 -}
 
 import Control.Monad
+import qualified Data.ByteString as B
 import Data.List
+import qualified Data.Text as T
+import qualified Data.Text.Encoding as TE
 import Foreign.Marshal.Array
 import Foreign.Ptr
 import Foreign.Storable
@@ -67,8 +70,11 @@ initBuffer = do
    checkError "initBuffer"
    return bufferObject
 
-vertexShaderSource :: String
-vertexShaderSource = unlines [
+packUtf8 :: String -> B.ByteString
+packUtf8 = TE.encodeUtf8 . T.pack
+
+vertexShaderSource :: B.ByteString
+vertexShaderSource = packUtf8 . unlines $ [
    "#version 140",
    "uniform mat4 fg_ProjectionMatrix;",
    "in vec4 fg_Color;",
@@ -80,8 +86,8 @@ vertexShaderSource = unlines [
    "   gl_Position = fg_ProjectionMatrix * fg_Vertex;",
    "}" ]
 
-fragmentShaderSource :: String
-fragmentShaderSource = unlines [
+fragmentShaderSource :: B.ByteString
+fragmentShaderSource = packUtf8 . unlines $ [
    "#version 140",
    "smooth in vec4 fg_SmoothColor;",
    "out vec4 fg_FragColor;",
@@ -100,7 +106,7 @@ checked action getStatus getInfoLog message object = do
 compileAndCheck :: Shader -> IO ()
 compileAndCheck = checked compileShader compileStatus shaderInfoLog "compile"
 
-compileShaderSource :: ShaderType -> String -> IO Shader
+compileShaderSource :: ShaderType -> B.ByteString -> IO Shader
 compileShaderSource st source = do
    shader <- createShader st
    shaderSource shader $= source

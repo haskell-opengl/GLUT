@@ -9,6 +9,7 @@ import Prelude hiding ( sum )
 import Control.Applicative
 import Control.Exception ( IOException, catch )
 import Control.Monad
+import qualified Data.ByteString as B
 import Data.Foldable ( Foldable, sum )
 import Data.IORef
 import System.Exit
@@ -291,7 +292,7 @@ checkGLSLSupport = do
 
 readAndCompileShader :: ShaderType -> FilePath -> IO Shader
 readAndCompileShader st filePath = do
-   src <- readFile filePath
+   src <- B.readFile filePath
    shader <- createShader st
    shaderSource shader $= src
    compileShader shader
