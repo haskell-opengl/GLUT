@@ -294,7 +294,7 @@ readAndCompileShader :: ShaderType -> FilePath -> IO Shader
 readAndCompileShader st filePath = do
    src <- B.readFile filePath
    shader <- createShader st
-   shaderSource shader $= src
+   shaderSourceBS shader $= src
    compileShader shader
    reportErrors
    ok <- get (compileStatus shader)

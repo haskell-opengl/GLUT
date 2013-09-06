@@ -109,7 +109,7 @@ compileAndCheck = checked compileShader compileStatus shaderInfoLog "compile"
 compileShaderSource :: ShaderType -> B.ByteString -> IO Shader
 compileShaderSource st source = do
    shader <- createShader st
-   shaderSource shader $= source
+   shaderSourceBS shader $= source
    compileAndCheck shader
    return shader
 
