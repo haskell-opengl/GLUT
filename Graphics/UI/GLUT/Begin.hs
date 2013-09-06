@@ -72,11 +72,10 @@ data ActionOnWindowClose
      MainLoopReturns
    | -- | Return from mainLoop after the last window is closed.
      ContinueExecution
-   | -- | Deprecated, use 'ContinueExecution'.
-     ContinueExectuion
+   | ContinueExectuion
    deriving ( Eq, Ord, Show )
 
-{-# DEPRECATED ContinueExectuion "use `ContinueExecution' instead" #-}
+{-# DEPRECATED ContinueExectuion "Use 'ContinueExecution' instead." #-}
 
 marshalActionOnWindowClose :: ActionOnWindowClose -> CInt
 marshalActionOnWindowClose x = case x of
