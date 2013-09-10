@@ -17,15 +17,15 @@ import Graphics.UI.GLUT
 myInit :: IO ()
 myInit = do
    let check = do
-          ok <- get (textureProxyOK (Left Texture2D) 0)
+          ok <- get (textureProxyOK Texture2D 0)
           putStrLn ("proxy allocation " ++ if ok then "succeeded" else "failed")
 
-   texImage2D Nothing Proxy 0 RGBA8 (TextureSize2D 64 64) 0 (PixelData RGBA UnsignedByte nullPtr)
+   texImage2D Texture2D Proxy 0 RGBA8 (TextureSize2D 64 64) 0 (PixelData RGBA UnsignedByte nullPtr)
    check
 
    -- Note: We use a larger texture size here to demonstrate failure,
    -- modern graphic cards can handle the original size.
-   texImage2D Nothing Proxy 0 RGBA16 (TextureSize2D 8192 8192) 0 (PixelData RGBA UnsignedShort nullPtr)
+   texImage2D Texture2D Proxy 0 RGBA16 (TextureSize2D 8192 8192) 0 (PixelData RGBA UnsignedShort nullPtr)
    check
 
 

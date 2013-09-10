@@ -62,7 +62,7 @@ myInit = do
    textureWrapMode Texture2D S $= (Repeated, Repeat)
    textureWrapMode Texture2D T $= (Repeated, Repeat)
    textureFilter Texture2D $= ((Nearest, Nothing), Nearest)
-   withImage $ texImage2D Nothing NoProxy 0 RGB' imageSize 0
+   withImage $ texImage2D Texture2D NoProxy 0 RGB' imageSize 0
    texture Texture2D $= Enabled
    depthFunc $= Just Less
    shadeModel $= Flat

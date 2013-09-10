@@ -40,7 +40,7 @@ myInit = do
    textureWrapMode Texture3D T $= (Repeated, Clamp)
    textureWrapMode Texture3D R $= (Repeated, Clamp)
    textureFilter Texture3D $= ((Nearest, Nothing), Nearest)
-   withImage $ texImage3D NoProxy 0  RGB' imageSize 0
+   withImage $ texImage3D Texture3D NoProxy 0  RGB' imageSize 0
    texture Texture3D $= Enabled
 
 display :: DisplayCallback

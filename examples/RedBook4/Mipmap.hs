@@ -19,7 +19,7 @@ import Graphics.UI.GLUT
 makeImage :: Level -> TextureSize2D -> Color4 GLubyte -> IO ()
 makeImage level size@(TextureSize2D w h) col =
    withArray (replicate (fromIntegral (w * h)) col) $
-      texImage2D Nothing NoProxy level RGBA' size 0 . PixelData RGBA UnsignedByte
+      texImage2D Texture2D NoProxy level RGBA' size 0 . PixelData RGBA UnsignedByte
 
 makeImages :: [Color4 GLubyte] -> IO ()
 makeImages colors = sequence_ $ zipWith3 makeImage levels sizes colors

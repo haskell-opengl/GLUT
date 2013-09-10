@@ -14,7 +14,7 @@ specifyTexture :: TextureSize2D -> (GLubyte -> GLubyte -> Color4 GLubyte) -> IO 
 specifyTexture size@(TextureSize2D w h) f =
    withArray [ f i j | i <- [ 0 .. fromIntegral w - 1 ],
                        j <- [ 0 .. fromIntegral h - 1] ] $
-      texImage2D Nothing NoProxy 0 RGBA' size 0 . PixelData RGBA UnsignedByte
+      texImage2D Texture2D NoProxy 0 RGBA' size 0 . PixelData RGBA UnsignedByte
 
 myInit :: IO ()
 myInit = do

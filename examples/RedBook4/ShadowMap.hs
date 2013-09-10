@@ -48,7 +48,7 @@ makeState = do
 
 myInit :: IO ()
 myInit = do
-   texImage2D Nothing NoProxy 0 DepthComponent' shadowMapSize 0
+   texImage2D Texture2D NoProxy 0 DepthComponent' shadowMapSize 0
               (PixelData DepthComponent UnsignedByte nullPtr)
 
    position (Light 0) $= lightPos
@@ -177,7 +177,7 @@ generateShadowMap torusAngle' showShadow' = do
          matrixMode $= Projection
       matrixMode $= Modelview 0
 
-      copyTexImage2D Nothing 0 DepthComponent' (Position 0 0) shadowMapSize 0
+      copyTexImage2D Texture2D 0 DepthComponent' (Position 0 0) shadowMapSize 0
 
    when showShadow' $ do
       let numShadowMapPixels = fromIntegral (shadowMapWidth * shadowMapHeight)

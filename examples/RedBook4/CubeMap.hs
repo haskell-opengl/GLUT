@@ -39,7 +39,7 @@ withCheckImage (TextureSize2D w h) n f act =
 makeImage :: CubeMapTarget -> (GLubyte -> (Color4 GLubyte)) -> IO ()
 makeImage target f =
    withCheckImage imageSize 0x1 f $
-      texImage2D (Just target) NoProxy 0  RGBA' imageSize 0
+      texImage2D (TextureCubeMap target) NoProxy 0  RGBA' imageSize 0
 
 myInit :: IO ()
 myInit = do
@@ -48,10 +48,10 @@ myInit = do
    shadeModel $= Smooth
 
    rowAlignment Unpack $= 1
-   textureWrapMode TextureCubeMap S $= (Repeated, Repeat)
-   textureWrapMode TextureCubeMap T $= (Repeated, Repeat)
-   textureWrapMode TextureCubeMap R $= (Repeated, Repeat)
-   textureFilter TextureCubeMap $= ((Nearest, Nothing), Nearest)
+   textureWrapMode (TextureCubeMap undefined) S $= (Repeated, Repeat)  -- TODO: WRONG!!!
+   textureWrapMode (TextureCubeMap undefined) T $= (Repeated, Repeat)  -- TODO: WRONG!!!
+   textureWrapMode (TextureCubeMap undefined) R $= (Repeated, Repeat)  -- TODO: WRONG!!!
+   textureFilter (TextureCubeMap undefined) $= ((Nearest, Nothing), Nearest)  -- TODO: WRONG!!!
 
    makeImage TextureCubeMapPositiveX (\c -> Color4   c c   c 255)
    makeImage TextureCubeMapNegativeX (\c -> Color4   0 c   c 255)
@@ -66,7 +66,7 @@ myInit = do
 
    textureFunction $= Modulate
 
-   texture TextureCubeMap $= Enabled
+   texture (TextureCubeMap undefined) $= Enabled  -- TODO: WRONG!!!
    lighting $= Enabled
    light (Light 0) $= Enabled
    autoNormal $= Enabled

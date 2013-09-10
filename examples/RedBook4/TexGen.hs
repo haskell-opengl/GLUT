@@ -53,7 +53,7 @@ myInit = do
 
    textureWrapMode Texture1D S $= (Repeated, Repeat)
    textureFilter Texture1D $= ((Linear', Nothing), Linear')
-   withStripeImage $ texImage1D NoProxy 0  RGBA' stripeImageWidth 0
+   withStripeImage $ texImage1D Texture1D NoProxy 0  RGBA' stripeImageWidth 0
 
    textureFunction $= Modulate
    textureGenMode S $= Just (ObjectLinear xEqualZero)

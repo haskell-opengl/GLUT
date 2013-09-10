@@ -55,7 +55,7 @@ myInit = do
    textureFilter Texture2D $= ((Nearest, Nothing), Nearest)
    -- horiz b & w stripes
    makeImage imageSize (\i _ -> let c = if i .&. 2 == 0 then 255 else 0 in Color4 c c c 255) $
-      texImage2D Nothing NoProxy 0  RGBA' imageSize 0
+      texImage2D Texture2D NoProxy 0  RGBA' imageSize 0
 
    textureBinding Texture2D $= Just texName1
    textureWrapMode Texture2D S $= (Repeated, Repeat)
@@ -64,7 +64,7 @@ myInit = do
    textureFunction $= Decal
    -- wider vertical 50% cyan and black stripes
    makeImage imageSize (\_ j -> let c = if j .&. 4 /= 0 then 128 else 0 in Color4 0 c c 255) $
-      texImage2D Nothing NoProxy 0  RGBA' imageSize 0
+      texImage2D Texture2D NoProxy 0  RGBA' imageSize 0
 
    -- smooth-shaded polygon with multiple texture coordinates
    let vert :: TexCoord2 GLfloat -> Color3 GLfloat -> Vertex3 GLfloat -> IO ()

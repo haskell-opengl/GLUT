@@ -47,7 +47,7 @@ myInit = do
    textureWrapMode Texture2D T $= (Repeated, Repeat)
    textureFilter Texture2D $= ((Nearest, Nothing), Nearest)
    withCheckImage checkImageSize 0x8 (\c -> Color4 c c c 255) $
-      texImage2D Nothing NoProxy 0  RGBA' checkImageSize 0
+      texImage2D Texture2D NoProxy 0  RGBA' checkImageSize 0
    return mbTexName
 
 display ::  Maybe TextureObject -> DisplayCallback
