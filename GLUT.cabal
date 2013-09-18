@@ -1,5 +1,5 @@
 name: GLUT
-version: 2.5.0.0
+version: 2.5.0.1
 license: BSD3
 license-file: LICENSE
 maintainer: Sven Panne <svenpanne@gmail.com>, Jason Dagit <dagitj@gmail.com>
@@ -16,6 +16,8 @@ build-type: Simple
 cabal-version: >=1.6
 extra-source-files:
    README.md
+   examples/00-README
+   examples/BOGLGP/00-README
    examples/BOGLGP/Chapter01/Makefile
    examples/BOGLGP/Chapter01/OnYourOwn1.hs
    examples/BOGLGP/Chapter01/Simple.hs
@@ -30,6 +32,7 @@ extra-source-files:
    examples/BOGLGP/Chapter03/TrianglesQuads.hs
    examples/BOGLGP/Makefile
    examples/Makefile
+   examples/Misc/00-README
    examples/Misc/ARBOcclude.hs
    examples/Misc/ExtractContours.hs
    examples/Misc/Gears.hs
@@ -37,6 +40,7 @@ extra-source-files:
    examples/Misc/Pitfall14.hs
    examples/Misc/SmoothOpenGL3.hs
    examples/Misc/Triangulate.hs
+   examples/OrangeBook/00-README
    examples/OrangeBook/3Dlabs-License.txt
    examples/OrangeBook/Makefile
    examples/OrangeBook/ogl2brick/Brick.frag
@@ -118,6 +122,14 @@ extra-source-files:
    examples/RedBook4/UnProject.hs
    examples/RedBook4/VArray.hs
    examples/RedBook4/Wrap.hs
+   examples/RedBook8/00-README
+   examples/RedBook8/Chapter01/Makefile
+   examples/RedBook8/Chapter01/triangles.frac
+   examples/RedBook8/Chapter01/Triangles.hs
+   examples/RedBook8/Chapter01/triangles.vert
+   examples/RedBook8/common/LoadShaders.hs
+   examples/RedBook8/common/Makefile
+   examples/RedBook8/Makefile
    examples/examples.mk
    include/HsGLUTExt.h
 
