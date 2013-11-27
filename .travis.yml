@@ -35,7 +35,7 @@ install:
  - ghc-pkg list
 
 script:
- - cabal-1.18 install --enable-documentation
+ - cabal-1.18 install --enable-documentation --verbose=3
  - cabal-1.18 sdist
  - ghc-pkg list
  - if test "$GHCVER" \> "7.1"; then cabal-1.18 install random; fi
