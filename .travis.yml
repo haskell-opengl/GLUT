@@ -38,4 +38,5 @@ script:
  - cabal-1.18 install --enable-documentation
  - cabal-1.18 sdist
  - ghc-pkg list
+ - test "$GHCVER" \> "7.1" && cabal-1.18 install random
  - make -j2 -C examples
