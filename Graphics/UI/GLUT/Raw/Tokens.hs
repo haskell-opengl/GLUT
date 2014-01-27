@@ -300,8 +300,20 @@ glut_JOYSTICK_BUTTON_D = 0x0008
 glut_JOYSTICK_POLL_RATE :: GLenum
 glut_JOYSTICK_POLL_RATE = 0x0268
 
+glut_KEY_ALT_L :: CInt
+glut_KEY_ALT_L = 0x0074
+
+glut_KEY_ALT_R :: CInt
+glut_KEY_ALT_R = 0x0075
+
 glut_KEY_BEGIN :: CInt
 glut_KEY_BEGIN = 0x006E
+
+glut_KEY_CTRL_L :: CInt
+glut_KEY_CTRL_L = 0x0072
+
+glut_KEY_CTRL_R :: CInt
+glut_KEY_CTRL_R = 0x0073
 
 glut_KEY_DELETE :: CInt
 glut_KEY_DELETE = 0x006F
@@ -377,6 +389,12 @@ glut_KEY_REPEAT_ON = 0x0001
 
 glut_KEY_RIGHT :: CInt
 glut_KEY_RIGHT = 0x0066
+
+glut_KEY_SHIFT_L :: CInt
+glut_KEY_SHIFT_L = 0x0070
+
+glut_KEY_SHIFT_R :: CInt
+glut_KEY_SHIFT_R = 0x0071
 
 glut_KEY_UP :: CInt
 glut_KEY_UP = 0x0065

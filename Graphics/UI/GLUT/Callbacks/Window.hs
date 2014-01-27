@@ -341,7 +341,15 @@ data SpecialKey
    | KeyNumLock
    | KeyBegin
    | KeyDelete
-   | KeyUnknown Int
+   | KeyShiftL
+   | KeyShiftR
+   | KeyCtrlL
+   | KeyCtrlR
+   | KeyAltL
+   | KeyAltR
+   | KeyUnknown Int -- ^ You should actually never encounter this value, it is
+                    -- just here as a safeguard against future changes in the
+                    -- native GLUT library.
    deriving ( Eq, Ord, Show )
 
 unmarshalSpecialKey :: CInt -> SpecialKey
@@ -370,6 +378,12 @@ unmarshalSpecialKey x
    | x == glut_KEY_NUM_LOCK = KeyNumLock
    | x == glut_KEY_BEGIN = KeyBegin
    | x == glut_KEY_DELETE = KeyDelete
+   | x == glut_KEY_SHIFT_L = KeyShiftL
+   | x == glut_KEY_SHIFT_R = KeyShiftR
+   | x == glut_KEY_CTRL_L = KeyCtrlL
+   | x == glut_KEY_CTRL_R = KeyCtrlR
+   | x == glut_KEY_ALT_L = KeyAltL
+   | x == glut_KEY_ALT_R = KeyAltR
    | otherwise = KeyUnknown (fromIntegral x)
 
 --------------------------------------------------------------------------------
