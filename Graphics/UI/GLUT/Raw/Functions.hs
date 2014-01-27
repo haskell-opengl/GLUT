@@ -105,6 +105,9 @@ module Graphics.UI.GLUT.Raw.Functions (
    glutSetMenu,
    glutSetMenuData,
    glutSetOption,
+   glutSetVertexAttribCoord3,
+   glutSetVertexAttribNormal,
+   glutSetVertexAttribTexCoord2,
    glutSetWindow,
    glutSetWindowData,
    glutSetWindowTitle,
@@ -262,6 +265,9 @@ API_ENTRY(glutSetKeyRepeat,CInt -> IO ())
 API_ENTRY(glutSetMenu,CInt -> IO ())
 API_ENTRY(glutSetMenuData,Ptr a -> IO ())
 API_ENTRY(glutSetOption,GLenum -> CInt -> IO ())
+API_ENTRY(glutSetVertexAttribCoord3,GLint -> IO ())
+API_ENTRY(glutSetVertexAttribNormal,GLint -> IO ())
+API_ENTRY(glutSetVertexAttribTexCoord2,GLint -> IO ())
 API_ENTRY(glutSetWindow,CInt -> IO ())
 API_ENTRY(glutSetWindowData,Ptr a -> IO ())
 API_ENTRY(glutSetWindowTitle,Ptr CChar -> IO ())

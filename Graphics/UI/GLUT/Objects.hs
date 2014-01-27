@@ -16,7 +16,10 @@
 -- rendering routines. The routines do not generate display lists for the
 -- objects they create. The routines generate normals appropriate for lighting
 -- but do not generate texture coordinates (except for the solid teapot, teacup
--- and teaspoon).
+-- and teaspoon). If VBOs should be used instead of the fixed function pipeline,
+-- specify at least one of the attribute locations
+-- 'Graphics.UI.GLUT.State.vertexAttribCoord3' or
+-- 'Graphics.UI.GLUT.State.vertexAttribNormal'.
 --
 --------------------------------------------------------------------------------
 

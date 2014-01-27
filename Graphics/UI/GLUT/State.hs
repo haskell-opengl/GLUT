@@ -18,14 +18,24 @@ module Graphics.UI.GLUT.State (
    windowBorderWidth, windowHeaderHeight, skipStaleMotionEvents,
 
    -- * State of the /current window/
+
+   -- ** Framebuffer state
    rgba,
    BufferDepth, rgbaBufferDepths, colorBufferDepth,
    doubleBuffered, stereo,
    accumBufferDepths, depthBufferDepth, stencilBufferDepth,
    SampleCount, sampleCount, formatID,
-   fullScreenMode, geometryVisualizeNormals,
 
-   -- * GLUT state pertaining to the layers of the /current window/
+   -- ** Full screen state
+   fullScreenMode,
+
+   -- ** Object rendering state
+   geometryVisualizeNormals,
+
+   -- ** Vertex attribute state
+   vertexAttribCoord3, vertexAttribNormal, vertexAttribTexCoord2,
+
+   -- ** Layer state
    damaged,
 
    -- * Timing
@@ -53,9 +63,7 @@ import Foreign.Marshal.Alloc
 import Foreign.Marshal.Array
 import Foreign.Ptr
 import Foreign.Storable
-import Graphics.Rendering.OpenGL ( GLenum, Size(..)
-                                 , StateVar, makeStateVar
-                                 , GettableStateVar, makeGettableStateVar )
+import Graphics.Rendering.OpenGL
 import Graphics.UI.GLUT.Overlay
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
@@ -166,7 +174,7 @@ setFullScreenMode newMode = do
    oldMode <- getFullScreenMode
    unless (newMode == oldMode) fullScreenToggle
 
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 -- | (/freeglut only/) Controls if vectors representing the normals should be
 -- drawn, too, when objects are drawn.
@@ -176,6 +184,36 @@ geometryVisualizeNormals =
    makeStateVar
       (simpleGet i2b glut_GEOMETRY_VISUALIZE_NORMALS)
       (glutSetOption glut_GEOMETRY_VISUALIZE_NORMALS . b2i)
+
+
+--------------------------------------------------------------------------------
+
+-- | (/freeglut only/) If 'vertexAttribCoord3' and 'vertexAttribNormal' both
+-- contain 'Nothing', the fixed function pipeline is used to draw
+-- objects. Otherwise VBOs are used and the coordinates are passed via 'Just'
+-- this attribute location (for a vec3).
+
+vertexAttribCoord3 :: SettableStateVar (Maybe AttribLocation)
+vertexAttribCoord3 = setVertexAttribWith glutSetVertexAttribCoord3
+
+setVertexAttribWith :: (GLint -> IO ()) -> SettableStateVar (Maybe AttribLocation)
+setVertexAttribWith f = makeSettableStateVar $ f . getLocation
+   where getLocation = maybe (-1) (\(AttribLocation l) -> fromIntegral l)
+
+-- | (/freeglut only/) If 'vertexAttribCoord3' and 'vertexAttribNormal' both
+-- contain 'Nothing', the fixed function pipeline is used to draw
+-- objects. Otherwise VBOs are used and the normals are passed via 'Just' this
+-- attribute location (for a vec3).
+
+vertexAttribNormal :: SettableStateVar (Maybe AttribLocation)
+vertexAttribNormal = setVertexAttribWith glutSetVertexAttribNormal
+
+-- | (/freeglut only/) If VBOs are used to draw objects (controlled via
+-- 'vertexAttribCoord3' and 'vertexAttribNormal'), the texture coordinates are
+-- passed via 'Just' this attribute location (for a vec2).
+
+vertexAttribTexCoord2 :: SettableStateVar (Maybe AttribLocation)
+vertexAttribTexCoord2 = setVertexAttribWith glutSetVertexAttribTexCoord2
 
 --------------------------------------------------------------------------------
 
