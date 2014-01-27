@@ -15,7 +15,8 @@
 -- recognizable objects. These routines can be implemented as pure OpenGL
 -- rendering routines. The routines do not generate display lists for the
 -- objects they create. The routines generate normals appropriate for lighting
--- but do not generate texture coordinates (except for the teapot).
+-- but do not generate texture coordinates (except for the solid teapot, teacup
+-- and teaspoon).
 --
 --------------------------------------------------------------------------------
 
@@ -36,7 +37,7 @@ module Graphics.UI.GLUT.Objects (
 import Foreign.C.Types
 import Foreign.Marshal.Utils
 import Foreign.Ptr
-import Graphics.Rendering.OpenGL ( Height, Radius, Slices, Stacks, GLint, GLdouble, Vertex3(..) )
+import Graphics.Rendering.OpenGL
 import Graphics.UI.GLUT.Raw
 
 --------------------------------------------------------------------------------
@@ -62,9 +63,8 @@ data Flavour
 --
 -- * Approximations to rounded objects.
 --
--- * The classic teapot modeled by Martin Newell in 1975. Both surface normals
---   and texture coordinates for the teapot are generated. The teapot is
---   generated with OpenGL evaluators.
+-- * The classic teaset modeled by Martin Newell in 1975. Both surface normals
+--   and texture coordinates for the teaset are generated.
 --
 -- * A Sierpinski sponge, see
 --   <http://mathworld.wolfram.com/Tetrix.html>.
@@ -113,6 +113,10 @@ data Object
      Torus Radius Radius Sides Rings
    | -- | A teapot with a given relative size.
      Teapot Height
+   | -- |(/freeglut only/) A teacup with a given relative size.
+     Teacup Height
+   | -- |(/freeglut only/) A teaspoon with a given relative size.
+     Teaspoon Height
    | -- |(/freeglut only/) A Sierpinski sponge of a given level, where a level
      -- 0 sponge is the same as a 'Tetrahedron'.
      SierpinskiSponge NumLevels
@@ -129,198 +133,34 @@ type NumLevels = GLint
 -- | Render an object in the given flavour.
 
 renderObject :: Flavour -> Object -> IO ()
-renderObject Solid     (Cube h)             = solidCube h
-renderObject Wireframe (Cube h)             = wireCube  h
-renderObject Solid     Dodecahedron         = solidDodecahedron
-renderObject Wireframe Dodecahedron         = wireDodecahedron
-renderObject Solid     Icosahedron          = solidIcosahedron
-renderObject Wireframe Icosahedron          = wireIcosahedron
-renderObject Solid     Octahedron           = solidOctahedron
-renderObject Wireframe Octahedron           = wireOctahedron
-renderObject Solid     Tetrahedron          = solidTetrahedron
-renderObject Wireframe Tetrahedron          = wireTetrahedron
+renderObject Solid     (Cube h)             = glutSolidCube h
+renderObject Wireframe (Cube h)             = glutWireCube  h
+renderObject Solid     Dodecahedron         = glutSolidDodecahedron
+renderObject Wireframe Dodecahedron         = glutWireDodecahedron
+renderObject Solid     Icosahedron          = glutSolidIcosahedron
+renderObject Wireframe Icosahedron          = glutWireIcosahedron
+renderObject Solid     Octahedron           = glutSolidOctahedron
+renderObject Wireframe Octahedron           = glutWireOctahedron
+renderObject Solid     Tetrahedron          = glutSolidTetrahedron
+renderObject Wireframe Tetrahedron          = glutWireTetrahedron
 renderObject Solid     RhombicDodecahedron  = glutSolidRhombicDodecahedron
 renderObject Wireframe RhombicDodecahedron  = glutWireRhombicDodecahedron
-renderObject Solid     (Sphere' r s t)      = solidSphere r s t
-renderObject Wireframe (Sphere' r s t)      = wireSphere  r s t
-renderObject Solid     (Cone r h s t)       = solidCone r h s t
-renderObject Wireframe (Cone r h s t)       = wireCone  r h s t
+renderObject Solid     (Sphere' r s t)      = glutSolidSphere r s t
+renderObject Wireframe (Sphere' r s t)      = glutWireSphere  r s t
+renderObject Solid     (Cone r h s t)       = glutSolidCone r h s t
+renderObject Wireframe (Cone r h s t)       = glutWireCone  r h s t
 renderObject Solid     (Cylinder' r h s t)  = glutSolidCylinder r h s t
 renderObject Wireframe (Cylinder' r h s t)  = glutWireCylinder r h s t
-renderObject Solid     (Torus i o s r)      = solidTorus i o s r
-renderObject Wireframe (Torus i o s r)      = wireTorus  i o s r
-renderObject Solid     (Teapot h)           = solidTeapot h
-renderObject Wireframe (Teapot h)           = wireTeapot  h
+renderObject Solid     (Torus i o s r)      = glutSolidTorus i o s r
+renderObject Wireframe (Torus i o s r)      = glutWireTorus  i o s r
+renderObject Solid     (Teapot h)           = glutSolidTeapot h
+renderObject Wireframe (Teapot h)           = glutWireTeapot  h
+renderObject Solid     (Teacup h)           = glutSolidTeacup h
+renderObject Wireframe (Teacup h)           = glutWireTeacup  h
+renderObject Solid     (Teaspoon h)         = glutSolidTeaspoon h
+renderObject Wireframe (Teaspoon h)         = glutWireTeaspoon  h
 renderObject Solid     (SierpinskiSponge n) = solidSierpinskiSponge n
 renderObject Wireframe (SierpinskiSponge n) = wireSierpinskiSponge n
-
---------------------------------------------------------------------------------
-
--- | Render a solid cube centered at the modeling coordinates origin with sides
--- of the given length.
-
-solidCube
-   :: Height -- ^ Length of the cube sides
-   -> IO ()
-solidCube = glutSolidCube
-
--- | Render a wireframe cube centered at the modeling coordinates origin with
--- sides of the given length.
-
-wireCube
-   :: Height -- ^ Length of the cube sides
-   -> IO ()
-wireCube = glutWireCube
-
---------------------------------------------------------------------------------
-
--- | Render a solid dodecahedron (12-sided regular solid) centered at the
--- modeling coordinates origin with a radius of @sqrt 3@.
-
-solidDodecahedron :: IO ()
-solidDodecahedron = glutSolidDodecahedron
-
--- | Render a wireframe dodecahedron (12-sided regular solid) centered at the
--- modeling coordinates origin with a radius of @sqrt 3@.
-
-wireDodecahedron :: IO ()
-wireDodecahedron = glutWireDodecahedron
-
---------------------------------------------------------------------------------
-
--- | Render a solid icosahedron (20-sided regular solid) centered at the
--- modeling coordinates origin with a radius of 1.0.
-
-wireIcosahedron :: IO ()
-wireIcosahedron = glutWireIcosahedron
-
--- | Render a wireframe icosahedron (20-sided regular solid) centered at the
--- modeling coordinates origin with a radius of 1.0.
-
-solidIcosahedron :: IO ()
-solidIcosahedron = glutSolidIcosahedron
-
---------------------------------------------------------------------------------
-
--- | Render a solid octahedron (8-sided regular solid) centered at the modeling
--- coordinates origin with a radius of 1.0.
-
-solidOctahedron :: IO ()
-solidOctahedron = glutSolidOctahedron
-
--- | Render a wireframe octahedron (8-sided regular solid) centered at the
--- modeling coordinates origin with a radius of 1.0.
-
-wireOctahedron :: IO ()
-wireOctahedron = glutWireOctahedron
-
---------------------------------------------------------------------------------
-
--- | Render a solid tetrahedron (4-sided regular solid) centered at the modeling
--- coordinates origin with a radius of @sqrt 3@.
-
-wireTetrahedron :: IO ()
-wireTetrahedron = glutWireTetrahedron
-
--- | Render a wireframe tetrahedron (4-sided regular solid) centered at the
--- modeling coordinates origin with a radius of @sqrt 3@.
-
-solidTetrahedron  :: IO ()
-solidTetrahedron = glutSolidTetrahedron
-
---------------------------------------------------------------------------------
-
--- | Render a solid sphere centered at the modeling coordinates origin of the
--- specified radius. The sphere is subdivided around the Z axis into slices
--- and along the Z axis into stacks.
-
-solidSphere
-   :: Radius   -- ^ Radius of the sphere.
-   -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar
-               --   to lines of longitude.
-   -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis,
-               --   similar to lines of latitude.
-   -> IO ()
-solidSphere = glutSolidSphere
-
--- | Render a wireframe sphere centered at the modeling coordinates origin of
--- the specified radius. The sphere is subdivided around the Z axis into slices
--- and along the Z axis into stacks.
-
-wireSphere
-   :: Radius   -- ^ Radius of the sphere.
-   -> Slices   -- ^ Number of subdivisions (slices) around the Z axis, similar
-               --   to lines of longitude.
-   -> Stacks   -- ^ The number of subdivisions (stacks) along the Z axis,
-               --   similar to lines of latitude.
-   -> IO ()
-wireSphere = glutWireSphere
-
---------------------------------------------------------------------------------
-
--- | Render a solid cone oriented along the Z axis. The base of the cone is
--- placed at Z = 0, and the top at Z = height. The cone is subdivided around the
--- Z axis into slices, and along the Z axis into stacks.
-
-solidCone
-   :: Radius   -- ^ Radius of the base of the cone.
-   -> Height   -- ^ Height of the cone.
-   -> Slices   -- ^ Number of subdivisions around the Z axis.
-   -> Stacks   -- ^ The number of subdivisions along the Z axis.
-   -> IO ()
-solidCone = glutSolidCone
-
--- | Render a wireframe cone oriented along the Z axis. The base of the cone is
--- placed at Z = 0, and the top at Z = height. The cone is subdivided around the
--- Z axis into slices, and along the Z axis into stacks.
-
-wireCone
-   :: Radius   -- ^ Radius of the base of the cone.
-   -> Height   -- ^ Height of the cone.
-   -> Slices   -- ^ Number of subdivisions around the Z axis.
-   -> Stacks   -- ^ The number of subdivisions along the Z axis.
-   -> IO ()
-wireCone = glutWireCone
-
---------------------------------------------------------------------------------
-
--- | Render a solid torus (doughnut) centered at the modeling coordinates origin
--- whose axis is aligned with the Z axis.
-
-solidTorus
-   :: Radius   -- ^ Inner radius of the torus.
-   -> Radius   -- ^ Outer radius of the torus.
-   -> Slices   -- ^ Number of sides for each radial section.
-   -> Stacks   -- ^ Number of radial divisions for the torus.
-   -> IO ()
-solidTorus = glutSolidTorus
-
--- | Render a wireframe torus (doughnut) centered at the modeling coordinates
--- origin whose axis is aligned with the Z axis.
-
-wireTorus
-   :: Radius   -- ^ Inner radius of the torus.
-   -> Radius   -- ^ Outer radius of the torus.
-   -> Slices   -- ^ Number of sides for each radial section.
-   -> Stacks   -- ^ Number of radial divisions for the torus.
-   -> IO ()
-wireTorus = glutWireTorus
-
---------------------------------------------------------------------------------
-
--- | Render a solid teapot.
-
-solidTeapot
-   :: Height -- ^ Relative size of the teapot
-   -> IO ()
-solidTeapot = glutSolidTeapot
-
--- | Render a wireframe teapot.
-
-wireTeapot
-   :: Height -- ^ Relative size of the teapot
-   -> IO ()
-wireTeapot = glutWireTeapot
 
 --------------------------------------------------------------------------------
 

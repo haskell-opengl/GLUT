@@ -15,50 +15,47 @@
 -----------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Raw.Functions (
-   glutGetProcAddress,
-   glutGetColor,
-   glutStrokeHeight,
-   glutBitmapHeight,
-   glutBitmapLength,
-   glutBitmapWidth,
-   glutCreateMenu,
-   glutCreateSubWindow,
-   glutCreateWindow,
-   glutDeviceGet,
-   glutEnterGameMode,
-   glutExtensionSupported,
-   glutGameModeGet,
-   glutGet,
-   glutGetMenu,
-   glutGetModifiers,
-   glutGetWindow,
-   glutLayerGet,
-   glutStrokeLength,
-   glutStrokeWidth,
-   glutVideoResizeGet,
-   glutGetModeValues,
    glutAddMenuEntry,
    glutAddSubMenu,
    glutAttachMenu,
    glutBitmapCharacter,
+   glutBitmapHeight,
+   glutBitmapLength,
    glutBitmapString,
+   glutBitmapWidth,
    glutButtonBoxFunc,
    glutChangeToMenuEntry,
    glutChangeToSubMenu,
    glutCloseFunc,
    glutCopyColormap,
+   glutCreateMenu,
+   glutCreateSubWindow,
+   glutCreateWindow,
    glutDestroyMenu,
    glutDestroyWindow,
    glutDetachMenu,
+   glutDeviceGet,
    glutDialsFunc,
    glutDisplayFunc,
+   glutEnterGameMode,
    glutEntryFunc,
    glutEstablishOverlay,
    glutExit,
+   glutExtensionSupported,
    glutForceJoystickFunc,
    glutFullScreen,
    glutFullScreenToggle,
+   glutGameModeGet,
    glutGameModeString,
+   glutGet,
+   glutGetColor,
+   glutGetMenu,
+   glutGetMenuData,
+   glutGetModeValues,
+   glutGetModifiers,
+   glutGetProcAddress,
+   glutGetWindow,
+   glutGetWindowData,
    glutHideOverlay,
    glutHideWindow,
    glutIconifyWindow,
@@ -66,8 +63,8 @@ module Graphics.UI.GLUT.Raw.Functions (
    glutIgnoreKeyRepeat,
    glutInit,
    glutInitContextFlags,
-   glutInitContextVersion,
    glutInitContextProfile,
+   glutInitContextVersion,
    glutInitDisplayMode,
    glutInitDisplayString,
    glutInitWindowPosition,
@@ -75,6 +72,7 @@ module Graphics.UI.GLUT.Raw.Functions (
    glutJoystickFunc,
    glutKeyboardFunc,
    glutKeyboardUpFunc,
+   glutLayerGet,
    glutLeaveGameMode,
    glutLeaveMainLoop,
    glutMainLoop,
@@ -121,7 +119,9 @@ module Graphics.UI.GLUT.Raw.Functions (
    glutSolidRhombicDodecahedron,
    glutSolidSierpinskiSponge,
    glutSolidSphere,
+   glutSolidTeacup,
    glutSolidTeapot,
+   glutSolidTeaspoon,
    glutSolidTetrahedron,
    glutSolidTorus,
    glutSpaceballButtonFunc,
@@ -131,7 +131,10 @@ module Graphics.UI.GLUT.Raw.Functions (
    glutSpecialUpFunc,
    glutStopVideoResizing,
    glutStrokeCharacter,
+   glutStrokeHeight,
+   glutStrokeLength,
    glutStrokeString,
+   glutStrokeWidth,
    glutSwapBuffers,
    glutTabletButtonFunc,
    glutTabletMotionFunc,
@@ -139,6 +142,7 @@ module Graphics.UI.GLUT.Raw.Functions (
    glutUseLayer,
    glutVideoPan,
    glutVideoResize,
+   glutVideoResizeGet,
    glutVisibilityFunc,
    glutWMCloseFunc,
    glutWarpPointer,
@@ -152,11 +156,11 @@ module Graphics.UI.GLUT.Raw.Functions (
    glutWireRhombicDodecahedron,
    glutWireSierpinskiSponge,
    glutWireSphere,
+   glutWireTeacup,
    glutWireTeapot,
+   glutWireTeaspoon,
    glutWireTetrahedron,
-   glutWireTorus,
-   glutGetMenuData,
-   glutGetWindowData
+   glutWireTorus
 ) where
 
 import Foreign.C.Types
@@ -167,50 +171,47 @@ import Graphics.UI.GLUT.Raw.Callbacks
 
 #include "HsGLUTExt.h"
 
-API_ENTRY(glutGetProcAddress,Ptr CChar -> IO (FunPtr a))
-API_ENTRY(glutGetColor,CInt -> CInt -> IO GLfloat)
-API_ENTRY(glutStrokeHeight,Ptr a -> IO GLfloat)
-API_ENTRY(glutBitmapHeight,Ptr a -> IO CInt)
-API_ENTRY(glutBitmapLength,Ptr a -> Ptr CUChar -> IO CInt)
-API_ENTRY(glutBitmapWidth,Ptr a -> CInt -> IO CInt)
-API_ENTRY(glutCreateMenu,FunPtr MenuFunc -> IO CInt)
-API_ENTRY(glutCreateSubWindow,CInt -> CInt -> CInt -> CInt -> CInt -> IO CInt)
-API_ENTRY(glutCreateWindow,Ptr CChar -> IO CInt)
-API_ENTRY(glutDeviceGet,GLenum -> IO CInt)
-API_ENTRY(glutEnterGameMode,IO CInt)
-API_ENTRY(glutExtensionSupported,Ptr CChar -> IO CInt)
-API_ENTRY(glutGameModeGet,GLenum -> IO CInt)
-API_ENTRY(glutGet,GLenum -> IO CInt)
-API_ENTRY(glutGetMenu,IO CInt)
-API_ENTRY(glutGetModifiers,IO CInt)
-API_ENTRY(glutGetWindow,IO CInt)
-API_ENTRY(glutLayerGet,GLenum -> IO CInt)
-API_ENTRY(glutStrokeLength,Ptr a -> Ptr CUChar -> IO CInt)
-API_ENTRY(glutStrokeWidth,Ptr a -> CInt -> IO CInt)
-API_ENTRY(glutVideoResizeGet,GLenum -> IO CInt)
-API_ENTRY(glutGetModeValues,GLenum -> Ptr CInt -> IO (Ptr CInt))
 API_ENTRY(glutAddMenuEntry,Ptr CChar -> CInt -> IO ())
 API_ENTRY(glutAddSubMenu,Ptr CChar -> CInt -> IO ())
 API_ENTRY(glutAttachMenu,CInt -> IO ())
 API_ENTRY(glutBitmapCharacter,Ptr a -> CInt -> IO ())
+API_ENTRY(glutBitmapHeight,Ptr a -> IO CInt)
+API_ENTRY(glutBitmapLength,Ptr a -> Ptr CUChar -> IO CInt)
 API_ENTRY(glutBitmapString,Ptr a -> Ptr CUChar -> IO ())
+API_ENTRY(glutBitmapWidth,Ptr a -> CInt -> IO CInt)
 API_ENTRY(glutButtonBoxFunc,FunPtr ButtonBoxFunc -> IO ())
 API_ENTRY(glutChangeToMenuEntry,CInt -> Ptr CChar -> CInt -> IO ())
 API_ENTRY(glutChangeToSubMenu,CInt -> Ptr CChar -> CInt -> IO ())
 API_ENTRY(glutCloseFunc,FunPtr CloseFunc -> IO ())
 API_ENTRY(glutCopyColormap,CInt -> IO ())
+API_ENTRY(glutCreateMenu,FunPtr MenuFunc -> IO CInt)
+API_ENTRY(glutCreateSubWindow,CInt -> CInt -> CInt -> CInt -> CInt -> IO CInt)
+API_ENTRY(glutCreateWindow,Ptr CChar -> IO CInt)
 API_ENTRY(glutDestroyMenu,CInt -> IO ())
 API_ENTRY(glutDestroyWindow,CInt -> IO ())
 API_ENTRY(glutDetachMenu,CInt -> IO ())
+API_ENTRY(glutDeviceGet,GLenum -> IO CInt)
 API_ENTRY(glutDialsFunc,FunPtr DialsFunc -> IO ())
 API_ENTRY(glutDisplayFunc,FunPtr DisplayFunc -> IO ())
+API_ENTRY(glutEnterGameMode,IO CInt)
 API_ENTRY(glutEntryFunc,FunPtr EntryFunc -> IO ())
 API_ENTRY_SAFE(glutEstablishOverlay,IO ())
 API_ENTRY(glutExit,IO ())
+API_ENTRY(glutExtensionSupported,Ptr CChar -> IO CInt)
 API_ENTRY(glutForceJoystickFunc,IO ())
 API_ENTRY(glutFullScreen,IO ())
 API_ENTRY(glutFullScreenToggle,IO ())
+API_ENTRY(glutGameModeGet,GLenum -> IO CInt)
 API_ENTRY(glutGameModeString,Ptr CChar -> IO ())
+API_ENTRY(glutGet,GLenum -> IO CInt)
+API_ENTRY(glutGetColor,CInt -> CInt -> IO GLfloat)
+API_ENTRY(glutGetMenu,IO CInt)
+API_ENTRY(glutGetMenuData,IO (Ptr a))
+API_ENTRY(glutGetModeValues,GLenum -> Ptr CInt -> IO (Ptr CInt))
+API_ENTRY(glutGetModifiers,IO CInt)
+API_ENTRY(glutGetProcAddress,Ptr CChar -> IO (FunPtr a))
+API_ENTRY(glutGetWindow,IO CInt)
+API_ENTRY(glutGetWindowData,IO (Ptr a))
 API_ENTRY_SAFE(glutHideOverlay,IO ())
 API_ENTRY(glutHideWindow,IO ())
 API_ENTRY(glutIconifyWindow,IO ())
@@ -218,8 +219,8 @@ API_ENTRY(glutIdleFunc,FunPtr IdleFunc -> IO ())
 API_ENTRY(glutIgnoreKeyRepeat,CInt -> IO ())
 API_ENTRY(glutInit,Ptr CInt -> Ptr (Ptr CChar) -> IO ())
 API_ENTRY(glutInitContextFlags,CInt -> IO ())
-API_ENTRY(glutInitContextVersion,CInt -> CInt -> IO ())
 API_ENTRY(glutInitContextProfile,CInt -> IO ())
+API_ENTRY(glutInitContextVersion,CInt -> CInt -> IO ())
 API_ENTRY(glutInitDisplayMode,CUInt -> IO ())
 API_ENTRY(glutInitDisplayString,Ptr CChar -> IO ())
 API_ENTRY(glutInitWindowPosition,CInt -> CInt -> IO ())
@@ -227,6 +228,7 @@ API_ENTRY(glutInitWindowSize,CInt -> CInt -> IO ())
 API_ENTRY(glutJoystickFunc,FunPtr JoystickFunc -> CInt -> IO ())
 API_ENTRY(glutKeyboardFunc,FunPtr KeyboardFunc -> IO ())
 API_ENTRY(glutKeyboardUpFunc,FunPtr KeyboardUpFunc -> IO ())
+API_ENTRY(glutLayerGet,GLenum -> IO CInt)
 API_ENTRY(glutLeaveGameMode,IO ())
 API_ENTRY_SAFE(glutLeaveMainLoop,IO ())
 API_ENTRY_SAFE(glutMainLoop,IO ())
@@ -273,7 +275,9 @@ API_ENTRY(glutSolidOctahedron,IO ())
 API_ENTRY(glutSolidRhombicDodecahedron,IO ())
 API_ENTRY(glutSolidSierpinskiSponge,CInt -> Ptr GLdouble -> GLdouble -> IO ())
 API_ENTRY(glutSolidSphere,GLdouble -> GLint -> GLint -> IO ())
+API_ENTRY(glutSolidTeacup,GLdouble -> IO ())
 API_ENTRY(glutSolidTeapot,GLdouble -> IO ())
+API_ENTRY(glutSolidTeaspoon,GLdouble -> IO ())
 API_ENTRY(glutSolidTetrahedron,IO ())
 API_ENTRY(glutSolidTorus,GLdouble -> GLdouble -> GLint -> GLint -> IO ())
 API_ENTRY(glutSpaceballButtonFunc,FunPtr SpaceballButtonFunc -> IO ())
@@ -283,7 +287,10 @@ API_ENTRY(glutSpecialFunc,FunPtr SpecialFunc -> IO ())
 API_ENTRY(glutSpecialUpFunc,FunPtr SpecialUpFunc -> IO ())
 API_ENTRY(glutStopVideoResizing,IO ())
 API_ENTRY(glutStrokeCharacter,Ptr a -> CInt -> IO ())
+API_ENTRY(glutStrokeHeight,Ptr a -> IO GLfloat)
+API_ENTRY(glutStrokeLength,Ptr a -> Ptr CUChar -> IO CInt)
 API_ENTRY(glutStrokeString,Ptr a -> Ptr CUChar -> IO ())
+API_ENTRY(glutStrokeWidth,Ptr a -> CInt -> IO CInt)
 API_ENTRY(glutSwapBuffers,IO ())
 API_ENTRY(glutTabletButtonFunc,FunPtr TabletButtonFunc -> IO ())
 API_ENTRY(glutTabletMotionFunc,FunPtr TabletMotionFunc -> IO ())
@@ -291,6 +298,7 @@ API_ENTRY(glutTimerFunc,CUInt -> FunPtr TimerFunc -> CInt -> IO ())
 API_ENTRY_SAFE(glutUseLayer,GLenum -> IO ())
 API_ENTRY(glutVideoPan,CInt -> CInt -> CInt -> CInt -> IO ())
 API_ENTRY(glutVideoResize,CInt -> CInt -> CInt -> CInt -> IO ())
+API_ENTRY(glutVideoResizeGet,GLenum -> IO CInt)
 API_ENTRY(glutVisibilityFunc,FunPtr VisibilityFunc -> IO ())
 API_ENTRY(glutWMCloseFunc,FunPtr WMCloseFunc -> IO ())
 API_ENTRY(glutWarpPointer,CInt -> CInt -> IO ())
@@ -304,8 +312,8 @@ API_ENTRY(glutWireOctahedron,IO ())
 API_ENTRY(glutWireRhombicDodecahedron,IO ())
 API_ENTRY(glutWireSierpinskiSponge,CInt -> Ptr GLdouble -> GLdouble -> IO ())
 API_ENTRY(glutWireSphere,GLdouble -> GLint -> GLint -> IO ())
+API_ENTRY(glutWireTeacup,GLdouble -> IO ())
 API_ENTRY(glutWireTeapot,GLdouble -> IO ())
+API_ENTRY(glutWireTeaspoon,GLdouble -> IO ())
 API_ENTRY(glutWireTetrahedron,IO ())
 API_ENTRY(glutWireTorus,GLdouble -> GLdouble -> GLint -> GLint -> IO ())
-API_ENTRY(glutGetMenuData,IO (Ptr a))
-API_ENTRY(glutGetWindowData,IO (Ptr a))
