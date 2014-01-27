@@ -23,7 +23,7 @@ module Graphics.UI.GLUT.State (
    doubleBuffered, stereo,
    accumBufferDepths, depthBufferDepth, stencilBufferDepth,
    SampleCount, sampleCount, formatID,
-   fullScreenMode,
+   fullScreenMode, geometryVisualizeNormals,
 
    -- * GLUT state pertaining to the layers of the /current window/
    damaged,
@@ -165,6 +165,17 @@ setFullScreenMode :: Bool -> IO ()
 setFullScreenMode newMode = do
    oldMode <- getFullScreenMode
    unless (newMode == oldMode) fullScreenToggle
+
+-----------------------------------------------------------------------------
+
+-- | (/freeglut only/) Controls if vectors representing the normals should be
+-- drawn, too, when objects are drawn.
+
+geometryVisualizeNormals :: StateVar Bool
+geometryVisualizeNormals =
+   makeStateVar
+      (simpleGet i2b glut_GEOMETRY_VISUALIZE_NORMALS)
+      (glutSetOption glut_GEOMETRY_VISUALIZE_NORMALS . b2i)
 
 --------------------------------------------------------------------------------
 
