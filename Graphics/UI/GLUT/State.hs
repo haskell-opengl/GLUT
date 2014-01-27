@@ -15,7 +15,7 @@
 
 module Graphics.UI.GLUT.State (
    -- * State of all windows
-   windowBorderWidth, windowHeaderHeight,
+   windowBorderWidth, windowHeaderHeight, skipStaleMotionEvents,
 
    -- * State of the /current window/
    rgba,
@@ -316,10 +316,14 @@ getModeValues what = makeGettableStateVar $
       fmap (map fromIntegral) $ peekArray (fromIntegral size) valuesBuffer
 
 --------------------------------------------------------------------------------
--- Convenience unmarshalers
+-- Convenience (un-)marshalers
 
 i2b :: CInt -> Bool
 i2b = (/= 0)
+
+b2i :: Bool ->  CInt
+b2i False = 0
+b2i True = 1
 
 --------------------------------------------------------------------------------
 
@@ -369,6 +373,17 @@ windowBorderWidth =
 windowHeaderHeight :: GettableStateVar Int
 windowHeaderHeight =
    makeGettableStateVar (simpleGet fromIntegral glut_WINDOW_HEADER_HEIGHT)
+
+-----------------------------------------------------------------------------
+
+-- | (/freeglut on X11 only/) Controls if all but the last motion event should
+-- be discarded.
+
+skipStaleMotionEvents :: StateVar Bool
+skipStaleMotionEvents =
+   makeStateVar
+      (simpleGet i2b glut_SKIP_STALE_MOTION_EVENTS)
+      (glutSetOption glut_SKIP_STALE_MOTION_EVENTS . b2i)
 
 -----------------------------------------------------------------------------
 
