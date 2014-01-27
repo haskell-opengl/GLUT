@@ -33,7 +33,7 @@ module Graphics.UI.GLUT.Window (
    -- * Changing the window geometry
 
    -- $ChangingTheWindowGeometry
-   windowPosition, windowSize, fullScreen, fullScreenToggle,
+   windowPosition, windowSize, fullScreen, fullScreenToggle, leaveFullScreen,
 
    -- * Manipulating the stacking order
 
@@ -295,6 +295,14 @@ fullScreen = glutFullScreen
 
 fullScreenToggle :: IO ()
 fullScreenToggle = glutFullScreenToggle
+
+--------------------------------------------------------------------------------
+
+-- | (/freeglut only/) If we are in full screen mode, resize the current window
+-- back to its original size.
+
+leaveFullScreen :: IO ()
+leaveFullScreen = glutLeaveFullScreen
 
 --------------------------------------------------------------------------------
 

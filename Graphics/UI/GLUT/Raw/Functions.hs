@@ -73,6 +73,7 @@ module Graphics.UI.GLUT.Raw.Functions (
    glutKeyboardFunc,
    glutKeyboardUpFunc,
    glutLayerGet,
+   glutLeaveFullScreen,
    glutLeaveGameMode,
    glutLeaveMainLoop,
    glutMainLoop,
@@ -229,6 +230,7 @@ API_ENTRY(glutJoystickFunc,FunPtr JoystickFunc -> CInt -> IO ())
 API_ENTRY(glutKeyboardFunc,FunPtr KeyboardFunc -> IO ())
 API_ENTRY(glutKeyboardUpFunc,FunPtr KeyboardUpFunc -> IO ())
 API_ENTRY(glutLayerGet,GLenum -> IO CInt)
+API_ENTRY(glutLeaveFullScreen,IO ())
 API_ENTRY(glutLeaveGameMode,IO ())
 API_ENTRY_SAFE(glutLeaveMainLoop,IO ())
 API_ENTRY_SAFE(glutMainLoop,IO ())
