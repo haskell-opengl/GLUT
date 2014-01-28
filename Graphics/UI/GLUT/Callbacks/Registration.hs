@@ -40,8 +40,8 @@ data CallbackType
    | SpaceballButtonCB | ButtonBoxCB       | DialsCB
    | TabletMotionCB    | TabletButtonCB    | JoystickCB
    | MenuStatusCB      | IdleCB
-   | CloseCB   -- freeglut only
-   | MouseWheelCB   -- freeglut only
+   -- freeglut-only callback types
+   | CloseCB           | MouseWheelCB      | PositionCB
    deriving ( Eq, Ord )
 
 isGlobal :: CallbackType -> Bool

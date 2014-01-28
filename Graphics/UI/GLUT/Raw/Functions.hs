@@ -87,6 +87,7 @@ module Graphics.UI.GLUT.Raw.Functions (
    glutOverlayDisplayFunc,
    glutPassiveMotionFunc,
    glutPopWindow,
+   glutPositionFunc,
    glutPositionWindow,
    glutPostOverlayRedisplay,
    glutPostRedisplay,
@@ -248,6 +249,7 @@ API_ENTRY(glutMouseWheelFunc,FunPtr MouseWheelFunc -> IO ())
 API_ENTRY(glutOverlayDisplayFunc,FunPtr OverlayDisplayFunc -> IO ())
 API_ENTRY(glutPassiveMotionFunc,FunPtr PassiveMotionFunc -> IO ())
 API_ENTRY(glutPopWindow,IO ())
+API_ENTRY(glutPositionFunc,FunPtr PositionFunc -> IO ())
 API_ENTRY(glutPositionWindow,CInt -> CInt -> IO ())
 API_ENTRY_SAFE(glutPostOverlayRedisplay,IO ())
 API_ENTRY(glutPostRedisplay,IO ())

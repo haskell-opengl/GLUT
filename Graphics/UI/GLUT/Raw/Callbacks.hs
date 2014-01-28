@@ -33,6 +33,7 @@ module Graphics.UI.GLUT.Raw.Callbacks (
    MouseWheelFunc, makeMouseWheelFunc,
    OverlayDisplayFunc, makeOverlayDisplayFunc,
    PassiveMotionFunc, makePassiveMotionFunc,
+   PositionFunc, makePositionFunc,
    ReshapeFunc, makeReshapeFunc,
    SpaceballButtonFunc, makeSpaceballButtonFunc,
    SpaceballMotionFunc, makeSpaceballMotionFunc,
@@ -139,6 +140,11 @@ type PassiveMotionFunc = CInt -> CInt -> IO ()
 
 foreign import ccall "wrapper"
    makePassiveMotionFunc :: PassiveMotionFunc -> IO (FunPtr PassiveMotionFunc)
+
+type PositionFunc = CInt -> CInt -> IO ()
+
+foreign import ccall "wrapper"
+   makePositionFunc :: PositionFunc -> IO (FunPtr PositionFunc)
 
 type ReshapeFunc = CInt -> CInt -> IO ()
 

@@ -17,6 +17,9 @@ module Graphics.UI.GLUT.Callbacks.Window (
    -- * Reshape callback
    ReshapeCallback, reshapeCallback,
 
+   -- * Position callback
+   PositionCallback, positionCallback,
+
    -- * Callbacks for visibility changes
    Visibility(..), VisibilityCallback, visibilityCallback,
    WindowState(..), WindowStateCallback, windowStateCallback,
@@ -64,8 +67,7 @@ import Data.Bits hiding ( shift )
 import Data.Char
 import Data.Maybe
 import Foreign.C.Types
-import Graphics.Rendering.OpenGL ( Position(..), Size(..)
-                                 , SettableStateVar, makeSettableStateVar )
+import Graphics.Rendering.OpenGL
 import Graphics.UI.GLUT.Callbacks.Registration
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.State
@@ -187,6 +189,21 @@ reshapeCallback :: SettableStateVar (Maybe ReshapeCallback)
 reshapeCallback = makeSettableStateVar $
    setCallback ReshapeCB glutReshapeFunc (makeReshapeFunc . unmarshal)
    where unmarshal cb w h = cb (Size (fromIntegral w) (fromIntegral h))
+
+--------------------------------------------------------------------------------
+
+-- | A position callback
+
+type PositionCallback = Position -> IO ()
+
+-- | (/freeglut only/) Controls the position callback for the /current window./
+-- The position callback for a window is called when the position of a window
+-- changes.
+
+positionCallback :: SettableStateVar (Maybe PositionCallback)
+positionCallback = makeSettableStateVar $
+   setCallback PositionCB glutPositionFunc (makePositionFunc . unmarshal)
+   where unmarshal cb x y = cb (Position (fromIntegral x) (fromIntegral y))
 
 --------------------------------------------------------------------------------
 
