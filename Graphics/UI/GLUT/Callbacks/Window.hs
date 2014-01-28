@@ -60,7 +60,14 @@ module Graphics.UI.GLUT.Callbacks.Window (
 
    -- * Joystick callback
    JoystickButtons(..), JoystickPosition(..),
-   JoystickCallback, joystickCallback
+   JoystickCallback, joystickCallback,
+
+   -- * Multi-touch support
+   TouchID,
+   MultiMouseCallback, multiMouseCallback,
+   MultiCrossingCallback, multiCrossingCallback,
+   MultiMotionCallback, multiMotionCallback, multiPassiveMotionCallback
+
 ) where
 
 import Data.Bits hiding ( shift )
@@ -294,7 +301,11 @@ windowStateCallback = makeSettableStateVar $
 
 --------------------------------------------------------------------------------
 
+-- | A window close callback
+
 type CloseCallback = IO ()
+
+-- | Controls the window close callback for the /current window/.
 
 closeCallback :: SettableStateVar (Maybe CloseCallback)
 closeCallback = makeSettableStateVar $
@@ -303,6 +314,7 @@ closeCallback = makeSettableStateVar $
 --------------------------------------------------------------------------------
 
 -- | A keyboard callback
+
 type KeyboardCallback = Char -> Position -> IO ()
 
 setKeyboardCallback :: Maybe KeyboardCallback -> IO ()
@@ -313,6 +325,7 @@ setKeyboardCallback =
 
 -- | Controls the keyboard callback for the /current window/. This is
 -- activated only when a key is pressed.
+
 keyboardCallback :: SettableStateVar (Maybe KeyboardCallback)
 keyboardCallback = makeSettableStateVar setKeyboardCallback
 
@@ -327,8 +340,10 @@ setKeyboardUpCallback =
 
 -- | Controls the keyboard callback for the /current window/. This is
 -- activated only when a key is released.
+
 keyboardUpCallback :: SettableStateVar (Maybe KeyboardCallback)
 keyboardUpCallback = makeSettableStateVar setKeyboardUpCallback
+
 --------------------------------------------------------------------------------
 
 -- | Special keys
@@ -406,6 +421,7 @@ unmarshalSpecialKey x
 --------------------------------------------------------------------------------
 
 -- | A special key callback
+
 type SpecialCallback = SpecialKey -> Position -> IO ()
 
 setSpecialCallback :: Maybe SpecialCallback -> IO ()
@@ -416,8 +432,10 @@ setSpecialCallback =
 
 -- | Controls the special key callback for the /current window/. This is
 -- activated only when a special key is pressed.
+
 specialCallback :: SettableStateVar (Maybe SpecialCallback)
 specialCallback = makeSettableStateVar setSpecialCallback
+
 --------------------------------------------------------------------------------
 
 setSpecialUpCallback :: Maybe SpecialCallback -> IO ()
@@ -428,8 +446,10 @@ setSpecialUpCallback =
 
 -- | Controls the special key callback for the /current window/. This is
 -- activated only when a special key is released.
+
 specialUpCallback :: SettableStateVar (Maybe SpecialCallback)
 specialUpCallback = makeSettableStateVar setSpecialUpCallback
+
 --------------------------------------------------------------------------------
 
 -- | The current state of a key or button
@@ -448,6 +468,7 @@ unmarshalKeyState x
 --------------------------------------------------------------------------------
 
 -- | A mouse callback
+
 type MouseCallback = MouseButton -> KeyState -> Position -> IO ()
 
 setMouseCallback :: Maybe MouseCallback -> IO ()
@@ -458,8 +479,10 @@ setMouseCallback =
                                    (Position (fromIntegral x) (fromIntegral y))
 
 -- | Controls the mouse callback for the /current window/.
+
 mouseCallback :: SettableStateVar (Maybe MouseCallback)
 mouseCallback = makeSettableStateVar setMouseCallback
+
 --------------------------------------------------------------------------------
 
 -- | The state of the keyboard modifiers
@@ -867,3 +890,56 @@ joystickCallback =
                                     (JoystickPosition (fromIntegral x)
                                                       (fromIntegral y)
                                                       (fromIntegral z))
+
+--------------------------------------------------------------------------------
+
+-- | A description where the multi-touch event is coming from, the freeglut
+-- specs are very vague about the actual semantics. It contains the device ID
+-- and\/or the cursor\/finger ID.
+
+type TouchID = Int
+
+-- | A multi-touch variant of 'MouseCallback'.
+
+type MultiMouseCallback = TouchID -> MouseCallback
+
+-- | (/freeglut only/) A multi-touch variant of 'mouseCallback'.
+
+multiMouseCallback :: SettableStateVar (Maybe MultiMouseCallback)
+multiMouseCallback = makeSettableStateVar $
+   setCallback MultiButtonCB glutMultiButtonFunc (makeMultiButtonFunc . unmarshal)
+   where unmarshal cb d x y b s = cb (fromIntegral d)
+                                     (unmarshalMouseButton b)
+                                     (unmarshalKeyState s)
+                                     (Position (fromIntegral x) (fromIntegral y))
+
+-- | A multi-touch variant of 'CrossingCallback'.
+
+type MultiCrossingCallback = TouchID -> CrossingCallback
+
+-- | (/freeglut only/) A multi-touch variant of 'crossingCallback'.
+
+multiCrossingCallback :: SettableStateVar (Maybe MultiCrossingCallback)
+multiCrossingCallback = makeSettableStateVar $
+   setCallback MultiEntryCB glutMultiEntryFunc (makeMultiEntryFunc . unmarshal)
+   where unmarshal cb d c = cb (fromIntegral d) (unmarshalCrossing c)
+
+-- | A multi-touch variant of 'MotionCallback'.
+
+type MultiMotionCallback = TouchID -> MotionCallback
+
+-- | (/freeglut only/) A multi-touch variant of 'motionCallback'.
+
+multiMotionCallback :: SettableStateVar (Maybe MultiMotionCallback)
+multiMotionCallback = makeSettableStateVar $
+   setCallback MultiMotionCB glutMultiMotionFunc (makeMultiMotionFunc . unmarshal)
+   where unmarshal cb d x y =
+            cb (fromIntegral d) (Position (fromIntegral x) (fromIntegral y))
+
+-- | (/freeglut only/) A multi-touch variant of 'passiveMotionCallback'.
+
+multiPassiveMotionCallback :: SettableStateVar (Maybe MultiMotionCallback)
+multiPassiveMotionCallback = makeSettableStateVar $
+   setCallback MultiPassiveCB glutMultiPassiveFunc (makeMultiPassiveFunc . unmarshal)
+   where unmarshal cb d x y =
+            cb (fromIntegral d) (Position (fromIntegral x) (fromIntegral y))

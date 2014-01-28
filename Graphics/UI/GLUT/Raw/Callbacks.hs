@@ -15,7 +15,6 @@
 -----------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Raw.Callbacks (
-   MenuFunc, makeMenuFunc,
    ButtonBoxFunc, makeButtonBoxFunc,
    CloseFunc, makeCloseFunc,
    DialsFunc, makeDialsFunc,
@@ -26,11 +25,16 @@ module Graphics.UI.GLUT.Raw.Callbacks (
    KeyboardFunc, makeKeyboardFunc,
    KeyboardUpFunc, makeKeyboardUpFunc,
    MenuDestroyFunc, makeMenuDestroyFunc,
+   MenuFunc, makeMenuFunc,
    MenuStateFunc, makeMenuStateFunc,
    MenuStatusFunc, makeMenuStatusFunc,
    MotionFunc, makeMotionFunc,
    MouseFunc, makeMouseFunc,
    MouseWheelFunc, makeMouseWheelFunc,
+   MultiButtonFunc, makeMultiButtonFunc,
+   MultiEntryFunc, makeMultiEntryFunc,
+   MultiMotionFunc, makeMultiMotionFunc,
+   MultiPassiveFunc, makeMultiPassiveFunc,
    OverlayDisplayFunc, makeOverlayDisplayFunc,
    PassiveMotionFunc, makePassiveMotionFunc,
    PositionFunc, makePositionFunc,
@@ -50,11 +54,6 @@ module Graphics.UI.GLUT.Raw.Callbacks (
 
 import Foreign.C.Types
 import Foreign.Ptr
-
-type MenuFunc = CInt -> IO ()
-
-foreign import ccall "wrapper"
-   makeMenuFunc :: MenuFunc -> IO (FunPtr MenuFunc)
 
 type ButtonBoxFunc = CInt -> CInt -> IO ()
 
@@ -106,6 +105,11 @@ type MenuDestroyFunc = IO ()
 foreign import ccall "wrapper"
    makeMenuDestroyFunc :: MenuDestroyFunc -> IO (FunPtr MenuDestroyFunc)
 
+type MenuFunc = CInt -> IO ()
+
+foreign import ccall "wrapper"
+   makeMenuFunc :: MenuFunc -> IO (FunPtr MenuFunc)
+
 type MenuStateFunc = CInt -> IO ()
 
 foreign import ccall "wrapper"
@@ -130,6 +134,26 @@ type MouseWheelFunc = CInt -> CInt -> CInt -> CInt -> IO ()
 
 foreign import ccall "wrapper"
    makeMouseWheelFunc :: MouseWheelFunc -> IO (FunPtr MouseWheelFunc)
+
+type MultiButtonFunc = CInt -> CInt -> CInt -> CInt -> CInt -> IO ()
+
+foreign import ccall "wrapper"
+   makeMultiButtonFunc :: MultiButtonFunc -> IO (FunPtr MultiButtonFunc)
+
+type MultiEntryFunc = CInt -> CInt -> IO ()
+
+foreign import ccall "wrapper"
+   makeMultiEntryFunc :: MultiEntryFunc -> IO (FunPtr MultiEntryFunc)
+
+type MultiMotionFunc = CInt -> CInt -> CInt -> IO ()
+
+foreign import ccall "wrapper"
+   makeMultiMotionFunc :: MultiMotionFunc -> IO (FunPtr MultiMotionFunc)
+
+type MultiPassiveFunc = CInt -> CInt -> CInt -> IO ()
+
+foreign import ccall "wrapper"
+   makeMultiPassiveFunc :: MultiPassiveFunc -> IO (FunPtr MultiPassiveFunc)
 
 type OverlayDisplayFunc = IO ()
 

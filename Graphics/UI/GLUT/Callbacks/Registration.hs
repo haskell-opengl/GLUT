@@ -42,6 +42,8 @@ data CallbackType
    | MenuStatusCB      | IdleCB
    -- freeglut-only callback types
    | CloseCB           | MouseWheelCB      | PositionCB
+   | MultiEntryCB      | MultiMotionCB     | MultiButtonCB
+   | MultiPassiveCB
    deriving ( Eq, Ord )
 
 isGlobal :: CallbackType -> Bool

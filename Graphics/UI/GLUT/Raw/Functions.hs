@@ -84,6 +84,10 @@ module Graphics.UI.GLUT.Raw.Functions (
    glutMotionFunc,
    glutMouseFunc,
    glutMouseWheelFunc,
+   glutMultiButtonFunc,
+   glutMultiEntryFunc,
+   glutMultiMotionFunc,
+   glutMultiPassiveFunc,
    glutOverlayDisplayFunc,
    glutPassiveMotionFunc,
    glutPopWindow,
@@ -246,6 +250,10 @@ API_ENTRY(glutMenuStatusFunc,FunPtr MenuStatusFunc -> IO ())
 API_ENTRY(glutMotionFunc,FunPtr MotionFunc -> IO ())
 API_ENTRY(glutMouseFunc,FunPtr MouseFunc -> IO ())
 API_ENTRY(glutMouseWheelFunc,FunPtr MouseWheelFunc -> IO ())
+API_ENTRY(glutMultiButtonFunc,FunPtr MultiButtonFunc -> IO ())
+API_ENTRY(glutMultiEntryFunc,FunPtr MultiEntryFunc -> IO ())
+API_ENTRY(glutMultiMotionFunc,FunPtr MultiMotionFunc -> IO ())
+API_ENTRY(glutMultiPassiveFunc,FunPtr MultiPassiveFunc -> IO ())
 API_ENTRY(glutOverlayDisplayFunc,FunPtr OverlayDisplayFunc -> IO ())
 API_ENTRY(glutPassiveMotionFunc,FunPtr PassiveMotionFunc -> IO ())
 API_ENTRY(glutPopWindow,IO ())
