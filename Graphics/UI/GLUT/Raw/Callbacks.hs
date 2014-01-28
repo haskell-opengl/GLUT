@@ -21,6 +21,7 @@ module Graphics.UI.GLUT.Raw.Callbacks (
    DisplayFunc, makeDisplayFunc,
    EntryFunc, makeEntryFunc,
    IdleFunc, makeIdleFunc,
+   InitContextFunc, makeInitContextFunc,
    JoystickFunc, makeJoystickFunc,
    KeyboardFunc, makeKeyboardFunc,
    KeyboardUpFunc, makeKeyboardUpFunc,
@@ -84,6 +85,11 @@ type IdleFunc = IO ()
 
 foreign import ccall "wrapper"
    makeIdleFunc :: IdleFunc -> IO (FunPtr IdleFunc)
+
+type InitContextFunc = IO ()
+
+foreign import ccall "wrapper"
+   makeInitContextFunc :: InitContextFunc -> IO (FunPtr InitContextFunc)
 
 type JoystickFunc = CUInt -> CInt -> CInt -> CInt -> IO ()
 

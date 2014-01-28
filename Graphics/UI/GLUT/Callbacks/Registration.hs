@@ -43,7 +43,7 @@ data CallbackType
    -- freeglut-only callback types
    | CloseCB           | MouseWheelCB      | PositionCB
    | MultiEntryCB      | MultiMotionCB     | MultiButtonCB
-   | MultiPassiveCB
+   | MultiPassiveCB    | InitContextCB
    deriving ( Eq, Ord )
 
 isGlobal :: CallbackType -> Bool

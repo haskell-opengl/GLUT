@@ -63,6 +63,7 @@ module Graphics.UI.GLUT.Raw.Functions (
    glutIgnoreKeyRepeat,
    glutInit,
    glutInitContextFlags,
+   glutInitContextFunc,
    glutInitContextProfile,
    glutInitContextVersion,
    glutInitDisplayMode,
@@ -229,6 +230,7 @@ API_ENTRY(glutIdleFunc,FunPtr IdleFunc -> IO ())
 API_ENTRY(glutIgnoreKeyRepeat,CInt -> IO ())
 API_ENTRY(glutInit,Ptr CInt -> Ptr (Ptr CChar) -> IO ())
 API_ENTRY(glutInitContextFlags,CInt -> IO ())
+API_ENTRY(glutInitContextFunc,FunPtr InitContextFunc -> IO ())
 API_ENTRY(glutInitContextProfile,CInt -> IO ())
 API_ENTRY(glutInitContextVersion,CInt -> CInt -> IO ())
 API_ENTRY(glutInitDisplayMode,CUInt -> IO ())

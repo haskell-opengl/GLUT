@@ -27,6 +27,9 @@ module Graphics.UI.GLUT.Callbacks.Window (
    -- * Window close callback
    CloseCallback, closeCallback,
 
+   -- * Initialize context callback
+   InitContextCallback, initContextCallback,
+
    -- * Keyboard callback
    KeyboardCallback, keyboardCallback, keyboardUpCallback,
 
@@ -310,6 +313,19 @@ type CloseCallback = IO ()
 closeCallback :: SettableStateVar (Maybe CloseCallback)
 closeCallback = makeSettableStateVar $
    setCallback CloseCB glutCloseFunc makeCloseFunc
+
+--------------------------------------------------------------------------------
+
+-- | An initialize context callback
+
+type InitContextCallback = IO ()
+
+-- | (/freeglut only/) Controls the initialize context callback for the /current
+-- window/.
+
+initContextCallback :: SettableStateVar (Maybe InitContextCallback)
+initContextCallback = makeSettableStateVar $
+   setCallback InitContextCB glutInitContextFunc makeInitContextFunc
 
 --------------------------------------------------------------------------------
 
