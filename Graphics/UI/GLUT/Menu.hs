@@ -24,15 +24,13 @@ module Graphics.UI.GLUT.Menu (
 
 import Data.Array
 import Data.IORef
-import qualified Data.Map as Map ( empty, lookup, insert, delete )
+import qualified Data.Map as Map
 import Control.Monad
 import Data.Map ( Map )
 import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Ptr
-import Graphics.Rendering.OpenGL ( get, ($=), StateVar
-                                 , makeStateVar, GettableStateVar
-                                 , makeGettableStateVar )
+import Graphics.Rendering.OpenGL
 import Graphics.UI.GLUT.Callbacks.Registration
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
@@ -40,8 +38,18 @@ import Graphics.UI.GLUT.Types
 
 --------------------------------------------------------------------------------
 
--- | A menu is simply a list of menu items.
-newtype Menu = Menu [MenuItem]
+-- | A menu is simply a list of menu items, possibly with an associated font.
+data Menu
+   = Menu [MenuItem]
+   | MenuWithFont BitmapFont [MenuItem]
+
+menuFont :: Menu -> Maybe BitmapFont
+menuFont (Menu _) = Nothing
+menuFont (MenuWithFont font _) = Just font
+
+menuItems :: Menu -> [MenuItem]
+menuItems (Menu items) = items
+menuItems (MenuWithFont _ items) = items
 
 -- | A single item within a menu can either be a plain menu entry or a sub-menu
 -- entry, allowing for arbitrarily deep nested menus.
@@ -69,11 +77,11 @@ type MenuCallback = IO ()
 -- are available.
 
 attachMenu :: MouseButton -> Menu -> IO ()
-attachMenu mouseButton menu@(Menu items) = do
+attachMenu mouseButton menu = do
    win <- getCurrentWindow "attachMenu"
    let hook = MenuHook win mouseButton
    detachMenu hook
-   unless (null items) $ do
+   unless (null (menuItems menu)) $ do
       (_, destructor) <- traverseMenu menu
       addToMenuTable hook destructor
       attachMenu_ mouseButton
@@ -88,10 +96,12 @@ detachMenu hook@(MenuHook _ mouseButton) = do
    deleteFromMenuTable hook
 
 traverseMenu :: Menu -> IO (MenuID, Destructor)
-traverseMenu (Menu items) = do
-   let callbackArray = listArray (1, length items) (map makeCallback items)
+traverseMenu menu = do
+   let items = menuItems menu
+       callbackArray = listArray (1, length items) (map makeCallback items)
    cb <- makeMenuFunc (\i -> callbackArray ! (fromIntegral i))
    menuID <- glutCreateMenu cb
+   maybe (return ()) (setMenuFont menuID) (menuFont menu)
    destructors <- zipWithM addMenuItem items [1..]
    let destructor = do sequence_ destructors
                        glutDestroyMenu menuID
@@ -231,7 +241,6 @@ foreign import CALLCONV unsafe "glutChangeToSubMenu" glutChangeToSubMenu ::
 -- will be popped up when the user presses the specified button. Note that the
 -- menu is attached to the button by identifier, not by reference.
 
-
 attachMenu_ :: MouseButton -> IO ()
 attachMenu_ = glutAttachMenu . marshalMouseButton
 
@@ -246,3 +255,8 @@ detachMenu_ = glutDetachMenu . marshalMouseButton
 
 numMenuItems :: GettableStateVar Int
 numMenuItems = makeGettableStateVar $ simpleGet fromIntegral glut_MENU_NUM_ITEMS
+
+--------------------------------------------------------------------------------
+
+setMenuFont :: MenuID -> BitmapFont -> IO ()
+setMenuFont menuID font = glutSetMenuFont menuID =<< marshalBitmapFont font
