@@ -15,6 +15,7 @@
 -----------------------------------------------------------------------------
 
 module Graphics.UI.GLUT.Raw.Callbacks (
+   AppStatusFunc, makeAppStatusFunc,
    ButtonBoxFunc, makeButtonBoxFunc,
    CloseFunc, makeCloseFunc,
    DialsFunc, makeDialsFunc,
@@ -55,6 +56,11 @@ module Graphics.UI.GLUT.Raw.Callbacks (
 
 import Foreign.C.Types
 import Foreign.Ptr
+
+type AppStatusFunc = CInt -> IO ()
+
+foreign import ccall "wrapper"
+   makeAppStatusFunc :: AppStatusFunc -> IO (FunPtr AppStatusFunc)
 
 type ButtonBoxFunc = CInt -> CInt -> IO ()
 

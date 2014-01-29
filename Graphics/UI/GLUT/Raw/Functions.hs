@@ -17,6 +17,7 @@
 module Graphics.UI.GLUT.Raw.Functions (
    glutAddMenuEntry,
    glutAddSubMenu,
+   glutAppStatusFunc,
    glutAttachMenu,
    glutBitmapCharacter,
    glutBitmapHeight,
@@ -184,6 +185,7 @@ import Graphics.UI.GLUT.Raw.Callbacks
 
 API_ENTRY(glutAddMenuEntry,Ptr CChar -> CInt -> IO ())
 API_ENTRY(glutAddSubMenu,Ptr CChar -> CInt -> IO ())
+API_ENTRY(glutAppStatusFunc,FunPtr AppStatusFunc -> IO ())
 API_ENTRY(glutAttachMenu,CInt -> IO ())
 API_ENTRY(glutBitmapCharacter,Ptr a -> CInt -> IO ())
 API_ENTRY(glutBitmapHeight,Ptr a -> IO CInt)

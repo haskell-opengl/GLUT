@@ -48,6 +48,12 @@ glut_ALLOW_DIRECT_CONTEXT = 1
 glut_ALPHA :: CUInt
 glut_ALPHA = 0x0008
 
+glut_APPSTATUS_PAUSE :: CInt
+glut_APPSTATUS_PAUSE = 0x0001
+
+glut_APPSTATUS_RESUME :: CInt
+glut_APPSTATUS_RESUME = 0x0002
+
 glut_AUX :: GLenum
 glut_AUX = 0x1000
 

@@ -27,8 +27,9 @@ module Graphics.UI.GLUT.Callbacks.Window (
    -- * Window close callback
    CloseCallback, closeCallback,
 
-   -- * Initialize context callback
+   -- * Life cycle callbacks for mobile platforms
    InitContextCallback, initContextCallback,
+   AppStatus(..), AppStatusCallback, appStatusCallback,
 
    -- * Keyboard callback
    KeyboardCallback, keyboardCallback, keyboardUpCallback,
@@ -326,6 +327,35 @@ type InitContextCallback = IO ()
 initContextCallback :: SettableStateVar (Maybe InitContextCallback)
 initContextCallback = makeSettableStateVar $
    setCallback InitContextCB glutInitContextFunc makeInitContextFunc
+
+--------------------------------------------------------------------------------
+
+-- | The application status of the /current window/
+
+data AppStatus
+   = AppStatusPause
+   | AppStatusResume
+   deriving ( Eq, Ord, Show )
+
+unmarshalAppStatus :: CInt -> AppStatus
+unmarshalAppStatus x
+   | x == glut_APPSTATUS_PAUSE = AppStatusPause
+   | x == glut_APPSTATUS_RESUME = AppStatusResume
+   | otherwise = error ("unmarshalAppStatus: illegal value " ++ show x)
+
+--------------------------------------------------------------------------------
+
+-- | An application status callback
+
+type AppStatusCallback = AppStatus -> IO ()
+
+-- | Controls the application status callback for the /current window./
+
+appStatusCallback :: SettableStateVar (Maybe AppStatusCallback)
+appStatusCallback = makeSettableStateVar $
+   setCallback AppStatusCB glutAppStatusFunc
+               (makeAppStatusFunc . unmarshal)
+   where unmarshal cb  = cb . unmarshalAppStatus
 
 --------------------------------------------------------------------------------
 
