@@ -2,7 +2,7 @@
    Triangles.hs (adapted from triangles.cpp which is (c) The Red Book Authors.)
    Copyright (c) Sven Panne 2014 <svenpanne@gmail.com>
    This file is part of HOpenGL and distributed under a BSD-style license
-   See the file libraries/GLUT/LICENSE
+   See the file GLUT/LICENSE
 
    Our first OpenGL program.
 -}
@@ -33,11 +33,12 @@ init = do
         Vertex2   0.90    0.90 ,
         Vertex2 (-0.85)   0.90 ] :: [Vertex2 GLfloat]
       numVertices = length vertices
+      vertexSize = sizeOf (head vertices)
 
   arrayBuffer <- genObjectName
   bindBuffer ArrayBuffer $= Just arrayBuffer
   withArray vertices $ \ptr -> do
-    let size = fromIntegral (numVertices * sizeOf (head vertices))
+    let size = fromIntegral (numVertices * vertexSize)
     bufferData ArrayBuffer $= (size, ptr, StaticDraw)
 
   program <- loadShaders [
@@ -48,10 +49,12 @@ init = do
   let firstIndex = 0
       vPosition = AttribLocation 0
   vertexAttribPointer vPosition $=
-    (ToFloat, VertexArrayDescriptor 2 Float 0 (bufferOffset firstIndex))
+    (ToFloat,
+     VertexArrayDescriptor 2 Float 0 (bufferOffset (firstIndex * vertexSize)))
   vertexAttribArray vPosition $= Enabled
 
-  return $ Descriptor triangles firstIndex (fromIntegral numVertices)
+  return $
+    Descriptor triangles (fromIntegral firstIndex) (fromIntegral numVertices)
 
 display :: Descriptor -> DisplayCallback
 display (Descriptor triangles firstIndex numVertices) = do
