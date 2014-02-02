@@ -1,6 +1,6 @@
 {-
    Triangles.hs (adapted from triangles.cpp which is (c) The Red Book Authors.)
-   Copyright (c) Sven Panne 2013 <svenpanne@gmail.com>
+   Copyright (c) Sven Panne 2014 <svenpanne@gmail.com>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 
@@ -13,16 +13,7 @@ import Foreign.Ptr
 import Foreign.Storable
 import Graphics.UI.GLUT
 import Prelude hiding ( init )
-import System.IO
 import LoadShaders
-
--- TODO: Just for debugging, remove me later.
-checkError :: String -> IO ()
-checkError functionName = get errors >>= mapM_ reportError
-  where reportError e =
-          hPutStrLn stderr (showError e ++ " detected in " ++ functionName)
-        showError (Error category message) =
-          "GL error " ++ show category ++ " (" ++ message ++ ")"
 
 bufferOffset :: Integral a => a -> Ptr b
 bufferOffset = plusPtr nullPtr . fromIntegral
@@ -60,7 +51,6 @@ init = do
     (ToFloat, VertexArrayDescriptor 2 Float 0 (bufferOffset firstIndex))
   vertexAttribArray vPosition $= Enabled
 
-  checkError "init"
   return $ Descriptor triangles firstIndex (fromIntegral numVertices)
 
 display :: Descriptor -> DisplayCallback
@@ -69,7 +59,6 @@ display (Descriptor triangles firstIndex numVertices) = do
   bindVertexArrayObject $= Just triangles
   drawArrays Triangles firstIndex numVertices
   flush
-  checkError "display"
 
 main :: IO ()
 main = do
@@ -77,10 +66,6 @@ main = do
   initialDisplayMode $= [ RGBAMode ]
   initialWindowSize $= Size 512 512
   initialContextVersion $= (4, 3)
-
-  -- TODO: Just for debugging, remove me later.
-  initialContextFlags $= [ DebugContext ]
-
   initialContextProfile $= [ CoreProfile ]
   _ <- createWindow progName
   descriptor <- init
