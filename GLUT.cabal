@@ -34,6 +34,10 @@ extra-source-files:
    examples/Makefile
    examples/Misc/00-README
    examples/Misc/ARBOcclude.hs
+   examples/Misc/ColorTriangle/ColorTriangle.hs
+   examples/Misc/ColorTriangle/Makefile
+   examples/Misc/ColorTriangle/color_triangles.frac
+   examples/Misc/ColorTriangle/color_triangles.vert
    examples/Misc/ExtractContours.hs
    examples/Misc/Gears.hs
    examples/Misc/Makefile
