@@ -15,19 +15,21 @@
 #ifndef HSGLUTEXT_H
 #define HSGLUTEXT_H
 
+#define HASH #
+
 /* NOTE: The macro must immediately start with the foreign declaration,
    otherwise the magic mangler (hack_foreign) in the Hugs build system
    doesn't recognize it. */
-#define API_ENTRY_INTERNAL(_entry,_ty,_safety) \
-foreign import CALLCONV _safety "dynamic" dyn_/**/_entry :: Graphics.UI.GLUT.Raw.APIEntry.Invoker (_ty) ; \
+#define API_ENTRY_INTERNAL(_dyn_entry,_ptr_entry,_str_entry,_entry,_ty,_safety) \
+foreign import CALLCONV _safety "dynamic" _dyn_entry :: Graphics.UI.GLUT.Raw.APIEntry.Invoker (_ty) ; \
 _entry :: (_ty) ; \
-_entry = dyn_/**/_entry ptr_/**/_entry ; \
-ptr_/**/_entry :: FunPtr a ; \
-ptr_/**/_entry = unsafePerformIO (Graphics.UI.GLUT.Raw.APIEntry.getAPIEntry "_entry") ; \
-{-# NOINLINE ptr_/**/_entry #-}
+_entry = _dyn_entry _ptr_entry ; \
+_ptr_entry :: FunPtr a ; \
+_ptr_entry = unsafePerformIO (Graphics.UI.GLUT.Raw.APIEntry.getAPIEntry _str_entry) ; \
+{-HASH NOINLINE _ptr_entry HASH-}
 
-#define API_ENTRY(_entry,_ty) API_ENTRY_INTERNAL(_entry,_ty,unsafe)
+#define API_ENTRY(_dyn_entry,_ptr_entry,_str_entry,_entry,_ty) API_ENTRY_INTERNAL(_dyn_entry,_ptr_entry,_str_entry,_entry,_ty,unsafe)
 
-#define API_ENTRY_SAFE(_entry,_ty) API_ENTRY_INTERNAL(_entry,_ty,safe)
+#define API_ENTRY_SAFE(_dyn_entry,_ptr_entry,_str_entry,_entry,_ty) API_ENTRY_INTERNAL(_dyn_entry,_ptr_entry,_str_entry,_entry,_ty,safe)
 
 #endif
