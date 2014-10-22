@@ -8,7 +8,7 @@
 import Prelude hiding ( sum )
 import Control.Applicative
 import Control.Exception ( IOException, catch )
-import Control.Monad
+import Control.Monad ( when, unless )
 import qualified Data.ByteString as B
 import Data.Foldable ( Foldable, sum )
 import Data.IORef
