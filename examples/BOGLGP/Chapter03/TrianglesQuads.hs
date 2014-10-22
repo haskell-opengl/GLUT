@@ -252,7 +252,7 @@ drawTriangleFan =
    renderPrimitive TriangleFan $ do
       -- center vertex of fan
       vertex (Vertex3 0 0 (0 :: GLfloat))
-	
+
       -- bottom side
       for [ 3, 2 .. 0 ] $ \x ->
          vertex (Vertex3 x 0 3)

@@ -40,13 +40,13 @@ accFrustum :: GLdouble -> GLdouble -> GLdouble -> GLdouble -> GLdouble -> GLdoub
 accFrustum left right bottom top zNear zFar
            (Vector2 pixDx pixDy) (Vector2 eyeDx eyeDy) focus = do
    (_, Size w h) <- get viewport
-	
+
    let xWSize = right - left;
        yWSize = top - bottom;
-	
+
        dx = -(pixDx * xWSize / fromIntegral w + eyeDx * zNear / focus)
        dy = -(pixDy * yWSize / fromIntegral h + eyeDy * zNear / focus)
-	
+
    matrixMode $= Projection
    loadIdentity
    frustum (left + dx) (right + dx) (bottom + dy) (top + dy) zNear zFar
