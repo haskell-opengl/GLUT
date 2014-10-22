@@ -72,17 +72,13 @@ data ActionOnWindowClose
      MainLoopReturns
    | -- | Return from mainLoop after the last window is closed.
      ContinueExecution
-   | ContinueExectuion
    deriving ( Eq, Ord, Show )
-
-{-# DEPRECATED ContinueExectuion "Use 'ContinueExecution' instead." #-}
 
 marshalActionOnWindowClose :: ActionOnWindowClose -> CInt
 marshalActionOnWindowClose x = case x of
    Exit ->  glut_ACTION_EXIT
    MainLoopReturns -> glut_ACTION_GLUTMAINLOOP_RETURNS
    ContinueExecution -> glut_ACTION_CONTINUE_EXECUTION
-   ContinueExectuion -> glut_ACTION_CONTINUE_EXECUTION
 
 unmarshalActionOnWindowClose :: CInt -> ActionOnWindowClose
 unmarshalActionOnWindowClose x
