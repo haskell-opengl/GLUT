@@ -171,6 +171,7 @@ library
       Graphics.UI.GLUT.Raw.Tokens,
       Graphics.UI.GLUT.Types
    include-dirs: include
+   hs-source-dirs: src
    c-sources:
       cbits/HsGLUT.c
    build-depends: base >= 3 && < 5, array >= 0.3, containers >= 0.3, OpenGL >= 2.8.0.0, OpenGLRaw >= 1.3.0.0
