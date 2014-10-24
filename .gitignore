@@ -1,7 +1,8 @@
-/cabal-dev/
-/dist/
 *.swp
-*.o
-*.hi
-*.exe
 *~
+/.cabal-sandbox
+/dist
+/examples/**/*.exe
+/examples/**/*.hi
+/examples/**/*.o
+cabal.sandbox.config
