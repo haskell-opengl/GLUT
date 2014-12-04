@@ -1,19 +1,20 @@
 name: GLUT
 version: 2.6.0.0
-license: BSD3
-license-file: LICENSE
-maintainer: Sven Panne <svenpanne@gmail.com>, Jason Dagit <dagitj@gmail.com>
-bug-reports: https://github.com/haskell-opengl/GLUT/issues
-homepage: http://www.haskell.org/haskellwiki/Opengl
-category: Graphics
 synopsis: A binding for the OpenGL Utility Toolkit
 description:
-   A Haskell binding for the OpenGL Utility Toolkit, a window system independent
-   toolkit for writing OpenGL programs. For more information about the C library
-   on which this binding is based, please see:
-   <http://www.opengl.org/resources/libraries/glut/>.
+  A Haskell binding for the OpenGL Utility Toolkit, a window system independent
+  toolkit for writing OpenGL programs. For more information about the C library
+  on which this binding is based, please see:
+  <http://www.opengl.org/resources/libraries/glut/>.
+homepage: http://www.haskell.org/haskellwiki/Opengl
+bug-reports: https://github.com/haskell-opengl/GLUT/issues
+license: BSD3
+license-file: LICENSE
+author: Sven Panne
+maintainer: Sven Panne <svenpanne@gmail.com>, Jason Dagit <dagitj@gmail.com>
+category: Graphics
 build-type: Simple
-cabal-version: >=1.6
+cabal-version: >=1.10
 extra-source-files:
    README.md
    examples/00-README
@@ -138,59 +139,59 @@ extra-source-files:
    include/HsGLUTExt.h
 
 flag UseNativeWindowsLibraries
-   description:
-      When compiling under Windows, use the native libraries instead of e.g. the
-      ones coming with Cygwin.
+  description:
+    When compiling under Windows, use the native libraries instead of e.g. the
+    ones coming with Cygwin.
 
 library
-   exposed-modules:
-      Graphics.UI.GLUT,
-      Graphics.UI.GLUT.Begin,
-      Graphics.UI.GLUT.Callbacks,
-      Graphics.UI.GLUT.Callbacks.Global,
-      Graphics.UI.GLUT.Callbacks.Window,
-      Graphics.UI.GLUT.Colormap,
-      Graphics.UI.GLUT.Debugging,
-      Graphics.UI.GLUT.DeviceControl,
-      Graphics.UI.GLUT.Fonts,
-      Graphics.UI.GLUT.GameMode,
-      Graphics.UI.GLUT.Initialization,
-      Graphics.UI.GLUT.Menu,
-      Graphics.UI.GLUT.Objects,
-      Graphics.UI.GLUT.Overlay,
-      Graphics.UI.GLUT.State,
-      Graphics.UI.GLUT.Window
-   other-modules:
-      Graphics.UI.GLUT.Callbacks.Registration,
-      Graphics.UI.GLUT.QueryUtils,
-      Graphics.UI.GLUT.Raw,
-      Graphics.UI.GLUT.Raw.APIEntry,
-      Graphics.UI.GLUT.Raw.Callbacks,
-      Graphics.UI.GLUT.Raw.Fonts,
-      Graphics.UI.GLUT.Raw.Functions,
-      Graphics.UI.GLUT.Raw.Tokens,
-      Graphics.UI.GLUT.Types
-   include-dirs: include
-   hs-source-dirs: src
-   c-sources:
-      cbits/HsGLUT.c
-   build-depends: base >= 3 && < 5, array >= 0.3, containers >= 0.3, OpenGL >= 2.8.0.0, OpenGLRaw >= 1.3.0.0
-   ghc-options: -Wall -O2
-   if os(windows) && flag(UseNativeWindowsLibraries)
-      if arch(i386)
-         cpp-options: "-DCALLCONV=stdcall"
-      else
-         cpp-options: "-DCALLCONV=ccall"
-      cc-options: "-DUSE_GETPROCADDRESS"
-      extra-libraries: glut32
-   else
+  exposed-modules:
+    Graphics.UI.GLUT
+    Graphics.UI.GLUT.Begin
+    Graphics.UI.GLUT.Callbacks
+    Graphics.UI.GLUT.Callbacks.Global
+    Graphics.UI.GLUT.Callbacks.Window
+    Graphics.UI.GLUT.Colormap
+    Graphics.UI.GLUT.Debugging
+    Graphics.UI.GLUT.DeviceControl
+    Graphics.UI.GLUT.Fonts
+    Graphics.UI.GLUT.GameMode
+    Graphics.UI.GLUT.Initialization
+    Graphics.UI.GLUT.Menu
+    Graphics.UI.GLUT.Objects
+    Graphics.UI.GLUT.Overlay
+    Graphics.UI.GLUT.State
+    Graphics.UI.GLUT.Window
+  other-modules:
+    Graphics.UI.GLUT.Callbacks.Registration
+    Graphics.UI.GLUT.QueryUtils
+    Graphics.UI.GLUT.Raw
+    Graphics.UI.GLUT.Raw.APIEntry
+    Graphics.UI.GLUT.Raw.Callbacks
+    Graphics.UI.GLUT.Raw.Fonts
+    Graphics.UI.GLUT.Raw.Functions
+    Graphics.UI.GLUT.Raw.Tokens
+    Graphics.UI.GLUT.Types
+  c-sources:
+     cbits/HsGLUT.c
+  hs-source-dirs: src
+  include-dirs: include
+  build-depends: base >= 3 && < 5, array >= 0.3, containers >= 0.3, OpenGL >= 2.8.0.0, OpenGLRaw >= 1.3.0.0
+  ghc-options: -Wall -O2
+  if os(windows) && flag(UseNativeWindowsLibraries)
+    if arch(i386)
+      cpp-options: "-DCALLCONV=stdcall"
+    else
       cpp-options: "-DCALLCONV=ccall"
-      cc-options: "-DUSE_DLSYM"
-      if os(darwin)
-         frameworks: GLUT
-      else
-         extra-libraries: glut
+    cc-options: "-DUSE_GETPROCADDRESS"
+    extra-libraries: glut32
+  else
+    cpp-options: "-DCALLCONV=ccall"
+    cc-options: "-DUSE_DLSYM"
+    if os(darwin)
+      frameworks: GLUT
+    else
+      extra-libraries: glut
 
 source-repository head
-  type:     git
-  location: https://github.com/haskell-opengl/GLUT
+  type: git
+  location: https://github.com/haskell-opengl/GLUT.git
