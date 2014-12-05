@@ -1,4 +1,4 @@
-{-# LANGUAGE ForeignFunctionInterface, CPP #-}
+{-# LANGUAGE CPP #-}
 {-# OPTIONS_HADDOCK hide #-}
 --------------------------------------------------------------------------------
 -- |
