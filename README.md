@@ -1,1 +1,1 @@
-[![Build Status](https://travis-ci.org/haskell-opengl/GLUT.png)](https://travis-ci.org/haskell-opengl/GLUT)
+[![Hackage](https://img.shields.io/hackage/v/GLUT.svg)](https://hackage.haskell.org/package/GLUT) [![Build Status](https://travis-ci.org/haskell-opengl/GLUT.png)](https://travis-ci.org/haskell-opengl/GLUT)
