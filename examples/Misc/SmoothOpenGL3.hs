@@ -20,6 +20,7 @@ import System.IO
 
 data State = State {
    vertexBufferName :: BufferObject,
+   vertexArrayObject :: VertexArrayObject,
    fgProjectionMatrixIndex :: UniformLocation,
    fgColorIndex :: AttribLocation ,
    fgVertexIndex :: AttribLocation,
@@ -148,12 +149,15 @@ initRendering = do
 
 myInit :: IO State
 myInit = do
+   vao <- genObjectName
+   bindVertexArrayObject $= Just vao
    bufferObject <- initBuffer
    (projectionMatrixIndex, colorIndex, vertexIndex) <- initShader
    initRendering
    m <- newMatrix ColumnMajor (replicate 16 0)
    return $ State {
       vertexBufferName = bufferObject,
+      vertexArrayObject = vao,
       fgProjectionMatrixIndex = projectionMatrixIndex,
       fgColorIndex = colorIndex,
       fgVertexIndex = vertexIndex,
@@ -179,6 +183,7 @@ triangle :: State -> IO ()
 triangle state = do
    withMatrix (projectionMatrix state) $ \order buffer ->
       uniformMatrix4fv (fgProjectionMatrixIndex state) 1 (order == RowMajor) buffer
+   bindVertexArrayObject $= Just (vertexArrayObject state)
    bindBuffer ArrayBuffer $= Just (vertexBufferName state)
    vertexAttribPointer (fgColorIndex state) $=
       (ToFloat, vertexArrayDescriptor numColorComponents 0)
