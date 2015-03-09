@@ -1,5 +1,5 @@
 name: GLUT
-version: 2.6.0.1
+version: 2.7.0.0
 synopsis: A binding for the OpenGL Utility Toolkit
 description:
   A Haskell binding for the OpenGL Utility Toolkit, a window system independent
@@ -8,6 +8,7 @@ description:
   <http://www.opengl.org/resources/libraries/glut/>.
 homepage: http://www.haskell.org/haskellwiki/Opengl
 bug-reports: https://github.com/haskell-opengl/GLUT/issues
+copyright: Copyright (C) 2002-2015 Sven Panne
 license: BSD3
 license-file: LICENSE
 author: Sven Panne
@@ -175,7 +176,13 @@ library
      cbits/HsGLUT.c
   hs-source-dirs: src
   include-dirs: include
-  build-depends: base >= 3 && < 5, array >= 0.3, containers >= 0.3, OpenGL >= 2.8.0.0, OpenGLRaw >= 1.3.0.0
+  build-depends:
+    base       >= 3    && < 5,
+    array      >= 0.3  && < 0.6,
+    containers >= 0.3  && < 0.6,
+    StateVar   >= 1.1  && < 1.2,
+    OpenGLRaw  >= 2.3  && < 2.4,
+    OpenGL     >= 2.12 && < 2.13
   default-language: Haskell2010
   other-extensions: CPP
   ghc-options: -Wall -O2
