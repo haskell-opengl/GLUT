@@ -8,8 +8,6 @@
 import Control.Monad
 import qualified Data.ByteString as B
 import Data.List
-import qualified Data.Text as T
-import qualified Data.Text.Encoding as TE
 import Foreign.Marshal.Array
 import Foreign.Ptr
 import Foreign.Storable
@@ -70,9 +68,6 @@ initBuffer = do
       bufferData ArrayBuffer $= (fromIntegral sizeOfVarray, buffer, StaticDraw)
    checkError "initBuffer"
    return bufferObject
-
-packUtf8 :: String -> B.ByteString
-packUtf8 = TE.encodeUtf8 . T.pack
 
 vertexShaderSource :: B.ByteString
 vertexShaderSource = packUtf8 . unlines $ [

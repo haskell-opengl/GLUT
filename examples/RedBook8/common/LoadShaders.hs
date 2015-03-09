@@ -20,8 +20,6 @@ module LoadShaders (
 import Control.Exception
 import Control.Monad
 import qualified Data.ByteString as B
-import qualified Data.Text as T
-import qualified Data.Text.Encoding as TE
 import Graphics.Rendering.OpenGL
 
 --------------------------------------------------------------------------------
@@ -41,9 +39,6 @@ getSource :: ShaderSource -> IO B.ByteString
 getSource (ByteStringSource bs) = return bs
 getSource (StringSource str) = return $ packUtf8 str
 getSource (FileSource path) = B.readFile path
-
-packUtf8 :: String -> B.ByteString
-packUtf8 = TE.encodeUtf8 . T.pack
 
 --------------------------------------------------------------------------------
 
