@@ -185,7 +185,7 @@ library
     OpenGL     >= 2.12 && < 2.13
   default-language: Haskell2010
   other-extensions: CPP
-  ghc-options: -Wall -O2
+  ghc-options: -Wall
   if os(windows) && flag(UseNativeWindowsLibraries)
     if arch(i386)
       cpp-options: "-DCALLCONV=stdcall"
