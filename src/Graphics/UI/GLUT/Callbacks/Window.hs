@@ -74,11 +74,13 @@ module Graphics.UI.GLUT.Callbacks.Window (
 
 ) where
 
-import Data.Bits hiding ( shift )
-import Data.Char
-import Data.Maybe
-import Foreign.C.Types
-import Graphics.Rendering.OpenGL
+import Data.Bits ( (.&.) )
+import Data.Char ( chr )
+import Data.Maybe ( fromJust )
+import Data.StateVar ( SettableStateVar, makeSettableStateVar )
+import Foreign.C.Types ( CInt, CUInt )
+import Graphics.Rendering.OpenGL ( Position(..), Size(..) )
+
 import Graphics.UI.GLUT.Callbacks.Registration
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.State

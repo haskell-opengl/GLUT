@@ -22,8 +22,10 @@ module Graphics.UI.GLUT.Begin (
    ActionOnWindowClose(..), actionOnWindowClose
 ) where
 
-import Data.StateVar
-import Foreign.C.Types
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Data.StateVar ( StateVar, makeStateVar )
+import Foreign.C.Types ( CInt )
+
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 
@@ -33,7 +35,7 @@ import Graphics.UI.GLUT.Raw
 -- callbacks that have been registered. This routine should be called at most
 -- once in a GLUT program.
 
-mainLoop :: IO ()
+mainLoop :: MonadIO m => m ()
 mainLoop = glutMainLoop
 
 --------------------------------------------------------------------------------
@@ -42,7 +44,7 @@ mainLoop = glutMainLoop
 -- This allows the application to control its own event loop and still use the
 -- GLUT package.
 
-mainLoopEvent :: IO ()
+mainLoopEvent :: MonadIO m => m ()
 mainLoopEvent = glutMainLoopEvent
 
 --------------------------------------------------------------------------------
@@ -57,7 +59,7 @@ mainLoopEvent = glutMainLoopEvent
 -- for one behaviour over the other he should contact the freeglut Programming
 -- Consortium and ask for the code to be fixed.
 
-leaveMainLoop :: IO ()
+leaveMainLoop :: MonadIO m => m ()
 leaveMainLoop = glutLeaveMainLoop
 
 --------------------------------------------------------------------------------

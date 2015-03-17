@@ -19,12 +19,13 @@ module Graphics.UI.GLUT.Callbacks.Registration (
 
 --------------------------------------------------------------------------------
 
-import Control.Monad
-import Data.IORef
-import qualified Data.Map as Map ( empty, lookup, insert, delete )
-import Data.Map ( Map )
-import Foreign.Ptr
-import Graphics.Rendering.OpenGL ( get )
+import Control.Monad ( when )
+import Data.IORef ( IORef, newIORef, readIORef, writeIORef, modifyIORef )
+import qualified Data.Map as M
+import Data.StateVar ( get )
+import Foreign.Ptr ( FunPtr, nullFunPtr, freeHaskellFunPtr )
+import System.IO.Unsafe ( unsafePerformIO )
+
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Window
 
@@ -86,22 +87,22 @@ modifyCallbackTable = modifyIORef theCallbackTable
 
 --------------------------------------------------------------------------------
 
-type CallbackTable a = Map CallbackID (FunPtr a)
+type CallbackTable a = M.Map CallbackID (FunPtr a)
 
 emptyCallbackTable :: CallbackTable a
-emptyCallbackTable = Map.empty
+emptyCallbackTable = M.empty
 
 lookupInCallbackTable :: CallbackID -> IO (Maybe (FunPtr a))
 lookupInCallbackTable callbackID =
-   fmap (Map.lookup callbackID) getCallbackTable
+   fmap (M.lookup callbackID) getCallbackTable
 
 deleteFromCallbackTable :: CallbackID -> IO ()
 deleteFromCallbackTable callbackID =
-   modifyCallbackTable (Map.delete callbackID)
+   modifyCallbackTable (M.delete callbackID)
 
 addToCallbackTable :: CallbackID -> FunPtr a -> IO ()
 addToCallbackTable callbackID funPtr =
-   modifyCallbackTable (Map.insert callbackID funPtr)
+   modifyCallbackTable (M.insert callbackID funPtr)
 
 --------------------------------------------------------------------------------
 -- Another global mutable variable: The list of function pointers ready to be

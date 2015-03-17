@@ -49,24 +49,24 @@ module Graphics.UI.GLUT.Initialization (
    ContextProfile(..), initialContextProfile
 ) where
 
-import Control.Monad
-import Data.Bits
-import Data.List
-import Foreign.C.String
-import Foreign.C.Types
-import Foreign.Marshal.Array
-import Foreign.Marshal.Utils
-import Foreign.Ptr
-import Foreign.Storable
-import Graphics.Rendering.OpenGL ( Position(..), Size(..)
-                                 , StateVar, GettableStateVar, get
-                                 , SettableStateVar, makeStateVar, ($=)
-                                 , makeGettableStateVar
-                                 , makeSettableStateVar )
+import Control.Monad ( when )
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Data.Bits ( Bits(..) )
+import Data.List ( genericLength, intersperse, mapAccumR )
+import Data.StateVar ( get, ($=), GettableStateVar, makeGettableStateVar
+                     , SettableStateVar, makeSettableStateVar, StateVar, makeStateVar )
+import Foreign.C.String ( peekCString, withCString )
+import Foreign.C.Types ( CInt, CUInt )
+import Foreign.Marshal.Array ( peekArray, withArray0 )
+import Foreign.Marshal.Utils ( with, withMany )
+import Foreign.Ptr ( nullPtr )
+import Foreign.Storable ( peek )
+import Graphics.Rendering.OpenGL ( Position(..), Size(..) )
+import System.Environment ( getArgs, getProgName )
+
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
-import System.Environment
 
 --------------------------------------------------------------------------------
 
@@ -113,10 +113,11 @@ import System.Environment
 -- * @-sync@: Enable synchronous X protocol transactions. This option makes
 --   it easier to track down potential X protocol errors.
 
-initialize :: String      -- ^ The program name.
+initialize :: MonadIO m
+           => String      -- ^ The program name.
            -> [String]    -- ^ The command line arguments
-           -> IO [String] -- ^ Non-GLUT command line arguments
-initialize prog args =
+           -> m [String] -- ^ Non-GLUT command line arguments
+initialize prog args = liftIO $
    with (1 + genericLength args) $ \argcBuf ->
    withMany withCString (prog : args) $ \argvPtrs ->
    withArray0 nullPtr argvPtrs $ \argvBuf -> do
@@ -129,8 +130,8 @@ initialize prog args =
 -- | Convenience action: Initialize GLUT, returning the program name and any
 -- non-GLUT command line arguments.
 
-getArgsAndInitialize :: IO (String, [String])
-getArgsAndInitialize = do
+getArgsAndInitialize :: MonadIO m => m (String, [String])
+getArgsAndInitialize = liftIO $ do
    prog <- getProgName
    args <- getArgs
    nonGLUTArgs <- initialize prog args
@@ -141,7 +142,7 @@ getArgsAndInitialize = do
 -- | (/freeglut only/) De-initialize GLUT. After this, one has to use
 -- 'initialize' or 'getArgsAndInitialize' to initialize GLUT again.
 
-exit :: IO ()
+exit :: MonadIO m => m ()
 exit = glutExit
 
 --------------------------------------------------------------------------------
@@ -367,7 +368,6 @@ setSamplesPerPixel spp = do
 
 multisamplingSupported :: IO Bool
 multisamplingSupported = isKnown "glutGetModeValues"
-   where isKnown = fmap (/= nullFunPtr) . getAPIEntryInternal
 
 --------------------------------------------------------------------------------
 

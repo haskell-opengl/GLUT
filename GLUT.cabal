@@ -137,7 +137,6 @@ extra-source-files:
    examples/RedBook8/common/Makefile
    examples/RedBook8/Makefile
    examples/examples.mk
-   include/HsGLUTExt.h
 
 flag UseNativeWindowsLibraries
   description:
@@ -166,7 +165,6 @@ library
     Graphics.UI.GLUT.Callbacks.Registration
     Graphics.UI.GLUT.QueryUtils
     Graphics.UI.GLUT.Raw
-    Graphics.UI.GLUT.Raw.APIEntry
     Graphics.UI.GLUT.Raw.Callbacks
     Graphics.UI.GLUT.Raw.Fonts
     Graphics.UI.GLUT.Raw.Functions
@@ -175,14 +173,14 @@ library
   c-sources:
      cbits/HsGLUT.c
   hs-source-dirs: src
-  include-dirs: include
   build-depends:
-    base       >= 3    && < 5,
-    array      >= 0.3  && < 0.6,
-    containers >= 0.3  && < 0.6,
-    StateVar   >= 1.1  && < 1.2,
-    OpenGLRaw  >= 2.3  && < 2.5,
-    OpenGL     >= 2.12 && < 2.13
+    base         >= 3    && < 5,
+    array        >= 0.3  && < 0.6,
+    containers   >= 0.3  && < 0.6,
+    transformers >= 0.2  && < 0.5,
+    StateVar     >= 1.1  && < 1.2,
+    OpenGLRaw    >= 2.3  && < 2.5,
+    OpenGL       >= 2.12 && < 2.13
   default-language: Haskell2010
   other-extensions: CPP
   ghc-options: -Wall

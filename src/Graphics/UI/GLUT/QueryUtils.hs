@@ -17,8 +17,9 @@ module Graphics.UI.GLUT.QueryUtils (
   Getter, simpleGet, layerGet, deviceGet
 ) where
 
-import Foreign.C.Types
-import Graphics.Rendering.OpenGL ( GLenum )
+import Foreign.C.Types ( CInt )
+import Graphics.Rendering.OpenGL.Raw.Types ( GLenum )
+
 import Graphics.UI.GLUT.Raw
 
 --------------------------------------------------------------------------------

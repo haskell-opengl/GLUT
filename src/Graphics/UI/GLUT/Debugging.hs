@@ -17,9 +17,11 @@ module Graphics.UI.GLUT.Debugging (
    reportErrors
 ) where
 
-import Graphics.Rendering.OpenGL ( Error(..), errors, get )
-import System.Environment
-import System.IO
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Data.StateVar ( get )
+import Graphics.Rendering.OpenGL ( Error(..), errors )
+import System.Environment ( getProgName )
+import System.IO ( hPutStrLn, stderr )
 
 --------------------------------------------------------------------------------
 
@@ -28,10 +30,10 @@ import System.IO
 -- error flags are reset after this action, i.e. there are no pending errors
 -- left afterwards.
 
-reportErrors :: IO ()
+reportErrors :: MonadIO m => m ()
 reportErrors = get errors >>= mapM_ reportError
 
-reportError :: Error -> IO ()
-reportError (Error _ msg) = do
+reportError :: MonadIO m => Error -> m ()
+reportError (Error _ msg) = liftIO $ do
    pn <- getProgName
    hPutStrLn stderr ("GLUT: Warning in " ++ pn ++ ": GL error: " ++ msg)

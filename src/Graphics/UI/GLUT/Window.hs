@@ -52,12 +52,14 @@ module Graphics.UI.GLUT.Window (
    Cursor(..), cursor, pointerPosition
 ) where
 
-import Foreign.C.String
-import Foreign.C.Types
-import Graphics.Rendering.OpenGL ( Position(..), Size(..)
-                                 , StateVar, makeStateVar
-                                 , GettableStateVar, makeGettableStateVar
-                                 , SettableStateVar, makeSettableStateVar )
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Data.StateVar ( GettableStateVar, makeGettableStateVar
+                     , SettableStateVar, makeSettableStateVar
+                     , StateVar, makeStateVar )
+import Foreign.C.String ( withCString )
+import Foreign.C.Types ( CInt )
+import Graphics.Rendering.OpenGL ( Position(..), Size(..) )
+
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
@@ -89,9 +91,10 @@ import Graphics.UI.GLUT.Types
 -- established for the first window created.
 
 createWindow
-   :: String    -- ^ The window name
-   -> IO Window -- ^ The identifier for the newly created window
-createWindow name = fmap Window $ withCString name glutCreateWindow
+   :: MonadIO m
+   => String   -- ^ The window name
+   -> m Window -- ^ The identifier for the newly created window
+createWindow name = liftIO $ fmap Window $ withCString name glutCreateWindow
 
 --------------------------------------------------------------------------------
 
@@ -100,16 +103,17 @@ createWindow name = fmap Window $ withCString name glutCreateWindow
 -- newly created subwindow. Subwindows can be nested arbitrarily deep.
 
 createSubWindow
-   :: Window    -- ^ Identifier of the subwindow\'s parent window.
-   -> Position  -- ^ Window position in pixels relative to parent window\'s
-                --   origin.
-   -> Size      -- ^ Window size in pixels
-   -> IO Window -- ^ The identifier for the newly created subwindow
-createSubWindow (Window win) (Position x y) (Size w h) =
-   fmap Window $
-      glutCreateSubWindow win
-                          (fromIntegral x) (fromIntegral y)
-                          (fromIntegral w) (fromIntegral h)
+   :: MonadIO m
+   => Window   -- ^ Identifier of the subwindow\'s parent window.
+   -> Position -- ^ Window position in pixels relative to parent window\'s
+               --   origin.
+   -> Size     -- ^ Window size in pixels
+   -> m Window -- ^ The identifier for the newly created subwindow
+createSubWindow (Window win) (Position x y) (Size w h) = do
+   s <- glutCreateSubWindow win
+                            (fromIntegral x) (fromIntegral y)
+                            (fromIntegral w) (fromIntegral h)
+   return $ Window s
 
 --------------------------------------------------------------------------------
 
@@ -140,7 +144,7 @@ numSubWindows =
 -- /current window/, the /current window/ becomes invalid ('currentWindow' will
 -- contain 'Nothing').
 
-destroyWindow :: Window -> IO ()
+destroyWindow :: MonadIO m => Window -> m ()
 destroyWindow (Window win) = glutDestroyWindow win
 
 --------------------------------------------------------------------------------
@@ -178,7 +182,7 @@ getWindow act = do
 --
 -- Also, see 'Graphics.UI.GLUT.Overlay.postOverlayRedisplay'.
 
-postRedisplay :: Maybe Window -> IO ()
+postRedisplay :: MonadIO m => Maybe Window -> m ()
 postRedisplay = maybe glutPostRedisplay (\(Window win) -> glutPostWindowRedisplay win)
 
 -- | Mark the normal plane of the given window as needing to be redisplayed,
@@ -205,7 +209,7 @@ postRedisplay = maybe glutPostRedisplay (\(Window win) -> glutPostWindowRedispla
 --
 -- If the /layer in use/ is not double buffered, 'swapBuffers' has no effect.
 
-swapBuffers :: IO ()
+swapBuffers :: MonadIO m => m ()
 swapBuffers = glutSwapBuffers
 
 --------------------------------------------------------------------------------
@@ -286,14 +290,14 @@ getWindowSize = do
 -- absolutely no decorations. Non-Motif window managers may not respond to
 -- @_MOTIF_WM_HINTS@.
 
-fullScreen :: IO ()
+fullScreen :: MonadIO m => m ()
 fullScreen = glutFullScreen
 
 --------------------------------------------------------------------------------
 
 -- | (/freeglut only/) Toggle between windowed and full screen mode.
 
-fullScreenToggle :: IO ()
+fullScreenToggle :: MonadIO m => m ()
 fullScreenToggle = glutFullScreenToggle
 
 --------------------------------------------------------------------------------
@@ -301,7 +305,7 @@ fullScreenToggle = glutFullScreenToggle
 -- | (/freeglut only/) If we are in full screen mode, resize the current window
 -- back to its original size.
 
-leaveFullScreen :: IO ()
+leaveFullScreen :: MonadIO m => m ()
 leaveFullScreen = glutLeaveFullScreen
 
 --------------------------------------------------------------------------------
@@ -317,13 +321,13 @@ leaveFullScreen = glutLeaveFullScreen
 -- | Change the stacking order of the /current window/ relative to its siblings
 -- (lowering it).
 
-pushWindow :: IO ()
+pushWindow :: MonadIO m => m ()
 pushWindow = glutPushWindow
 
 -- | Change the stacking order of the /current window/ relative to its siblings,
 -- bringing the /current window/ closer to the top.
 
-popWindow :: IO ()
+popWindow :: MonadIO m => m ()
 popWindow = glutPopWindow
 
 --------------------------------------------------------------------------------

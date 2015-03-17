@@ -37,10 +37,13 @@ module Graphics.UI.GLUT.Objects (
    renderObject
 ) where
 
-import Foreign.C.Types
-import Foreign.Marshal.Utils
-import Foreign.Ptr
-import Graphics.Rendering.OpenGL
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Foreign.C.Types ( CInt )
+import Foreign.Marshal.Utils ( with )
+import Foreign.Ptr ( Ptr, castPtr )
+import Graphics.Rendering.OpenGL ( Height, Radius, Slices, Stacks, Vertex3(..) )
+import Graphics.Rendering.OpenGL.Raw.Types ( GLdouble, GLint )
+
 import Graphics.UI.GLUT.Raw
 
 --------------------------------------------------------------------------------
@@ -135,7 +138,7 @@ type NumLevels = GLint
 
 -- | Render an object in the given flavour.
 
-renderObject :: Flavour -> Object -> IO ()
+renderObject :: MonadIO m => Flavour -> Object -> m ()
 renderObject Solid     (Cube h)             = glutSolidCube h
 renderObject Wireframe (Cube h)             = glutWireCube  h
 renderObject Solid     Dodecahedron         = glutSolidDodecahedron
@@ -167,14 +170,14 @@ renderObject Wireframe (SierpinskiSponge n) = wireSierpinskiSponge n
 
 --------------------------------------------------------------------------------
 
-solidSierpinskiSponge :: NumLevels -> IO ()
+solidSierpinskiSponge :: MonadIO m => NumLevels -> m ()
 solidSierpinskiSponge = sierpinskiSponge glutSolidSierpinskiSponge
 
-wireSierpinskiSponge :: NumLevels -> IO ()
+wireSierpinskiSponge :: MonadIO m => NumLevels -> m ()
 wireSierpinskiSponge = sierpinskiSponge glutWireSierpinskiSponge
 
 -- for consistency, we hide the offset and scale on the Haskell side
-sierpinskiSponge :: (CInt -> Ptr GLdouble -> Height -> IO ()) -> NumLevels -> IO ()
-sierpinskiSponge f n =
+sierpinskiSponge :: MonadIO m => (CInt -> Ptr GLdouble -> Height -> IO ()) -> NumLevels -> m ()
+sierpinskiSponge f n = liftIO $
    with (Vertex3 0 0 0) $ \offsetBuf ->
       f (fromIntegral n) ((castPtr :: Ptr (Vertex3 GLdouble) -> Ptr GLdouble) offsetBuf) 1

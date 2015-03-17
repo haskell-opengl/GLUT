@@ -19,8 +19,10 @@ module Graphics.UI.GLUT.DeviceControl (
    forceJoystickCallback
 ) where
 
-import Foreign.C.Types
-import Graphics.Rendering.OpenGL ( StateVar, makeStateVar )
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Data.StateVar ( StateVar, makeStateVar )
+import Foreign.C.Types ( CInt )
+
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 
@@ -118,5 +120,5 @@ perWindowKeyRepeat =
 -- This is done in a synchronous fashion within the current context, i.e. when
 -- 'forceJoystickCallback' returns, the callback will have already happened.
 
-forceJoystickCallback :: IO ()
+forceJoystickCallback :: MonadIO m => m ()
 forceJoystickCallback = glutForceJoystickFunc

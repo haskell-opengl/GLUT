@@ -30,13 +30,14 @@ module Graphics.UI.GLUT.GameMode (
    gameModeActive
 ) where
 
-import Data.List
-import Foreign.C.String
-import Graphics.Rendering.OpenGL ( GLenum, Size(..)
-                                 , GettableStateVar
-                                 , SettableStateVar
-                                 , makeGettableStateVar
-                                 , makeSettableStateVar )
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Data.List ( intersperse )
+import Data.StateVar ( GettableStateVar, makeGettableStateVar
+                     , SettableStateVar, makeSettableStateVar )
+import Foreign.C.String ( withCString )
+import Graphics.Rendering.OpenGL ( Size(..) )
+import Graphics.Rendering.OpenGL.Raw.Types ( GLenum )
+
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
 
@@ -133,7 +134,7 @@ generalCapStr =
 -- Re-entering /game mode/ is allowed, the previous game mode window gets
 -- destroyed by this, and a new one is created.
 
-enterGameMode :: IO (Window, Bool)
+enterGameMode :: MonadIO m => m (Window, Bool)
 enterGameMode = do
    w <- glutEnterGameMode
    c <- getBool glut_GAME_MODE_DISPLAY_CHANGED
@@ -144,7 +145,7 @@ enterGameMode = do
 -- | Leave /game mode/, restoring the old display mode and destroying the game
 -- mode window.
 
-leaveGameMode :: IO ()
+leaveGameMode :: MonadIO m => m ()
 leaveGameMode = glutLeaveGameMode
 
 --------------------------------------------------------------------------------
@@ -180,8 +181,10 @@ gameModeInfo = makeGettableStateVar $ do
          return $ Just $ GameModeInfo size (fromIntegral b) (fromIntegral r)
       else return Nothing
 
-getBool :: GLenum -> IO Bool
-getBool = fmap (/= 0) . glutGameModeGet
+getBool :: MonadIO m => GLenum -> m Bool
+getBool x = do
+  val <- glutGameModeGet x
+  return $ val /= 0
 
 --------------------------------------------------------------------------------
 

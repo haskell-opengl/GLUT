@@ -22,11 +22,13 @@ module Graphics.UI.GLUT.Fonts (
    Font(..), BitmapFont(..), StrokeFont(..),
 ) where
 
-import Data.Char
-import Foreign.C.String
-import Foreign.C.Types
-import Foreign.Ptr
-import Graphics.Rendering.OpenGL
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Data.Char ( ord )
+import Foreign.C.String ( withCString )
+import Foreign.C.Types ( CInt )
+import Foreign.Ptr ( castPtr )
+import Graphics.Rendering.OpenGL.Raw.Types ( GLint, GLfloat )
+
 import Graphics.UI.GLUT.Raw
 
 --------------------------------------------------------------------------------
@@ -44,20 +46,20 @@ class Font a where
    -- 'Graphics.Rendering.OpenGL.GL.CoordTrans.translate' is used to translate
    -- the current model view matrix to advance the width of the string.
 
-   renderString :: a -> String -> IO ()
+   renderString :: MonadIO m => a -> String -> m ()
 
    -- | For a bitmap font, return the width in pixels of a string. For a stroke
    -- font, return the width in units. While the width of characters in a font
    -- may vary (though fixed width fonts do not vary), the maximum height
    -- characteristics of a particular font are fixed.
 
-   stringWidth :: a -> String -> IO GLint
+   stringWidth :: MonadIO m => a -> String -> m GLint
 
    -- | (/freeglut only/) For a bitmap font, return the maximum height of the
    -- characters in the given font measured in pixels. For a stroke font,
    -- return the width in units.
 
-   fontHeight :: a -> IO GLfloat
+   fontHeight :: MonadIO m => a -> m GLfloat
 
 instance Font BitmapFont where
    renderString = bitmapString
@@ -72,49 +74,55 @@ instance Font StrokeFont where
 
 --------------------------------------------------------------------------------
 
-bitmapString :: BitmapFont -> String -> IO ()
+bitmapString :: MonadIO m => BitmapFont -> String -> m ()
 bitmapString f s = do
    i <- marshalBitmapFont f
    mapM_ (\c -> withChar c (glutBitmapCharacter i)) s
 
-withChar :: Char -> (CInt -> IO a) -> IO a
+withChar :: MonadIO m => Char -> (CInt -> m a) -> m a
 withChar c f = f . fromIntegral . ord $ c
 
 --------------------------------------------------------------------------------
 
-strokeString :: StrokeFont -> String -> IO ()
+strokeString :: MonadIO m => StrokeFont -> String -> m ()
 strokeString f s = do
    i <- marshalStrokeFont f
    mapM_ (\c -> withChar c (glutStrokeCharacter i)) s
 
 --------------------------------------------------------------------------------
 
-bitmapLength :: BitmapFont -- ^ Bitmap font to use.
+bitmapLength :: MonadIO m
+             => BitmapFont -- ^ Bitmap font to use.
              -> String     -- ^ String to return width of (not confined to 8
                            --   bits).
-             -> IO GLint   -- ^ Width in pixels.
-bitmapLength f s = do
+             -> m GLint    -- ^ Width in pixels.
+bitmapLength f s = liftIO $ do
    i <- marshalBitmapFont f
    fmap fromIntegral $ withCString s (glutBitmapLength i . castPtr)
 
 --------------------------------------------------------------------------------
 
-strokeLength :: StrokeFont -- ^ Stroke font to use.
+strokeLength :: MonadIO m
+             => StrokeFont -- ^ Stroke font to use.
              -> String     -- ^ String to return width of (not confined to 8
                            --   bits).
-             -> IO GLint   -- ^ Width in units.
-strokeLength f s = do
+             -> m GLint    -- ^ Width in units.
+strokeLength f s = liftIO $ do
    i <- marshalStrokeFont f
    fmap fromIntegral $ withCString s (glutStrokeLength i . castPtr)
 
 --------------------------------------------------------------------------------
 
-bitmapHeight :: BitmapFont -- ^ Bitmap font to use.
-             -> IO GLfloat -- ^ Height in pixels.
-bitmapHeight f = fmap fromIntegral $ glutBitmapHeight =<< marshalBitmapFont f
+bitmapHeight :: MonadIO m
+             => BitmapFont -- ^ Bitmap font to use.
+             -> m GLfloat  -- ^ Height in pixels.
+bitmapHeight f = liftIO $ do
+  i <- marshalBitmapFont f
+  fromIntegral `fmap` glutBitmapHeight  i
 
 --------------------------------------------------------------------------------
 
-strokeHeight :: StrokeFont -- ^ Stroke font to use.
-             -> IO GLfloat -- ^ Height in units.
+strokeHeight :: MonadIO m
+             => StrokeFont -- ^ Stroke font to use.
+             -> m GLfloat  -- ^ Height in units.
 strokeHeight f = glutStrokeHeight =<< marshalStrokeFont f

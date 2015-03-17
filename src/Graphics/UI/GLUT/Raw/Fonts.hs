@@ -18,8 +18,9 @@ module Graphics.UI.GLUT.Raw.Fonts (
    StrokeFont(..), GLUTstrokeFont, marshalStrokeFont
 ) where
 
+import Control.Monad.IO.Class ( MonadIO(..) )
 import Foreign.C.Types
-import Foreign.Ptr
+import Foreign.Ptr ( Ptr )
 
 --------------------------------------------------------------------------------
 
@@ -53,8 +54,8 @@ data BitmapFont
 -- small C wrappers around those macros. *sigh*
 type GLUTbitmapFont = Ptr ()
 
-marshalBitmapFont :: BitmapFont -> IO GLUTbitmapFont
-marshalBitmapFont x = case x of
+marshalBitmapFont :: MonadIO m => BitmapFont -> m GLUTbitmapFont
+marshalBitmapFont x = liftIO $ case x of
    Fixed8By13 -> hs_GLUT_marshalBitmapFont 0
    Fixed9By15 -> hs_GLUT_marshalBitmapFont 1
    TimesRoman10 -> hs_GLUT_marshalBitmapFont 2
@@ -62,7 +63,6 @@ marshalBitmapFont x = case x of
    Helvetica10 -> hs_GLUT_marshalBitmapFont 4
    Helvetica12 -> hs_GLUT_marshalBitmapFont 5
    Helvetica18 -> hs_GLUT_marshalBitmapFont 6
-
 
 foreign import ccall unsafe "hs_GLUT_marshalBitmapFont"
    hs_GLUT_marshalBitmapFont :: CInt -> IO (Ptr a)
@@ -83,8 +83,8 @@ data StrokeFont
 -- Same remarks as for GLUTbitmapFont
 type GLUTstrokeFont = Ptr ()
 
-marshalStrokeFont :: StrokeFont -> IO GLUTstrokeFont
-marshalStrokeFont x = case x of
+marshalStrokeFont :: MonadIO m => StrokeFont -> m GLUTstrokeFont
+marshalStrokeFont x = liftIO $ case x of
    Roman -> hs_GLUT_marshalStrokeFont 0
    MonoRoman -> hs_GLUT_marshalStrokeFont 1
 

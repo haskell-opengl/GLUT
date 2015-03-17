@@ -21,11 +21,11 @@ module Graphics.UI.GLUT.Callbacks.Global (
    Timeout, TimerCallback, addTimerCallback
 ) where
 
-import Control.Monad.Fix
-import Foreign.C.Types
-import Graphics.Rendering.OpenGL ( Position(..)
-                                 , SettableStateVar
-                                 , makeSettableStateVar )
+import Control.Monad.Fix ( mfix )
+import Data.StateVar ( SettableStateVar, makeSettableStateVar )
+import Foreign.C.Types ( CInt )
+import Graphics.Rendering.OpenGL ( Position(..) )
+
 import Graphics.UI.GLUT.Callbacks.Registration
 import Graphics.UI.GLUT.Raw
 

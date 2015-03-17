@@ -22,15 +22,18 @@ module Graphics.UI.GLUT.Menu (
    numMenuItems
 ) where
 
-import Data.Array
-import Data.IORef
-import qualified Data.Map as Map
-import Control.Monad
-import Data.Map ( Map )
-import Foreign.C.String
-import Foreign.C.Types
-import Foreign.Ptr
-import Graphics.Rendering.OpenGL
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Control.Monad ( when, unless, zipWithM )
+import Data.Array ( listArray, (!) )
+import Data.IORef ( IORef, newIORef, readIORef, modifyIORef )
+import qualified Data.Map as M
+import Data.StateVar ( get, ($=), GettableStateVar, makeGettableStateVar
+                     , StateVar, makeStateVar )
+import Foreign.C.String ( withCString )
+import Foreign.C.Types ( CInt )
+import Foreign.Ptr ( freeHaskellFunPtr )
+import System.IO.Unsafe ( unsafePerformIO )
+
 import Graphics.UI.GLUT.Callbacks.Registration
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
@@ -76,8 +79,8 @@ type MenuCallback = IO ()
 -- @SERVER_OVERLAY_VISUALS@ convention is used to determine if overlay visuals
 -- are available.
 
-attachMenu :: MouseButton -> Menu -> IO ()
-attachMenu mouseButton menu = do
+attachMenu :: MonadIO m => MouseButton -> Menu -> m ()
+attachMenu mouseButton menu = liftIO $ do
    win <- getCurrentWindow "attachMenu"
    let hook = MenuHook win mouseButton
    detachMenu hook
@@ -154,22 +157,22 @@ data MenuHook = MenuHook Window MouseButton
 
 type Destructor = IO ()
 
-type MenuTable = Map MenuHook Destructor
+type MenuTable = M.Map MenuHook Destructor
 
 emptyMenuTable :: MenuTable
-emptyMenuTable = Map.empty
+emptyMenuTable = M.empty
 
 lookupInMenuTable :: MenuHook -> IO (Maybe Destructor)
 lookupInMenuTable callbackID =
-   fmap (Map.lookup callbackID) getMenuTable
+   fmap (M.lookup callbackID) getMenuTable
 
 deleteFromMenuTable :: MenuHook -> IO ()
 deleteFromMenuTable callbackID =
-   modifyMenuTable (Map.delete callbackID)
+   modifyMenuTable (M.delete callbackID)
 
 addToMenuTable :: MenuHook -> Destructor -> IO ()
 addToMenuTable callbackID funPtr =
-   modifyMenuTable (Map.insert callbackID funPtr)
+   modifyMenuTable (M.insert callbackID funPtr)
 
 --------------------------------------------------------------------------------
 

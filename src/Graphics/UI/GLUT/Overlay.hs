@@ -30,9 +30,12 @@ module Graphics.UI.GLUT.Overlay (
    postOverlayRedisplay
 ) where
 
-import Graphics.Rendering.OpenGL ( GLenum, StateVar, makeStateVar
-                                 , GettableStateVar, makeGettableStateVar
-                                 , SettableStateVar, makeSettableStateVar )
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Data.StateVar ( GettableStateVar, makeGettableStateVar
+                     , SettableStateVar, makeSettableStateVar
+                     , StateVar, makeStateVar )
+import Graphics.Rendering.OpenGL.Raw.Types ( GLenum )
+
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
@@ -163,6 +166,6 @@ getLayerInUse = layerGet (unmarshalLayer . fromIntegral) glut_LAYER_IN_USE
 --
 -- Also, see 'Graphics.UI.GLUT.Window.postRedisplay'.
 
-postOverlayRedisplay :: Maybe Window -> IO ()
+postOverlayRedisplay :: MonadIO m => Maybe Window -> m ()
 postOverlayRedisplay =
    maybe glutPostOverlayRedisplay (\(Window win) -> glutPostWindowOverlayRedisplay win)

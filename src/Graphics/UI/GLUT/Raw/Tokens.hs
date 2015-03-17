@@ -15,8 +15,8 @@
 
 module Graphics.UI.GLUT.Raw.Tokens where
 
-import Foreign.C.Types
-import Graphics.Rendering.OpenGL ( GLenum )
+import Foreign.C.Types ( CInt, CUInt )
+import Graphics.Rendering.OpenGL.Raw.Types ( GLenum )
 
 glut_ACCUM :: CUInt
 glut_ACCUM = 0x0004

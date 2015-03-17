@@ -41,10 +41,12 @@ module Graphics.UI.GLUT.Colormap (
    transparentIndex
 ) where
 
-import Foreign.C.Types
-import Graphics.Rendering.OpenGL ( GLfloat, GLint, Color3(..), Index1(..)
-                                 , StateVar, makeStateVar, GettableStateVar
-                                 , makeGettableStateVar )
+import Control.Monad.IO.Class ( MonadIO(..) )
+import Data.StateVar ( GettableStateVar, makeGettableStateVar, StateVar, makeStateVar )
+import Foreign.C.Types ( CInt )
+import Graphics.Rendering.OpenGL.GL.VertexSpec ( Index1(..), Color3(..) )
+import Graphics.Rendering.OpenGL.Raw.Types ( GLint, GLfloat )
+
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types
@@ -87,7 +89,7 @@ getColorMapEntry cell = do
 -- 'copyColormap' should only be called when both the /current window/ and the
 -- specified window are color index windows.
 
-copyColormap :: Window -> IO ()
+copyColormap :: MonadIO m => Window -> m ()
 copyColormap (Window win) = glutCopyColormap win
 
 --------------------------------------------------------------------------------

@@ -57,13 +57,17 @@ module Graphics.UI.GLUT.State (
    glutVersion, initState
 ) where
 
-import Control.Monad
-import Foreign.C.Types
-import Foreign.Marshal.Alloc
-import Foreign.Marshal.Array
-import Foreign.Ptr
-import Foreign.Storable
-import Graphics.Rendering.OpenGL
+import Control.Monad ( unless )
+import Data.StateVar ( GettableStateVar, makeGettableStateVar
+                     , SettableStateVar, makeSettableStateVar
+                     , StateVar, makeStateVar )
+import Foreign.C.Types ( CInt )
+import Foreign.Marshal.Alloc ( alloca )
+import Foreign.Marshal.Array ( peekArray )
+import Foreign.Storable ( peek )
+import Graphics.Rendering.OpenGL ( AttribLocation(..), Size(..) )
+import Graphics.Rendering.OpenGL.Raw.Types ( GLenum, GLint )
+
 import Graphics.UI.GLUT.Overlay
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw
@@ -390,9 +394,8 @@ getDeviceInfo dev act =
 
 glutVersion :: GettableStateVar String
 glutVersion = makeGettableStateVar $ do
-   let isGLUT = isUnknown "glutSetOption"
-       isFreeglut = isUnknown "glutSetWindowStayOnTop"
-       isUnknown = fmap (== nullFunPtr) . getAPIEntryInternal
+   let isGLUT = not `fmap` isKnown "glutSetOption"
+       isFreeglut = not `fmap` isKnown "glutSetWindowStayOnTop"
        showVersionPart x = shows (x `mod` 100)
        showVersion v = showVersionPart (v `div` 10000) . showChar '.' .
                        showVersionPart (v `div`   100) . showChar '.' .
