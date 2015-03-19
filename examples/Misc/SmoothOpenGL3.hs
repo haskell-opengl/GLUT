@@ -160,7 +160,8 @@ myInit = do
 
 dumpInfo :: IO ()
 dumpInfo = do
-   let dump message var = putStrLn . ((message ++ ": ") ++) =<< get var
+   let dump :: String -> GettableStateVar String -> IO ()
+       dump message var = putStrLn . ((message ++ ": ") ++) =<< get var
    dump "Vendor" vendor
    dump "Renderer" renderer
    dump "Version" glVersion
