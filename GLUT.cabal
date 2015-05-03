@@ -1,5 +1,5 @@
 name: GLUT
-version: 2.7.0.0
+version: 2.7.0.1
 synopsis: A binding for the OpenGL Utility Toolkit
 description:
   A Haskell binding for the OpenGL Utility Toolkit, a window system independent
@@ -179,7 +179,7 @@ library
     containers   >= 0.3  && < 0.6,
     transformers >= 0.2  && < 0.5,
     StateVar     >= 1.1  && < 1.2,
-    OpenGLRaw    >= 2.3  && < 2.5,
+    OpenGLRaw    >= 2.3  && < 2.6,
     OpenGL       >= 2.12 && < 2.13
   default-language: Haskell2010
   other-extensions: CPP
