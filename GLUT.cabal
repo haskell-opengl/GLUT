@@ -38,7 +38,7 @@ extra-source-files:
    examples/Misc/ARBOcclude.hs
    examples/Misc/ColorTriangle/ColorTriangle.hs
    examples/Misc/ColorTriangle/Makefile
-   examples/Misc/ColorTriangle/color_triangles.frac
+   examples/Misc/ColorTriangle/color_triangles.frag
    examples/Misc/ColorTriangle/color_triangles.vert
    examples/Misc/ExtractContours.hs
    examples/Misc/Gears.hs
@@ -130,7 +130,7 @@ extra-source-files:
    examples/RedBook4/Wrap.hs
    examples/RedBook8/00-README
    examples/RedBook8/Chapter01/Makefile
-   examples/RedBook8/Chapter01/triangles.frac
+   examples/RedBook8/Chapter01/triangles.frag
    examples/RedBook8/Chapter01/Triangles.hs
    examples/RedBook8/Chapter01/triangles.vert
    examples/RedBook8/common/LoadShaders.hs
