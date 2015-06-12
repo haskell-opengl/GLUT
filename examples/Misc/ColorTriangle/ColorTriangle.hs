@@ -58,7 +58,7 @@ init = do
 
   program <- loadShaders [
      ShaderInfo VertexShader (FileSource "color_triangles.vert"),
-     ShaderInfo FragmentShader (FileSource "color_triangles.frac")]
+     ShaderInfo FragmentShader (FileSource "color_triangles.frag")]
   currentProgram $= Just program
 
   let firstIndex = 0
