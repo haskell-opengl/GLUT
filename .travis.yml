@@ -48,7 +48,7 @@ before_script:
 script:
  - cabal install --enable-documentation
  - cabal sdist
- - make -C examples
+ - make -k -C examples
 
 after_script:
  - ghc-pkg list
