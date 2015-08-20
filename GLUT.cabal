@@ -1,5 +1,5 @@
 name: GLUT
-version: 2.7.0.2
+version: 2.7.0.3
 synopsis: A binding for the OpenGL Utility Toolkit
 description:
   A Haskell binding for the OpenGL Utility Toolkit, a window system independent
@@ -17,6 +17,7 @@ category: Graphics
 build-type: Simple
 cabal-version: >=1.10
 extra-source-files:
+   CHANGELOG.md
    README.md
    examples/00-README
    examples/BOGLGP/00-README
