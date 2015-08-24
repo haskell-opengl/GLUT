@@ -1,7 +1,5 @@
 # It seems that we can't use the CABALVER and GHCVER environment variables in a
 # toplevel addons.apt.packages section, so we have to duplicate things below.
-# Furthermore, GHC 7.10.2 is not on the whitelist yet.
-# TODO: Change 7.10.1 to 7.10.2 when it is whitelisted.
 matrix:
   include:
    - env: CABALVER=1.16 GHCVER=7.0.4
@@ -49,7 +47,7 @@ matrix:
           - freeglut3-dev
           - cabal-install-1.20
           - ghc-7.8.4
-   - env: CABALVER=1.22 GHCVER=7.10.1
+   - env: CABALVER=1.22 GHCVER=7.10.2
      addons:
        apt:
          sources:
@@ -57,7 +55,7 @@ matrix:
          packages:
           - freeglut3-dev
           - cabal-install-1.22
-          - ghc-7.10.1
+          - ghc-7.10.2
    - env: CABALVER=head GHCVER=head
      addons:
        apt:
