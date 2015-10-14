@@ -180,7 +180,7 @@ library
     containers   >= 0.3  && < 0.6,
     transformers >= 0.2  && < 0.5,
     StateVar     >= 1.1  && < 1.2,
-    OpenGLRaw    >= 2.3  && < 2.6,
+    OpenGLRaw    >= 2.3  && < 2.7,
     OpenGL       >= 2.12 && < 2.14
   default-language: Haskell2010
   other-extensions: CPP
