@@ -1,3 +1,7 @@
+2.7.0.5
+--------
+* Make things work with both old and new `OpenGLRaw`/`GLURaw` packages.
+
 2.7.0.4
 --------
 * Relaxed upper version bound for `transformers`.
