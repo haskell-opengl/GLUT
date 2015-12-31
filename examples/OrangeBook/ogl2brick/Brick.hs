@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-
    Brick.hs (adapted from ogl2brick.c which is (c) 3Dlabs Inc. Ltd.)
    Copyright (c) Sven Panne 2006 <svenpanne@gmail.com>
@@ -5,12 +6,16 @@
    See the file libraries/GLUT/LICENSE
 -}
 
+-- What we actually mean is: "#if !MIN_VERSION_base(4,8,0)", but we don't use
+-- cabal in the examples.
+#if __GLASGOW_HASKELL__ < 710
 import Prelude hiding ( sum )
+import Data.Foldable ( Foldable, sum )
+#endif
 import Control.Applicative
 import Control.Exception ( IOException, catch )
 import Control.Monad ( when, unless )
 import qualified Data.ByteString as B
-import Data.Foldable ( Foldable, sum )
 import Data.IORef
 import System.Exit
 import Graphics.UI.GLUT

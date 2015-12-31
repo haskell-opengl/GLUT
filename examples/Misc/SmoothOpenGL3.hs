@@ -11,7 +11,7 @@ import Data.List
 import Foreign.Marshal.Array
 import Foreign.Ptr
 import Foreign.Storable
-import Graphics.Rendering.OpenGL.Raw.Core31
+import Graphics.GL.Core31
 import Graphics.UI.GLUT
 import System.Exit
 import System.IO
@@ -193,8 +193,8 @@ uniformMatrix4fv :: UniformLocation -> GLsizei -> Bool -> Ptr GLfloat -> IO ()
 uniformMatrix4fv location count =
    glUniformMatrix4fv (uniformLocationToGLint location) count . marshalGLboolean
    where marshalGLboolean x = fromIntegral $ case x of
-            False -> gl_FALSE
-            True -> gl_TRUE
+            False -> GL_FALSE
+            True -> GL_TRUE
          -- MEGA HACK because UniformLocation is abstract
          uniformLocationToGLint = read . head . tail . words . show
 
