@@ -18,7 +18,7 @@ module Graphics.UI.GLUT.QueryUtils (
 ) where
 
 import Foreign.C.Types ( CInt )
-import Graphics.Rendering.OpenGL.Raw.Types ( GLenum )
+import Graphics.Rendering.OpenGL ( GLenum )
 
 import Graphics.UI.GLUT.Raw
 

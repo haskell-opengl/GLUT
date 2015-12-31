@@ -184,7 +184,7 @@ import Control.Monad.IO.Class ( MonadIO(..) )
 import Foreign.C.String ( withCString, CString )
 import Foreign.Marshal.Error ( throwIf )
 import Foreign.Ptr ( Ptr, FunPtr, nullFunPtr )
-import Graphics.Rendering.OpenGL.Raw.Types ( GLdouble, GLenum, GLfloat, GLint )
+import Graphics.Rendering.OpenGL ( GLdouble, GLenum, GLfloat, GLint )
 import System.IO.Unsafe ( unsafePerformIO )
 
 import Graphics.UI.GLUT.Raw.Callbacks

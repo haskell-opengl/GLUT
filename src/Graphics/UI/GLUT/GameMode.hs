@@ -35,8 +35,7 @@ import Data.List ( intersperse )
 import Data.StateVar ( GettableStateVar, makeGettableStateVar
                      , SettableStateVar, makeSettableStateVar )
 import Foreign.C.String ( withCString )
-import Graphics.Rendering.OpenGL ( Size(..) )
-import Graphics.Rendering.OpenGL.Raw.Types ( GLenum )
+import Graphics.Rendering.OpenGL ( Size(..), GLenum )
 
 import Graphics.UI.GLUT.Raw
 import Graphics.UI.GLUT.Types

@@ -65,8 +65,7 @@ import Foreign.C.Types ( CInt )
 import Foreign.Marshal.Alloc ( alloca )
 import Foreign.Marshal.Array ( peekArray )
 import Foreign.Storable ( peek )
-import Graphics.Rendering.OpenGL ( AttribLocation(..), Size(..) )
-import Graphics.Rendering.OpenGL.Raw.Types ( GLenum, GLint )
+import Graphics.Rendering.OpenGL ( AttribLocation(..), Size(..), GLenum, GLint )
 
 import Graphics.UI.GLUT.Overlay
 import Graphics.UI.GLUT.QueryUtils

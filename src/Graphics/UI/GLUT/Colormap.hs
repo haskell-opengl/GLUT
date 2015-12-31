@@ -45,7 +45,7 @@ import Control.Monad.IO.Class ( MonadIO(..) )
 import Data.StateVar ( GettableStateVar, makeGettableStateVar, StateVar, makeStateVar )
 import Foreign.C.Types ( CInt )
 import Graphics.Rendering.OpenGL.GL.VertexSpec ( Index1(..), Color3(..) )
-import Graphics.Rendering.OpenGL.Raw.Types ( GLint, GLfloat )
+import Graphics.Rendering.OpenGL ( GLint, GLfloat )
 
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw

@@ -41,8 +41,8 @@ import Control.Monad.IO.Class ( MonadIO(..) )
 import Foreign.C.Types ( CInt )
 import Foreign.Marshal.Utils ( with )
 import Foreign.Ptr ( Ptr, castPtr )
-import Graphics.Rendering.OpenGL ( Height, Radius, Slices, Stacks, Vertex3(..) )
-import Graphics.Rendering.OpenGL.Raw.Types ( GLdouble, GLint )
+import Graphics.Rendering.OpenGL (
+  Height, Radius, Slices, Stacks, Vertex3(..), GLdouble, GLint )
 
 import Graphics.UI.GLUT.Raw
 

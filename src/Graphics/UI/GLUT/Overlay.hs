@@ -34,7 +34,7 @@ import Control.Monad.IO.Class ( MonadIO(..) )
 import Data.StateVar ( GettableStateVar, makeGettableStateVar
                      , SettableStateVar, makeSettableStateVar
                      , StateVar, makeStateVar )
-import Graphics.Rendering.OpenGL.Raw.Types ( GLenum )
+import Graphics.Rendering.OpenGL ( GLenum )
 
 import Graphics.UI.GLUT.QueryUtils
 import Graphics.UI.GLUT.Raw

@@ -27,7 +27,7 @@ import Data.Char ( ord )
 import Foreign.C.String ( withCString )
 import Foreign.C.Types ( CInt )
 import Foreign.Ptr ( castPtr )
-import Graphics.Rendering.OpenGL.Raw.Types ( GLint, GLfloat )
+import Graphics.Rendering.OpenGL ( GLint, GLfloat )
 
 import Graphics.UI.GLUT.Raw
 
