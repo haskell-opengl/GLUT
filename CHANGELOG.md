@@ -1,6 +1,7 @@
 2.7.0.5
 --------
 * Make things work with both old and new `OpenGLRaw`/`GLURaw` packages.
+* Build all examples via cabal, no need for `make` anymore.
 
 2.7.0.4
 --------
