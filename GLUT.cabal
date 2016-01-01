@@ -8,7 +8,7 @@ description:
   <http://www.opengl.org/resources/libraries/glut/>.
 homepage: http://www.haskell.org/haskellwiki/Opengl
 bug-reports: https://github.com/haskell-opengl/GLUT/issues
-copyright: Copyright (C) 2002-2015 Sven Panne
+copyright: Copyright (C) 2002-2016 Sven Panne
 license: BSD3
 license-file: LICENSE
 author: Sven Panne
@@ -21,19 +21,6 @@ extra-source-files:
    README.md
    examples/00-README
    examples/BOGLGP/00-README
-   examples/BOGLGP/Chapter01/Makefile
-   examples/BOGLGP/Chapter01/OnYourOwn1.hs
-   examples/BOGLGP/Chapter01/Simple.hs
-   examples/BOGLGP/Chapter02/Makefile
-   examples/BOGLGP/Chapter02/OnYourOwn1.hs
-   examples/BOGLGP/Chapter02/OpenGLApplication.hs
-   examples/BOGLGP/Chapter03/Lines.hs
-   examples/BOGLGP/Chapter03/Makefile
-   examples/BOGLGP/Chapter03/OnYourOwn1.hs
-   examples/BOGLGP/Chapter03/Points.hs
-   examples/BOGLGP/Chapter03/Polygons.hs
-   examples/BOGLGP/Chapter03/TrianglesQuads.hs
-   examples/BOGLGP/Makefile
    examples/Makefile
    examples/Misc/00-README
    examples/Misc/ARBOcclude.hs
@@ -195,7 +182,88 @@ library
     else
       extra-libraries: glut
 
-executable Brick
+executable BOGLGP01-OnYourOwn1
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: OnYourOwn1.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/BOGLGP/Chapter01
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable BOGLGP01-Simple
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Simple.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/BOGLGP/Chapter01
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable BOGLGP02-OnYourOwn1.hs
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: OnYourOwn1.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/BOGLGP/Chapter02
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable BOGLGP02-OpenGLApplication.hs
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: OpenGLApplication.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/BOGLGP/Chapter02
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable BOGLGP03-Lines
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Lines.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/BOGLGP/Chapter03
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable BOGLGP03-OnYourOwn1
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: OnYourOwn1.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/BOGLGP/Chapter03
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable BOGLGP03-Points
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Points.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/BOGLGP/Chapter03
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable BOGLGP03-Polygons
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Polygons.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/BOGLGP/Chapter03
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable BOGLGP03-TrianglesQuads
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: TrianglesQuads.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/BOGLGP/Chapter03
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable OrangeBook-Brick
   if !flag(BuildExamples)
     buildable: False
   main-is: Brick.hs
@@ -204,7 +272,7 @@ executable Brick
   default-language: Haskell2010
   ghc-options: -Wall
 
-executable Triangles
+executable RedBook8-Triangles
   if !flag(BuildExamples)
     buildable: False
   main-is: Triangles.hs
