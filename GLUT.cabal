@@ -30,80 +30,8 @@ extra-source-files:
    examples/OrangeBook/ogl2brick/Brick.frag
    examples/OrangeBook/ogl2brick/Brick.vert
    examples/RedBook4/00-README
-   examples/RedBook4/AAIndex.hs
-   examples/RedBook4/AARGB.hs
-   examples/RedBook4/AccAnti.hs
-   examples/RedBook4/AccPersp.hs
-   examples/RedBook4/Alpha.hs
-   examples/RedBook4/Alpha3D.hs
-   examples/RedBook4/BezCurve.hs
-   examples/RedBook4/BezMesh.hs
-   examples/RedBook4/BezSurf.hs
-   examples/RedBook4/BlendEqn.hs
-   examples/RedBook4/Checker.hs
-   examples/RedBook4/Clip.hs
-   examples/RedBook4/ColorMat.hs
-   examples/RedBook4/ColorMatrix.hs
-   examples/RedBook4/ColorTable.hs
-   examples/RedBook4/Combiner.hs
-   examples/RedBook4/Convolution.hs
-   examples/RedBook4/Cube.hs
-   examples/RedBook4/CubeMap.hs
-   examples/RedBook4/DList.hs
-   examples/RedBook4/DOF.hs
    examples/RedBook4/Data/leeds.bin
-   examples/RedBook4/Double.hs
-   examples/RedBook4/DrawF.hs
-   examples/RedBook4/Feedback.hs
-   examples/RedBook4/Fog.hs
-   examples/RedBook4/FogCoord.hs
-   examples/RedBook4/FogIndex.hs
-   examples/RedBook4/Font.hs
-   examples/RedBook4/Hello.hs
-   examples/RedBook4/Histogram.hs
-   examples/RedBook4/Image.hs
-   examples/RedBook4/Light.hs
-   examples/RedBook4/Lines.hs
-   examples/RedBook4/MVArray.hs
    examples/RedBook4/Makefile
-   examples/RedBook4/Material.hs
-   examples/RedBook4/Minmax.hs
-   examples/RedBook4/Mipmap.hs
-   examples/RedBook4/Model.hs
-   examples/RedBook4/MoveLight.hs
-   examples/RedBook4/MultiTex.hs
-   examples/RedBook4/Multisamp.hs
-   examples/RedBook4/PickDepth.hs
-   examples/RedBook4/PickSquare.hs
-   examples/RedBook4/Planet.hs
-   examples/RedBook4/PointP.hs
-   examples/RedBook4/PolyOff.hs
-   examples/RedBook4/Polys.hs
-   examples/RedBook4/Quadric.hs
-   examples/RedBook4/ReadImage.hs
-   examples/RedBook4/Robot.hs
-   examples/RedBook4/Scene.hs
-   examples/RedBook4/Select.hs
-   examples/RedBook4/ShadowMap.hs
-   examples/RedBook4/Smooth.hs
-   examples/RedBook4/Stencil.hs
-   examples/RedBook4/Stroke.hs
-   examples/RedBook4/SurfPoints.hs
-   examples/RedBook4/Surface.hs
-   examples/RedBook4/Teapots.hs
-   examples/RedBook4/Tess.hs
-   examples/RedBook4/TessWind.hs
-   examples/RedBook4/TexBind.hs
-   examples/RedBook4/TexGen.hs
-   examples/RedBook4/TexProx.hs
-   examples/RedBook4/TexSub.hs
-   examples/RedBook4/Texture3D.hs
-   examples/RedBook4/TextureSurf.hs
-   examples/RedBook4/Torus.hs
-   examples/RedBook4/Trim.hs
-   examples/RedBook4/UnProject.hs
-   examples/RedBook4/VArray.hs
-   examples/RedBook4/Wrap.hs
    examples/RedBook8/00-README
    examples/RedBook8/Chapter01/triangles.frag
    examples/RedBook8/Chapter01/triangles.vert
@@ -324,6 +252,650 @@ executable OrangeBook-Brick
   main-is: Brick.hs
   build-depends: base >= 3 && < 5, bytestring >= 0.9 && < 0.11, GLUT
   hs-source-dirs: examples/OrangeBook/ogl2brick
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-AAIndex
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: AAIndex.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-AARGB
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: AARGB.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-AccAnti
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: AccAnti.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-AccPersp
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: AccPersp.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Alpha
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Alpha.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Alpha3D
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Alpha3D.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-BezCurve
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: BezCurve.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-BezMesh
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: BezMesh.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-BezSurf
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: BezSurf.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-BlendEqn
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: BlendEqn.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Checker
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Checker.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Clip
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Clip.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-ColorMat
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: ColorMat.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-ColorMatrix
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: ColorMatrix.hs
+  other-modules: ReadImage
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-ColorTable
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: ColorTable.hs
+  other-modules: ReadImage
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Combiner
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Combiner.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Convolution
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Convolution.hs
+  other-modules: ReadImage
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Cube
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Cube.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-CubeMap
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: CubeMap.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-DList
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: DList.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-DOF
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: DOF.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Double
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Double.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-DrawF
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: DrawF.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Feedback
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Feedback.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Fog
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Fog.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-FogCoord
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: FogCoord.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-FogIndex
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: FogIndex.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Font
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Font.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Hello
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Hello.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Histogram
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Histogram.hs
+  other-modules: ReadImage
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Image
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Image.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Light
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Light.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Lines
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Lines.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-MVArray
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: MVArray.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Material
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Material.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Minmax
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Minmax.hs
+  other-modules: ReadImage
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Mipmap
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Mipmap.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Model
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Model.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-MoveLight
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: MoveLight.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-MultiTex
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: MultiTex.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Multisamp
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Multisamp.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-PickDepth
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: PickDepth.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-PickSquare
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: PickSquare.hs
+  build-depends: base >= 3 && < 5, array >= 0.1 && < 0.6, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Planet
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Planet.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-PointP
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: PointP.hs
+  build-depends: base >= 3 && < 5, random >= 1.0 && < 1.2, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-PolyOff
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: PolyOff.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Polys
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Polys.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Quadric
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Quadric.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Robot
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Robot.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Scene
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Scene.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Select
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Select.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-ShadowMap
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: ShadowMap.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Smooth
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Smooth.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Stencil
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Stencil.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Stroke
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Stroke.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-SurfPoints
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: SurfPoints.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Surface
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Surface.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Teapots
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Teapots.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Tess
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Tess.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-TessWind
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: TessWind.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-TexBind
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: TexBind.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-TexGen
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: TexGen.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-TexProx
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: TexProx.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-TexSub
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: TexSub.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Texture3D
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Texture3D.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-TextureSurf
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: TextureSurf.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Torus
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Torus.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Trim
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Trim.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-UnProject
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: UnProject.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-VArray
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: VArray.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable RedBook4-Wrap
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Wrap.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/RedBook4
   default-language: Haskell2010
   ghc-options: -Wall
 
