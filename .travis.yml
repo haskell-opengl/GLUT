@@ -83,7 +83,7 @@ before_script:
  - ghc-pkg list
 
 script:
- - cabal install --enable-documentation --flags=BuildExamples
+ - cabal install --enable-documentation --flags=BuildExamples `test "$GHCVER" \> "7.3" && echo "--jobs"`
  - cabal sdist
 
 after_script:
