@@ -20,7 +20,7 @@ module LoadShaders (
 import Control.Exception
 import Control.Monad
 import qualified Data.ByteString as B
-import Graphics.Rendering.OpenGL
+import Graphics.UI.GLUT
 
 --------------------------------------------------------------------------------
 

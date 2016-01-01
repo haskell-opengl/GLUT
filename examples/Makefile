@@ -1,2 +1,2 @@
-SUBDIRS := Misc RedBook4
+SUBDIRS := RedBook4
 include examples.mk

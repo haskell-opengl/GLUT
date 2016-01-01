@@ -23,17 +23,8 @@ extra-source-files:
    examples/BOGLGP/00-README
    examples/Makefile
    examples/Misc/00-README
-   examples/Misc/ARBOcclude.hs
-   examples/Misc/ColorTriangle/ColorTriangle.hs
-   examples/Misc/ColorTriangle/Makefile
    examples/Misc/ColorTriangle/color_triangles.frag
    examples/Misc/ColorTriangle/color_triangles.vert
-   examples/Misc/ExtractContours.hs
-   examples/Misc/Gears.hs
-   examples/Misc/Makefile
-   examples/Misc/Pitfall14.hs
-   examples/Misc/SmoothOpenGL3.hs
-   examples/Misc/Triangulate.hs
    examples/OrangeBook/00-README
    examples/OrangeBook/3Dlabs-License.txt
    examples/OrangeBook/ogl2brick/Brick.frag
@@ -263,6 +254,70 @@ executable BOGLGP03-TrianglesQuads
   default-language: Haskell2010
   ghc-options: -Wall
 
+executable Misc-ARBOcclude
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: ARBOcclude.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/Misc
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable Misc-ColorTriangle
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: ColorTriangle.hs
+  other-modules: LoadShaders
+  build-depends: base >= 3 && < 5, bytestring >= 0.9 && < 0.11, GLUT
+  hs-source-dirs: examples/Misc/ColorTriangle, examples/RedBook8/common
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable Misc-ExtractContours
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: ExtractContours.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/Misc
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable Misc-Gears
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Gears.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/Misc
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable Misc-Pitfall14
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Pitfall14.hs
+  build-depends: base >= 3 && < 5, GLUT
+  hs-source-dirs: examples/Misc
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable Misc-SmoothOpenGL3
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: SmoothOpenGL3.hs
+  build-depends: base >= 3 && < 5, bytestring >= 0.9 && < 0.11, OpenGLRaw >= 1.0 && < 3.1, GLUT
+  hs-source-dirs: examples/Misc
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable Misc-Triangulate
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Triangulate.hs
+  build-depends: base >= 3 && < 5, random >= 1.0 && < 1.2, GLUT
+  hs-source-dirs: examples/Misc
+  default-language: Haskell2010
+  ghc-options: -Wall
+
 executable OrangeBook-Brick
   if !flag(BuildExamples)
     buildable: False
@@ -277,7 +332,7 @@ executable RedBook8-Triangles
     buildable: False
   main-is: Triangles.hs
   other-modules: LoadShaders
-  build-depends: base >= 3 && < 5, bytestring >= 0.9 && < 0.11, OpenGL, GLUT
+  build-depends: base >= 3 && < 5, bytestring >= 0.9 && < 0.11, GLUT
   hs-source-dirs: examples/RedBook8/Chapter01, examples/RedBook8/common
   default-language: Haskell2010
   ghc-options: -Wall

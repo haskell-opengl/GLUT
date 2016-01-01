@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-
    SmoothOpenGL3.hs (adapted from freeglut's smooth_opengl3.c example)
    Copyright (c) Sven Panne 2009 <svenpanne@gmail.com>
@@ -11,7 +12,13 @@ import Data.List
 import Foreign.Marshal.Array
 import Foreign.Ptr
 import Foreign.Storable
-import Graphics.GL.Core31
+#if MIN_VERSION_OpenGLRaw(3,0,0)
+import Graphics.GL
+#else
+import Graphics.Rendering.OpenGL.Raw
+#define GL_FALSE gl_FALSE
+#define GL_TRUE gl_TRUE
+#endif
 import Graphics.UI.GLUT
 import System.Exit
 import System.IO
