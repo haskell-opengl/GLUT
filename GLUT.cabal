@@ -49,11 +49,8 @@ extra-source-files:
    examples/Misc/Triangulate.hs
    examples/OrangeBook/00-README
    examples/OrangeBook/3Dlabs-License.txt
-   examples/OrangeBook/Makefile
    examples/OrangeBook/ogl2brick/Brick.frag
-   examples/OrangeBook/ogl2brick/Brick.hs
    examples/OrangeBook/ogl2brick/Brick.vert
-   examples/OrangeBook/ogl2brick/Makefile
    examples/RedBook4/00-README
    examples/RedBook4/AAIndex.hs
    examples/RedBook4/AARGB.hs
@@ -144,6 +141,10 @@ flag UseNativeWindowsLibraries
     When compiling under Windows, use the native libraries instead of e.g. the
     ones coming with Cygwin.
 
+flag BuildExamples
+  description: Build various OpenGL/GLUT examples.
+  default: False
+
 library
   exposed-modules:
     Graphics.UI.GLUT
@@ -198,6 +199,15 @@ library
       frameworks: GLUT
     else
       extra-libraries: glut
+
+executable Brick
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Brick.hs
+  build-depends: base >= 3 && < 5, bytestring >= 0.9 && < 0.11, GLUT
+  hs-source-dirs: examples/OrangeBook/ogl2brick
+  default-language: Haskell2010
+  ghc-options: -Wall
 
 source-repository head
   type: git

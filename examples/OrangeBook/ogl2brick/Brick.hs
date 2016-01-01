@@ -6,9 +6,7 @@
    See the file libraries/GLUT/LICENSE
 -}
 
--- What we actually mean is: "#if !MIN_VERSION_base(4,8,0)", but we don't use
--- cabal in the examples.
-#if __GLASGOW_HASKELL__ < 710
+#if !MIN_VERSION_base(4,8,0)
 import Prelude hiding ( sum )
 import Data.Foldable ( Foldable, sum )
 #endif
@@ -326,9 +324,9 @@ installBrickShaders shaders = do
    currentProgram $= Just brickProg
 
    let setUniform var val = do
-       location <- get (uniformLocation brickProg var)
-       reportErrors
-       uniform location $= val
+          location <- get (uniformLocation brickProg var)
+          reportErrors
+          uniform location $= val
 
    setUniform "BrickColor" (Color3 1.0 0.3 (0.2 :: GLfloat))
    setUniform "MortarColor" (Color3 0.85 0.86 (0.84 :: GLfloat))

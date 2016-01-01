@@ -1,2 +1,2 @@
-SUBDIRS := BOGLGP Misc OrangeBook RedBook4 RedBook8
+SUBDIRS := BOGLGP Misc RedBook4 RedBook8
 include examples.mk
