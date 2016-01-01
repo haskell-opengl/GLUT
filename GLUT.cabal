@@ -21,7 +21,6 @@ extra-source-files:
    README.md
    examples/00-README
    examples/BOGLGP/00-README
-   examples/Makefile
    examples/Misc/00-README
    examples/Misc/ColorTriangle/color_triangles.frag
    examples/Misc/ColorTriangle/color_triangles.vert
@@ -31,11 +30,9 @@ extra-source-files:
    examples/OrangeBook/ogl2brick/Brick.vert
    examples/RedBook4/00-README
    examples/RedBook4/Data/leeds.bin
-   examples/RedBook4/Makefile
    examples/RedBook8/00-README
    examples/RedBook8/Chapter01/triangles.frag
    examples/RedBook8/Chapter01/triangles.vert
-   examples/examples.mk
 
 flag UseNativeWindowsLibraries
   description:
