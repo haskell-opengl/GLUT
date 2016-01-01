@@ -83,7 +83,7 @@ before_script:
  - ghc-pkg list
 
 script:
- - cabal install --jobs --enable-documentation --flags=BuildExamples
+ - cabal install --enable-documentation --flags=BuildExamples
  - cabal sdist
 
 after_script:
