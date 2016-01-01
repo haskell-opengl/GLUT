@@ -127,13 +127,8 @@ extra-source-files:
    examples/RedBook4/VArray.hs
    examples/RedBook4/Wrap.hs
    examples/RedBook8/00-README
-   examples/RedBook8/Chapter01/Makefile
    examples/RedBook8/Chapter01/triangles.frag
-   examples/RedBook8/Chapter01/Triangles.hs
    examples/RedBook8/Chapter01/triangles.vert
-   examples/RedBook8/common/LoadShaders.hs
-   examples/RedBook8/common/Makefile
-   examples/RedBook8/Makefile
    examples/examples.mk
 
 flag UseNativeWindowsLibraries
@@ -206,6 +201,16 @@ executable Brick
   main-is: Brick.hs
   build-depends: base >= 3 && < 5, bytestring >= 0.9 && < 0.11, GLUT
   hs-source-dirs: examples/OrangeBook/ogl2brick
+  default-language: Haskell2010
+  ghc-options: -Wall
+
+executable Triangles
+  if !flag(BuildExamples)
+    buildable: False
+  main-is: Triangles.hs
+  other-modules: LoadShaders
+  build-depends: base >= 3 && < 5, bytestring >= 0.9 && < 0.11, OpenGL, GLUT
+  hs-source-dirs: examples/RedBook8/Chapter01, examples/RedBook8/common
   default-language: Haskell2010
   ghc-options: -Wall
 
