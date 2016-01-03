@@ -1461,12 +1461,12 @@ ptr_glutSetMenuData = unsafePerformIO $ getAPIEntry "glutSetMenuData"
 
 -- glutSetMenuFont -------------------------------------------------------------
 
-glutSetMenuFont :: MonadIO m => GLint -> Ptr a -> m ()
+glutSetMenuFont :: MonadIO m => CInt -> Ptr a -> m ()
 glutSetMenuFont v1 v2 = liftIO $ dyn_glutSetMenuFont ptr_glutSetMenuFont v1 v2
 
 foreign import CALLCONV "dynamic" dyn_glutSetMenuFont
-  :: FunPtr (GLint -> Ptr a -> IO ())
-  ->         GLint -> Ptr a -> IO ()
+  :: FunPtr (CInt -> Ptr a -> IO ())
+  ->         CInt -> Ptr a -> IO ()
 
 {-# NOINLINE ptr_glutSetMenuFont #-}
 ptr_glutSetMenuFont :: FunPtr a
