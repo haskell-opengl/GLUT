@@ -1,3 +1,7 @@
+2.7.0.6
+--------
+* Relaxed upper version bound for `OpenGLRaw`.
+
 2.7.0.5
 --------
 * Make things work with both old and new `OpenGLRaw`/`GLURaw` packages.
