@@ -62,6 +62,7 @@ matrix:
          sources:
           - hvr-ghc
          packages:
+          - freeglut3-dev
           - cabal-install-1.24
           - ghc-8.0.1
    - env: CABALVER=head GHCVER=head
