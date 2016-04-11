@@ -79,7 +79,7 @@ bitmapString f s = do
    i <- marshalBitmapFont f
    mapM_ (\c -> withChar c (glutBitmapCharacter i)) s
 
-withChar :: MonadIO m => Char -> (CInt -> m a) -> m a
+withChar :: Char -> (CInt -> m a) -> m a
 withChar c f = f . fromIntegral . ord $ c
 
 --------------------------------------------------------------------------------

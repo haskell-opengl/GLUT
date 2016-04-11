@@ -1,3 +1,7 @@
+2.7.0.7
+-------
+* Removed redundant constraints.
+
 2.7.0.6
 --------
 * Relaxed upper version bound for `OpenGLRaw`.
