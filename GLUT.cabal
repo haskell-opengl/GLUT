@@ -43,10 +43,16 @@ extra-source-files:
    examples/RedBook8/Chapter01/triangles.frag
    examples/RedBook8/Chapter01/triangles.vert
 
+flag freeglut
+  description:
+    When compiling under Windows, use the freeglut library.
+  default: False
+  manual:  True
+
 flag UseNativeWindowsLibraries
   description:
     When compiling under Windows, use the native libraries instead of e.g. the
-    ones coming with Cygwin.
+    ones coming with Cygwin or MSYS.
 
 flag BuildExamples
   description: Build various OpenGL/GLUT examples.
@@ -94,13 +100,17 @@ library
   ghc-options: -Wall
   if impl(ghc > 8)
     ghc-options: -Wcompat
-  if os(windows) && flag(UseNativeWindowsLibraries)
+  if os(windows) && (flag(freeglut) || flag(UseNativeWindowsLibraries))
     if arch(i386)
       cpp-options: "-DCALLCONV=stdcall"
     else
       cpp-options: "-DCALLCONV=ccall"
     cc-options: "-DUSE_GETPROCADDRESS"
-    extra-libraries: glut32
+    if flag(freeglut)
+      cpp-options: "-DUSE_FREEGLUT"
+      extra-libraries: freeglut
+    else
+      extra-libraries: glut32
   else
     cpp-options: "-DCALLCONV=ccall"
     cc-options: "-DUSE_DLSYM"
