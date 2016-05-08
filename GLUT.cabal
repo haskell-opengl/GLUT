@@ -107,7 +107,7 @@ library
       cpp-options: "-DCALLCONV=ccall"
     cc-options: "-DUSE_GETPROCADDRESS"
     if flag(freeglut)
-      cpp-options: "-DUSE_FREEGLUT"
+      cc-options: "-DUSE_FREEGLUT"
       extra-libraries: freeglut
     else
       extra-libraries: glut32

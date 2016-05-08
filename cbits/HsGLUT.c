@@ -87,9 +87,10 @@ hs_GLUT_getProcAddress(const char *name)
     firstTime = 0;
 #if defined(USE_FREEGLUT)
     handle = LoadLibrary(TEXT("freeglut"));
+
     // The MinGW-w64 version of freeglut prefixes "lib" onto the DLL name
     if (!handle) {
-        handle = LoadLibrary(TEXT("libfreeglut"));
+      handle = LoadLibrary(TEXT("libfreeglut"));
     }
 #else
     handle = LoadLibrary(TEXT("glut32"));
