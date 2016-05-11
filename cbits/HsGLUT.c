@@ -86,6 +86,16 @@ hs_GLUT_getProcAddress(const char *name)
   if (firstTime) {
     firstTime = 0;
     handle = LoadLibrary(TEXT("glut32"));
+
+    // If glut32 isn't present, try freeglut instead
+    if (!handle) {
+      handle = LoadLibrary(TEXT("freeglut"));
+    }
+
+    // The MinGW-w64 version of freeglut prefixes "lib" onto the DLL name
+    if (!handle) {
+      handle = LoadLibrary(TEXT("libfreeglut"));
+    }
   }
 
   return handle ? GetProcAddress(handle, name) : NULL;
