@@ -1,7 +1,7 @@
 /* -----------------------------------------------------------------------------
  *
  * Module      :  C support for Graphics.UI.GLUT.Raw
- * Copyright   :  (c) Sven Panne 2002-2013
+ * Copyright   :  (c) Sven Panne 2002-2016
  * License     :  BSD3
  *
  * Maintainer  :  Sven Panne <svenpanne@gmail.com>
@@ -85,16 +85,19 @@ hs_GLUT_getProcAddress(const char *name)
 
   if (firstTime) {
     firstTime = 0;
-    handle = LoadLibrary(TEXT("glut32"));
 
-    // If glut32 isn't present, try freeglut instead
-    if (!handle) {
-      handle = LoadLibrary(TEXT("freeglut"));
-    }
+    /* Try to load freeglut first, it has a few extra features compared to
+       classic GLUT. */
+    handle = LoadLibrary(TEXT("freeglut"));
 
-    // The MinGW-w64 version of freeglut prefixes "lib" onto the DLL name
+    /* The MinGW-w64 version of freeglut prefixes "lib" onto the DLL name. */
     if (!handle) {
       handle = LoadLibrary(TEXT("libfreeglut"));
+    }
+
+    /* If no freeglut version is found, try plain old glut32 instead. */
+    if (!handle) {
+      handle = LoadLibrary(TEXT("glut32"));
     }
   }
 

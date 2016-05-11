@@ -1,3 +1,8 @@
+2.7.0.9
+--------
+* Windows: The GLUT package compiles without any additional GLUT library now.
+* Windows: We search for a native freeglut DLL, a MinGW freeglut DLL and a classic GLUT DLL, in that order.
+
 2.7.0.8
 --------
 * Relaxed upper version bound for `OpenGLRaw`.
