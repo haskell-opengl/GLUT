@@ -105,8 +105,6 @@ library
     cc-options: "-DUSE_DLSYM"
     if os(darwin)
       frameworks: GLUT
-    else
-      extra-libraries: glut
 
 executable BOGLGP01-OnYourOwn1
   if !flag(BuildExamples)

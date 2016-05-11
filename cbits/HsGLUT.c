@@ -10,68 +10,6 @@
  *
  * -------------------------------------------------------------------------- */
 
-#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined(__WATCOMC__)
-
-#define GLUT_STROKE_ROMAN          ((void *)0x0000)
-#define GLUT_STROKE_MONO_ROMAN     ((void *)0x0001)
-#define GLUT_BITMAP_9_BY_15        ((void *)0x0002)
-#define GLUT_BITMAP_8_BY_13        ((void *)0x0003)
-#define GLUT_BITMAP_TIMES_ROMAN_10 ((void *)0x0004)
-#define GLUT_BITMAP_TIMES_ROMAN_24 ((void *)0x0005)
-#define GLUT_BITMAP_HELVETICA_10   ((void *)0x0006)
-#define GLUT_BITMAP_HELVETICA_12   ((void *)0x0007)
-#define GLUT_BITMAP_HELVETICA_18   ((void *)0x0008)
-
-#else
-
-extern void* glutStrokeRoman;
-extern void* glutStrokeMonoRoman;
-extern void* glutBitmap9By15;
-extern void* glutBitmap8By13;
-extern void* glutBitmapTimesRoman10;
-extern void* glutBitmapTimesRoman24;
-extern void* glutBitmapHelvetica10;
-extern void* glutBitmapHelvetica12;
-extern void* glutBitmapHelvetica18;
-
-#define GLUT_STROKE_ROMAN          ((void *)&glutStrokeRoman)
-#define GLUT_STROKE_MONO_ROMAN     ((void *)&glutStrokeMonoRoman)
-#define GLUT_BITMAP_9_BY_15        ((void *)&glutBitmap9By15)
-#define GLUT_BITMAP_8_BY_13        ((void *)&glutBitmap8By13)
-#define GLUT_BITMAP_TIMES_ROMAN_10 ((void *)&glutBitmapTimesRoman10)
-#define GLUT_BITMAP_TIMES_ROMAN_24 ((void *)&glutBitmapTimesRoman24)
-#define GLUT_BITMAP_HELVETICA_10   ((void *)&glutBitmapHelvetica10)
-#define GLUT_BITMAP_HELVETICA_12   ((void *)&glutBitmapHelvetica12)
-#define GLUT_BITMAP_HELVETICA_18   ((void *)&glutBitmapHelvetica18)
-
-#endif
-
-void*
-hs_GLUT_marshalBitmapFont(int fontID)
-{
-  switch (fontID) {
-  case 0 : return GLUT_BITMAP_8_BY_13;
-  case 1 : return GLUT_BITMAP_9_BY_15;
-  case 2 : return GLUT_BITMAP_TIMES_ROMAN_10;
-  case 3 : return GLUT_BITMAP_TIMES_ROMAN_24;
-  case 4 : return GLUT_BITMAP_HELVETICA_10;
-  case 5 : return GLUT_BITMAP_HELVETICA_12;
-  case 6 : return GLUT_BITMAP_HELVETICA_18;
-  }
-  return (void*)0;
-}
-
-void*
-hs_GLUT_marshalStrokeFont(int fontID)
-{
-  switch (fontID) {
-  case 0 : return GLUT_STROKE_ROMAN;
-  case 1 : return GLUT_STROKE_MONO_ROMAN;
-  }
-  return (void*)0;
-}
-
-/* -------------------------------------------------------------------------- */
 #if defined(USE_GETPROCADDRESS)
 
 #define WIN32_LEAN_AND_MEAN
@@ -153,7 +91,7 @@ hs_GLUT_getProcAddress(const char *name)
   if (firstTime) {
     firstTime = 0;
     /* Get a handle for our executable. */
-    handle = dlopen(NULL, RTLD_LAZY);
+    handle = dlopen("libglut.so", RTLD_LAZY);
   }
 
   return handle ? dlsym(handle, name) : NULL;
@@ -165,3 +103,176 @@ hs_GLUT_getProcAddress(const char *name)
 #error "Don't know how to retrieve GLUT entries"
 
 #endif
+
+/* -------------------------------------------------------------------------- */
+#if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined(__WATCOMC__)
+
+void*
+hs_GLUT_glutStrokeRoman(void)
+{
+  return ((void *)0x0000);
+}
+
+void*
+hs_GLUT_glutStrokeMonoRoman(void)
+{
+  return ((void *)0x0001);
+}
+
+void*
+hs_GLUT_glutBitmap9By15(void)
+{
+  return ((void *)0x0002);
+}
+
+void*
+hs_GLUT_glutBitmap8By13(void)
+{
+  return ((void *)0x0003);
+}
+
+void*
+hs_GLUT_glutBitmapTimesRoman10(void)
+{
+  return ((void *)0x0004);
+}
+
+void*
+hs_GLUT_glutBitmapTimesRoman24(void)
+{
+  return ((void *)0x0005);
+}
+
+void*
+hs_GLUT_glutBitmapHelvetica10(void)
+{
+  return ((void *)0x0006);
+}
+
+void*
+hs_GLUT_glutBitmapHelvetica12(void)
+{
+  return ((void *)0x0007);
+}
+
+void*
+hs_GLUT_glutBitmapHelvetica18(void)
+{
+  return ((void *)0x0008);
+}
+
+#else
+
+void*
+hs_GLUT_glutStrokeRoman(void)
+{
+  return hs_GLUT_getProcAddress("glutStrokeRoman");
+}
+
+void*
+hs_GLUT_glutStrokeMonoRoman(void)
+{
+  return hs_GLUT_getProcAddress("glutStrokeMonoRoman");
+}
+
+void*
+hs_GLUT_glutBitmap9By15(void)
+{
+  return hs_GLUT_getProcAddress("glutBitmap9By15");
+}
+
+void*
+hs_GLUT_glutBitmap8By13(void)
+{
+  return hs_GLUT_getProcAddress("glutBitmap8By13");
+}
+
+void*
+hs_GLUT_glutBitmapTimesRoman10(void)
+{
+  return hs_GLUT_getProcAddress("glutBitmapTimesRoman10");
+}
+
+void*
+hs_GLUT_glutBitmapTimesRoman24(void)
+{
+  return hs_GLUT_getProcAddress("glutBitmapTimesRoman24");
+}
+
+void*
+hs_GLUT_glutBitmapHelvetica10(void)
+{
+  return hs_GLUT_getProcAddress("glutBitmapHelvetica10");
+}
+
+void*
+hs_GLUT_glutBitmapHelvetica12(void)
+{
+  return hs_GLUT_getProcAddress("glutBitmapHelvetica12");
+}
+
+void*
+hs_GLUT_glutBitmapHelvetica18(void)
+{
+  return hs_GLUT_getProcAddress("glutBitmapHelvetica18");
+}
+
+#endif
+
+void*
+hs_GLUT_marshalBitmapFont(int fontID)
+{
+  static int firstTime = 1;
+  static void *h_glutBitmap9By15        = NULL;
+  static void *h_glutBitmap8By13        = NULL;
+  static void *h_glutBitmapTimesRoman10 = NULL;
+  static void *h_glutBitmapTimesRoman24 = NULL;
+  static void *h_glutBitmapHelvetica10  = NULL;
+  static void *h_glutBitmapHelvetica12  = NULL;
+  static void *h_glutBitmapHelvetica18  = NULL;
+
+
+  if (firstTime) {
+    firstTime = 0;
+
+    h_glutBitmap9By15        = hs_GLUT_glutBitmap9By15();
+    h_glutBitmap8By13        = hs_GLUT_glutBitmap8By13();
+    h_glutBitmapTimesRoman10 = hs_GLUT_glutBitmapTimesRoman10();
+    h_glutBitmapTimesRoman24 = hs_GLUT_glutBitmapTimesRoman24();
+    h_glutBitmapHelvetica10  = hs_GLUT_glutBitmapHelvetica10();
+    h_glutBitmapHelvetica12  = hs_GLUT_glutBitmapHelvetica12();
+    h_glutBitmapHelvetica18  = hs_GLUT_glutBitmapHelvetica18();
+  }
+
+  switch (fontID) {
+  case 0 : return h_glutBitmap8By13;
+  case 1 : return h_glutBitmap9By15;
+  case 2 : return h_glutBitmapTimesRoman10;
+  case 3 : return h_glutBitmapTimesRoman24;
+  case 4 : return h_glutBitmapHelvetica10;
+  case 5 : return h_glutBitmapHelvetica12;
+  case 6 : return h_glutBitmapHelvetica18;
+  }
+  return (void*)0;
+}
+
+void*
+hs_GLUT_marshalStrokeFont(int fontID)
+{
+  static int firstTime = 1;
+  static void *h_glutStrokeRoman     = NULL;
+  static void *h_glutStrokeMonoRoman = NULL;
+
+  if (firstTime) {
+    firstTime = 0;
+
+    h_glutStrokeRoman     = hs_GLUT_glutStrokeRoman();
+    h_glutStrokeMonoRoman = hs_GLUT_glutStrokeMonoRoman();
+  }
+
+  switch (fontID) {
+  case 0 : return h_glutStrokeRoman;
+  case 1 : return h_glutStrokeMonoRoman;
+  }
+  return (void*)0;
+}
