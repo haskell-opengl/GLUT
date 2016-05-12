@@ -1,3 +1,7 @@
+2.7.0.10
+--------
+* Mac OS X: Search public frameworks first, then system frameworks.
+
 2.7.0.9
 --------
 * The GLUT package compiles without any additional library/framework now.
