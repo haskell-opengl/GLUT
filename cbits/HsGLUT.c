@@ -90,7 +90,6 @@ hs_GLUT_getProcAddress(const char *name)
 
   if (firstTime) {
     firstTime = 0;
-    /* Get a handle for our executable. */
     handle = dlopen("libglut.so", RTLD_LAZY);
   }
 
@@ -105,6 +104,9 @@ hs_GLUT_getProcAddress(const char *name)
 #endif
 
 /* -------------------------------------------------------------------------- */
+
+/* Note: This #if below is in sync with freeglut_std.h, classic GLUT simply used
+   #if defined(_WIN32). */
 #if defined(_MSC_VER) || defined(__CYGWIN__) || defined(__MINGW32__) || defined(__WATCOMC__)
 #define INIT_FONT(name,num) hs_##name = ((void*)(num))
 #else
