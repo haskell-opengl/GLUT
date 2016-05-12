@@ -43,40 +43,6 @@ hs_GLUT_getProcAddress(const char *name)
 }
 
 /* -------------------------------------------------------------------------- */
-#elif defined(USE_NSADDRESSOFSYMBOL)
-
-#include <mach-o/dyld.h>
-#include <stdlib.h>
-#include <string.h>
-
-void*
-hs_GLUT_getProcAddress(const char *name)
-{
-  NSSymbol symbol;
-
-  /* Prepend a '_' for the Unix C symbol mangling convention */
-  char* symbolName = (char*)malloc(strlen(name) + 2);
-  if (!symbolName) {
-    return NULL;
-  }
-  symbolName[0] = '_';
-  strcpy(symbolName + 1, name);
-
-  if (!NSIsSymbolNameDefined(symbolName)) {
-    free(symbolName);
-    return NULL;
-  }
-
-  symbol = NSLookupAndBindSymbol(symbolName);
-  free(symbolName);
-  if (!symbol) {
-    return NULL;
-  }
-
-  return NSAddressOfSymbol(symbol);
-}
-
-/* -------------------------------------------------------------------------- */
 #elif defined(USE_DLSYM)
 
 #include <stdlib.h>
