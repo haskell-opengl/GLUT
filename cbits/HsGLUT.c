@@ -48,6 +48,12 @@ hs_GLUT_getProcAddress(const char *name)
 #include <stdlib.h>
 #include <dlfcn.h>
 
+#ifdef __APPLE__
+#define FILENAME "/System/Library/Frameworks/GLUT.framework/GLUT"
+#else
+#define FILENAME "libglut.so"
+#endif
+
 void*
 hs_GLUT_getProcAddress(const char *name)
 {
@@ -56,7 +62,7 @@ hs_GLUT_getProcAddress(const char *name)
 
   if (firstTime) {
     firstTime = 0;
-    handle = dlopen("libglut.so", RTLD_LAZY);
+    handle = dlopen(FILENAME, RTLD_LAZY | RTLD_GLOBAL);
   }
 
   return handle ? dlsym(handle, name) : NULL;
