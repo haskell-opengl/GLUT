@@ -1,3 +1,7 @@
+2.7.0.11
+--------
+* Linux: Try to load versioned GLUT library, too, because the unversioned one is often in *-dev packages only.
+
 2.7.0.10
 --------
 * Mac OS X: Search public frameworks first, then system frameworks.

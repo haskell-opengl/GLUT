@@ -15,6 +15,16 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+static LPCTSTR libNames[] = {
+  /* Try to load freeglut first, it has a few extra features compared to classic
+     GLUT. */
+  TEXT("freeglut"),
+  /* The MinGW-w64 version of freeglut prefixes "lib" onto the DLL name. */
+  TEXT("libfreeglut"),
+  /* If no freeglut version is found, try plain old glut32 instead. */
+  TEXT("glut32")
+};
+
 void*
 hs_GLUT_getProcAddress(const char *name)
 {
@@ -22,20 +32,10 @@ hs_GLUT_getProcAddress(const char *name)
   static HMODULE handle = NULL;
 
   if (firstTime) {
+    int i, numNames = (int)(sizeof(libNames) / sizeof(libNames[0]));
     firstTime = 0;
-
-    /* Try to load freeglut first, it has a few extra features compared to
-       classic GLUT. */
-    handle = LoadLibrary(TEXT("freeglut"));
-
-    /* The MinGW-w64 version of freeglut prefixes "lib" onto the DLL name. */
-    if (!handle) {
-      handle = LoadLibrary(TEXT("libfreeglut"));
-    }
-
-    /* If no freeglut version is found, try plain old glut32 instead. */
-    if (!handle) {
-      handle = LoadLibrary(TEXT("glut32"));
+    for (i = 0;   (!handle) && (i < numNames);   ++i) {
+      handle = LoadLibrary(libNames[i]);
     }
   }
 
@@ -48,6 +48,17 @@ hs_GLUT_getProcAddress(const char *name)
 #include <stdlib.h>
 #include <dlfcn.h>
 
+static const char* libNames[] = {
+#ifdef __APPLE__
+  /* Try public framework path first. */
+  "/Library/Frameworks/GLUT.framework/GLUT",
+  /* If the public path failed, try the system framework path. */
+  "/System/Library/Frameworks/GLUT.framework/GLUT"
+#else
+  "libglut.so", "libglut.so.3"
+#endif
+};
+
 void*
 hs_GLUT_getProcAddress(const char *name)
 {
@@ -55,19 +66,11 @@ hs_GLUT_getProcAddress(const char *name)
   static void *handle = NULL;
 
   if (firstTime) {
+    int i, numNames = (int)(sizeof(libNames) / sizeof(libNames[0]));
     firstTime = 0;
-
-#ifdef __APPLE__
-    /* Try public framework path first. */
-    handle = dlopen("/Library/Frameworks/GLUT.framework/GLUT", RTLD_LAZY | RTLD_GLOBAL);
-
-    /* If the public path failed, try the system framework path. */
-    if (!handle) {
-      handle = dlopen("/System/Library/Frameworks/GLUT.framework/GLUT", RTLD_LAZY | RTLD_GLOBAL);
+    for (i = 0;   (!handle) && (i < numNames);   ++i) {
+      handle = dlopen(libNames[i], RTLD_LAZY | RTLD_GLOBAL);
     }
-#else
-    handle = dlopen("libglut.so", RTLD_LAZY | RTLD_GLOBAL);
-#endif
   }
 
   return handle ? dlsym(handle, name) : NULL;
