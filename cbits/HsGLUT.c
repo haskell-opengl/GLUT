@@ -50,6 +50,8 @@ hs_GLUT_getProcAddress(const char *name)
 
 static const char* libNames[] = {
 #ifdef __APPLE__
+  /* Try to use freeglut, checking the LD_LIBRARY_PATH */
+  "libglut.dylib",
   /* Try public framework path first. */
   "/Library/Frameworks/GLUT.framework/GLUT",
   /* If the public path failed, try the system framework path. */
