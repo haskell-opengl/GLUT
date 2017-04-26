@@ -1,3 +1,7 @@
+2.7.0.12
+--------
+* Mac OS X: Make it possible to link against freeglut.
+
 2.7.0.11
 --------
 * Linux: Try to load versioned GLUT library, too, because the unversioned one is often in *-dev packages only.
