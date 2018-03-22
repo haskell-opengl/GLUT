@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.UI.GLUT.Raw.Functions
--- Copyright   :  (c) Sven Panne 2013
+-- Copyright   :  (c) Sven Panne 2018
 -- License     :  BSD3
 --
 -- Maintainer  :  Sven Panne <svenpanne@gmail.com>

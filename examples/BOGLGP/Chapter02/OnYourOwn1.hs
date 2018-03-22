@@ -1,6 +1,6 @@
 {-
    OnYourOwn1.hs (adapted from OpenGLApplication which is (c) 2004 Astle/Hawkins)
-   Copyright (c) Sven Panne 2004-2005 <svenpanne@gmail.com>
+   Copyright (c) Sven Panne 2004-2018 <svenpanne@gmail.com>
    This file is part of HOpenGL and distributed under a BSD-style license
    See the file libraries/GLUT/LICENSE
 -}
