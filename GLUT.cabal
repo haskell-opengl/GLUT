@@ -1,5 +1,5 @@
 name: GLUT
-version: 2.7.0.12
+version: 2.7.0.13
 synopsis: A binding for the OpenGL Utility Toolkit
 description:
   A Haskell binding for the OpenGL Utility Toolkit, a window system independent
@@ -237,7 +237,7 @@ executable Misc-SmoothOpenGL3
   if !flag(BuildExamples)
     buildable: False
   main-is: SmoothOpenGL3.hs
-  build-depends: base >= 3 && < 5, bytestring >= 0.9 && < 0.11, OpenGLRaw >= 1.0 && < 3.3, GLUT
+  build-depends: base >= 3 && < 5, bytestring >= 0.9 && < 0.11, OpenGLRaw >= 1.0 && < 3.4, GLUT
   hs-source-dirs: examples/Misc
   default-language: Haskell2010
   ghc-options: -Wall

@@ -1,3 +1,7 @@
+2.7.0.13
+--------
+* Relaxed upper version bound for `OpenGLRaw`.
+
 2.7.0.12
 --------
 * Mac OS X: Make it possible to link against freeglut.
