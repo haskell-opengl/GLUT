@@ -57,7 +57,7 @@ class Font a where
 
    -- | (/freeglut only/) For a bitmap font, return the maximum height of the
    -- characters in the given font measured in pixels. For a stroke font,
-   -- return the width in units.
+   -- return the height in units.
 
    fontHeight :: MonadIO m => a -> m GLfloat
 
