@@ -260,6 +260,9 @@ data DisplayMode
      -- ^ Select a window without any borders (/freeglut only/).
    | SRGBMode
      -- ^ Select an sRGB mode window (/freeglut only/).
+   | MacOSCore32Profile
+     -- ^ Select a window with support for OpenGL 3.2 core profile
+     -- (/macOS system GLUT only/).
    deriving ( Eq, Ord, Show )
 
 marshalDisplayMode :: DisplayMode -> CUInt
@@ -286,6 +289,7 @@ marshalDisplayMode m = case m of
    Captionless -> glut_CAPTIONLESS
    Borderless -> glut_BORDERLESS
    SRGBMode -> glut_SRGB
+   MacOSCore32Profile -> glut_3_2_CORE_PROFILE
 
 --------------------------------------------------------------------------------
 
