@@ -1,3 +1,8 @@
+2.7.0.15
+--------
+* Fixed typo in documentation.
+* Relaxed upper version bound for `StateVar`.
+
 2.7.0.14
 --------
 * Relaxed upper version bound for `containers`.
