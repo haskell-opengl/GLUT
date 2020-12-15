@@ -1,3 +1,7 @@
+2.7.0.16
+--------
+* Relaxed upper version bounds for `random` and `bytestring`.
+
 2.7.0.15
 --------
 * Fixed typo in documentation.
